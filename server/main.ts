@@ -1,31 +1,22 @@
-import { Meteor } from 'meteor/meteor';
-import { LinksCollection } from '/imports/api/links';
+import { Meteor } from 'meteor/meteor'
 
-function insertLink(title: string, url: string) {
-  LinksCollection.insert({ title, url, createdAt: new Date() });
-}
+import { ZBClient } from "zeebe-node"
+
+require("dotenv").config()
 
 Meteor.startup(() => {
-  // If the Links collection is empty, add some data.
-  if (LinksCollection.find().count() === 0) {
-    insertLink(
-      'Do the Tutorial',
-      'https://www.meteor.com/tutorials/react/creating-an-app'
-    );
+  Meteor.publish('tasks', function() {
+    const added = this.added.bind(this)
+    const zbc = new ZBClient()
 
-    insertLink(
-      'Follow the Guide',
-      'http://guide.meteor.com'
-    );
-
-    insertLink(
-      'Read the Docs',
-      'https://docs.meteor.com'
-    );
-
-    insertLink(
-      'Discussions',
-      'https://forums.meteor.com'
-    );
-  }
-});
+    zbc.createWorker({
+      taskType: 'fill_sectionA',
+      taskHandler: function(instance : any, completed) {
+        console.log(instance)
+        added('workflow-tasks', instance.workflowInstanceKey, instance)
+        completed.forwarded()
+      },
+      maxJobsToActivate: 6
+    })
+  })
+})

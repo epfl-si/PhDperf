@@ -1,8 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route } from "react-router-dom"
 import { Footer } from "epfl-sti-react-library"
-import { Hello } from './Hello'
-import { Info } from './Info'
 import { PhDHeader } from "./components/PhDHeader"
 import { PhDBreadcrumbs } from "./components/PhDBreadcrumbs"
 import { TaskList } from "./components/TaskList"
