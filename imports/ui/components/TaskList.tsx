@@ -8,6 +8,6 @@ export function TaskList() {
   const tasks = useTracker(() => PerfWorkflowTasks.find({}).fetch())
 
   return <ul>
-    {tasks.map(task => <li><pre>{JSON.stringify(task, null, "  ")}</pre></li>)}
+    {tasks.map(task => <li key={task.key}><pre>{JSON.stringify(task, null, "  ")}</pre></li>)}
   </ul>
 }
