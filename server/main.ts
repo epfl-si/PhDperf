@@ -1,22 +1,13 @@
 import { Meteor } from 'meteor/meteor'
-
-import { ZBClient } from "zeebe-node"
+import { Mongo } from 'meteor/mongo'
+import { WorkflowClient } from './workflow'
 
 require("dotenv").config()
 
 Meteor.startup(() => {
-  Meteor.publish('tasks', function() {
-    const added = this.added.bind(this)
-    const zbc = new ZBClient()
+  WorkflowClient.the().start()
+})
 
-    zbc.createWorker({
-      taskType: 'fill_sectionA',
-      taskHandler: function(instance : any, completed) {
-        console.log(instance)
-        added('workflow-tasks', instance.workflowInstanceKey, instance)
-        completed.forwarded()
-      },
-      maxJobsToActivate: 6
-    })
-  })
+Meteor.publish('tasks', function() {
+  return WorkflowClient.the().find({})
 })
