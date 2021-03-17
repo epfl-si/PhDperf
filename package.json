@@ -16,7 +16,8 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-popover": "^0.5.10",
-    "react-router-dom": "^5.2.0"
+    "react-router-dom": "^5.2.0",
+    "zeebe-node": "^0.26.0"
   },
   "devDependencies": {
     "@types/meteor": "^1.4.49",
