@@ -12,6 +12,7 @@
     "@babel/runtime": "^7.11.2",
     "dotenv": "^8.2.0",
     "epfl-sti-react-library": "git+ssh://git@gitlab.epfl.ch/sti-it/epfl-sti-react-library.git",
+    "lodash": "^4.17.21",
     "meteor-node-stubs": "git://github.com/meteor/node-stubs.git",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
@@ -20,6 +21,7 @@
     "zeebe-node": "^0.26.0"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.168",
     "@types/meteor": "^1.4.49",
     "@types/mocha": "^8.0.3",
     "@types/react": "^16.9.49",
