@@ -12,14 +12,16 @@ export type PerfWorkflowHeaders = {
   form_io: string
 }
 
-export type PerfWorkflowTask = Job<PerfWorkflowVariables, PerfWorkflowHeaders>
+export type PerfWorkflowTaskData = Job<PerfWorkflowVariables, PerfWorkflowHeaders>
 
 const collectionName = 'perf-workflow-tasks'
 
-export const PerfWorkflowTasks : Mongo.Collection<PerfWorkflowTask> =
-  new Mongo.Collection<PerfWorkflowTask>(
+// Due to restrictions in the Meteor model, this function can only be
+// called once per locus (i.e. once in the client and once in the
+// server).
+export function perfWorkflowTasksCollection<U>(transform ?: (doc: PerfWorkflowTaskData) => U) {
+  return new Mongo.Collection<PerfWorkflowTaskData, U>(
     collectionName,
-    Meteor.isServer ?
-      // The collection is *not* persistent server-side; instead, it gets fed from Zeebe
-      {connection: null} :
-      undefined)
+    // The collection is *not* persistent server-side; instead, it gets fed from Zeebe
+    Meteor.isServer ? { connection : null, transform } : { transform })
+}

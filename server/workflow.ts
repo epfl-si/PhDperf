@@ -3,11 +3,13 @@ import { Mongo } from 'meteor/mongo'
 import { Meteor } from 'meteor/meteor'
 import { ZBClient, CompleteFn, ZBWorkerTaskHandler } from 'zeebe-node'
 
-import { PerfWorkflowTask, PerfWorkflowTasks,
+import { PerfWorkflowTaskData, perfWorkflowTasksCollection,
          PerfWorkflowVariables, PerfWorkflowHeaders } from '/imports/api/perf-workflow-tasks'
 
 import debug_ from 'debug'
 const debug = debug_('server/workflow')
+
+const PerfWorkflowTasks = perfWorkflowTasksCollection<PerfWorkflowTaskData>()
 
 export class WorkflowClient {
   private static singleton : WorkflowClient
@@ -45,7 +47,7 @@ export class WorkflowClient {
     })
   }
 
-  public find(query : any) : Mongo.Cursor<PerfWorkflowTask> {
+  public find(query : any) : Mongo.Cursor<PerfWorkflowTaskData> {
     return PerfWorkflowTasks.find(query)
   }
 }
