@@ -1,0 +1,22 @@
+diff --git a/node_modules/epfl-sti-react-library/dist/Navigations/Avatar.js b/node_modules/epfl-sti-react-library/dist/Navigations/Avatar.js
+index d68e2db..7982868 100644
+--- a/node_modules/epfl-sti-react-library/dist/Navigations/Avatar.js
++++ b/node_modules/epfl-sti-react-library/dist/Navigations/Avatar.js
+@@ -9,8 +9,6 @@ var _react = _interopRequireDefault(require("react"));
+ 
+ var _propTypes = _interopRequireDefault(require("prop-types"));
+ 
+-var _sti_logo = _interopRequireDefault(require("./sti_logo.png"));
+-
+ require("./index.css");
+ 
+ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+@@ -40,7 +38,7 @@ function Avatar(_ref) {
+       paddingRight: '10px'
+     }
+   }, /*#__PURE__*/_react.default.createElement("img", {
+-    src: _sti_logo.default,
++    src: "",
+     alt: "Logo STI, EPFL school of engineering"
+   })), /*#__PURE__*/_react.default.createElement("a", {
+     className: "avatar-teaser-img-placeholder",
