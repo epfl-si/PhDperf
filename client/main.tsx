@@ -1,8 +1,10 @@
 import React from 'react';
-import { Meteor } from 'meteor/meteor';
-import { render } from 'react-dom';
+import { Meteor } from 'meteor/meteor'
+import { render } from 'react-dom'
 import { App } from '/imports/ui/App'
+import Tequila from 'meteor/epfl:accounts-tequila'
 
 Meteor.startup(() => {
-  render(<App />, document.getElementById('react-target'));
-});
+  Tequila.start()
+  render(<App />, document.getElementById('react-target'))
+})
