@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.11.2",
+    "epfl-sti-react-library": "git+ssh://git@gitlab.epfl.ch/sti-it/epfl-sti-react-library.git",
     "meteor-node-stubs": "git://github.com/meteor/node-stubs.git",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
