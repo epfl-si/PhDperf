@@ -32,7 +32,7 @@ export class WorkflowClient {
     const completeds : { [key : string] : CompleteFn<any> } = {}
 
     zbc.createWorker({
-      taskType: 'fill_sectionA',
+      taskType: 'section_A',
       taskHandler: Meteor.bindEnvironment(/* therefore, Fiber'd */ function(instance, completed) {
         const key : string = instance[keyField],
           keyStruct = _.pick(instance, [keyField])
