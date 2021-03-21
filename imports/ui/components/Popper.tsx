@@ -1,13 +1,15 @@
 import React, { useRef, useEffect } from 'react'
-import { Options } from '@popperjs/core';
+import { Options } from '@popperjs/core'
 import { usePopper } from 'react-popper'
 import _ from 'lodash'
+
+export type PopperOptions = Omit<Partial<Options>, "modifiers">
 
 export function Popper(props: React.PropsWithChildren<{
   visible?: boolean,
   relativeTo: HTMLElement|null,
   onClickElsewhere?: () => any,
-  options?: Omit<Partial<Options>, "modifiers">
+  options?: PopperOptions
 }>) {
   const popperRef = useRef<HTMLDivElement>(null)
 

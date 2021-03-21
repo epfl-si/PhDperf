@@ -10,3 +10,16 @@ body .breadcrumb-container, body .breadcrumb-item {
 body .breadcrumb-container::before {
   display: none;
 }
+
+/* .dropdown-menu is all wrong position-wise. */
+.dropdown-menu-popper {
+  min-width: 10rem;
+    font-size: 1rem;
+    color: #212121;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid rgba(33,33,33,.15);
+    border-radius: 2px;
+}
