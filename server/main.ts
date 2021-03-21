@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor'
 import { Mongo } from 'meteor/mongo'
 import { WorkflowClient } from './workflow'
 import Tequila from 'meteor/epfl:accounts-tequila'
+import '/imports/policy'
 
 require("dotenv").config()
 
