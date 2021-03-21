@@ -11,6 +11,9 @@
   "dependencies": {
     "@babel/runtime": "^7.11.2",
     "@formio/react": "^5.0.0-rc.3",
+    "@fortawesome/fontawesome-svg-core": "^1.2.35",
+    "@fortawesome/free-solid-svg-icons": "^5.15.3",
+    "@fortawesome/react-fontawesome": "^0.1.14",
     "debug": "^4.3.1",
     "dotenv": "^8.2.0",
     "epfl-sti-react-library": "git+ssh://git@gitlab.epfl.ch/sti-it/epfl-sti-react-library.git",
