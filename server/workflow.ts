@@ -22,6 +22,8 @@ export class WorkflowClient {
 
   private constructor() {}
 
+  private completeds : { [key : string] : CompleteFn<any> } = {}
+
   public start() {
     const zbc = new ZBClient()
 
@@ -29,17 +31,15 @@ export class WorkflowClient {
     // `elementInstanceKey` or `workflowInstanceKey`
     const keyField = 'key'
 
-    const completeds : { [key : string] : CompleteFn<any> } = {}
-
     zbc.createWorker({
       taskType: 'section_A',
-      taskHandler: Meteor.bindEnvironment(/* therefore, Fiber'd */ function(instance, completed) {
+      taskHandler: Meteor.bindEnvironment(/* therefore, Fiber'd */ (instance, completed) => {
         const key : string = instance[keyField],
           keyStruct = _.pick(instance, [keyField])
         const upserted = PerfWorkflowTasks.upsert(keyStruct, { $set: instance })
         if (upserted.insertedId) {
           debug(`Received ${JSON.stringify(keyStruct)} from Zeebe`)
-          completeds[key] = completed
+          this.completeds[key] = completed
         }
         completed.forwarded()
       }) as ZBWorkerTaskHandler<PerfWorkflowVariables, PerfWorkflowHeaders>,
@@ -49,5 +49,9 @@ export class WorkflowClient {
 
   public find(query : any) : Mongo.Cursor<PerfWorkflowTaskData> {
     return PerfWorkflowTasks.find(query)
+  }
+
+  public api(key : string) : CompleteFn<any> {
+    return this.completeds[key]
   }
 }

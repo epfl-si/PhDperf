@@ -10,10 +10,15 @@ export function Task ({workflowKey} : {workflowKey : string}) {
   let formBody = <p>No form</p>
   const formIoJson = task?.customHeaders?.form_io
   if (formIoJson) {
-    formBody = <Form form={ JSON.parse(formIoJson as string) } />
+    formBody = <Form form={ JSON.parse(formIoJson as string) } onSubmit={ onSubmit } />
   }
   return <>
     <h1>Task {workflowKey}</h1>
     {formBody}
   </>
+
+  function onSubmit(formData : { data: any, metadata: any}) {
+    Meteor.call("submit", workflowKey, formData.data, formData.metadata,
+               alert)
+  }
 }
