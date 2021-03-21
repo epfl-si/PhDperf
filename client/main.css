@@ -2,3 +2,11 @@ body {
   padding: 10px;
   font-family: sans-serif;
 }
+
+/* TODO: maybe epfl-elements shouldn't do any of this jazz. */
+body .breadcrumb-container, body .breadcrumb-item {
+  position: inherit;
+}
+body .breadcrumb-container::before {
+  display: none;
+}
