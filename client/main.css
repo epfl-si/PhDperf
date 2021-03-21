@@ -23,3 +23,8 @@ body .breadcrumb-container::before {
     border: 1px solid rgba(33,33,33,.15);
     border-radius: 2px;
 }
+
+label.field-required:after {
+  content: " *";
+  color: red;
+}
