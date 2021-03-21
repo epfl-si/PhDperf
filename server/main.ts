@@ -1,10 +1,10 @@
 import { Meteor } from 'meteor/meteor'
-import { Mongo } from 'meteor/mongo'
 import { WorkflowClient } from './workflow'
 import Tequila from 'meteor/epfl:accounts-tequila'
+import findUp from 'find-up'
 import '/imports/policy'
 
-require("dotenv").config()
+require("dotenv").config({path: findUp.sync(".env")})
 
 Meteor.startup(() => {
   WorkflowClient.the().start()
