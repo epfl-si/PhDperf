@@ -8,7 +8,7 @@ export type PerfWorkflowTask = PerfWorkflowTaskData & {
 const PerfWorkflowTasks_ = perfWorkflowTasksCollection<PerfWorkflowTask>((data) => {
   const task = data as PerfWorkflowTask
   task.getUri = () => `/tasks/${data.key}`
-  task.getName = () => JSON.stringify(data.variables)
+  task.getName = () => `Start step 1 task #${data.key} (`  + JSON.stringify(data.variables) + `)`
   return task
 })
 
