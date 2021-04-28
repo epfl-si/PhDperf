@@ -1,14 +1,30 @@
-import { Meteor } from "meteor/meteor"
+import {Meteor} from "meteor/meteor"
 import React from "react"
-import { useTracker } from 'meteor/react-meteor-data'
-import { PerfWorkflowTask, PerfWorkflowTasks } from '/imports/ui/model/perf-workflow-tasks'
-import { Link } from "react-router-dom"
+import {useTracker} from 'meteor/react-meteor-data'
+import {PerfWorkflowTask, PerfWorkflowTasks} from '/imports/ui/model/perf-workflow-tasks'
+import {Button} from "epfl-sti-react-library"
 
-export function TaskList() {
+
+export default function TaskList() {
   useTracker(() => Meteor.subscribe('tasks'))
+
   const tasks = useTracker(() => PerfWorkflowTasks.find({}).fetch())
 
-  return <ul>
-    {tasks.map((task : PerfWorkflowTask) => <li key={task.key}><Link to={task.getUri()}>{task.getName()}</Link></li>)}
-  </ul>
+  return (
+    <>
+      <h3>Need input forms</h3>
+      <ul>
+        {tasks.map(
+          (task: PerfWorkflowTask) =>
+            <li key={task.key}>
+              {task.getName()} <Button label={'Proceed'} onClickFn={() => window.open(task.getUri())}/>
+              <ul>
+                <li><a href={task.getOperateUri()} target="_blank">See on Operate</a></li>
+                <li><a title={task.getDetail()} href={'#'}>Details (onHover)</a></li>
+              </ul>
+            </li>
+        )}
+      </ul>
+    </>
+  )
 }

@@ -1,12 +1,13 @@
-import { Meteor } from 'meteor/meteor'
+import {Meteor} from 'meteor/meteor'
 import WorkersClient from './workflow'
 import Tequila from 'meteor/epfl:accounts-tequila'
-import { Encryption } from '/server/encryption'
+import {Encryption} from '/server/encryption'
+import _ from 'lodash'
 import findUp from 'find-up'
 import '/imports/policy'
+import {ZBClient} from "zeebe-node";
 
-import debug_ from 'debug'
-const debug = debug_('server/main')
+const debug = require('debug')('server/main')
 
 require("dotenv").config({path: findUp.sync(".env")})
 
@@ -15,31 +16,32 @@ Meteor.startup(() => {
   Tequila.start()
 })
 
-/*
-// Start an instance every time a client connect
-Meteor.onConnection(async (connection) => {
-  console.debug(`starting workflow instance "Process_PhDAssess" for ${connection}`);
-  const zbc = new ZBClient();
-  const res = await zbc.createWorkflowInstance("Process_PhDAssess", {});
-  console.debug(res);
-});
-*/
-
-Meteor.publish('tasks', function() {
+Meteor.publish('tasks', function () {
   return WorkersClient.find({})
 })
 
 const encryptionKey = process.env.PHDASSESS_ENCRYPTION_KEY as string
 
 Meteor.methods({
-  submit(key, data, metadata) {
-    const encryption = new Encryption(encryptionKey, key)
-    const workerResult = {
-      sciper_list: Object.keys(data['sciper_list']).map(x => encryption.encrypt(x)),
-      metadata: encryption.encrypt(metadata)
-    };
+  'launch_workflow' () {  // aka start a new instance in Zeebe terms
+    const diagramProcessId = 'Process_PhDAssess'
 
-    WorkersClient.success(key, workerResult)
-    console.debug("Submitted form result")
-  }
+    debug(`calling for a new "Process_PhDAssess" instance`)
+    const zbc = new ZBClient()
+    zbc.createWorkflowInstance(diagramProcessId, {}).then(
+      (res) => {
+        debug(`created new instance ${diagramProcessId}, response: ${res}`)
+      })
+  },
+  submit(key, data, metadata) {
+    delete data['submit']  // no thanks, I already know that
+
+    const encryption = new Encryption(encryptionKey, key)
+    data = _.mapValues(data, x => encryption.encrypt(x))  // encrypt all data
+
+    data['metadata'] = encryption.encrypt(metadata)  // add some info on the submitter
+
+    WorkersClient.success(key, data)
+    debug("Submitted form result")
+  },
 })

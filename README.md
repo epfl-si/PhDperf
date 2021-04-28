@@ -26,3 +26,10 @@ cp /keybase/team/epfl_phdassess.test/env .env
 meteor npm i
 meteor
 ```
+
+### Debug info
+```
+DEBUG=*,-babel,-compression-connect*,-combined-stream2 DEBUG_COLORS=yes meteor run
+```
+
+See https://www.npmjs.com/package/debug for details
