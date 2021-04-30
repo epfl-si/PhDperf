@@ -1,7 +1,7 @@
 import {Meteor} from 'meteor/meteor'
 import WorkersClient from './workflow'
 import Tequila from 'meteor/epfl:accounts-tequila'
-import {Encryption} from '/server/encryption'
+import {encrypt} from '/server/encryption'
 import _ from 'lodash'
 import findUp from 'find-up'
 import '/imports/policy'
@@ -36,10 +36,8 @@ Meteor.methods({
   submit(key, data, metadata) {
     delete data['submit']  // no thanks, I already know that
 
-    const encryption = new Encryption(encryptionKey, key)
-    data = _.mapValues(data, x => encryption.encrypt(x))  // encrypt all data
-
-    data['metadata'] = encryption.encrypt(metadata)  // add some info on the submitter
+    data = _.mapValues(data, x => encrypt(encryptionKey, x))  // encrypt all data
+    data['metadata'] = encrypt(encryptionKey, JSON.stringify(metadata))  // add some info on the submitter
 
     WorkersClient.success(key, data)
     debug("Submitted form result")
