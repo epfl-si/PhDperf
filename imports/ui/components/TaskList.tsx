@@ -20,7 +20,7 @@ export default function TaskList() {
               {task.getName()} <Button label={'Proceed'} onClickFn={() => window.open(task.getUri())}/>
               <ul>
                 <li><a href={task.getOperateUri()} target="_blank">See on Operate</a></li>
-                <li><a title={task.getDetail()} href={'#'}>Details (onHover)</a></li>
+                <li><a onClick={() => console.log(task.getDetail())} href={'#'}>Console.log Details</a></li>
               </ul>
             </li>
         )}
