@@ -8,7 +8,6 @@ import {PhDHeader} from "./components/PhDHeader"
 import {Breadcrumbs} from "epfl-sti-react-library"
 import TaskList from "./components/TaskList"
 import {Task} from "./components/Task"
-import WorkflowLauncher from "./components/WorkflowLauncher"
 
 const PageRoute: React.FC<RouteProps> = (props) => (
   <Route {...props}>
@@ -33,7 +32,6 @@ export const App = () => {
         </PageRoute>
         <PageRoute path="/">
           <TaskList/>
-          <WorkflowLauncher/>
         </PageRoute>
       </Switch>
     </BrowserRouter>

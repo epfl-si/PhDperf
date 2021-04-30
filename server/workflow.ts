@@ -18,6 +18,7 @@ export default {
   start() {
     const zbc = new ZBClient()
     const taskType = 'fill_form'
+    //const taskType = 'send_email'
 
     // Just a shot in the dark - Could just as well be
     // `elementInstanceKey` or `workflowInstanceKey`

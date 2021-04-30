@@ -15,16 +15,18 @@ export function Task({workflowKey}: { workflowKey: string }) {
     <>
       <h1>Task {workflowKey}</h1>
       <Errors/>
-      {formIoJson && <Form form={JSON.parse(formIoJson as string)}
-                           noDefaultSubmitButton={true}
-                           onSubmit={onSubmit}
-                           onCustomEvent={e => e.type == 'cancelClicked' && window.history.go(-1)}
-      />}
-      {formIoJson ||
-      <>
-        <p>Form already submitted or removed</p>
-        <Link to={`/`}><Button label={'Back'} onClickFn={() => void 0}/></Link>
-      </>
+      {formIoJson ? (
+        <Form form={JSON.parse(formIoJson as string)}
+              noDefaultSubmitButton={true}
+              onSubmit={onSubmit}
+              onCustomEvent={e => e.type == 'cancelClicked' && window.history.go(-1)}
+        />
+      ) : (
+        <>
+          <p>Form submitted !</p>
+          <Link to={`/`}><Button label={'Back'} onClickFn={() => void 0}/></Link>
+        </>
+      )
       }
     </>
   )
