@@ -1,5 +1,6 @@
 import React from 'react'
 import {Form, Errors} from '@formio/react'
+import {customEvent} from '/imports/ui/model/formIo'
 import {PerfWorkflowTasks} from '/imports/ui/model/perf-workflow-tasks'
 import {Meteor} from 'meteor/meteor'
 import {useTracker} from 'meteor/react-meteor-data'
@@ -19,7 +20,7 @@ export function Task({workflowKey}: { workflowKey: string }) {
         <Form form={JSON.parse(formIoJson as string)}
               noDefaultSubmitButton={true}
               onSubmit={onSubmit}
-              onCustomEvent={e => e.type == 'cancelClicked' && window.history.go(-1)}
+              onCustomEvent={(event: customEvent) => event.type == 'cancelClicked' && window.history.go(-1)}
         />
       ) : (
         <>
