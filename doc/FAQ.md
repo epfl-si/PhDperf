@@ -12,7 +12,8 @@ the one that manages the PhD assess workflow.
 
 **Q: Which type of tasks are you going to handle on this app ?**
 
-**A:** At the moment, thinking of these processes:
-- the form filling
+**A:** At the time being, only the form filling ('fill_form')
+But we may be thinking to add these processes:
 - the signing of a state (certainly with a "is it valid ?" button)
-- the notification (certainly an email sent)
+- the notification (certainly an email sent) ('send_email')
+- Pdf generation
