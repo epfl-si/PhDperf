@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  BrowserRouter as Router, RouteProps, Route, Switch,
+  BrowserRouter, RouteProps, Route, Switch,
   useParams, useRouteMatch
 } from "react-router-dom"
 import {Footer} from "epfl-sti-react-library"
@@ -23,19 +23,22 @@ const PageRoute: React.FC<RouteProps> = (props) => (
   </Route>
 )
 
-export const App = () => (
-  <Router>
-    <Switch>
-      <PageRoute exact path="/">
-        <TaskList/>
-        <WorkflowLauncher/>
-      </PageRoute>
-      <PageRoute path="/tasks/:key">
-        <TheTask/>
-      </PageRoute>
-    </Switch>
-  </Router>
-)
+
+export const App = () => {
+  return (
+    <BrowserRouter>
+      <Switch>
+        <PageRoute path="/tasks/:key">
+          <TheTask/>
+        </PageRoute>
+        <PageRoute path="/">
+          <TaskList/>
+          <WorkflowLauncher/>
+        </PageRoute>
+      </Switch>
+    </BrowserRouter>
+  );
+}
 
 function TheTask() {
   const {key} = useParams<{ key: string }>()
