@@ -25,17 +25,15 @@ export default function TaskList() {
           <ul>
             {tasks.length > 0 ? tasks.map(
               (task: PerfWorkflowTask) =>
-                <>
-                  <li key={task.key}>
-                    {task.getName()}
-                    <ul>
-                      <li><a href={task.getOperateUri()} target="_blank">See on Operate</a></li>
-                      <li><a onClick={() => console.log(task.getDetail())} href={'#'}>Console.log instance Details</a></li>
-                    </ul>
-                    <div><Link to={`tasks/${task.key}`}><Button label={'Proceed'} onClickFn={() => void 0}/></Link></div>
-                  </li>
+                <li key={task.key}>
+                  {task.getName()}
+                  <ul>
+                    <li><a href={task.getOperateUri()} target="_blank">See on Operate</a></li>
+                    <li><a onClick={() => console.log(task.getDetail())} href={'#'}>Console.log instance Details</a></li>
+                  </ul>
+                  <div><Link to={`tasks/${task.key}`}><Button label={'Proceed'} onClickFn={() => void 0}/></Link></div>
                   <hr className={"bold"}/>
-                </>
+                </li>
             ) : (
               <p>There is no task waiting</p>
             )}

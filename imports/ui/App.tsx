@@ -8,11 +8,13 @@ import {PhDHeader} from "./components/PhDHeader"
 import {Breadcrumbs} from "epfl-sti-react-library"
 import TaskList from "./components/TaskList"
 import {Task} from "./components/Task"
+import {ZeebeStatus} from "/imports/ui/components/ZeebeStatus";
 
 const PageRoute: React.FC<RouteProps> = (props) => (
   <Route {...props}>
     <PhDHeader/>
     <PhDBreadcrumbs/>
+    <ZeebeStatus/>
     <div className="nav-toggle-layout nav-aside-layout">
       <div className="container">
         {props.children}

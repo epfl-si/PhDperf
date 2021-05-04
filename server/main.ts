@@ -30,7 +30,7 @@ Meteor.methods({
     const zbc = new ZBClient()
     zbc.createWorkflowInstance(diagramProcessId, {}).then(
       (res) => {
-        debug(`created new instance ${diagramProcessId}, response: ${res}`)
+        debug(`created new instance ${diagramProcessId}, response: ${JSON.stringify(res)}`)
       })
   },
   submit(key, data, metadata) {
