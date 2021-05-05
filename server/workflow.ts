@@ -47,7 +47,7 @@ export default {
 
     debug(`creating Zeebe worker of type "${taskType}"`);
 
-    zeebeStatusCollection.insert({type: 'worker', status: 'starting'}))
+    zeebeStatusCollection.insert({type: 'worker', status: 'starting'})
 
     const zbWorker = ZBClient.createWorker({
       taskType: taskType,
