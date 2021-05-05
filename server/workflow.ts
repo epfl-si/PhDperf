@@ -19,27 +19,27 @@ Meteor.publish(
   'zeebe.status', function () { return zeebeStatusCollection.find(); }
 )
 
-zeebeStatusCollection.insert({status: 'not connected'})
+zeebeStatusCollection.insert({type: 'client', status: 'disconnected'})
 
 export default {
   start() {
     const taskType = 'fill_form'
     //const taskType = 'send_email'
-    zeebeStatusCollection.insert({status: 'starting'})
+    zeebeStatusCollection.insert({type: 'client', status: 'starting'})
 
     const ZBClient = new ZeebeClient(
       {
-        loglevel: 'DEBUG'
+        loglevel: 'INFO'
         //pollInterval: Duration.seconds.of(85),
         //longPoll:
       }
     )
 
     // Keep a trace of the client state
-    ZBClient.on('ready', Meteor.bindEnvironment(() => zeebeStatusCollection.insert({status: 'Ready'})))
-    ZBClient.on('close', Meteor.bindEnvironment(() => zeebeStatusCollection.insert({status: 'Closed'})))
-    ZBClient.on('connectionError', Meteor.bindEnvironment(() => zeebeStatusCollection.insert({status: 'Error'})))
-    ZBClient.on('unknown', Meteor.bindEnvironment(() => zeebeStatusCollection.insert({status: 'Unknown'})))
+    ZBClient.on('ready', Meteor.bindEnvironment(() => zeebeStatusCollection.insert({type: 'client', status: 'ready'})))
+    ZBClient.on('close', Meteor.bindEnvironment(() => zeebeStatusCollection.insert({type: 'client', status: 'closed'})))
+    ZBClient.on('connectionError', Meteor.bindEnvironment(() => zeebeStatusCollection.insert({type: 'client', status: 'error'})))
+    ZBClient.on('unknown', Meteor.bindEnvironment(() => zeebeStatusCollection.insert({type: 'client', status: 'unknown'})))
 
     // Just a shot in the dark - Could just as well be
     // `elementInstanceKey` or `workflowInstanceKey`
@@ -47,10 +47,11 @@ export default {
 
     debug(`creating Zeebe worker of type "${taskType}"`);
 
-    ZBClient.createWorker({
+    zeebeStatusCollection.insert({type: 'worker', status: 'starting'}))
+
+    const zbWorker = ZBClient.createWorker({
       taskType: taskType,
       maxJobsToActivate: 60,
-      // TODO: check what is needed there
       taskHandler:
         Meteor.bindEnvironment(/* therefore, Fiber'd */
           (instance, completed) => {
@@ -81,6 +82,12 @@ export default {
             completed.forwarded()  // tell Zeebe that result may come later, and free ourself for an another work
           }) as ZBWorkerTaskHandler<PerfWorkflowVariables, PerfWorkflowHeaders>,
     })
+
+    zbWorker.on('ready', Meteor.bindEnvironment(() => zeebeStatusCollection.insert({type: 'worker', status: 'ready'})))
+    zbWorker.on('close', Meteor.bindEnvironment(() => zeebeStatusCollection.insert({type: 'worker', status: 'closed'})))
+    zbWorker.on('connectionError', Meteor.bindEnvironment(() => zeebeStatusCollection.insert({type: 'worker', status: 'error'})))
+    zbWorker.on('unknown', Meteor.bindEnvironment(() => zeebeStatusCollection.insert({type: 'worker', status: 'unknown'})))
+
   },
   find(query: any): Mongo.Cursor<PerfWorkflowTaskData> {
     return PerfWorkflowTasks.find(query)
