@@ -13,7 +13,12 @@ require("dotenv").config({path: findUp.sync(".env")})
 
 Meteor.startup(() => {
   WorkersClient.start()
-  Tequila.start()
+  Tequila.start({
+    getUserId: (tequila: any) => {
+      return tequila.uniqueid;
+    },
+    request: ['uniqueid', 'username', 'name', 'firstname', 'displayname', 'personaltitle', 'email', 'group'],
+  })
 })
 
 Meteor.publish('tasks', function () {
@@ -23,7 +28,7 @@ Meteor.publish('tasks', function () {
 const encryptionKey = process.env.PHDASSESS_ENCRYPTION_KEY as string
 
 Meteor.methods({
-  'launch_workflow' () {  // aka start a new instance in Zeebe terms
+  'launch_workflow'() {  // aka start a new instance in Zeebe terms
     const diagramProcessId = 'Process_PhDAssess'
 
     debug(`calling for a new "Process_PhDAssess" instance`)
