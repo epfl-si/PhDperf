@@ -16,7 +16,7 @@ export function ZeebeStatus() {
   const zeebeStatus = allZeebeStatus[0]
 
   return (
-    <p><span>Zeebe status:</span>&nbsp;
+    <div className={'float-right small mr-3'}><span>Zeebe status:</span>&nbsp;
       <span className="font-weight-bold">
         {zeebeStatusLoading ? (
           'waiting on server'
@@ -25,6 +25,6 @@ export function ZeebeStatus() {
         )
         }
       </span>
-    </p>
+    </div>
   )
 }

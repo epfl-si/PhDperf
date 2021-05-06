@@ -14,12 +14,12 @@ const PageRoute: React.FC<RouteProps> = (props) => (
   <Route {...props}>
     <PhDHeader/>
     <PhDBreadcrumbs/>
-    <ZeebeStatus/>
     <div className="nav-toggle-layout nav-aside-layout">
       <div className="container">
         {props.children}
       </div>
     </div>
+    <ZeebeStatus/>
     <Footer/>
   </Route>
 )
