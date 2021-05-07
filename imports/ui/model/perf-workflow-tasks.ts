@@ -1,13 +1,13 @@
-import {  PerfWorkflowTaskData, perfWorkflowTasksCollection } from "/imports/api/perf-workflow-tasks"
+import {  FillFormTaskData, fillFormTasksCollection } from "/imports/api/perf-workflow-tasks"
 
-export type PerfWorkflowTask = PerfWorkflowTaskData & {
+export type PerfWorkflowTask = FillFormTaskData & {
   getUri : () => string
   getName : () => string
   getDetail: () => any
   getOperateUri : () => string  // not for prod
 }
 
-const PerfWorkflowTasks_ = perfWorkflowTasksCollection<PerfWorkflowTask>((data) => {
+const PerfWorkflowTasks_ = fillFormTasksCollection<PerfWorkflowTask>((data) => {
   const task = data as PerfWorkflowTask
   const zeebeAddress = `be0628da-ddd4-4cfc-82ca-5c66504c7ef6` // should be process.env.ZEEBE_ADDRESS truncated but not in "no server parts"
   task.getUri = () => `/tasks/${data.key}`

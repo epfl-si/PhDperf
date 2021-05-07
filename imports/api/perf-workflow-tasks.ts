@@ -4,7 +4,7 @@ import { Job } from 'zeebe-node'
 
 import { Sciper } from './datatypes'
 
-export type PerfWorkflowVariables = {
+export type PhDWorkflowInstanceVariables = {
   programAssistant: Sciper
   phDStudentsSciper: Sciper
   mentorSciper: Sciper
@@ -12,21 +12,21 @@ export type PerfWorkflowVariables = {
   thesisDirector: Sciper
 }
 
-export type PerfWorkflowHeaders = {
+export type FillFormJobHeaders = {
   groups: string[]
   title: string
   form_io: string
 }
 
-export type PerfWorkflowTaskData = Job<PerfWorkflowVariables, PerfWorkflowHeaders>
+export type FillFormTaskData = Job<PhDWorkflowInstanceVariables, FillFormJobHeaders>
 
-const collectionName = 'perf-workflow-tasks'
+const collectionName = 'fill-form-tasks'
 
 // Due to restrictions in the Meteor model, this function can only be
 // called once per locus (i.e. once in the client and once in the
 // server).
-export function perfWorkflowTasksCollection<U>(transform ?: (doc: PerfWorkflowTaskData) => U) {
-  return new Mongo.Collection<PerfWorkflowTaskData, U>(
+export function fillFormTasksCollection<U>(transform ?: (doc: FillFormTaskData) => U) {
+  return new Mongo.Collection<FillFormTaskData, U>(
     collectionName,
     // The collection is *not* persistent server-side; instead, it gets fed from Zeebe
     Meteor.isServer ? { connection : null, transform } : { transform })
