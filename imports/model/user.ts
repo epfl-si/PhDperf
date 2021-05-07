@@ -66,7 +66,17 @@ export class User {
     public _id : string | null = null
     public isAdmin: boolean = false
     public displayname: string | null = null
-    public tequila?: { user: string }
+    public tequila?: {
+      provider: string | ""
+      email: string
+      displayname: string
+      firstname: string
+      name: string
+      personaltitle: string
+      group: string | ""
+      user: string
+      org: string
+    }
 
     static null() : User {
         return User.cast({ _id: null, displayname: null, isAdmin: false })

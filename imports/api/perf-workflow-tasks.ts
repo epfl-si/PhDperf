@@ -5,10 +5,16 @@ import { Job } from 'zeebe-node'
 import { Sciper } from './datatypes'
 
 export type PerfWorkflowVariables = {
-  studentSciper: Sciper
+  programAssistant: Sciper
+  phDStudentsSciper: Sciper
+  mentorSciper: Sciper
+  programDirector: Sciper
+  thesisDirector: Sciper
 }
 
 export type PerfWorkflowHeaders = {
+  groups: string[]
+  title: string
   form_io: string
 }
 

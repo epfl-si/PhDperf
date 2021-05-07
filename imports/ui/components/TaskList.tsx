@@ -17,7 +17,7 @@ export default function TaskList() {
 
   return (
     <>
-      <h3>Need input forms</h3>
+      <h3>Fill form tasks</h3>
       {listLoading ? (
         <Loader message={'Fetching tasks from Zeebe...'}/>
       ) : (

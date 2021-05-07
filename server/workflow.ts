@@ -3,7 +3,7 @@ import {Mongo} from 'meteor/mongo'
 import {Meteor} from 'meteor/meteor'
 import {ZBClient as ZeebeClient, CompleteFn, ZBWorkerTaskHandler} from 'zeebe-node'
 import {zeebeStatusCollection} from "/imports/api/zeebeStatus";
-
+import {decrypt} from "/server/encryption";
 import {
   PerfWorkflowTaskData, perfWorkflowTasksCollection,
   PerfWorkflowVariables, PerfWorkflowHeaders
@@ -62,6 +62,13 @@ export default {
 
             const key: string = instance[keyField]
             const keyStruct = _.pick(instance, [keyField])
+
+            // decrypt the variables, the one that we want confidentiality
+
+            Object.keys(instance['variables']).map((key) => {
+                instance['variables'][key] = decrypt(instance['variables'][key])
+            })
+
             const upserted = PerfWorkflowTasks.upsert(keyStruct, {$set: instance})
 
             if (upserted.insertedId) {

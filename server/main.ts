@@ -22,10 +22,21 @@ Meteor.startup(() => {
 })
 
 Meteor.publish('tasks', function () {
-  return WorkersClient.find({})
-})
+  const currentUserGroups = Meteor.user()?.tequila?.group
+  if (!currentUserGroups || currentUserGroups.length == 0) {
+    return this.ready();
+  }
 
-const encryptionKey = process.env.PHDASSESS_ENCRYPTION_KEY as string
+  const currentUserGroupsArray = currentUserGroups.split(',')
+
+  // TODO: move this permission rule into an auditable file .ts, like a
+  return WorkersClient.find({
+    $or: [
+      {"customHeaders.allowed_groups": {$in: currentUserGroupsArray}},
+      {"variables.assigneeSciper": Meteor.user()?._id}
+    ]
+  })
+})
 
 Meteor.methods({
   'launch_workflow'() {  // aka start a new instance in Zeebe terms
@@ -40,9 +51,10 @@ Meteor.methods({
   },
   submit(key, data, metadata) {
     delete data['submit']  // no thanks, I already know that
+    delete data['cancel']  // no thanks, I already know that
 
-    data = _.mapValues(data, x => encrypt(encryptionKey, x))  // encrypt all data
-    data['metadata'] = encrypt(encryptionKey, JSON.stringify(metadata))  // add some info on the submitter
+    data = _.mapValues(data, x => encrypt(x))  // encrypt all data
+    data['metadata'] = encrypt(JSON.stringify(metadata))  // add some info on the submitter
 
     WorkersClient.success(key, data)
     debug("Submitted form result")

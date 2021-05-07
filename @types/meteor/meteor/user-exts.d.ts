@@ -9,7 +9,17 @@ declare module "meteor/meteor" {
         interface User {
             displayname: string
             isAdmin: boolean
-            tequila: { user: string }
+            tequila: {
+              provider: string
+              email: string
+              displayname: string
+              firstname: string
+              name: string
+              personaltitle: string
+              group: string
+              user: string
+              org: string
+            }
         }
     }
 }
