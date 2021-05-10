@@ -17,29 +17,37 @@ export default function TaskList() {
 
   return (
     <>
-      <h3>Fill form tasks</h3>
+      <div id={'worklow-actions'} className={'mb-4'}>
+        <Button label={'Initialize a new PhD Assessment process'}
+                onClickFn={() => Meteor.call("launch_workflow")}
+        />
+      </div>
+      <h4>Your form tasks</h4>
       {listLoading ? (
         <Loader message={'Fetching tasks from server...'}/>
       ) : (
         <>
-          <ul>
             {tasks.length > 0 ? tasks.map(
               (task: PerfWorkflowTask) =>
-                <li key={task.key}>
-                  {task.getName()}
-                  <ul>
-                    <li><a href={task.getOperateUri()} target="_blank">See on Operate</a></li>
-                    <li><a onClick={() => console.log(task.getDetail())} href={'#'}>Console.log instance Details</a></li>
-                  </ul>
-                  <div><Link to={`tasks/${task.key}`}><Button label={'Proceed'} onClickFn={() => void 0}/></Link></div>
-                  <hr className={"bold"}/>
-                </li>
+                <div key={task.key}>
+
+                  <div className={''}>
+                    <details >
+                      <summary className={'d-flex'}>
+                        <span className={'mr-auto'}>{task.getName()}</span>
+                        <span className={'small'}>
+                          <a href={task.getOperateUri()} target="_blank" className={'pr-3 '}>See on Operate</a>
+                          <Link className={''} to={`tasks/${task.key}`}><Button label={'Proceed'} onClickFn={() => void 0}/></Link>
+                        </span>
+                      </summary>
+                      <pre><code>{task.getDetail()}</code></pre>
+                    </details>
+                  </div>
+                  <hr/>
+                </div>
             ) : (
               <p>There is no task waiting</p>
             )}
-          </ul>
-          <Button label={'Initialize a new PhD Assessment process'}
-                  onClickFn={() => Meteor.call("launch_workflow")}/>
         </>
       )}
     </>
