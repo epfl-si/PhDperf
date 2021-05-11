@@ -19,7 +19,7 @@ export default function TaskList() {
     <>
       <div id={'worklow-actions'} className={'mb-4'}>
         <Button label={'Initialize a new PhD Assessment process'}
-                onClickFn={() => Meteor.call("launch_workflow")}
+                onClickFn={() => Meteor.call("start_workflow")}
         />
       </div>
       <h4>Your form tasks</h4>

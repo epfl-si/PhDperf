@@ -1,11 +1,13 @@
 import {Meteor} from 'meteor/meteor'
 import WorkersClient from './workflow'
 import Tequila from 'meteor/epfl:accounts-tequila'
-import {encrypt} from '/server/encryption'
+import {encrypt} from './encryption'
 import _ from 'lodash'
 import findUp from 'find-up'
 import '/imports/policy'
 import {ZBClient} from "zeebe-node";
+import {get_user_permitted_tasks,
+  is_allowed_to_submit} from './permission/tasks'
 
 const debug = require('debug')('server/main')
 
@@ -22,24 +24,12 @@ Meteor.startup(() => {
 })
 
 Meteor.publish('tasks', function () {
-  const currentUserGroups = Meteor.user()?.tequila?.group
-  if (!currentUserGroups || currentUserGroups.length == 0) {
-    return this.ready();
-  }
-
-  const currentUserGroupsArray = currentUserGroups.split(',')
-
-  // TODO: move this permission rule into an auditable file .ts, like a
-  return WorkersClient.find({
-    $or: [
-      {"customHeaders.allowed_groups": {$in: currentUserGroupsArray}},
-      {"variables.assigneeSciper": Meteor.user()?._id}
-    ]
-  })
+  return get_user_permitted_tasks()
 })
 
 Meteor.methods({
-  'launch_workflow'() {  // aka start a new instance in Zeebe terms
+  start_workflow() {  // aka start a new instance in Zeebe terms
+    // TODO: check the right to start a workflow
     const diagramProcessId = 'Process_PhDAssess'
 
     debug(`calling for a new "Process_PhDAssess" instance`)
@@ -50,6 +40,10 @@ Meteor.methods({
       })
   },
   submit(key, data, metadata) {
+    if (!is_allowed_to_submit(key)) {
+      throw new Meteor.Error(403, 'Error 403: Not allowed', 'Check your permission');
+    }
+
     delete data['submit']  // no thanks, I already know that
     delete data['cancel']  // no thanks, I already know that
 

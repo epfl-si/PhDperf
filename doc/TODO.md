@@ -1,4 +1,6 @@
 # Mainly
+- from 30s polling to continious polling (aka long polling option) ?
+  - is that compatible with the "claim task per server" scenario ?
 
 - ✔ Redo first form, so we select all participant
   - ✔️seperate every participant sciper in instances variables through the first form
