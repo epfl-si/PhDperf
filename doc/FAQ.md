@@ -21,3 +21,8 @@ But we may be thinking to add these processes:
 - the signing of a state (certainly with a "is it valid ?" button)
 - the notification (certainly an email sent) ('send_email')
 - Pdf generation
+
+**Q: Why disabled fields are not being stored ?**
+
+**A:** Despite formio will send the disabled formfield,
+we filter out them to keep clean workflow instance variables

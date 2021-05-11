@@ -6,6 +6,31 @@ import {Meteor} from 'meteor/meteor'
 import {useTracker} from 'meteor/react-meteor-data'
 import {Button, Loader, Alert} from "epfl-sti-react-library"
 import {Link} from "react-router-dom";
+import _ from "lodash";
+
+function findDisabledFields(form: any) {
+  let disabledFieldKeys: string[] = [];
+
+  const rootComponents = form.components;
+
+  const searchForDisabledFields = (components: []) => {
+    components.forEach((element: any) => {
+      if (element.key !== undefined &&
+        element.disabled !== undefined &&
+        element.disabled) {
+        disabledFieldKeys.push(element.key);
+      }
+
+      if (element.components !== undefined) {
+        searchForDisabledFields(element.components);
+      }
+    })
+  };
+
+  searchForDisabledFields(rootComponents);
+
+  return disabledFieldKeys;
+}
 
 export function Task({workflowKey}: { workflowKey: string }) {
   const taskLoading = useTracker(() => {
@@ -37,12 +62,16 @@ export function Task({workflowKey}: { workflowKey: string }) {
       </>)}
     </>)
 
-  function onSubmit(formData: { data: any, metadata: any }) {
+  function onSubmit(this: any, formData: { data: any, metadata: any }) {
+    // As formio sent all the form fields (disabled included)
+    // we remove the "disabled" one, so we can control
+    // the workflow variables with only the needed values
+    const formDataPicked = _.omit(formData.data, findDisabledFields(this.form))
+
     Meteor.call("submit",
       workflowKey,
-      formData.data, formData.metadata,
-      // TODO: make the form alive after submit with:
-      // (error, result) => {},
+      formDataPicked,
+      formData.metadata
     )
   }
 }
