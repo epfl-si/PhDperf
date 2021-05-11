@@ -1,6 +1,6 @@
 import { Mongo } from 'meteor/mongo'
 import type {ZBClientOptions} from "zeebe-node";
-import {ZBClient, ZBWorker} from "zeebe-node";
+import {ConnectionStatusEvent, ZBClient, ZBWorker} from "zeebe-node";
 import {Meteor} from "meteor/meteor";
 
 export type ZeebeStatus = {
@@ -18,11 +18,9 @@ export class ZeebeSpreadingClient extends ZBClient {
     zeebeStatusCollection.insert({type: 'client', status: 'starting'})
     super(options);
 
-    // TODO: make subscribe to event generic
-    this.on('ready', Meteor.bindEnvironment(() => zeebeStatusCollection.insert({type: 'client', status: 'ready'})))
-    this.on('close', Meteor.bindEnvironment(() => zeebeStatusCollection.insert({type: 'client', status: 'closed'})))
-    this.on('connectionError', Meteor.bindEnvironment(() => zeebeStatusCollection.insert({type: 'client', status: 'error'})))
-    this.on('unknown', Meteor.bindEnvironment(() => zeebeStatusCollection.insert({type: 'client', status: 'unknown'})))
+    Object.values(ConnectionStatusEvent).forEach((eventName) => {
+      this.on(eventName, Meteor.bindEnvironment(() => zeebeStatusCollection.insert({type: 'client', status: eventName})))
+    })
   }
 
   createWorker(...args: any[]): ZBWorker<any, any, any>{
@@ -32,11 +30,9 @@ export class ZeebeSpreadingClient extends ZBClient {
     // @ts-ignore
     let worker = super.createWorker(...args);
 
-    // TODO: make subscribe to event generic
-    worker.on('ready', Meteor.bindEnvironment(() => zeebeStatusCollection.insert({type: 'worker', status: 'ready'})))
-    worker.on('close', Meteor.bindEnvironment(() => zeebeStatusCollection.insert({type: 'worker', status: 'closed'})))
-    worker.on('connectionError', Meteor.bindEnvironment(() => zeebeStatusCollection.insert({type: 'worker', status: 'error'})))
-    worker.on('unknown', Meteor.bindEnvironment(() => zeebeStatusCollection.insert({type: 'worker', status: 'unknown'})))
+    Object.values(ConnectionStatusEvent).forEach((eventName) => {
+      worker.on(eventName, Meteor.bindEnvironment(() => zeebeStatusCollection.insert({type: 'worker', status: eventName})))
+    })
 
     return worker;
   }
