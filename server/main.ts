@@ -28,18 +28,18 @@ Meteor.publish('tasks', function () {
 })
 
 Meteor.methods({
-  start_workflow() {  // aka start a new instance in Zeebe terms
+  async start_workflow() {  // aka start a new instance in Zeebe terms
     // TODO: check the right to start a workflow
     const diagramProcessId = 'Process_PhDAssess'
 
     debug(`calling for a new "Process_PhDAssess" instance`)
     const zbc = new ZBClient()
-    zbc.createWorkflowInstance(diagramProcessId, {}).then(
+    await zbc.createProcessInstance(diagramProcessId, {}).then(
       (res) => {
         debug(`created new instance ${diagramProcessId}, response: ${JSON.stringify(res)}`)
       })
   },
-  submit(key, data, metadata) {
+  async submit(key, data, metadata) {
     if (!is_allowed_to_submit(key)) {
       throw new Meteor.Error(403, 'Error 403: Not allowed', 'Check your permission');
     }
@@ -50,7 +50,7 @@ Meteor.methods({
     data = _.mapValues(data, x => encrypt(x))  // encrypt all data
     data['metadata'] = encrypt(JSON.stringify(metadata))  // add some info on the submitter
 
-    WorkersClient.success(key, data)
+    await WorkersClient.success(key, data)
     debug("Submitted form result")
   },
 })
