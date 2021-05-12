@@ -22,7 +22,7 @@ export default {
     const jobKeyField = 'key'
 
     zBClient = new ZeebeSpreadingClient({
-      pollInterval: Duration.seconds.of(10)
+      pollInterval: Duration.seconds.of(2)
     })
 
     debug(`creating Zeebe worker of type "${taskType}"...`);
@@ -41,17 +41,13 @@ export default {
             const keyStruct = _.pick(job, [jobKeyField])
 
             // to decrypt the variables and keep the typed values in the same process,
-            // we transform the job to a MutableJob type, by removing the readonly status
-            type MutableJob<FillFormTaskData> = { -readonly [P in keyof FillFormTaskData]: FillFormTaskData[P] }
-            let instanceToMongo: MutableJob<any> = job
-
+            let instanceToMongo: any = job  // make it writable
             Object.keys(instanceToMongo['variables']).map((key) => {
               instanceToMongo['variables'][key] = decrypt(instanceToMongo['variables'][key])
             })
 
-            const upserted = PerfWorkflowTasks.upsert(keyStruct, {$set: instanceToMongo})
-
-            if (upserted.insertedId) {
+            if (PerfWorkflowTasks.find(keyStruct).count() == 0) {
+              PerfWorkflowTasks.insert(instanceToMongo)
               debug(`Received a new job from Zeebe ${JSON.stringify(keyStruct)}`)
             }
 
