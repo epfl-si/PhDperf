@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import {Mongo} from 'meteor/mongo'
 import {Meteor} from 'meteor/meteor'
-import {CompleteFn, ZBWorkerTaskHandler} from 'zeebe-node'
+import {CompleteFn, Duration, ZBWorkerTaskHandler} from 'zeebe-node'
 import {ZeebeSpreadingClient} from "/imports/api/zeebeStatus";
 import {decrypt} from "/server/encryption";
 import {
@@ -29,6 +29,9 @@ export default {
     zBClient.createWorker({
       taskType: taskType,
       maxJobsToActivate: 60,
+      // set a short timeout, as we use the decoupled job pattern
+      // and other servers (if any) can claimed the jobs too
+      timeout: Duration.milliseconds.of(1),
       taskHandler:
         Meteor.bindEnvironment(/* therefore, Fiber'd */
           (instance, completed) => {
