@@ -28,3 +28,9 @@ label.field-required:after {
   content: " *";
   color: red;
 }
+
+.table {
+  height: auto !important;
+  display: revert !important;
+  overflow-y: auto !important;
+}
