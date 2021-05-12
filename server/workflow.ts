@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import {Mongo} from 'meteor/mongo'
 import {Meteor} from 'meteor/meteor'
-import {Duration, ZBWorkerTaskHandler, ZeebeJob} from 'zeebe-node'
+import {Duration, ZBWorkerTaskHandler} from 'zeebe-node'
 import {ZeebeSpreadingClient} from "/imports/api/zeebeStatus";
 import {decrypt} from "/server/encryption";
 import {
@@ -14,19 +14,18 @@ import debug_ from 'debug'
 const debug = debug_('server/workflow')
 
 const PerfWorkflowTasks = fillFormTasksCollection<FillFormTaskData>()
-const zeebeJobs: { [key: string]: ZeebeJob<any> } = {}
+let zBClient: ZeebeSpreadingClient | null = null
 
 export default {
   start() {
     const taskType = 'fill_form'
-    const zBClient = new ZeebeSpreadingClient({})
+    const jobKeyField = 'key'
 
-    // Just a shot in the dark - Could just as well be
-    // `elementInstanceKey` or `workflowInstanceKey`
-    const keyField = 'key'
+    zBClient = new ZeebeSpreadingClient({
+      pollInterval: Duration.seconds.of(10)
+    })
 
-    debug(`creating Zeebe worker of type "${taskType}"`);
-
+    debug(`creating Zeebe worker of type "${taskType}"...`);
     zBClient.createWorker({
       taskType: taskType,
       maxJobsToActivate: 60,
@@ -39,8 +38,7 @@ export default {
         Meteor.bindEnvironment(
           (job,
           ) => {
-            const key: string = job[keyField]
-            const keyStruct = _.pick(job, [keyField])
+            const keyStruct = _.pick(job, [jobKeyField])
 
             // to decrypt the variables and keep the typed values in the same process,
             // we transform the job to a MutableJob type, by removing the readonly status
@@ -55,21 +53,30 @@ export default {
 
             if (upserted.insertedId) {
               debug(`Received a new job from Zeebe ${JSON.stringify(keyStruct)}`)
-              zeebeJobs[key] = job
             }
 
             return job.forward()  // tell Zeebe that result may come later, and free ourself for an another work
           }) as ZBWorkerTaskHandler<PhDWorkflowInstanceVariables, FillFormJobHeaders>,
     })
+    debug(`Zeebe worker "${taskType}" created`);
   },
   find(query: any): Mongo.Cursor<FillFormTaskData> {
     return PerfWorkflowTasks.find(query)
   },
   async success(key: string, workerResult: any) {
     debug(`Sending success to worker ${key} with result ${JSON.stringify(workerResult)}`)
-    await zeebeJobs[key].complete(workerResult)
+
+    if (zBClient === null) {
+      throw new Meteor.Error("zeebe disconnected",
+        `The task ${key} can not be closed if zeebe is not connected.`);
+    }
+
+    await zBClient?.completeJob({
+      jobKey: key,
+      variables: workerResult,
+    })
     debug(`Worker ${key} successfully closed  with the success state`)
-    delete zeebeJobs[key]
+
     PerfWorkflowTasks.remove({key})
     debug(`Worker ${key} successfully removed from server memory`)
   }
