@@ -46,9 +46,9 @@ export function Task({workflowKey}: { workflowKey: string }) {
   return (
     <>
       {taskLoading ? (<>
-        <Loader message={'Fetching task from server...'}/>
+        <Loader message={'Fetching task...'}/>
       </>) : (<>
-        <h1>{task?.getName() || `Task ${workflowKey}`}</h1>
+        <h1 className={'h2'}>{task?.getName() || `Task ${workflowKey}`}</h1>
         <Errors/>
         {formIoJson ? (
           <Form form={JSON.parse(formIoJson as string)}

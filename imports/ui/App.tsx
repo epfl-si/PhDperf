@@ -33,6 +33,7 @@ export const App = () => {
           <TheTask/>
         </PageRoute>
         <PageRoute path="/">
+          <h1 className={'h2'}>PhD Assess</h1>
           <TaskList/>
         </PageRoute>
       </Switch>

@@ -18,13 +18,13 @@ export default function TaskList() {
   return (
     <>
       <div id={'worklow-actions'} className={'mb-4'}>
-        <Button label={'Initialize a new PhD Assessment process'}
+        <Button label={'Start a new process'}
                 onClickFn={() => Meteor.call("start_workflow")}
         />
       </div>
-      <h4>Your form tasks</h4>
+      <h4>Uncompleted tasks</h4>
       {listLoading ? (
-        <Loader message={'Fetching tasks from server...'}/>
+        <Loader message={'Fetching tasks...'}/>
       ) : (
         <>
             {tasks.length > 0 ? tasks.map(
@@ -36,7 +36,7 @@ export default function TaskList() {
                       <summary className={'d-flex'}>
                         <span className={'mr-auto'}>{task.getName()}</span>
                         <span className={'small'}>
-                          <a href={task.getOperateUri()} target="_blank" className={'pr-3 '}>See on Operate</a>
+                          <a href={task.getMonitorUri()} target="_blank" className={'pr-3'}>on Monitor <span className={"fa fa-external-link"}/></a>
                           <Link className={''} to={`tasks/${task.key}`}><Button label={'Proceed'} onClickFn={() => void 0}/></Link>
                         </span>
                       </summary>
