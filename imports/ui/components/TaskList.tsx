@@ -22,7 +22,7 @@ export default function TaskList() {
                 onClickFn={() => Meteor.call("start_workflow")}
         />
       </div>
-      <h4>Uncompleted tasks</h4>
+      <h4>Tasks</h4>
       {listLoading ? (
         <Loader message={'Fetching tasks...'}/>
       ) : (
@@ -53,4 +53,3 @@ export default function TaskList() {
     </>
   )
 }
-
