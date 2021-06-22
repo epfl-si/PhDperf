@@ -18,7 +18,7 @@
     "crypto-js": "^4.0.0",
     "debug": "^4.3.1",
     "dotenv": "^8.2.0",
-    "epfl-sti-react-library": "git+ssh://git@gitlab.epfl.ch/lhd/epfl-sti-react-library.git",
+    "epfl-sti-react-library": "git+https://gitlab.epfl.ch/sti-it/epfl-sti-react-library.git",
     "find-up": "^5.0.0",
     "formiojs": "^4.13.0-rc.19",
     "lodash": "^4.17.21",

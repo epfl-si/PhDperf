@@ -1,5 +1,5 @@
 diff --git a/node_modules/epfl-sti-react-library/dist/Navigations/Avatar.js b/node_modules/epfl-sti-react-library/dist/Navigations/Avatar.js
-index d68e2db..7982868 100644
+index 5c848d2..250f9f7 100644
 --- a/node_modules/epfl-sti-react-library/dist/Navigations/Avatar.js
 +++ b/node_modules/epfl-sti-react-library/dist/Navigations/Avatar.js
 @@ -9,8 +9,6 @@ var _react = _interopRequireDefault(require("react"));
@@ -11,12 +11,12 @@ index d68e2db..7982868 100644
  require("./index.css");
  
  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-@@ -40,7 +38,7 @@ function Avatar(_ref) {
-       paddingRight: '10px'
-     }
-   }, /*#__PURE__*/_react.default.createElement("img", {
--    src: _sti_logo.default,
-+    src: "",
-     alt: "Logo STI, EPFL school of engineering"
-   })), /*#__PURE__*/_react.default.createElement("a", {
-     className: "avatar-teaser-img-placeholder",
+@@ -25,7 +23,7 @@ function Avatar(_ref) {
+     return "url('".concat(user.photo_url, "')");
+   };
+ 
+-  var avatarLogo = logoUrl || _sti_logo.default;
++  var avatarLogo = logoUrl || "";
+   var avatarLogoAltText = logoAltText || 'Logo STI, EPFL school of engineering';
+ 
+   function handleLogout() {
