@@ -3,7 +3,7 @@ import {
   BrowserRouter, RouteProps, Route, Switch,
   useParams, useRouteMatch
 } from "react-router-dom"
-import {Footer} from "epfl-sti-react-library"
+import {FooterLight} from "epfl-sti-react-library"
 import {PhDHeader} from "./components/PhDHeader"
 import {Breadcrumbs} from "epfl-sti-react-library"
 import TaskList from "./components/TaskList"
@@ -20,7 +20,7 @@ const PageRoute: React.FC<RouteProps> = (props) => (
       </div>
     </div>
     <ZeebeStatus/>
-    <Footer/>
+    <FooterLight/>
   </Route>
 )
 
