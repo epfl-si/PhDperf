@@ -38,9 +38,9 @@ export function Task({workflowKey}: { workflowKey: string }) {
     // when your component is unmounted or deps change.
     const handle = Meteor.subscribe('tasks');
     return !handle.ready();
-  }, []);
+  }, [workflowKey]);
 
-  const task = useTracker(() => PerfWorkflowTasks.findByKey(workflowKey))
+  const task = useTracker(() => PerfWorkflowTasks.findByKey(workflowKey), [workflowKey])
   const formIoJson = task?.customHeaders?.form_io
 
   return (
