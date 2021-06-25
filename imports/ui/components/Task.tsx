@@ -52,6 +52,7 @@ export function Task({workflowKey}: { workflowKey: string }) {
         <Errors/>
         {formIoJson ? (
           <Form form={JSON.parse(formIoJson as string)}
+                submission={ { data: task?.variables }}
                 noDefaultSubmitButton={true}
                 onSubmit={onSubmit}
                 onCustomEvent={(event: customEvent) => event.type == 'cancelClicked' && window.history.go(-1)}
