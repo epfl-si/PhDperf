@@ -1,6 +1,8 @@
 # PhD Assess
 
-Provide form tasks to users, so they can fulfil their [the PhD assessment process](bpmn-model/PhD Assessment - Annual Review.bpmn).
+Provide form tasks to users, so they can fulfil their the PhD assessment process.
+
+You can take a look at the process by installing the [BPMN Modeler](https://camunda.com/download/modeler/) and by opening [the process definition](bpmn-model/phdAssessProcess.bpmn).
 
 Technically, the application consists on a Meteor server, defined as a [Zeebe](https://zeebe.io) worker. It shows all jobs of type `phdAssessFillForm` as a task/todo-list. A user can complete his/her form tasks through FormIO forms.
 
