@@ -18,7 +18,7 @@ let zBClient: ZeebeSpreadingClient | null = null
 
 export default {
   start() {
-    const taskType = 'fill_form'
+    const taskType = 'phdAssessFillForm'
     const jobKeyField = 'key'
 
     zBClient = new ZeebeSpreadingClient({

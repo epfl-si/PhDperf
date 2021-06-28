@@ -9,7 +9,7 @@ export const get_user_permitted_tasks = () => {
 
   return WorkersClient.find({
     $or: [
-      {"customHeaders.allowed_groups": {$in: currentUserGroupsArray}},
+      {"customHeaders.allowedGroups": {$in: currentUserGroupsArray}},
       {"variables.assigneeSciper": Meteor.user()?._id}
     ]
   })
@@ -25,7 +25,7 @@ export const is_allowed_to_submit = (taskKey: string) : boolean => {
       },
       {
         $or: [
-          {"customHeaders.allowed_groups": {$in: currentUserGroupsArray}},
+          {"customHeaders.allowedGroups": {$in: currentUserGroupsArray}},
           {"variables.assigneeSciper": Meteor.user()?._id}
         ]
       }

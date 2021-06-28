@@ -5,17 +5,18 @@ import { Job } from 'zeebe-node'
 import { Sciper } from './datatypes'
 
 export type PhDWorkflowInstanceVariables = {
-  programAssistant: Sciper
-  phDStudentsSciper: Sciper
-  mentorSciper: Sciper
-  programDirector: Sciper
-  thesisDirector: Sciper
+  programAssistantSciper: Sciper
+  phdStudentSciper: Sciper
+  thesisDirectorSciper: Sciper
+  thesisCoDirectorSciper: Sciper
+  programDirectorSciper: Sciper
+  mentorSciperSciper: Sciper
 }
 
 export type FillFormJobHeaders = {
   groups: string[]
   title: string
-  form_io: string
+  formIO: string
 }
 
 type FillFormTaskDataBase = Job<PhDWorkflowInstanceVariables, FillFormJobHeaders>

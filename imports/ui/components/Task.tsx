@@ -41,7 +41,7 @@ export function Task({workflowKey}: { workflowKey: string }) {
   }, [workflowKey]);
 
   const task = useTracker(() => PerfWorkflowTasks.findByKey(workflowKey), [workflowKey])
-  const formIoJson = task?.customHeaders?.form_io
+  const formIoJson = task?.customHeaders?.formIO
 
   return (
     <>
