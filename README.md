@@ -18,19 +18,16 @@ Technically, the application consists on a Meteor server, defined as a [Zeebe](h
   cp /keybase/team/epfl_phdassess.test/env_local .env
   ```
 
-### State server
+### Start the Zeebe state server
 
-- Install and start the Zeebe server
+- Download zeebe-hazelcast-exporter-1.0.0-jar-with-dependencies.jar from https://github.com/camunda-community-hub/zeebe-hazelcast-exporter/releases and put it under docker/zeebe-hazelcast/
+
+- Build and start the Zeebe server
   ```
-  git clone https://github.com/camunda-community-hub/zeebe-docker-compose ../zeebe-docker-compose
-  cd ../zeebe-docker-compose/simple-monitor/ && docker-compose up
-  ```
-- Deploy the workflow
-  ```
-  ../zeebe-docker-compose/bin/zbctl --insecure deploy ./bpmn-model/PhD\ Assessment\ -\ Annual\ Review.bpmn
+  cd docker && docker-compose up
   ```
 
-### Web framework
+### Start the Web framework
 
   - Install dependencies
     ```
@@ -45,6 +42,11 @@ Technically, the application consists on a Meteor server, defined as a [Zeebe](h
       ```
       meteor run
       ```
+
+### Deploy the workflow
+  ```
+  meteor node scripts/deployProcess.js
+  ```
 
 ### Browse
 
