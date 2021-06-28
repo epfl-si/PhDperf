@@ -1,35 +1,51 @@
-# PhDAssess
+# PhD Assess
 
-## Credentials
+Provide form tasks to users, so they can fulfil their [the PhD assessment process](bpmn_model/PhD Assessment - Annual Review.bpmn).
 
-### Keybase
+Technically, the application consists on a Meteor server, defined as a [Zeebe](https://zeebe.io) worker. It shows all jobs of type `fill_form` as a task/todo-list. A user can complete his/her form tasks through FormIO forms.
 
-Test credentials are available in /keybase/team/epfl_phdassess.test/
+## Run
 
-Here is one way to wield them to create a workflow:
+### Prerequiste
 
-```
-. /keybase/team/epfl_phdassess.test/env ; zbctl create instance "PhDAssessmentv1" --variables '{"term": "2021H2"}'
-```
+- Have docker & docker-compose
+- [Have meteor](https://www.meteor.com/developers/install)
+- Assert you have access to Keybase credentials, available in /keybase/team/epfl_phdassess.test/
+- Copy the `.env` file from Keybase:
+  ```
+  cp /keybase/team/epfl_phdassess.test/env_local .env
+  ```
 
-### .env
+### State server
 
-In order to start up the Meteor server, you first need to copy the `.env` file from Keybase :
+- Install and start the Zeebe server
+  ```
+  git clone https://github.com/camunda-community-hub/zeebe-docker-compose ../zeebe-docker-compose
+  cd ../zeebe-docker-compose/simple-monitor/ && docker-compose up
+  ```
+- Deploy the workflow
+  ```
+  ../zeebe-docker-compose/bin/zbctl --insecure deploy ./bpmn_model/PhD\ Assessment\ -\ Annual\ Review.bpmn
+  ```
 
-```
-cp /keybase/team/epfl_phdassess.test/env .env
-```
+### Web framework
 
-## Run locally
+  - Install dependencies
+    ```
+    meteor npm i
+    ```
+  - Choose how to start the server
+    - with debug logs:
+      ```
+      DEBUG=*,-babel,-compression-connect*,-combined-stream2 DEBUG_COLORS=yes meteor run
+      ```
+    - without debug logs:
+      ```
+      meteor run
+      ```
 
-```
-meteor npm i
-meteor
-```
+### Browse
 
-### Debug info
-```
-DEBUG=*,-babel,-compression-connect*,-combined-stream2 DEBUG_COLORS=yes meteor run
-```
-
-See https://www.npmjs.com/package/debug for details
+  - Assert your VPN is on (needed for tequila authentication)
+  - Assert you never use the https protocol while browsing (certainly after redirection from the first tequila authentication)
+  - Open http://localhost:3000
