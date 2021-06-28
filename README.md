@@ -1,6 +1,6 @@
 # PhD Assess
 
-Provide form tasks to users, so they can fulfil their [the PhD assessment process](bpmn_model/PhD Assessment - Annual Review.bpmn).
+Provide form tasks to users, so they can fulfil their [the PhD assessment process](bpmn-model/PhD Assessment - Annual Review.bpmn).
 
 Technically, the application consists on a Meteor server, defined as a [Zeebe](https://zeebe.io) worker. It shows all jobs of type `phdAssessFillForm` as a task/todo-list. A user can complete his/her form tasks through FormIO forms.
 
@@ -25,7 +25,7 @@ Technically, the application consists on a Meteor server, defined as a [Zeebe](h
   ```
 - Deploy the workflow
   ```
-  ../zeebe-docker-compose/bin/zbctl --insecure deploy ./bpmn_model/PhD\ Assessment\ -\ Annual\ Review.bpmn
+  ../zeebe-docker-compose/bin/zbctl --insecure deploy ./bpmn-model/PhD\ Assessment\ -\ Annual\ Review.bpmn
   ```
 
 ### Web framework

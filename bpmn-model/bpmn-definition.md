@@ -27,3 +27,5 @@ Example BPMN with service task:
 * optional variables:
   * `assigneeSciper` - the name of the user which should be assigned to the task.
     As this info can not be crawled from the lane of the Activity, use the Zeebe ioMapping
+
+You may have additional information on the types definition imports/api/perf-workflow-tasks.ts
