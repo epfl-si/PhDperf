@@ -28,30 +28,37 @@ export default {
     debug(`creating Zeebe worker of type "${taskType}"...`);
     zBClient.createWorker({
       taskType: taskType,
-      maxJobsToActivate: 60,
-      // set a short timeout, as we use the decoupled job pattern
-      // and other servers (if any) can claimed the jobs too
-      timeout: Duration.milliseconds.of(1),
-      // load every job into the inmemory server db
+      maxJobsToActivate: 500,
+      // Set timeout, the same as we will ask yourself if the job is still up
+      timeout: Duration.minutes.of(5),
+      // load every job into the in-memory server db
       taskHandler:
       // therefore, Fiber'd
         Meteor.bindEnvironment(
           (job,
           ) => {
-            const keyStruct = _.pick(job, [jobKeyField])
+            let jobKey: string = _.pick(job, [jobKeyField]).toString()
 
-            // to decrypt the variables and keep the typed values in the same process,
-            let instanceToMongo: any = job  // make it writable
-            Object.keys(instanceToMongo['variables']).map((key) => {
-              instanceToMongo['variables'][key] = decrypt(instanceToMongo['variables'][key])
-            })
+            let task:FillFormTaskData | undefined = PerfWorkflowTasks.findOne(jobKey)
 
-            if (PerfWorkflowTasks.find(keyStruct).count() == 0) {
-              PerfWorkflowTasks.insert(instanceToMongo)
-              debug(`Received a new job from Zeebe ${JSON.stringify(keyStruct)}`)
+            if (!task) {  // Let's insert this unknown task
+              // decrypt the variables before saving into memory (keep the typed values too)
+              let instanceToMongo: any = job  // make it writable
+
+              Object.keys(instanceToMongo['variables']).map((key) => {
+                instanceToMongo['variables'][key] = decrypt(instanceToMongo['variables'][key])
+              })
+
+              jobKey = PerfWorkflowTasks.insert(instanceToMongo)
+
+              debug(`Received a new job from Zeebe ${JSON.stringify(jobKey)}`)
             }
 
+            // To keep insync with Zeebe, log the last time we see this one
+            PerfWorkflowTasks.update({ _id: jobKey },{ $set: { lastSeen: new Date() }});
+
             return job.forward()  // tell Zeebe that result may come later, and free ourself for an another work
+
           }) as ZBWorkerTaskHandler<PhDWorkflowInstanceVariables, FillFormJobHeaders>,
     })
     debug(`Zeebe worker "${taskType}" created`);

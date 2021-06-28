@@ -18,7 +18,11 @@ export type FillFormJobHeaders = {
   form_io: string
 }
 
-export type FillFormTaskData = Job<PhDWorkflowInstanceVariables, FillFormJobHeaders>
+type FillFormTaskDataBase = Job<PhDWorkflowInstanceVariables, FillFormJobHeaders>
+
+export type FillFormTaskData = FillFormTaskDataBase & {
+  lastSeen?: Date
+}
 
 const collectionName = 'fill-form-tasks'
 
