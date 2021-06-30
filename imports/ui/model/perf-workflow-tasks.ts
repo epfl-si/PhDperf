@@ -11,8 +11,8 @@ export type PerfWorkflowTask = FillFormTaskData & {
 const PerfWorkflowTasks_ = fillFormTasksCollection<PerfWorkflowTask>((data) => {
   const task = data as PerfWorkflowTask
   task.getUri = () => `/tasks/${data.key}`
-  task.getName = () => `${data.customHeaders.title} (${data.key})`
-  task.getDetail = () => `workflow version: ${data.processDefinitionVersion}, variables: ${JSON.stringify(_.omit(data.variables, 'metadata'), null, 2)}`
+  task.getName = () => `${data.customHeaders.title}`
+  task.getDetail = () => `Job key: ${data.key}, workflow version: ${data.processDefinitionVersion}, variables: ${JSON.stringify(_.omit(data.variables, 'metadata'), null, 2)}`
   task.getMonitorUri = () => `http://localhost:8082/views/instances/${data.processInstanceKey}`
   return task
 })
