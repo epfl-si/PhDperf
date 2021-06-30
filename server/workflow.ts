@@ -22,7 +22,7 @@ export default {
     const jobKeyField = 'key'
 
     zBClient = new ZeebeSpreadingClient({
-      pollInterval: Duration.seconds.of(2)
+      pollInterval: Duration.seconds.of(5)
     })
 
     debug(`creating Zeebe worker of type "${taskType}"...`);
@@ -30,16 +30,16 @@ export default {
       taskType: taskType,
       maxJobsToActivate: 500,
       // Set timeout, the same as we will ask yourself if the job is still up
-      timeout: Duration.minutes.of(5),
+      timeout: Duration.milliseconds.of(1),
       // load every job into the in-memory server db
       taskHandler:
       // therefore, Fiber'd
         Meteor.bindEnvironment(
           (job,
           ) => {
-            let jobKey: string = _.pick(job, [jobKeyField]).toString()
+            let jobKey: string = job[jobKeyField]
 
-            let task:FillFormTaskData | undefined = PerfWorkflowTasks.findOne(jobKey)
+            let task:FillFormTaskData | undefined = PerfWorkflowTasks.findOne({ _id: jobKey } )
 
             if (!task) {  // Let's insert this unknown task
               // decrypt the variables before saving into memory (keep the typed values too)
@@ -48,6 +48,8 @@ export default {
               Object.keys(instanceToMongo['variables']).map((key) => {
                 instanceToMongo['variables'][key] = decrypt(instanceToMongo['variables'][key])
               })
+
+              instanceToMongo['_id'] = jobKey
 
               jobKey = PerfWorkflowTasks.insert(instanceToMongo)
 
