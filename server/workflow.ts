@@ -57,7 +57,7 @@ export default {
             }
 
             // To keep insync with Zeebe, log the last time we see this one
-            PerfWorkflowTasks.update({ _id: jobKey },{ $set: { lastSeen: new Date() }});
+            //PerfWorkflowTasks.update({ _id: jobKey },{ $set: { lastSeen: new Date() }});
 
             return job.forward()  // tell Zeebe that result may come later, and free ourself for an another work
 
