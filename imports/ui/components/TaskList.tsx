@@ -33,7 +33,7 @@ export default function TaskList() {
 
                   <div className={''}>
                     <details >
-                      <summary className={'d-flex'}>
+                      <summary className={'d-flex align-items-center'}>
                         <span className={'mr-auto'}>{task.getName()}</span>
                         <span className={'small'}>
                           <a href={task.getMonitorUri()} target="_blank" className={'pr-3'}>on Monitor <span className={"fa fa-external-link"}/></a>
