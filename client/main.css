@@ -4,9 +4,11 @@ body {
 }
 
 /* TODO: maybe epfl-elements shouldn't do any of this jazz. */
-body .breadcrumb-container, body .breadcrumb-item {
+/* Removed this two line as tearing is happening on breadcrumb */
+/*body .breadcrumb-container, body .breadcrumb-item {
   position: inherit;
-}
+}*/
+
 body .breadcrumb-container::before {
   display: none;
 }
