@@ -20,7 +20,9 @@ Technically, the application consists on a Meteor server, defined as a [Zeebe](h
 
 ### Start the Zeebe state server
 
-- Download zeebe-hazelcast-exporter-1.0.0-jar-with-dependencies.jar from https://github.com/camunda-community-hub/zeebe-hazelcast-exporter/releases and put it under docker/zeebe-hazelcast/
+- Download [zeebe-hazelcast-exporter-1.0.0-jar-with-dependencies.jar](https://github.com/camunda-community-hub/zeebe-hazelcast-exporter/releases) into ./docker/zeebe-hazelcast
+
+- Download [postgresql-42.2.12.jar](https://jdbc.postgresql.org/download/postgresql-42.2.12.jar) into ./docker/simple-monitor
 
 - Build and start the Zeebe server
   ```

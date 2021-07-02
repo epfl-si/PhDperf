@@ -1,4 +1,5 @@
 node_modules/
 .env
-/docker/zeebe-hazelcast/zeebe-hazelcast-exporter-1.0.0-jar-with-dependencies.jar
-/docker/zeebe_data/
+/docker/zeebe-hazelcast/*.jar
+/docker/simple-monitor/*.jar
+/docker/volumes/zeebe_data/
