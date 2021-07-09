@@ -35,15 +35,10 @@ Technically, the application consists on a Meteor server, defined as a [Zeebe](h
     ```
     meteor npm i
     ```
-  - Choose how to start the server
-    - with debug logs:
-      ```
-      DEBUG=*,-babel,-compression-connect*,-combined-stream2 DEBUG_COLORS=yes meteor run
-      ```
-    - without debug logs:
-      ```
-      meteor run
-      ```
+  - Start the server
+    ```
+    meteor run
+    ```
 
 ### Deploy the workflow
   ```
