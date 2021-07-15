@@ -33,7 +33,7 @@ export class WorkflowStarter extends React.Component {
       <div id={'worklow-actions'} className={'mb-4'}>
         {this.state.waiting &&
         <button className="btn btn-secondary disabled">
-          <i className="fa fa-plus"/>&nbsp;&nbsp;Creating New PhD Assessment...
+          <i className="fa fa-spinner fa-pulse"/>&nbsp;&nbsp;Creating a new PhD Assessment...
         </button>
         }
         {!this.state.waiting &&
