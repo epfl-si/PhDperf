@@ -2,6 +2,7 @@ import {Meteor} from "meteor/meteor"
 import React from "react"
 import {useTracker} from 'meteor/react-meteor-data'
 import {PerfWorkflowTask, PerfWorkflowTasks} from '/imports/ui/model/perf-workflow-tasks'
+import {WorkflowStarter} from './workflowStarter'
 import {Button, Loader} from "epfl-sti-react-library"
 import {Link} from "react-router-dom"
 
@@ -17,11 +18,7 @@ export default function TaskList() {
 
   return (
     <>
-      <div id={'worklow-actions'} className={'mb-4'}>
-        <button className="btn btn-secondary" onClick={() => Meteor.call("start_workflow")}>
-          <i className="fa fa-plus" />&nbsp;&nbsp;New PhD Assessment
-        </button>
-      </div>
+      <WorkflowStarter />
       <h4>Tasks</h4>
       {listLoading ? (
         <Loader message={'Fetching tasks...'}/>
