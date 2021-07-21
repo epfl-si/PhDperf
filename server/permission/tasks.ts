@@ -3,21 +3,25 @@ import WorkersClient from "/server/workflow";
 import {PerfWorkflowTasks} from "/imports/ui/model/perf-workflow-tasks";
 
 export const get_user_permitted_tasks = () => {
-  // Get list from group too
-  const currentUserGroups = Meteor.user()?.tequila?.group
-  let currentUserGroupsArray: string[] = currentUserGroups?.split(',') || [];
+  if (Meteor.user()?.isAdmin) {
+    return WorkersClient.find({})
+  } else {
 
-  return WorkersClient.find({
-    $or: [
-      {"customHeaders.allowedGroups": {$in: currentUserGroupsArray}},
-      {"variables.assigneeSciper": Meteor.user()?._id}
-    ]
-  })
+    const groups = Meteor.user()?.groupList
+
+    return WorkersClient.find({
+      $or: [
+        {"customHeaders.allowedGroups": {$in: groups}},  // Get tasks for the group
+        {"variables.assigneeSciper": Meteor.user()?._id}  // Get assigned tasks
+      ]
+    })
+  }
 }
 
 export const is_allowed_to_submit = (taskKey: string) : boolean => {
-  const currentUserGroups = Meteor.user()?.tequila?.group
-  let currentUserGroupsArray: string[] = currentUserGroups?.split(',') || [];
+  if (Meteor.user()?.isAdmin) {
+    return true
+  }
 
   return PerfWorkflowTasks.find({$and : [
       {
@@ -25,7 +29,7 @@ export const is_allowed_to_submit = (taskKey: string) : boolean => {
       },
       {
         $or: [
-          {"customHeaders.allowedGroups": {$in: currentUserGroupsArray}},
+          {"customHeaders.allowedGroups": {$in: Meteor.user()?.groupList}},
           {"variables.assigneeSciper": Meteor.user()?._id}
         ]
       }
