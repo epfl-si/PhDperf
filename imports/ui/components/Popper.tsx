@@ -3,7 +3,7 @@ import { Options } from '@popperjs/core'
 import { usePopper } from 'react-popper'
 import _ from 'lodash'
 
-export type PopperOptions = Omit<Partial<Options>, "modifiers">
+export type PopperOptions = Omit<Partial<Options>, "strategy">
 
 export function Popper(props: React.PropsWithChildren<{
   visible?: boolean,

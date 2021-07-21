@@ -16,7 +16,15 @@ export function UserAuthButton() {
   const [visible, setVisibility] = useState<boolean>(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
   const popperOptions : PopperOptions = {
-    placement: "left-end",
+    placement: "left-start",
+    modifiers: [
+        {
+          name: 'offset',
+          options: {
+            offset: [-25, 25],
+          },
+        }
+      ]
   }
 
   return <>
@@ -26,12 +34,12 @@ export function UserAuthButton() {
     </button>
     <Popper relativeTo={buttonRef.current} options={popperOptions} visible={visible}
             onClickElsewhere={() => setVisibility(false)}>
-    <div className="dropdown-menu-popper p-1 mt-2">
+    <div className="dropdown-menu-popper p-2 mt-2">
       <p>
         Logged in as { user?.tequila?.user }
         { user?.isAdmin && ` (admin)` }
       </p>
-      <button className="btn btn-secondary">Log out</button>
+      [Log out]
     </div>
     </Popper>
   </>
