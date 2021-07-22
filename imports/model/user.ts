@@ -65,7 +65,6 @@ const MeteorUsers = <Mongo.Collection<Meteor.User>> Meteor.users
 export class User {
     public _id : string | null = null
     public isAdmin: boolean = false
-    public displayname: string | null = null
     public tequila?: {
       provider: string | ""
       email: string
@@ -79,7 +78,7 @@ export class User {
     }
 
     static null() : User {
-        return User.cast({ _id: null, displayname: null, isAdmin: false })
+        return User.cast({ _id: null, isAdmin: false })
     }
 
     static byId(_id: string): User {
