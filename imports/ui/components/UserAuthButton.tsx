@@ -36,7 +36,7 @@ export function UserAuthButton() {
             onClickElsewhere={() => setVisibility(false)}>
     <div className="dropdown-menu-popper p-2 mt-2">
       <p>
-        Logged in as { user?.tequila?.user }
+        Logged in as { user?.tequila?.displayname }
         { user?.isAdmin && ` (admin)` }
       </p>
       [Log out]
