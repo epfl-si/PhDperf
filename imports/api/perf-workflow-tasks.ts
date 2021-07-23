@@ -5,6 +5,7 @@ import { Job } from 'zeebe-node'
 import { Sciper } from './datatypes'
 
 export type PhDWorkflowInstanceVariables = {
+  assigneeSciper: Sciper
   programAssistantSciper: Sciper
   phdStudentSciper: Sciper
   thesisDirectorSciper: Sciper

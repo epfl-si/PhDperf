@@ -1,36 +1,13 @@
 import React from 'react'
-import {Form, Errors} from '@formio/react'
+import {Errors, Form} from '@formio/react'
 import {customEvent} from '/imports/ui/model/formIo'
 import {PerfWorkflowTasks} from '/imports/ui/model/perf-workflow-tasks'
 import {Meteor} from 'meteor/meteor'
 import {useTracker} from 'meteor/react-meteor-data'
-import {Button, Loader, Alert} from "epfl-sti-react-library"
+import {Alert, Button, Loader} from "epfl-sti-react-library"
 import {Link} from "react-router-dom";
 import _ from "lodash";
-
-function findDisabledFields(form: any) {
-  let disabledFieldKeys: string[] = [];
-
-  const rootComponents = form.components;
-
-  const searchForDisabledFields = (components: []) => {
-    components.forEach((element: any) => {
-      if (element.key !== undefined &&
-        element.disabled !== undefined &&
-        element.disabled) {
-        disabledFieldKeys.push(element.key);
-      }
-
-      if (element.components !== undefined) {
-        searchForDisabledFields(element.components);
-      }
-    })
-  };
-
-  searchForDisabledFields(rootComponents);
-
-  return disabledFieldKeys;
-}
+import findDisabledFields from "/imports/lib/formIOUtils";
 
 export function Task({workflowKey}: { workflowKey: string }) {
   const taskLoading = useTracker(() => {
@@ -48,7 +25,7 @@ export function Task({workflowKey}: { workflowKey: string }) {
       {taskLoading ? (<>
         <Loader message={'Fetching task...'}/>
       </>) : (<>
-        <h1 className={'h2'}>{task?.getName() || `Task ${workflowKey}`}</h1>
+        <h1 className={'h2'}>{task?.title || `Task ${workflowKey}`}</h1>
         <Errors/>
         {formIoJson ? (
           <Form form={JSON.parse(formIoJson as string)}
