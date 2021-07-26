@@ -2,16 +2,16 @@ import { Meteor } from 'meteor/meteor'
 import { Mongo } from 'meteor/mongo'
 import { Job } from 'zeebe-node'
 
-import { Sciper } from './datatypes'
+import {LDAPUser} from "meteor/epfl:ldap";
 
 export type PhDWorkflowInstanceVariables = {
-  assigneeSciper: Sciper
-  programAssistantSciper: Sciper
-  phdStudentSciper: Sciper
-  thesisDirectorSciper: Sciper
-  thesisCoDirectorSciper: Sciper
-  programDirectorSciper: Sciper
-  mentorSciperSciper: Sciper
+  assignee: LDAPUser
+  programAssistant: LDAPUser
+  phdStudent: LDAPUser
+  thesisDirector: LDAPUser
+  thesisCoDirector: LDAPUser
+  programDirector: LDAPUser
+  mentor: LDAPUser
 }
 
 export type FillFormJobHeaders = {
