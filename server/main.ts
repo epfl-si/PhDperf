@@ -20,7 +20,7 @@ Meteor.startup(() => {
       return tequila.uniqueid;
     },
     request: ['uniqueid', 'username', 'name', 'firstname', 'displayname', 'personaltitle', 'email', 'group'],
-    fakeLocalServer: process.env.FAKE_TEQUILA_SERVER==='yes',  // TODO: remove before prod, can be unwanted behavior
+    fakeLocalServer: Meteor.settings.fake_tequila,  // TODO: remove before prod, can be unwanted behavior
   })
 })
 

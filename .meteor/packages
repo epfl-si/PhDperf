@@ -22,6 +22,5 @@ react-meteor-data       # React higher-order component for reactively tracking M
 tracker@1.2.0
 epfl:accounts-tequila
 epfl:loginfirst
-epfl:become
 aldeed:collection2
 dev-error-overlay
