@@ -2,16 +2,14 @@ import { Meteor } from 'meteor/meteor'
 import { useTracker } from 'meteor/react-meteor-data'
 import React, { useState, useRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Become } from 'meteor/epfl:become'
-import { faUser, faUserClock, faUserShield } from '@fortawesome/free-solid-svg-icons'
+import { faUser, faUserShield } from '@fortawesome/free-solid-svg-icons'
 import { Popper, PopperOptions } from './Popper'
 import {User} from "/imports/model/user";
 
 export function UserAuthButton() {
   const user: User | undefined = useTracker(() => Meteor.user() || undefined)
 
-  const icon = ( user?.isAdmin) ? faUserShield :
-    Become.realUser() ? faUserClock : faUser
+  const icon = ( user?.isAdmin) ? faUserShield : faUser
 
   const [visible, setVisibility] = useState<boolean>(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
