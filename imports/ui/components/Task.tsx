@@ -10,11 +10,13 @@ import _ from "lodash";
 import findDisabledFields from "/imports/lib/formIOUtils";
 import { useHistory } from "react-router-dom";
 import {Templates} from "formiojs";
-import {newInputForm} from "/imports/ui/components/formIOComponents/sciperInput";
+import {UserSciperInput} from "/imports/ui/components/UserSciperInput";
+import findDisabledFields from "/imports/lib/formIOUtils";
+import {reactToFormIO} from "/imports/lib/formio-react-component";
 
 Templates.current = {
   'input-programAssistantSciper': {
-    form: newInputForm
+      form: reactToFormIO(UserSciperInput)
   }
 };
 
