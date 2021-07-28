@@ -1,5 +1,5 @@
 import {Meteor} from "meteor/meteor";
-import WorkersClient from "/server/workflow";
+import WorkersClient from "/server/zeebe_broker_connector";
 import {PerfWorkflowTasks} from "/imports/ui/model/perf-workflow-tasks";
 
 export const get_user_permitted_tasks = () => {
