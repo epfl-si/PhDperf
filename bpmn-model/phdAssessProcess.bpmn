@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" id="Definitions_0o87biy" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.9.0">
   <bpmn:collaboration id="Collaboration_13he9tk">
-    <bpmn:participant id="Participant_0f1vwfj" name="PhD Assess" processRef="Process_PhDAssess" />
+    <bpmn:participant id="Participant_0f1vwfj" name="PhD Assess" processRef="phdAssessProcess" />
   </bpmn:collaboration>
   <bpmn:message id="Message_0e4uf8w" name="Message_cancel_process">
     <bpmn:extensionElements>
       <zeebe:subscription correlationKey="=process_id" />
     </bpmn:extensionElements>
   </bpmn:message>
-  <bpmn:process id="Process_PhDAssess" name="PhD Assess" isExecutable="true">
+  <bpmn:process id="phdAssessProcess" name="PhD Assess" isExecutable="true">
     <bpmn:laneSet id="LaneSet_15bmgqu">
       <bpmn:lane id="Lane_0kmegd1" name="Thesis Co-Director">
         <bpmn:flowNodeRef>Activity_09ymy6t</bpmn:flowNodeRef>
