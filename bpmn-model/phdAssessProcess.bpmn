@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" id="Definitions_0o87biy" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.9.0">
   <bpmn:collaboration id="Collaboration_13he9tk">
-    <bpmn:participant id="Participant_0f1vwfj" name="&#10;" processRef="Process_PhDAssess" />
+    <bpmn:participant id="Participant_0f1vwfj" name="PhD Assess" processRef="Process_PhDAssess" />
   </bpmn:collaboration>
   <bpmn:message id="Message_0e4uf8w" name="Message_cancel_process">
     <bpmn:extensionElements>
@@ -53,6 +53,7 @@
         <bpmn:flowNodeRef>Gateway_0fxp2gk</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1xqt2me</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_00hc0r3</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_0pq4nc7</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_1k7ll7j" name="Program Assistant">
         <bpmn:flowNodeRef>Activity_Program_Assistant_Assign_Participants</bpmn:flowNodeRef>
@@ -116,7 +117,7 @@
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_0ic8cah" sourceRef="Gateway_0bhh4qd" targetRef="Gateway_0imp0g7" />
     <bpmn:sequenceFlow id="Flow_07ua6o4" sourceRef="Activity_14o47pb" targetRef="Gateway_0bhh4qd" />
-    <bpmn:sequenceFlow id="Flow_0wqd4km" name="no&#10;&#10;" sourceRef="Gateway_0imp0g7" targetRef="Gateway_0fxp2gk">
+    <bpmn:sequenceFlow id="Flow_0wqd4km" name="no&#10;&#10;" sourceRef="Gateway_0imp0g7" targetRef="Gateway_0pq4nc7">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=$thesisCoDirectorSciper=""</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1av2cod" name="yes" sourceRef="Gateway_0imp0g7" targetRef="Gateway_0crufzf">
@@ -237,8 +238,7 @@
       <bpmn:outgoing>Flow_11j7xax</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:parallelGateway id="Gateway_0fxp2gk">
-      <bpmn:incoming>Flow_0wqd4km</bpmn:incoming>
-      <bpmn:incoming>Flow_0sla35e</bpmn:incoming>
+      <bpmn:incoming>Flow_052hz68</bpmn:incoming>
       <bpmn:outgoing>Flow_0mzj9cs</bpmn:outgoing>
       <bpmn:outgoing>Flow_12k5unu</bpmn:outgoing>
     </bpmn:parallelGateway>
@@ -425,7 +425,7 @@
     <bpmn:sequenceFlow id="Flow_0m3p9f8" name="no" sourceRef="Gateway_00hc0r3" targetRef="Gateway_0bhh4qd">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=$generalAppraisalOfTheProgress!="unsatisfactory"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0sla35e" sourceRef="Activity_09ymy6t" targetRef="Gateway_0fxp2gk" />
+    <bpmn:sequenceFlow id="Flow_0sla35e" sourceRef="Activity_09ymy6t" targetRef="Gateway_0pq4nc7" />
     <bpmn:serviceTask id="Activity_14o47pb" name="Notification to Program Director">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="notification" retries="0" />
@@ -437,6 +437,12 @@
     <bpmn:startEvent id="Event_14n2id0" name="Yearly assessment start request&#10;&#10;">
       <bpmn:outgoing>Flow_0ighe3r</bpmn:outgoing>
     </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="Gateway_0pq4nc7">
+      <bpmn:incoming>Flow_0wqd4km</bpmn:incoming>
+      <bpmn:incoming>Flow_0sla35e</bpmn:incoming>
+      <bpmn:outgoing>Flow_052hz68</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_052hz68" sourceRef="Gateway_0pq4nc7" targetRef="Gateway_0fxp2gk" />
     <bpmn:textAnnotation id="TextAnnotation_04v2gmm">
       <bpmn:text>Section A, B, C</bpmn:text>
     </bpmn:textAnnotation>
@@ -475,8 +481,8 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0sla35e_di" bpmnElement="Flow_0sla35e">
         <di:waypoint x="1700" y="1130" />
-        <di:waypoint x="1880" y="1130" />
-        <di:waypoint x="1880" y="915" />
+        <di:waypoint x="1780" y="1130" />
+        <di:waypoint x="1780" y="915" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0m3p9f8_di" bpmnElement="Flow_0m3p9f8">
         <di:waypoint x="1205" y="890" />
@@ -582,9 +588,9 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0wqd4km_di" bpmnElement="Flow_0wqd4km">
         <di:waypoint x="1545" y="890" />
-        <di:waypoint x="1855" y="890" />
+        <di:waypoint x="1755" y="890" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1563" y="870" width="13" height="40" />
+          <dc:Bounds x="1560" y="870" width="13" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_07ua6o4_di" bpmnElement="Flow_07ua6o4">
@@ -647,6 +653,10 @@
       <bpmndi:BPMNEdge id="Flow_0lkccvn_di" bpmnElement="Flow_0lkccvn">
         <di:waypoint x="3010" y="1410" />
         <di:waypoint x="3010" y="515" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_052hz68_di" bpmnElement="Flow_052hz68">
+        <di:waypoint x="1805" y="890" />
+        <di:waypoint x="1855" y="890" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Activity_0a9n280_di" bpmnElement="Activity_Program_Assistant_Assign_Participants">
         <dc:Bounds x="385" y="185" width="100" height="80" />
@@ -779,6 +789,9 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0vy5jzl_di" bpmnElement="TextAnnotation_0vy5jzl">
         <dc:Bounds x="850" y="964" width="100" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0pq4nc7_di" bpmnElement="Gateway_0pq4nc7" isMarkerVisible="true">
+        <dc:Bounds x="1755" y="865" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_033zd9d_di" bpmnElement="Association_033zd9d">
         <di:waypoint x="655" y="596" />
