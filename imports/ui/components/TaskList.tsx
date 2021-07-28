@@ -1,7 +1,7 @@
 import {Meteor} from "meteor/meteor"
 import React from "react"
 import _ from "lodash"
-import {useTracker, withTracker} from 'meteor/react-meteor-data'
+import {useTracker} from 'meteor/react-meteor-data'
 import {PerfWorkflowTask, PerfWorkflowTasks} from '/imports/ui/model/perf-workflow-tasks'
 import {WorkflowStarter} from './workflowStarter'
 import {Button, Loader} from "epfl-sti-react-library"
@@ -14,7 +14,7 @@ function Task({task}) {
       <details>
         <summary className={'d-flex align-items-center'}>
           {task.participants &&
-          Object.keys(task.participants).map((participant) => {
+          Object.keys(task.participants).sort().map((participant) => {
               return (
               <Participant
                 key={`${task.key}-${participant}`}

@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import {Mongo} from 'meteor/mongo'
 import {Meteor} from 'meteor/meteor'
 import {Duration, ZBWorkerTaskHandler} from 'zeebe-node'
@@ -59,8 +58,10 @@ export default {
               // save value into the same name withnout the ending *Sciper. Yes, it's black magic but still
               Object.keys(instanceToMongo['variables']).map((key) => {
                 if (key.endsWith('Sciper') && instanceToMongo['variables'][key]) {
+                  if (key === 'assigneeSciper') {
+                    return
+                  }
                   const personTypeName = key.replace(/Sciper$/, "");
-                  const dbPersonTypeName = `variables.${personTypeName}`
                   const mongoFieldName = `participants.${personTypeName}`
 
                   getUsernameBySciper(
