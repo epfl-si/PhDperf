@@ -16,7 +16,7 @@ export function ZeebeStatus() {
   const zeebeStatus = allZeebeStatus[0]
 
   return (
-    <div className={'d-flex flex-row-reverse small mr-3'}>
+    <div className={'d-flex flex-row-reverse small mr-3 mt-1'}>
       <div>
         <span>Zeebe status:</span>&nbsp;
         <span className="font-weight-bold">
