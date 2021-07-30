@@ -6,9 +6,10 @@
 
 - Decrypt data in meteor shell
   ```
-  import {decrypt as decrypter} from './server/encryption.ts'
+  import {decrypt as decrypter, encrypt as encrypter} from './server/encryption.ts'
 
-  let to_decrypt = ''
-
+  to_encrypt = ''
+  to_decrypt = ''
+  encrypted = encrypter(to_encrypt)
   decrypter(to_decrypt)
   ```

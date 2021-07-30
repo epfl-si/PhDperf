@@ -6,30 +6,37 @@ import {PerfWorkflowTask, PerfWorkflowTasks} from '/imports/ui/model/perf-workfl
 import {WorkflowStarter} from './workflowStarter'
 import {Button, Loader} from "epfl-sti-react-library"
 import {Link} from "react-router-dom"
+import {Participant} from "/imports/ui/components/Participant";
 
-type TaskListElementProps = {
-  task: PerfWorkflowTask
-}
-
-const TaskListElement = ({task}: TaskListElementProps) =>
-  <div className={'border-top p-2'}>
-    <details>
-      <summary className={'d-flex align-items-center'}>
-        {(task.assignee &&
-          <span className={'mr-auto'}>Task for {task.assignee}</span>
-          ||
-          <span className={'mr-auto'}>Unassigned task</span>
-        )}
-        <span className={'small'}>
+function Task({task}) {
+  return (
+    <div className={'border-top p-2'}>
+      <details>
+        <summary className={'d-flex align-items-center'}>
+          {task.participants &&
+          Object.keys(task.participants).sort().map((participant) => {
+              return (
+              <Participant
+                key={`${task.key}-${participant}`}
+                user={task.participants[participant]}
+                role={participant}
+                isAssignee={task.variables.assigneeSciper == task.participants[participant].sciper}
+              />
+              )
+            }
+          )}
+          <span className={'small'}>
                           <a href={task.monitorUri} target="_blank" className={'pr-3'}>on Monitor <span
                             className={"fa fa-external-link"}/></a>
                           <Link className={''} to={`tasks/${task.key}`}><Button label={'Proceed'}
-                                                                                onClickFn={() => void 0}/></Link>
+                               onClickFn={() => void 0}/></Link>
                         </span>
-      </summary>
-      <pre><code>{task.detail}</code></pre>
-    </details>
-  </div>
+        </summary>
+        <pre><code>{task.detail}</code></pre>
+      </details>
+    </div>
+  )
+}
 
 export default function TaskList() {
   const listLoading = useTracker(() => {
@@ -56,11 +63,12 @@ export default function TaskList() {
                 <h4 className={'mt-5'}>{taskGrouper}</h4>
                 {
                   groupByTasks[taskGrouper].map((task: PerfWorkflowTask) =>
-                    <TaskListElement key={task.key} task={task}/>
+                    <Task key={task.key} task={task}/>
                   )
                 }
               </div>
-            )) : (
+            ))
+            : (
               <p>There is no task waiting</p>
             )}
         </>

@@ -1,5 +1,5 @@
 import {Meteor} from 'meteor/meteor'
-import WorkersClient from './workflow'
+import WorkersClient from './zeebe_broker_connector'
 import Tequila from 'meteor/epfl:accounts-tequila'
 import {encrypt} from './encryption'
 import _ from 'lodash'
