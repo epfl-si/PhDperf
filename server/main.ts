@@ -48,7 +48,9 @@ Meteor.methods({
     delete data['submit']  // no thanks, I already know that
     delete data['cancel']  // no thanks, I already know that
 
-    data = _.mapValues(data, x => encrypt(x))  // encrypt all data
+    // Move out empty string, as it become a full string once encrypted
+    const nonEmptyStringData = _.pickBy(data, (value) => value !== "")
+    data = _.mapValues(nonEmptyStringData, x => encrypt(x))  // encrypt data
     data['metadata'] = encrypt(JSON.stringify(metadata))  // add some info on the submitter
 
     await WorkersClient.success(key, data)
