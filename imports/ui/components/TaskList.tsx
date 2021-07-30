@@ -13,18 +13,7 @@ function Task({task}) {
     <div className={'border-top p-2'}>
       <details>
         <summary className={'d-flex align-items-center'}>
-          {task.participants &&
-          Object.keys(task.participants).sort().map((participant) => {
-              return (
-              <Participant
-                key={`${task.key}-${participant}`}
-                user={task.participants[participant]}
-                role={participant}
-                isAssignee={task.variables.assigneeSciper == task.participants[participant].sciper}
-              />
-              )
-            }
-          )}
+          <span className={'mr-auto'}/>
           <span className={'small'}>
                           <a href={task.monitorUri} target="_blank" className={'pr-3'}>on Monitor <span
                             className={"fa fa-external-link"}/></a>
@@ -33,6 +22,16 @@ function Task({task}) {
                         </span>
         </summary>
         <pre><code>{task.detail}</code></pre>
+        {task.participants &&
+        Object.keys(task.participants).sort().map((participant) => (
+              <Participant
+                key={`${task.key}-${participant}`}
+                user={task.participants[participant]}
+                role={participant}
+                isAssignee={task.variables.assigneeSciper == task.participants[participant].sciper}
+              />
+            )
+        )}
       </details>
     </div>
   )

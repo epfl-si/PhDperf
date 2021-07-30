@@ -8,15 +8,15 @@ export const Participant = ({user, role, isAssignee}) => {
   return (
     <>
       {user.length != 0 &&
-      <div className={`border m-2 p-3 ${isAssignee ? awaitingBoxColor : allGoodBoxColor}`}>
-        <div className={`border-bottom border-white`}>{role}</div>
-        <div>{user.displayName}</div>
+      <div className={`participant border m-1 p-2 ${isAssignee ? awaitingBoxColor : allGoodBoxColor}`}>
+        <div className={`small border-bottom border-white`}>{role}</div>
+        <div className={`small`}>{user.displayName}</div>
       </div>
       }
       {user.length == 0 &&
-      <div className={`border m-2 p-3 ${nothingBoxColor}`}>
-        <div className={`border-bottom border-white`}>{role}</div>
-        <div>Not setted</div>
+      <div className={`participant small border m-1 p-2 ${nothingBoxColor}`}>
+        <div className={`small border-bottom border-white`}>{role}</div>
+        <div>None</div>
       </div>
       }
     </>
