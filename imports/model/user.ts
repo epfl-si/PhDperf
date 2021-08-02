@@ -28,7 +28,7 @@ import { LocalCollection } from 'meteor/minimongo'
 import SimpleSchema from 'simpl-schema'
 
 import debug_ from 'debug'
-const debug = debug_('model/user')
+const debug = debug_('phdAssess:model:user')
 
 /* We will be applying the trick of
    https://stackoverflow.com/a/41517850/435004, therefore we need to

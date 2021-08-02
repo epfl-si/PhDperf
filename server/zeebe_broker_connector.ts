@@ -10,7 +10,7 @@ import {
 } from '/imports/api/perf-workflow-tasks'
 import debug_ from 'debug'
 
-const debug = debug_('server/workflow')
+const debug = debug_('phdAssess:server:workflow')
 
 const PerfWorkflowTasks = fillFormTasksCollection<FillFormTaskData>()
 let zBClient: ZeebeSpreadingClient | null = null
