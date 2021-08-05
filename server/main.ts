@@ -49,7 +49,8 @@ Meteor.methods({
     delete data['cancel']  // no thanks, I already know that
 
     data = _.mapValues(data, x => encrypt(x))  // encrypt all data
-    data['metadata'] = encrypt(JSON.stringify(metadata))  // add some info on the submitter
+    // TODO: should be an append to an existing array
+    data['activityLogs'] = encrypt(JSON.stringify(metadata))  // add some info on the submitter
 
     await WorkersClient.success(key, data)
     debug("Submitted form result")
