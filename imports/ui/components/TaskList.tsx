@@ -57,7 +57,6 @@ export default function TaskList() {
   return (
     <>
       <WorkflowStarter/>
-      <h3 className={'mt-3'}>Tasks</h3>
       {listLoading ? (
         <Loader message={'Fetching tasks...'}/>
       ) : (
@@ -65,7 +64,7 @@ export default function TaskList() {
           {tasks.length > 0 ?
             Object.keys(groupByTasks).map((taskGrouper: string) => (
               <div key={taskGrouper}>
-                <h4 className={'mt-5'}>{taskGrouper}</h4>
+                <h3 className={'mt-5'}>{taskGrouper}</h3>
                 {
                   groupByTasks[taskGrouper].map((task: Task) =>
                     <Task key={task.key} task={task}/>
@@ -74,7 +73,7 @@ export default function TaskList() {
               </div>
             ))
             : (
-              <p>There is no task waiting</p>
+              <p>There is currently no task waiting your input</p>
             )}
         </>
       )}
