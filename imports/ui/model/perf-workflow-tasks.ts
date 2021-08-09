@@ -10,7 +10,7 @@ export interface TaskParticipant {
 }
 
 export type Task = TaskData & {
-  title: string | undefined
+  title: string
   participants: TaskParticipant[]
   uri: string
   detail: any
@@ -24,7 +24,7 @@ const Tasks_ = TasksCollection<Task>((data) => {
   task.created_at = new Date(data.variables.created_at)
   task.updated_at = new Date(data.variables.updated_at)
 
-  task.title = data.customHeaders?.title
+  task.title = data.customHeaders?.title || data.elementId || "Unknown"
   task.participants = []
 
   // get participants
