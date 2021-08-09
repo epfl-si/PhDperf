@@ -20,6 +20,10 @@ export type Task = TaskData & {
 const Tasks_ = TasksCollection<Task>((data) => {
   const task = data as Task
 
+  task.created_by = data.variables.created_by
+  task.created_at = new Date(data.variables.created_at)
+  task.updated_at = new Date(data.variables.updated_at)
+
   task.title = data.customHeaders?.title
   task.participants = []
 

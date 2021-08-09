@@ -34,8 +34,14 @@ Meteor.methods({
     const diagramProcessId = 'phdAssessProcess'
 
     debug(`calling for a new "phdAssessProcess" instance`)
+
     const zbc = new ZBClient()
-    await zbc.createProcessInstance(diagramProcessId, {}).then(
+
+    await zbc.createProcessInstance(diagramProcessId, {
+      created_at: encrypt(new Date().toJSON()),
+      created_by: encrypt(Meteor.userId()!),
+      updated_at: encrypt(new Date().toJSON()),
+    }).then(
       (res) => {
         debug(`created new instance ${diagramProcessId}, response: ${JSON.stringify(res)}`)
       })
@@ -47,6 +53,7 @@ Meteor.methods({
 
     delete data['submit']  // no thanks, I already know that
     delete data['cancel']  // no thanks, I already know that
+    data['updated_at'] = new Date().toJSON()
 
     data = _.mapValues(data, x => encrypt(x))  // encrypt all data
     // TODO: should be an append to an existing array

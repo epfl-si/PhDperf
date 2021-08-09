@@ -17,13 +17,17 @@ function Task({task}: TaskProps) {
     <div className={'border-top p-2'}>
       <details>
         <summary className={'d-flex align-items-center'}>
-          <span className={'mr-auto'}/>
+          <span className={'mr-auto small'}>
+            <span className={'mr-1'}>Created by {task.created_by}</span>
+            <span className={'mr-1'}>Created {task.created_at.toLocaleString('fr-CH')}</span>
+            <span>Updated {task.updated_at.toLocaleString('fr-CH')}</span>
+          </span>
           <span className={'small'}>
-                          <a href={task.monitorUri} target="_blank" className={'pr-3'}>on Monitor <span
-                            className={"fa fa-external-link"}/></a>
-                          <Link className={''} to={`tasks/${task.key}`}><Button label={'Proceed'}
-                               onClickFn={() => void 0}/></Link>
-                        </span>
+            <a href={task.monitorUri} target="_blank" className={'pr-3'}>on Monitor <span
+              className={"fa fa-external-link"}/></a>
+            <Link className={''} to={`tasks/${task.key}`}><Button label={'Proceed'}
+                 onClickFn={() => void 0}/></Link>
+          </span>
         </summary>
         <pre><code>{task.detail}</code></pre>
         {task.participants &&

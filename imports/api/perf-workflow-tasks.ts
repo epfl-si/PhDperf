@@ -30,6 +30,9 @@ interface CustomHeaderShape {
 export type PhDJob = ZeebeJob<WorkerInputVariables, CustomHeaderShape>
 
 export type TaskData = PhDJob & {
+  created_by: Sciper
+  created_at: Date
+  updated_at: Date
   lastSeen?: Date
 }
 
