@@ -3,3 +3,4 @@ node_modules/
 /docker/zeebe-hazelcast/*.jar
 /docker/simple-monitor/*.jar
 /docker/volumes/zeebe_data/
+tsconfig.tsbuildinfo
