@@ -1,18 +1,16 @@
 import {Mongo} from 'meteor/mongo'
 import {Meteor} from 'meteor/meteor'
-import {Duration, ZBWorkerTaskHandler} from 'zeebe-node'
+import {Duration} from 'zeebe-node'
 import {ZeebeSpreadingClient} from "/imports/api/zeebeStatus";
 import {decrypt} from "/server/encryption";
-import getUsernameBySciper from "/server/ldap";
 import {
-  FillFormTaskData, fillFormTasksCollection,
-  PhDWorkflowInstanceVariables, FillFormJobHeaders
+  TaskData, TasksCollection, PhDJob
 } from '/imports/api/perf-workflow-tasks'
 import debug_ from 'debug'
 
 const debug = debug_('phdAssess:server:workflow')
 
-const PerfWorkflowTasks = fillFormTasksCollection<FillFormTaskData>()
+const tasks = TasksCollection<TaskData>()
 let zBClient: ZeebeSpreadingClient | null = null
 
 export default {
@@ -34,56 +32,38 @@ export default {
       taskHandler:
       // therefore, Fiber'd
         Meteor.bindEnvironment(
-          (job,
+          (job: PhDJob,
           ) => {
             const jobKey: string = job[jobKeyField]
 
-            let task:FillFormTaskData | undefined = PerfWorkflowTasks.findOne({ _id: jobKey } )
+            let task:TaskData | undefined = tasks.findOne({ _id: jobKey } )
 
             if (!task) {  // Let's insert this unknown task
               // decrypt the variables before saving into memory (keep the typed values too)
-              let instanceToMongo: any = job  // make it writable
+              // Typescript hack with the "any" : make it writable by bypassing typescript. Well know it's bad,
+              // but still, better than rebuilding the whole Zeebe interfaces to get it writeable
+              let instanceToMongo: any = job
 
               Object.keys(instanceToMongo['variables']).map((key) => {
-                instanceToMongo['variables'][key] = decrypt(instanceToMongo['variables'][key])
+                instanceToMongo['variables'][key] = decrypt(job.variables[key])
               })
 
               instanceToMongo['_id'] = jobKey
-              PerfWorkflowTasks.insert(instanceToMongo)
+              tasks.insert(instanceToMongo)
 
               debug(`Received a new job from Zeebe ${JSON.stringify(jobKey)}`)
-
-              // TODO: move this to a transfromer, it should happen on update/insert
-              // try to add LDAP user infos from sciper vars (that's it, a var that end with Sciper)
-              // save value into the same name withnout the ending *Sciper. Yes, it's black magic but still
-              Object.keys(instanceToMongo['variables']).map((key) => {
-                if (key.endsWith('Sciper') && instanceToMongo['variables'][key]) {
-                  if (key === 'assigneeSciper') {
-                    return
-                  }
-                  const personTypeName = key.replace(/Sciper$/, "");
-                  const mongoFieldName = `participants.${personTypeName}`
-
-                  getUsernameBySciper(
-                          instanceToMongo['variables'][key],
-                          (ldapUserInfo) => {
-                            PerfWorkflowTasks.update({_id: jobKey}, {$set: {[mongoFieldName]: ldapUserInfo}})
-                          })
-                }
-              })
             }
 
             // To keep insync with Zeebe, log the last time we see this one
-            //PerfWorkflowTasks.update({ _id: jobKey },{ $set: { lastSeen: new Date() }});
+            //tasks.update({ _id: jobKey },{ $set: { lastSeen: new Date() }});
 
             return job.forward()  // tell Zeebe that result may come later, and free ourself for an another work
-
-          }) as ZBWorkerTaskHandler<PhDWorkflowInstanceVariables, FillFormJobHeaders>,
+          })
     })
     debug(`Zeebe worker "${taskType}" created`);
   },
-  find(query: any): Mongo.Cursor<FillFormTaskData> {
-    return PerfWorkflowTasks.find(query)
+  find(query: any): Mongo.Cursor<TaskData> {
+    return tasks.find(query)
   },
   async success(key: string, workerResult: any) {
     debug(`Sending success to worker ${key} with result ${JSON.stringify(workerResult)}`)
@@ -99,7 +79,7 @@ export default {
     })
     debug(`Worker ${key} successfully closed  with the success state`)
 
-    PerfWorkflowTasks.remove({key})
+    tasks.remove({key})
     debug(`Worker ${key} successfully removed from server memory`)
   }
 }

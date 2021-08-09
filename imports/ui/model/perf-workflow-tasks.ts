@@ -1,44 +1,59 @@
 import _ from "lodash"
-import { FillFormTaskData, fillFormTasksCollection } from "/imports/api/perf-workflow-tasks"
-import {LDAPUser} from "meteor/epfl:ldap";
-import {Participant} from "/imports/ui/components/Participant";
+import {TaskData, TasksCollection} from "/imports/api/perf-workflow-tasks"
+import {Sciper} from "/imports/api/datatypes";
 
-type ParticipantName =
-  "programAssistant"
-  | "phdStudent"
-  | "thesisDirector"
-  | "thesisCoDirector"
-  | "programDirector"
-  | "Mentor"
-
-//type TaskParticipant = Record<ParticipantName, LDAPUser>
-
-interface TaskParticipant {
-  [participant: ParticipantName]: LDAPUser
+export interface TaskParticipant {
+  sciper: Sciper
+  displayName: string
+  role: string
+  isAssignee: boolean
 }
 
-export type PerfWorkflowTask = FillFormTaskData & {
+export type Task = TaskData & {
   title: string | undefined
-  participants: TaskParticipant
+  participants: TaskParticipant[]
   uri: string
   detail: any
   monitorUri: string  // not for prod
 }
 
-const PerfWorkflowTasks_ = fillFormTasksCollection<PerfWorkflowTask>((data) => {
-  const task = data as PerfWorkflowTask
+const Tasks_ = TasksCollection<Task>((data) => {
+  const task = data as Task
+
   task.title = data.customHeaders?.title
+  task.participants = []
+
+  // get participants
+  // TODO: get all participants, this a proto on how to do it
+  /*
+  import {MyInputVariables, TaskData, TasksCollection, WorkerInputVariables} from "/imports/api/perf-workflow-tasks"
+  const keysOfProps = Object.keys(new MyInputVariables()) as WorkerInputVariables;
+  keysOfProps.forEach((key: string | number) => {
+    if (key in data.variables) {
+      task.participants.push(data.variables[key])
+    }
+  })*/
+  if (data.variables.phdStudentSciper) {
+    const isAssignee = data.variables.assigneeSciper === data.variables.phdStudentSciper
+    task.participants.push({
+      sciper: data.variables.phdStudentSciper,
+      displayName: 'No name at the moment',
+      role: 'phdStudent',
+      isAssignee: isAssignee,
+    })
+  }
+
   task.uri = `/tasks/${data.key}`
   task.detail = `Job key: ${data.key}, workflow version: ${data.processDefinitionVersion}, variables: ${JSON.stringify(_.omit(data.variables, 'metadata'), null, 2)}`
   task.monitorUri = `http://localhost:8082/views/instances/${data.processInstanceKey}`
   return task
 })
 
-const PerfWorkflowTasksClassMethods = {
+const TasksClassMethods = {
   findByKey(key : string) {
-    return PerfWorkflowTasks_.findOne({key})
+    return Tasks_.findOne({key})
   }
 }
 
-export const PerfWorkflowTasks : typeof PerfWorkflowTasks_ & typeof PerfWorkflowTasksClassMethods =
-  Object.assign(PerfWorkflowTasks_, PerfWorkflowTasksClassMethods)
+export const PerfWorkflowTasks : typeof Tasks_ & typeof TasksClassMethods =
+  Object.assign(Tasks_, TasksClassMethods)
