@@ -1,38 +1,46 @@
 import { Meteor } from 'meteor/meteor'
 import { Mongo } from 'meteor/mongo'
-import { Job } from 'zeebe-node'
+import {Sciper} from "/imports/api/datatypes";
 
-import {LDAPUser} from "meteor/epfl:ldap";
-
-export type PhDWorkflowInstanceVariables = {
-  assignee: LDAPUser
-  programAssistant: LDAPUser
-  phdStudent: LDAPUser
-  thesisDirector: LDAPUser
-  thesisCoDirector: LDAPUser
-  programDirector: LDAPUser
-  mentor: LDAPUser
+export interface FormioActivityLog {
+  timezone?: string;
+  offset?: number;
+  origin?: string;
+  referrer?: string;
+  browserName?: string;
+  userAgent?: string;
+  pathName?: string;
+  onLine?: boolean;
 }
 
-export type FillFormJobHeaders = {
-  groups: string[]
-  title: string
-  formIO: string
+export interface TaskParticipant {
+  sciper: Sciper
+  displayName: string
+  role: string
+  isAssignee: boolean
 }
 
-type FillFormTaskDataBase = Job<PhDWorkflowInstanceVariables, FillFormJobHeaders>
-
-export type FillFormTaskData = FillFormTaskDataBase & {
+export type TaskData = {
+  _id: string
+  created_by?: Sciper
+  created_at?: Date
+  updated_at?: Date
   lastSeen?: Date
+  title?: string
+  participants?: TaskParticipant[]
+  formIO: string
+  zeebeInfo: any
+  variables?: any
+  activityLogs?: FormioActivityLog[]
 }
-
-const collectionName = 'fill-form-tasks'
 
 // Due to restrictions in the Meteor model, this function can only be
 // called once per locus (i.e. once in the client and once in the
 // server).
-export function fillFormTasksCollection<U>(transform ?: (doc: FillFormTaskData) => U) {
-  return new Mongo.Collection<FillFormTaskData, U>(
+export function TasksCollection<U>(transform ?: (doc: TaskData) => U) {
+    const collectionName = 'tasks'
+
+  return new Mongo.Collection<TaskData, U>(
     collectionName,
     // The collection is *not* persistent server-side; instead, it gets fed from Zeebe
     Meteor.isServer ? { connection : null, transform } : { transform })

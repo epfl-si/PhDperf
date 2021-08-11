@@ -1,22 +1,21 @@
 import React from "react"
+import {TaskParticipant} from "/imports/ui/model/perf-workflow-tasks";
 
 const allGoodBoxColor = 'bg-success text-white'
 const awaitingBoxColor = 'bg-info text-white'
-const nothingBoxColor = 'bg-light'
 
-export const Participant = ({user, role, isAssignee}) => {
+type ParticipantProps = {
+  user: TaskParticipant
+}
+
+export const Participant = ({user}: ParticipantProps) => {
   return (
     <>
-      {user.length != 0 &&
-      <div className={`participant border m-1 p-2 ${isAssignee ? awaitingBoxColor : allGoodBoxColor}`}>
-        <div className={`small border-bottom border-white`}>{role}</div>
-        <div className={`small`}>{user.displayName}</div>
-      </div>
-      }
-      {user.length == 0 &&
-      <div className={`participant small border m-1 p-2 ${nothingBoxColor}`}>
-        <div className={`small border-bottom border-white`}>{role}</div>
-        <div>None</div>
+      {user.sciper &&
+      <div className={`participant border m-1 p-2 ${user.isAssignee ? awaitingBoxColor : allGoodBoxColor}`}>
+        <div className={`small border-bottom border-white`}>Role: {user.role}</div>
+        <div className={`small`}>Sciper: {user.sciper}</div>
+        <div className={`small`}>Display name: {user.displayName}</div>
       </div>
       }
     </>

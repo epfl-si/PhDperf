@@ -1,44 +1,38 @@
-import _ from "lodash"
-import { FillFormTaskData, fillFormTasksCollection } from "/imports/api/perf-workflow-tasks"
-import {LDAPUser} from "meteor/epfl:ldap";
-import {Participant} from "/imports/ui/components/Participant";
+import {TaskData, TasksCollection} from "/imports/api/perf-workflow-tasks"
+import {Sciper} from "/imports/api/datatypes";
 
-type ParticipantName =
-  "programAssistant"
-  | "phdStudent"
-  | "thesisDirector"
-  | "thesisCoDirector"
-  | "programDirector"
-  | "Mentor"
-
-//type TaskParticipant = Record<ParticipantName, LDAPUser>
-
-interface TaskParticipant {
-  [participant: ParticipantName]: LDAPUser
+export interface TaskParticipant {
+  sciper: Sciper
+  displayName: string
+  role: string
+  isAssignee: boolean
 }
 
-export type PerfWorkflowTask = FillFormTaskData & {
-  title: string | undefined
-  participants: TaskParticipant
+export type Task = TaskData & {
+  title: string
+  participants: TaskParticipant[]
   uri: string
   detail: any
   monitorUri: string  // not for prod
 }
 
-const PerfWorkflowTasks_ = fillFormTasksCollection<PerfWorkflowTask>((data) => {
-  const task = data as PerfWorkflowTask
-  task.title = data.customHeaders?.title
-  task.uri = `/tasks/${data.key}`
-  task.detail = `Job key: ${data.key}, workflow version: ${data.processDefinitionVersion}, variables: ${JSON.stringify(_.omit(data.variables, 'metadata'), null, 2)}`
-  task.monitorUri = `http://localhost:8082/views/instances/${data.processInstanceKey}`
+const Tasks_ = TasksCollection<Task>((data) => {
+  const task = data as Task
+  task.detail = [
+    `Job key: ${data._id}`,
+    `workflow version: ${data.zeebeInfo.processDefinitionVersion}`,
+    `zeebeInfo: ${JSON.stringify(data.zeebeInfo, null, 2)}`,
+    `activityLogs: ${JSON.stringify(data.activityLogs, null, 2)}`,
+    ].join(", ")
+  task.monitorUri = `http://localhost:8082/views/instances/${data.zeebeInfo.processInstanceKey}`
   return task
 })
 
-const PerfWorkflowTasksClassMethods = {
-  findByKey(key : string) {
-    return PerfWorkflowTasks_.findOne({key})
+const TasksClassMethods = {
+  findByKey(key: string) {
+    return Tasks_.findOne({_id: key})
   }
 }
 
-export const PerfWorkflowTasks : typeof PerfWorkflowTasks_ & typeof PerfWorkflowTasksClassMethods =
-  Object.assign(PerfWorkflowTasks_, PerfWorkflowTasksClassMethods)
+export const PerfWorkflowTasks : typeof Tasks_ & typeof TasksClassMethods =
+  Object.assign(Tasks_, TasksClassMethods)

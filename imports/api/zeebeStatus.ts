@@ -3,9 +3,10 @@ import type {ZBClientOptions} from "zeebe-node";
 import {ConnectionStatusEvent, ZBClient, ZBWorker} from "zeebe-node";
 import {Meteor} from "meteor/meteor";
 
+
 export type ZeebeStatus = {
-  type: string
-  status: string
+  type: "client" | "worker"
+  status: keyof typeof ConnectionStatusEvent | "disconnected" | "starting"
 }
 
 export const zeebeStatusCollection = new Mongo.Collection<ZeebeStatus>('zeebeStatus', {connection: null})
