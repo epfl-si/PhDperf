@@ -6,14 +6,22 @@ export function encrypt(message: string | [], passphrase: string | undefined = p
     throw new Meteor.Error('encryption error', 'Trying to encrypt a value without a passphrase set');
   }
 
-  return CryptoJS.AES.encrypt(JSON.stringify(message), passphrase).toString();
+  if (message === "") {
+    return message;
+  } else {
+    return CryptoJS.AES.encrypt(JSON.stringify(message), passphrase).toString();
+  }
+
 }
 
 export function decrypt(cryptedMessage: string, passphrase: string | undefined = process.env.PHDASSESS_ENCRYPTION_KEY): string {
   if (passphrase === undefined) {
     throw new Meteor.Error('encryption error', 'Trying to encrypt a value without a passphrase set');
   }
-
-  const bytes = CryptoJS.AES.decrypt(cryptedMessage, passphrase)
-  return JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
+  if (cryptedMessage === "") {
+    return cryptedMessage;
+  } else {
+    const bytes = CryptoJS.AES.decrypt(cryptedMessage, passphrase)
+    return JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
+  }
 }
