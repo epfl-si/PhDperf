@@ -15,7 +15,7 @@ export const Participant = ({user}: ParticipantProps) => {
       <div className={`participant border m-1 p-2 ${user.isAssignee ? awaitingBoxColor : allGoodBoxColor}`}>
         <div className={`small border-bottom border-white`}>Role: {user.role}</div>
         <div className={`small`}>Sciper: {user.sciper}</div>
-        <div className={`small`}>Name: {user.displayName}</div>
+        <div className={`small`}>Display name: {user.displayName}</div>
       </div>
       }
     </>

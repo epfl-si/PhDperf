@@ -6,10 +6,18 @@ import _ from 'lodash'
 import findUp from 'find-up'
 import '/imports/policy'
 import {ZBClient} from "zeebe-node";
-import {get_user_permitted_tasks,
-  is_allowed_to_submit} from './permission/tasks'
+import {
+  get_user_permitted_tasks,
+  is_allowed_to_submit
+} from './permission/tasks'
+import {
+  TaskData,
+  TasksCollection,
+  FormioActivityLog
+} from "/imports/api/perf-workflow-tasks"
 
 const debug = require('debug')('server/main')
+const tasks = TasksCollection<TaskData>()
 
 require("dotenv").config({path: findUp.sync(".env")})
 
@@ -46,20 +54,35 @@ Meteor.methods({
         debug(`created new instance ${diagramProcessId}, response: ${JSON.stringify(res)}`)
       })
   },
-  async submit(key, data, metadata) {
+  async submit(key, data, metadata: FormioActivityLog) {
     if (!is_allowed_to_submit(key)) {
-      throw new Meteor.Error(403, 'Error 403: Not allowed', 'Check your permission');
+      debug("Unallowed user is trying to sumbit a task")
+      throw new Meteor.Error(403, 'Error 403: Not allowed', 'Check your permission')
     }
 
-    delete data['submit']  // no thanks, I already know that
-    delete data['cancel']  // no thanks, I already know that
-    data['updated_at'] = new Date().toJSON()
+    // TODO: check what is permitted to submit
 
-    data = _.mapValues(data, x => encrypt(x))  // encrypt all data
-    // TODO: should be an append to an existing array
-    data['activityLogs'] = encrypt(JSON.stringify(metadata))  // add some info on the submitter
+    // load the task we may need some values
+    const task:TaskData | undefined = tasks.findOne({ _id: key } )
 
-    await WorkersClient.success(key, data)
-    debug("Submitted form result")
+    if (task) {
+      delete data['submit']  // no thanks, I already know that
+      delete data['cancel']  // no thanks, I already know that
+      data.updated_at = new Date().toJSON()
+
+      data = _.mapValues(data, x => encrypt(x))  // encrypt all data
+
+      // append activity over other activities
+      const currentActivityLog = task.activityLogs || []
+      currentActivityLog.push(metadata)
+      data.activityLogs = encrypt(JSON.stringify(currentActivityLog))  // add some info on the submitter
+
+      await WorkersClient.success(task._id, data)
+      tasks.remove({_id: task._id})
+      debug("Submitted form result")
+    } else {
+      debug("Error can not find the task that is trying to be submitted")
+      throw new Meteor.Error(404, 'Error 404: Unknown task', 'Check the task exist by refreshing your browser')
+    }
   },
 })

@@ -4,8 +4,11 @@ import {customEvent} from '/imports/ui/model/formIo'
 import {PerfWorkflowTasks} from '/imports/ui/model/perf-workflow-tasks'
 import {Meteor} from 'meteor/meteor'
 import {useTracker} from 'meteor/react-meteor-data'
+import {Loader} from "epfl-sti-react-library"
+/*
 import {Alert, Button, Loader} from "epfl-sti-react-library"
-import {Link} from "react-router-dom";
+import {Link} from "react-router-dom"
+*/
 import _ from "lodash";
 import findDisabledFields from "/imports/lib/formIOUtils";
 
@@ -18,27 +21,34 @@ export function Task({workflowKey}: { workflowKey: string }) {
   }, [workflowKey]);
 
   const task = useTracker(() => PerfWorkflowTasks.findByKey(workflowKey), [workflowKey])
-  const formIoJson = task?.customHeaders?.formIO
 
   return (
     <>
-      {taskLoading ? (<>
-        <Loader message={'Fetching task...'}/>
-      </>) : (<>
-        <h1 className={'h2'}>{task?.title || `Task ${workflowKey}`}</h1>
-        <Errors/>
-        {formIoJson ? (
-          <Form form={JSON.parse(formIoJson as string)}
-                submission={ { data: task?.variables }}
+      {
+        task?.formIO ?
+        taskLoading ? (<>
+          <Loader message={'Fetching task...'}/>
+        </>) : (<>
+          <h1 className={'h2'}>{task.title || `Task ${workflowKey}`}</h1>
+          <Errors/>
+          <Form form={JSON.parse(task.formIO)}
+                submission={ { data: task.variables }}
                 noDefaultSubmitButton={true}
                 onSubmit={onSubmit}
                 onCustomEvent={(event: customEvent) => event.type == 'cancelClicked' && window.history.go(-1)}
-          />) : (<>
+          />
+        </>)
+      :
+      (<div>Unable to find the requested task no {workflowKey}</div>)
+      }
+    </>)
+
+  /*
+  (<>
           <Alert message={'Form submitted'} alertType={'success'}/>
           <Link to={`/`}><Button label={'Back'} onClickFn={() => void 0}/></Link>
-        </>)}
-      </>)}
-    </>)
+        </>)
+   */
 
   function onSubmit(this: any, formData: { data: any, metadata: any }) {
     // As formio sent all the form fields (disabled included)

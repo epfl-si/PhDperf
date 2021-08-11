@@ -19,13 +19,13 @@ function Task({task}: TaskProps) {
         <summary className={'d-flex align-items-center'}>
           <span className={'mr-auto small'}>
             <span className={'mr-1'}>Created by {task.created_by}</span>
-            <span className={'mr-1'}>Created {task.created_at.toLocaleString('fr-CH')}</span>
-            <span>Updated {task.updated_at.toLocaleString('fr-CH')}</span>
+            <span className={'mr-1'}>Created {task.created_at?.toLocaleString('fr-CH')}</span>
+            <span>Updated {task.updated_at?.toLocaleString('fr-CH')}</span>
           </span>
           <span className={'small'}>
             <a href={task.monitorUri} target="_blank" className={'pr-3'}>on Monitor <span
               className={"fa fa-external-link"}/></a>
-            <Link className={''} to={`tasks/${task.key}`}><Button label={'Proceed'}
+            <Link className={''} to={`tasks/${task._id}`}><Button label={'Proceed'}
                  onClickFn={() => void 0}/></Link>
           </span>
         </summary>
@@ -33,7 +33,7 @@ function Task({task}: TaskProps) {
         {task.participants &&
           task.participants.map((participant) => (
               <Participant
-                key={`${task.key}-${participant.role}`}
+                key={`${task._id}-${participant.role}`}
                 user={participant}
               />
           )
@@ -67,7 +67,7 @@ export default function TaskList() {
                 <h3 className={'mt-5'}>{taskGrouper}</h3>
                 {
                   groupByTasks[taskGrouper].map((task: Task) =>
-                    <Task key={task.key} task={task}/>
+                    <Task key={task._id} task={task}/>
                   )
                 }
               </div>
