@@ -34,5 +34,5 @@ const TasksClassMethods = {
   }
 }
 
-export const PerfWorkflowTasks : typeof Tasks_ & typeof TasksClassMethods =
+export const Tasks : typeof Tasks_ & typeof TasksClassMethods =
   Object.assign(Tasks_, TasksClassMethods)

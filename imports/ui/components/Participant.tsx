@@ -1,5 +1,5 @@
 import React from "react"
-import {TaskParticipant} from "/imports/ui/model/perf-workflow-tasks";
+import {TaskParticipant} from "/imports/ui/model/tasks";
 
 const allGoodBoxColor = 'bg-success text-white'
 const awaitingBoxColor = 'bg-info text-white'

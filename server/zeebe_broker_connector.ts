@@ -15,7 +15,7 @@ import {
   IOutputVariables,
   JobCompletionInterface
 } from "zeebe-node"
-import {TaskParticipant} from "/imports/ui/model/perf-workflow-tasks";
+import {TaskParticipant} from "/imports/ui/model/tasks";
 import _ from "lodash";
 
 const debug = debug_('phdAssess:server:workflow')

@@ -32,4 +32,4 @@ Thing to know (aka Programagikal):
 Adding a *Sciper variables name means the app will try to convert it to a user with ldap info
 See zeebe_broker_connector.ts where getUserBySciper is used
 
-You may have additional information on the types definition imports/api/perf-workflow-tasks.ts
+You may have additional information on the types definition imports/api/tasks.ts

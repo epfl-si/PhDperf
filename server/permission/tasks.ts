@@ -1,6 +1,6 @@
 import {Meteor} from "meteor/meteor";
 import WorkersClient from "/server/zeebe_broker_connector";
-import {PerfWorkflowTasks} from "/imports/ui/model/perf-workflow-tasks";
+import {Tasks} from "/imports/ui/model/tasks";
 
 export const get_user_permitted_tasks = () => {
   if (Meteor.user()?.isAdmin) {
@@ -23,7 +23,7 @@ export const is_allowed_to_submit = (taskKey: string) : boolean => {
     return true
   }
 
-  return PerfWorkflowTasks.find({$and : [
+  return Tasks.find({$and : [
       {
         "key": taskKey
       },

@@ -2,7 +2,7 @@ import {Meteor} from "meteor/meteor"
 import React from "react"
 import _ from "lodash"
 import {useTracker} from 'meteor/react-meteor-data'
-import {Task, PerfWorkflowTasks} from '/imports/ui/model/perf-workflow-tasks'
+import {Task, Tasks} from '/imports/ui/model/tasks'
 import {WorkflowStarter} from './workflowStarter'
 import {Button, Loader} from "epfl-sti-react-library"
 import {Link} from "react-router-dom"
@@ -51,7 +51,7 @@ export default function TaskList() {
     return !handle.ready();
   }, []);
 
-  const tasks = useTracker(() => PerfWorkflowTasks.find({}).fetch())
+  const tasks = useTracker(() => Tasks.find({}).fetch())
   const groupByTasks = _.groupBy(tasks, 'title')
 
   return (

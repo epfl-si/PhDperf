@@ -23,6 +23,7 @@
     "formiojs": "^4.13.0-rc.19",
     "lodash": "^4.17.21",
     "meteor-node-stubs": "git://github.com/meteor/node-stubs.git",
+    "timed-memoize": "^2.4.2",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-hot-toast": "^2.0.0",

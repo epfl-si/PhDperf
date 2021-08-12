@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import {Errors, Form} from '@formio/react'
 import {customEvent} from '/imports/ui/model/formIo'
-import {PerfWorkflowTasks} from '/imports/ui/model/perf-workflow-tasks'
+import {Tasks} from '/imports/ui/model/tasks'
 import {global_Error, Meteor} from 'meteor/meteor'
 import {useTracker} from 'meteor/react-meteor-data'
 import {Alert, Button, Loader} from "epfl-sti-react-library"
@@ -18,7 +18,7 @@ export function Task({workflowKey}: { workflowKey: string }) {
     return !handle.ready();
   }, [workflowKey]);
 
-  const task = PerfWorkflowTasks.findByKey(workflowKey)
+  const task = Tasks.findByKey(workflowKey)
 
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
