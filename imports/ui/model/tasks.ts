@@ -1,4 +1,4 @@
-import {TaskData, TasksCollection} from "/imports/api/perf-workflow-tasks"
+import {TaskData, TasksCollection} from "../../api/tasks"
 import {Sciper} from "/imports/api/datatypes";
 
 export interface TaskParticipant {

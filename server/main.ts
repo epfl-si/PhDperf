@@ -14,7 +14,7 @@ import {
   TaskData,
   TasksCollection,
   FormioActivityLog
-} from "/imports/api/perf-workflow-tasks"
+} from "/imports/api/tasks"
 
 const debug = require('debug')('server/main')
 const tasks = TasksCollection<TaskData>()

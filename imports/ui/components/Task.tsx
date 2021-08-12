@@ -65,7 +65,7 @@ export function Task({workflowKey}: { workflowKey: string }) {
     const formDataPicked = _.omit(formData.data, findDisabledFields(this.form))
 
     setSubmitting(true)
-    debugger
+
     Meteor.call("submit",
       workflowKey,
       formDataPicked,

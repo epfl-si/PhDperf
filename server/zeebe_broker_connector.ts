@@ -4,7 +4,7 @@ import {ZeebeSpreadingClient} from "/imports/api/zeebeStatus"
 import {decrypt} from "/server/encryption"
 import {
   TaskData, TasksCollection
-} from '/imports/api/perf-workflow-tasks'
+} from '/imports/api/tasks'
 import debug_ from 'debug'
 import {Sciper} from "/imports/api/datatypes";
 import {
