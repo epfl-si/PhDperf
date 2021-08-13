@@ -21,7 +21,6 @@
         <bpmn:flowNodeRef>Activity_1686jxu</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_0s9w3zi</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_14o47pb</bpmn:flowNodeRef>
-        <bpmn:childLaneSet id="LaneSet_1ycmwli" />
       </bpmn:lane>
       <bpmn:lane id="Lane_1e7w1ps" name="Mentor">
         <bpmn:flowNodeRef>Gateway_1vkk1yr</bpmn:flowNodeRef>
