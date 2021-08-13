@@ -3,7 +3,7 @@ import {Meteor} from 'meteor/meteor'
 import {ZeebeSpreadingClient} from "/imports/api/zeebeStatus"
 import {decrypt} from "/server/encryption"
 import {
-  TaskData, TasksCollection
+  TasksCollection
 } from '/imports/api/tasks'
 import debug_ from 'debug'
 import {Sciper} from "/imports/api/datatypes";
@@ -15,7 +15,7 @@ import {
   IOutputVariables,
   JobCompletionInterface
 } from "zeebe-node"
-import {TaskParticipant} from "/imports/ui/model/tasks";
+import {TaskData, TaskParticipant} from "/imports/ui/model/tasks";
 import _ from "lodash";
 
 const debug = debug_('phdAssess:server:workflow')
@@ -107,9 +107,10 @@ function zeebeJobToTask(job: PhDZeebeJob): TaskData {
     if (key === 'assigneeSciper') {  // assigne is an info, not a participant
       return
     }
+
     newTask.participants!.push({
       sciper: decryptedVariables[key],
-      displayName: "",
+      displayName: undefined,  // will do later, as it may be an crashing async API fetch and we want to keep going
       role: key.replace(/Sciper$/, ""),
       isAssignee: decryptedVariables.assigneeSciper && decryptedVariables.assigneeSciper == decryptedVariables[key]
     } as TaskParticipant)
@@ -150,16 +151,18 @@ export default {
         Meteor.bindEnvironment(
           (job: PhDZeebeJob,
           ) => {
-            const task:TaskData | undefined = tasks.findOne({ _id: job.key } )
+            let task_id: string | undefined;
 
-            if (!task) {  // Let's add this unknown task
+            if (!tasks.findOne({ _id: job.key } )) {  // Let's add this unknown task
               let newTask = zeebeJobToTask(job)
-              tasks.insert(newTask)
-              debug(`Received a new job from Zeebe ${JSON.stringify(job.key)}`)
+              task_id = tasks.insert(newTask)
+              debug(`Received a new job from Zeebe ${ JSON.stringify(job.key) }`)
+            } else {
+              task_id = job.key
             }
 
             // To keep insync with Zeebe, log the last time we see this one
-            tasks.update({ _id: task?._id },{ $set: { lastSeen: new Date() }});
+            tasks.update({ _id: task_id },{ $set: { lastSeen: new Date() }});
 
             return job.forward()  // tell Zeebe that result may come later, and free ourself for an another work
           })

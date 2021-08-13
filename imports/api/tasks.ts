@@ -1,38 +1,6 @@
 import { Meteor } from 'meteor/meteor'
 import { Mongo } from 'meteor/mongo'
-import {Sciper} from "/imports/api/datatypes";
-
-export interface FormioActivityLog {
-  timezone?: string;
-  offset?: number;
-  origin?: string;
-  referrer?: string;
-  browserName?: string;
-  userAgent?: string;
-  pathName?: string;
-  onLine?: boolean;
-}
-
-export interface TaskParticipant {
-  sciper: Sciper
-  displayName: string
-  role: string
-  isAssignee: boolean
-}
-
-export type TaskData = {
-  _id: string
-  created_by?: Sciper
-  created_at?: Date
-  updated_at?: Date
-  lastSeen?: Date
-  title?: string
-  participants?: TaskParticipant[]
-  formIO: string
-  zeebeInfo: any
-  variables?: any
-  activityLogs?: FormioActivityLog[]
-}
+import {TaskData} from "/imports/ui/model/tasks";
 
 // Due to restrictions in the Meteor model, this function can only be
 // called once per locus (i.e. once in the client and once in the
