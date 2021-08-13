@@ -16,7 +16,7 @@ import {
   TaskData,
   TaskParticipant,
   TasksCollection
-} from "/imports/ui/model/tasks";
+} from "/imports/model/tasks";
 import _ from "lodash";
 
 const debug = debug_('phdAssess:server:workflow')

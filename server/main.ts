@@ -16,7 +16,7 @@ import {
   TaskData,
   TaskParticipant,
   TasksCollection
-} from "/imports/ui/model/tasks";
+} from "/imports/model/tasks";
 
 const debug = require('debug')('server/main')
 const tasks = TasksCollection<TaskData>()

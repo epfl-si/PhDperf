@@ -1,5 +1,5 @@
 import React from "react"
-import {TaskParticipant} from "/imports/ui/model/tasks";
+import {TaskParticipant} from "/imports/model/tasks";
 
 const allGoodBoxColor = 'bg-success text-white'
 const awaitingBoxColor = 'bg-info text-white'

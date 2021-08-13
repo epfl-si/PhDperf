@@ -1,4 +1,4 @@
-import {TaskData, TasksCollection} from "/imports/ui/model/tasks";
+import {TaskData, TasksCollection} from "/imports/model/tasks";
 
 // add some useful thing for the front
 export type Task = TaskData & {

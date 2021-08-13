@@ -1,6 +1,6 @@
 import {Meteor} from "meteor/meteor";
 import WorkersClient from "/server/zeebe_broker_connector";
-import {Tasks} from "/imports/ui/model/tasks";
+import {Tasks} from "/imports/api/tasks";
 
 export const get_user_permitted_tasks = () => {
   if (Meteor.user()?.isAdmin) {
