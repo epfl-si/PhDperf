@@ -10,11 +10,13 @@ import {
   get_user_permitted_tasks,
   is_allowed_to_submit
 } from './permission/tasks'
-import {
-  TasksCollection,
-} from "/imports/api/tasks"
 import {getUserInfoMemoized} from "/server/userFetcher";
-import {FormioActivityLog, TaskData, TaskParticipant} from "/imports/ui/model/tasks";
+import {
+  FormioActivityLog,
+  TaskData,
+  TaskParticipant,
+  TasksCollection
+} from "/imports/ui/model/tasks";
 
 const debug = require('debug')('server/main')
 const tasks = TasksCollection<TaskData>()
@@ -68,7 +70,6 @@ tasks.find({}, {fields: { participants: 1}}).observeChanges({
     }
   },
 })
-
 
 Meteor.publish('tasks', function () {
   return get_user_permitted_tasks()

@@ -1,4 +1,5 @@
-import {TasksCollection} from "../../api/tasks"
+import { Meteor } from 'meteor/meteor'
+import { Mongo } from 'meteor/mongo'
 import {Sciper} from "/imports/api/datatypes";
 
 export interface FormioActivityLog {
@@ -33,30 +34,14 @@ export type TaskData = {
   activityLogs?: FormioActivityLog[]
 }
 
-// add some useful thing for frontend
-export type Task = TaskData & {
-  uri: string
-  detail: any
-  monitorUri: string  // not for prod
+// Due to restrictions in the Meteor model, this function can only be
+// called once per locus (i.e. once in the client and once in the
+// server).
+export function TasksCollection<U>(transform ?: (doc: TaskData) => U) {
+  const collectionName = 'tasks'
+
+  return new Mongo.Collection<TaskData, U>(
+    collectionName,
+    // The collection is *not* persistent server-side; instead, it gets fed from Zeebe
+    Meteor.isServer ? { connection : null, transform } : { transform })
 }
-
-const Tasks_ = TasksCollection<Task>((data) => {
-  const task = data as Task
-  task.detail = [
-    `Job key: ${data._id}`,
-    `workflow version: ${data.zeebeInfo.processDefinitionVersion}`,
-    `zeebeInfo: ${JSON.stringify(data.zeebeInfo, null, 2)}`,
-    `activityLogs: ${JSON.stringify(data.activityLogs, null, 2)}`,
-    ].join(", ")
-  task.monitorUri = `http://localhost:8082/views/instances/${data.zeebeInfo.processInstanceKey}`
-  return task
-})
-
-const TasksClassMethods = {
-  findByKey(key: string) {
-    return Tasks_.findOne({_id: key})
-  }
-}
-
-export const Tasks : typeof Tasks_ & typeof TasksClassMethods =
-  Object.assign(Tasks_, TasksClassMethods)

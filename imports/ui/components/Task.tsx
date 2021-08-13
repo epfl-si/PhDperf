@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import {Errors, Form} from '@formio/react'
 import {customEvent} from '/imports/ui/model/formIo'
-import {Tasks} from '/imports/ui/model/tasks'
+import {Tasks} from '/imports/api/tasks'
 import {global_Error, Meteor} from 'meteor/meteor'
 import {useTracker} from 'meteor/react-meteor-data'
 import {Alert, Button, Loader} from "epfl-sti-react-library"

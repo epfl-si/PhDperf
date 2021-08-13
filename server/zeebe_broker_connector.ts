@@ -2,9 +2,6 @@ import {Mongo} from 'meteor/mongo'
 import {Meteor} from 'meteor/meteor'
 import {ZeebeSpreadingClient} from "/imports/api/zeebeStatus"
 import {decrypt} from "/server/encryption"
-import {
-  TasksCollection
-} from '/imports/api/tasks'
 import debug_ from 'debug'
 import {Sciper} from "/imports/api/datatypes";
 import {
@@ -15,7 +12,11 @@ import {
   IOutputVariables,
   JobCompletionInterface
 } from "zeebe-node"
-import {TaskData, TaskParticipant} from "/imports/ui/model/tasks";
+import {
+  TaskData,
+  TaskParticipant,
+  TasksCollection
+} from "/imports/ui/model/tasks";
 import _ from "lodash";
 
 const debug = debug_('phdAssess:server:workflow')
