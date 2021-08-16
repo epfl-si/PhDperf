@@ -3,49 +3,20 @@ import {Meteor} from 'meteor/meteor'
 import {ZeebeSpreadingClient} from "/imports/api/zeebeStatus"
 import {decrypt} from "/server/encryption"
 import debug_ from 'debug'
-import {Sciper} from "/imports/api/datatypes";
 import {
   Duration,
   Job,
-  ICustomHeaders,
-  IInputVariables,
   IOutputVariables,
   JobCompletionInterface
 } from "zeebe-node"
 import {
+  PhDCustomHeaderShape,
+  PhDInputVariables,
   TaskData,
-  TaskParticipant,
   TasksCollection
-} from "/imports/model/tasks";
-import _ from "lodash";
+} from "/imports/model/tasks"
 
 const debug = debug_('phdAssess:server:workflow')
-
-// This are the bpmn variables we could find for every steps and
-// we will need through the code.
-// Why a class instead an interface here ? To be able to read the
-// keys later in the process. See https://stackoverflow.com/a/59806829
-export class PhDInputVariables implements IInputVariables {
-  created_by?: Sciper
-  created_at?: string  // JSON date
-  updated_at?: string  // JSON date
-  assigneeSciper?: Sciper
-  programAssistantSciper?: Sciper
-  phdStudentSciper?: Sciper
-  thesisDirectorSciper?: Sciper
-  thesisCoDirectorSciper?: Sciper
-  programDirectorSciper?: Sciper
-  mentorSciper?: Sciper
-  activityLogs?: string
-  [key: string]: any  // the others var
-}
-
-export class PhDFormCustomHeaderShape implements ICustomHeaders {
-  groups?: string[]  // manage permission groupwise
-  title?: string  // title shown for this task
-  formIO?: string  // the formIO JSON
-  [key: string]: any  // the others var
-}
 
 // what is send as result
 // should be the whole form, or an ACL decided value
@@ -54,7 +25,7 @@ interface OutputVariables {
 }
 
 // redeclare what is a job in the PhD context
-export interface PhDZeebeJob<WorkerInputVariables = PhDInputVariables, CustomHeaderShape = PhDFormCustomHeaderShape, WorkerOutputVariables = IOutputVariables> extends Job<WorkerInputVariables, CustomHeaderShape>, JobCompletionInterface<WorkerOutputVariables> {
+interface PhDZeebeJob<WorkerInputVariables = PhDInputVariables, CustomHeaderShape = PhDCustomHeaderShape, WorkerOutputVariables = IOutputVariables> extends Job<WorkerInputVariables, CustomHeaderShape>, JobCompletionInterface<WorkerOutputVariables> {
 }
 
 const tasks = TasksCollection<TaskData>()
@@ -81,41 +52,15 @@ function zeebeJobToTask(job: PhDZeebeJob): TaskData {
       }
     })
 
-  let newTask: TaskData = {
+  return Object.assign(job, {
     _id: job.key,
-    created_by: decryptedVariables.created_by!,
-    created_at: decryptedVariables.created_at ? new Date(decryptedVariables.created_at) : undefined,
-    updated_at: decryptedVariables.updated_at ? new Date(decryptedVariables.updated_at) : undefined,
-    title: job.customHeaders.title!,
-    participants: [],
-    formIO: job.customHeaders.formIO!,
-    zeebeInfo: _.omit(job, ['variables', 'customHeaders']),
-    variables: _.omit(decryptedVariables,
-      'created_by',
-      'created_at',
-      'updated_at',
-      'updated_at',
-      'title',
-      'activityLogs',
-    )
-  }
-
-  // set activitylogs
-  newTask.activityLogs = decryptedVariables.activityLogs ? JSON.parse(decryptedVariables.activityLogs) : []
-
-  // Fullfill participant
-  Object.keys(decryptedVariables).filter(key => key.endsWith('Sciper')).map((key) => {
-    if (key === 'assigneeSciper') {  // assigne is an info, not a participant
-      return
-    }
-
-    newTask.participants!.push({
-      sciper: decryptedVariables[key],
-      displayName: undefined,  // will do later, as it may be an crashing async API fetch and we want to keep going
-      role: key.replace(/Sciper$/, ""),
-      isAssignee: decryptedVariables.assigneeSciper && decryptedVariables.assigneeSciper == decryptedVariables[key]
-    } as TaskParticipant)
+    variables: decryptedVariables
   })
+
+  //
+  //zeebeInfo: _.omit(job, ['variables', 'customHeaders']),
+  // set activitylogs
+  //newTask.activityLogs = decryptedVariables.activityLogs ? JSON.parse(decryptedVariables.activityLogs) : []
 
   /*
   // proto on how to do it with a class and some keys
@@ -128,8 +73,6 @@ function zeebeJobToTask(job: PhDZeebeJob): TaskData {
     }
   })
   */
-
-  return newTask
 }
 
 export default {

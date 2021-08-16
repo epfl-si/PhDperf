@@ -10,11 +10,11 @@ import {
   get_user_permitted_tasks,
   is_allowed_to_submit
 } from './permission/tasks'
-import {getUserInfoMemoized} from "/server/userFetcher";
+//import {getUserInfoMemoized} from "/server/userFetcher";
 import {
   FormioActivityLog,
   TaskData,
-  TaskParticipant,
+  //TaskParticipant,
   TasksCollection
 } from "/imports/model/tasks";
 
@@ -34,7 +34,7 @@ Meteor.startup(() => {
   })
 })
 
-function updateTaskParticipantsNames(_id: string, participants: TaskParticipant[]) {
+/*function updateTaskParticipantsNames(_id: string, participants: TaskParticipant[]) {
   // filter out the one that are already set or unsettable
   const needUpdateParticipants = participants.filter((participant: TaskParticipant) => participant.sciper && participant.sciper !== "")
   if (needUpdateParticipants && needUpdateParticipants.length > 0) {
@@ -51,8 +51,8 @@ function updateTaskParticipantsNames(_id: string, participants: TaskParticipant[
       }
     })
   }
-}
-
+}*/
+/*
 // observe any change on Task.participant, as we need to fetch the corresponding user from a sciper
 tasks.find({}, {fields: { participants: 1}}).observeChanges({
   added: (id: string, fields: Partial<TaskData>) => {
@@ -69,7 +69,7 @@ tasks.find({}, {fields: { participants: 1}}).observeChanges({
       updateTaskParticipantsNames(id, fields.participants)
     }
   },
-})
+})*/
 
 Meteor.publish('tasks', function () {
   return get_user_permitted_tasks()
@@ -93,7 +93,7 @@ Meteor.methods({
         debug(`created new instance ${diagramProcessId}, response: ${JSON.stringify(res)}`)
       })
   },
-  async submit(key, data, metadata: FormioActivityLog) {
+  async submit(key, formData, formMetaData: FormioActivityLog) {
     if (!is_allowed_to_submit(key)) {
       debug("Unallowed user is trying to sumbit a task")
       throw new Meteor.Error(403, 'Error 403: Not allowed', 'Check your permission')
@@ -105,18 +105,18 @@ Meteor.methods({
     const task:TaskData | undefined = tasks.findOne({ _id: key } )
 
     if (task) {
-      delete data['submit']  // no thanks, I already know that
-      delete data['cancel']  // no thanks, I already know that
-      data.updated_at = new Date().toJSON()
+      delete formData['submit']  // no thanks, I already know that
+      delete formData['cancel']  // no thanks, I already know that
+      formData.updated_at = new Date().toJSON()
 
-      data = _.mapValues(data, x => encrypt(x))  // encrypt all data
+      formData = _.mapValues(formData, x => encrypt(x))  // encrypt all data
 
       // append activity over other activities
-      const currentActivityLog = task.activityLogs || []
-      currentActivityLog.push(metadata)
-      data.activityLogs = encrypt(JSON.stringify(currentActivityLog))  // add some info on the submitter
+      const currentActivityLog = task.variables.activityLogs || []
+      currentActivityLog.push(formMetaData)
+      formData.activityLogs = encrypt(JSON.stringify(currentActivityLog))  // add some info on the submitter
 
-      await WorkersClient.success(task._id, data)
+      await WorkersClient.success(task._id, formData)
       tasks.remove({_id: task._id})
       debug("Submitted form result")
     } else {

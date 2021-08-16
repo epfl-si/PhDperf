@@ -6,7 +6,6 @@ import {Task, Tasks} from '/imports/api/tasks'
 import {WorkflowStarter} from './workflowStarter'
 import {Button, Loader} from "epfl-sti-react-library"
 import {Link} from "react-router-dom"
-import {Participant} from "/imports/ui/components/Participant";
 
 type TaskProps = {
   task: Task
@@ -18,9 +17,9 @@ function Task({task}: TaskProps) {
       <details>
         <summary className={'d-flex align-items-center'}>
           <span className={'mr-auto small'}>
-            <span className={'mr-1'}>Created by {task.created_by}</span>
-            <span className={'mr-1'}>Created {task.created_at?.toLocaleString('fr-CH')}</span>
-            <span>Updated {task.updated_at?.toLocaleString('fr-CH')}</span>
+            <span className={'mr-1'}>Created by {task.variables.created_by}</span>
+            <span className={'mr-1'}>Created {task.variables.created_at?.toLocaleString('fr-CH')}</span>
+            <span>Updated {task.variables.updated_at?.toLocaleString('fr-CH')}</span>
           </span>
           <span className={'small'}>
             <a href={task.monitorUri} target="_blank" className={'pr-3'}>on Monitor <span
@@ -30,14 +29,19 @@ function Task({task}: TaskProps) {
           </span>
         </summary>
         <pre><code>{task.detail}</code></pre>
-        {task.participants &&
-          task.participants.map((participant) => (
+
+{/*
+        {task.variables.participants &&
+          task.variables.participants.map((participant) => (
               <Participant
                 key={`${task._id}-${participant.role}`}
-                user={participant}
+                role={participant}
+                detail={participant.}
               />
           )
         )}
+*/}
+
       </details>
     </div>
   )
@@ -52,7 +56,7 @@ export default function TaskList() {
   }, []);
 
   const tasks = useTracker(() => Tasks.find({}).fetch())
-  const groupByTasks = _.groupBy(tasks, 'title')
+  const groupByTasks = _.groupBy(tasks, 'customHeaders.title')
 
   return (
     <>

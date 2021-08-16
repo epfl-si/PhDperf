@@ -30,16 +30,16 @@ export function Task({workflowKey}: { workflowKey: string }) {
     <>
       {
         !submitted ?
-        task?.formIO ?
+        task?.customHeaders.formIO ?
           taskLoading ? (<>
               <Loader message={'Fetching task...'}/>
             </>) :
             submitting ? <div>Submitting...</div>
               :
               (<>
-                <h1 className={'h2'}>{task.title || `Task ${workflowKey}`}</h1>
+                <h1 className={'h2'}>{task.customHeaders.title || `Task ${task._id}`}</h1>
                 <Errors/>
-                <Form form={JSON.parse(task.formIO)}
+                <Form form={JSON.parse(task.customHeaders.formIO)}
                       submission={{data: task.variables}}
                       noDefaultSubmitButton={true}
                       onSubmit={onSubmit}

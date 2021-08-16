@@ -10,12 +10,11 @@ export type Task = TaskData & {
 const Tasks_ = TasksCollection<Task>((data) => {
   const task = data as Task
   task.detail = [
-    `Job key: ${data._id}`,
-    `workflow version: ${data.zeebeInfo.processDefinitionVersion}`,
-    `zeebeInfo: ${JSON.stringify(data.zeebeInfo, null, 2)}`,
-    `activityLogs: ${JSON.stringify(data.activityLogs, null, 2)}`,
+    `Job key: ${task._id}`,
+    `workflow version: ${task.processDefinitionVersion}`,
+    `activityLogs: ${JSON.stringify(task.variables.activityLogs, null, 2)}`,
   ].join(", ")
-  task.monitorUri = `http://localhost:8082/views/instances/${data.zeebeInfo.processInstanceKey}`
+  task.monitorUri = `http://localhost:8082/views/instances/${task.processInstanceKey}`
   return task
 })
 
