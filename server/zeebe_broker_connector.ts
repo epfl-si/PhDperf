@@ -56,18 +56,6 @@ function zeebeJobToTask(job: PhDZeebeJob): TaskData {
     _id: job.key,
     variables: decryptedVariables
   })
-
-  /*
-  // proto on how to do it with a class and some keys
-
-  import {MyInputVariables, TaskData, TasksCollection, WorkerInputVariables} from "/imports/api/perf-workflow-tasks"
-  const keysOfProps = Object.keys(new MyInputVariables()) as WorkerInputVariables;
-  keysOfProps.forEach((key: string | number) => {
-    if (key in data.variables) {
-      task.participants.push(data.variables[key])
-    }
-  })
-  */
 }
 
 export default {
