@@ -22,22 +22,35 @@ export interface FormioActivityLog {
   onLine?: boolean;
 }
 
-// throw in a flatten partipants list
+export const ParticipantIDs = [
+  "programAssistant" ,
+  "phdStudent" ,
+  "thesisDirector" ,
+  "thesisCoDirector" ,
+  "programDirector" ,
+  "mentor",
+]
+
+export type ParticipantDetail = {
+  name: string
+}
+
+// throw in a flatten participants list
 // dont' try to hide it under a structured var, as
 // participants.mentor is not a thing with zeebe + crypted data
-export interface Participants {
+export class Participants {
   programAssistantSciper?: Sciper
-  programAssistantInfo?: string
+  programAssistantInfo?: ParticipantDetail
   phdStudentSciper?: Sciper
-  phdStudentInfo?: string
+  phdStudentInfo?: ParticipantDetail
   thesisDirectorSciper?: Sciper
-  thesisDirectorInfo?: string
+  thesisDirectorInfo?: ParticipantDetail
   thesisCoDirectorSciper?: Sciper
-  thesisCoDirectorInfo?: string
+  thesisCoDirectorInfo?: ParticipantDetail
   programDirectorSciper?: Sciper
-  programDirectorInfo?: string
+  programDirectorInfo?: ParticipantDetail
   mentorSciper?: Sciper
-  mentorInfo?: string
+  mentorInfo?: ParticipantDetail
 }
 
 // This are the bpmn variables we could find for every steps and
@@ -45,6 +58,7 @@ export interface Participants {
 // Why a class instead an interface here ? To be able to read the
 // keys later in the process. See https://stackoverflow.com/a/59806829
 export interface PhDInputVariables extends Participants, IInputVariables {
+  assigneeSciper?: Sciper
   created_by?: Sciper
   created_at?: Date  // JSON date
   updated_at?: Date  // JSON date

@@ -6,6 +6,7 @@ import {Task, Tasks} from '/imports/api/tasks'
 import {WorkflowStarter} from './workflowStarter'
 import {Button, Loader} from "epfl-sti-react-library"
 import {Link} from "react-router-dom"
+import {Participant} from "/imports/ui/components/Participant";
 
 type TaskProps = {
   task: Task
@@ -30,17 +31,18 @@ function Task({task}: TaskProps) {
         </summary>
         <pre><code>{task.detail}</code></pre>
 
-{/*
-        {task.variables.participants &&
-          task.variables.participants.map((participant) => (
-              <Participant
-                key={`${task._id}-${participant.role}`}
-                role={participant}
-                detail={participant.}
-              />
-          )
-        )}
-*/}
+        <div className={'container'}>
+          <div className="row">
+          {task.participants &&
+            task.participants.map((participant) => (
+                <Participant
+                  key={`${task._id}-${participant.role}`}
+                  {...participant}
+                />
+            )
+          )}
+          </div>
+        </div>
 
       </details>
     </div>
