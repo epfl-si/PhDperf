@@ -57,11 +57,6 @@ function zeebeJobToTask(job: PhDZeebeJob): TaskData {
     variables: decryptedVariables
   })
 
-  //
-  //zeebeInfo: _.omit(job, ['variables', 'customHeaders']),
-  // set activitylogs
-  //newTask.activityLogs = decryptedVariables.activityLogs ? JSON.parse(decryptedVariables.activityLogs) : []
-
   /*
   // proto on how to do it with a class and some keys
 
