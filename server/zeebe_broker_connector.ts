@@ -82,9 +82,6 @@ export default {
               let newTask = zeebeJobToTask(job)
               task_id = tasks.insert(newTask)
               debug(`Received a new job from Zeebe ${ task_id }`)
-            } else {
-              task_id = job.key
-              debug(`Received a new job from Zeebe but ignored as server has alreay a trace of it ${ task_id }`)
             }
 
             return job.forward()  // tell Zeebe that result may come later, and free ourself for an another work
