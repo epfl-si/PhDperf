@@ -1,5 +1,6 @@
 import { fetch, Headers } from 'meteor/fetch'
 import memoize from 'timed-memoize'
+import {ParticipantIDs, PhDInputVariables} from "/imports/model/tasks";
 
 const debug = require('debug')('server/userFetcher')
 
@@ -67,3 +68,15 @@ export async function getUserInfo (sciper: string | number): Promise<GetPersonGo
 }
 
 export const getUserInfoMemoized = memoize(getUserInfo, {timeout: 86400000, hot:false})  // keep it in memory for 24 hours
+
+/*
+ * Return updated variables (if needed) of participants for a specific task variables
+ */
+export const getUpdatedParticipantsInfo = async (variables: PhDInputVariables) => {
+  ParticipantIDs.reduce(async (acc: any, participantName) => {
+    if (variables[`${participantName}Sciper`]) {
+      acc[`${participantName}Info`] = await getUserInfo(variables[`${participantName}Sciper`])
+      return acc
+    }
+  }, {})
+}
