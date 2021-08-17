@@ -34,43 +34,6 @@ Meteor.startup(() => {
   })
 })
 
-/*function updateTaskParticipantsNames(_id: string, participants: TaskParticipant[]) {
-  // filter out the one that are already set or unsettable
-  const needUpdateParticipants = participants.filter((participant: TaskParticipant) => participant.sciper && participant.sciper !== "")
-  if (needUpdateParticipants && needUpdateParticipants.length > 0) {
-    participants.forEach((participant: TaskParticipant) => {
-      try {
-        getUserInfoMemoized(participant.sciper).then(response => {
-          participant.displayName = response.result.display
-          debug(`find a new name for participant ${participant.sciper} : ${participant.displayName}`)
-        })
-
-        // update the task id then, without a infinite circle update
-      } catch (e) {
-        debug(`fetch a sciper has got an error${JSON.stringify(e)}`)
-      }
-    })
-  }
-}*/
-/*
-// observe any change on Task.participant, as we need to fetch the corresponding user from a sciper
-tasks.find({}, {fields: { participants: 1}}).observeChanges({
-  added: (id: string, fields: Partial<TaskData>) => {
-    debug(`starting observer added ${id}`)
-
-    if (fields.participants && fields.participants.length > 0) {
-      updateTaskParticipantsNames(id, fields.participants)
-    }
-  },
-  changed: (id: string, fields: Partial<TaskData>) => {
-    debug(`starting observer changed ${ id } ${ JSON.stringify(fields) }`)
-
-    if (fields.participants && fields.participants.length > 0) {
-      updateTaskParticipantsNames(id, fields.participants)
-    }
-  },
-})*/
-
 Meteor.publish('tasks', function () {
   return get_user_permitted_tasks()
 })
