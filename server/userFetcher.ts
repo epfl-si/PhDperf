@@ -11,29 +11,31 @@ interface GetPersonBadResult {
   }
 }
 
+interface PersonInfo {
+  accreds: []
+  addresses: []
+  display: string
+  email: string
+  firstname: string
+  firstnameus: string
+  id: number | string
+  name: string
+  nameus: string
+  org: string
+  physemail: string
+  sciper: number | string
+  sex: string
+  status: string
+  studies: []
+  type: string
+  uid: string
+  upfirstname: string
+  upname: string
+  username: string
+}
+
 interface GetPersonGoodResult {
-  result: {
-    accreds: []
-    addresses: []
-    display: string
-    email: string
-    firstname: string
-    firstnameus: string
-    id: number | string
-    name: string
-    nameus: string
-    org: string
-    physemail: string
-    sciper: number | string
-    sex: string
-    status: string
-    studies: []
-    type: string
-    uid: string
-    upfirstname: string
-    upname: string
-    username: string
-  }
+  result: PersonInfo
 }
 
 export async function getUserInfo (sciper: string | number): Promise<GetPersonGoodResult> {
