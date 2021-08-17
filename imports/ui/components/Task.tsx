@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import {Errors, Form} from '@formio/react'
 import {customEvent} from '/imports/ui/model/formIo'
 import {Tasks} from '/imports/api/tasks'
-import {global_Error, Meteor} from 'meteor/meteor'
+import { Meteor} from 'meteor/meteor'
 import {useTracker} from 'meteor/react-meteor-data'
 import {Alert, Button, Loader} from "epfl-sti-react-library"
 import {Link} from "react-router-dom"
@@ -18,7 +18,7 @@ export function Task({workflowKey}: { workflowKey: string }) {
     return !handle.ready();
   }, [workflowKey]);
 
-  const task = Tasks.findByKey(workflowKey)
+  const task = useTracker(() => Tasks.findByKey(workflowKey), [workflowKey])
 
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
@@ -26,14 +26,16 @@ export function Task({workflowKey}: { workflowKey: string }) {
 
   const history = useHistory()
 
-  return (
-    <>
-      {
-        !submitted ?
-        task?.customHeaders.formIO ?
+  if (task) {
+    if (!task.customHeaders.formIO) {
+      return (<div>Task exists but is not well formed (has no formIO field). Check with your administrator that the BPMN file is well formatted</div>)
+    } else {
+      return (
+        <>{
           taskLoading ? (<>
               <Loader message={'Fetching task...'}/>
-            </>) :
+            </>)
+            :
             submitting ? <div>Submitting...</div>
               :
               (<>
@@ -46,17 +48,30 @@ export function Task({workflowKey}: { workflowKey: string }) {
                       onCustomEvent={(event: customEvent) => event.type == 'cancelClicked' && history.push('/')}
                 />
               </>)
-            :
-            <div>Unable to find the requested task no {workflowKey}</div>
-          :
-            !meteorError ?
+        }</>
+      )
+    }
+  } else {
+    // if task is no more, it can be that we already submitted it or a 404
+    return (
+      <>
+        {
+          submitted ?
             <>
               <Alert message={'Form submitted'} alertType={'success'}/>
               <Link to={`/`}><Button label={'Back'} onClickFn={() => void 0}/></Link>
             </>
-            : <Alert message={`Form not submitted because of an error ${meteorError}. Please retry again`} alertType={'danger'}/>
-      }
-    </>)
+            :
+            <div>Unable to find the task no {workflowKey}</div>
+        }
+        {
+          meteorError ?
+            <Alert message={`Form not submitted because of an error ${meteorError}. Please try again later.`}
+                   alertType={'danger'}/>
+            : <></>
+        }
+      </>)
+  }
 
   function onSubmit(this: any, formData: { data: any, metadata: any }) {
     // As formio sent all the form fields (disabled included)
@@ -66,17 +81,18 @@ export function Task({workflowKey}: { workflowKey: string }) {
 
     setSubmitting(true)
 
-    Meteor.call("submit",
-      workflowKey,
-      formDataPicked,
-      formData.metadata,
-      (error: global_Error | Meteor.Error | undefined) => {
-        setSubmitting(false)
-        setSubmitted(true)
-        if (error) {
-          setMeteorError(error.message)
-        }
-      }
-    )
+    try {
+      Meteor.call("submit",
+        workflowKey,
+        formDataPicked,
+        formData.metadata,
+      )
+      setSubmitting(false)
+      setSubmitted(true)
+    } catch (error) {
+      setSubmitting(false)
+      setSubmitted(false)
+      setMeteorError(error.message)
+    }
   }
 }
