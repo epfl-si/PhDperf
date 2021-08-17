@@ -70,10 +70,8 @@ export interface PhDInputVariables extends Participants, IInputVariables {
 export interface Task<WorkerInputVariables = PhDInputVariables, CustomHeaderShape = PhDCustomHeaderShape> extends Job<WorkerInputVariables, CustomHeaderShape> {
 }
 
-// add lastSeen for sync utilities
 export type TaskData = Task & {
   _id: string
-  lastSeen?: Date
 }
 
 // Due to restrictions in the Meteor model, this function can only be

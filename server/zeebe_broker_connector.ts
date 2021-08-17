@@ -81,13 +81,11 @@ export default {
             if (!tasks.findOne({ _id: job.key } )) {  // Let's add this unknown task
               let newTask = zeebeJobToTask(job)
               task_id = tasks.insert(newTask)
-              debug(`Received a new job from Zeebe ${ JSON.stringify(job.key) }`)
+              debug(`Received a new job from Zeebe ${ task_id }`)
             } else {
               task_id = job.key
+              debug(`Received a new job from Zeebe but ignored as server has alreay a trace of it ${ task_id }`)
             }
-
-            // To keep insync with Zeebe, log the last time we see this one
-            tasks.update({ _id: task_id },{ $set: { lastSeen: new Date() }});
 
             return job.forward()  // tell Zeebe that result may come later, and free ourself for an another work
           })
