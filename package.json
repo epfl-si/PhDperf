@@ -23,7 +23,7 @@
     "find-up": "^5.0.0",
     "formiojs": "^4.13.0-rc.19",
     "lodash": "^4.17.21",
-    "meteor-node-stubs": "git://github.com/meteor/node-stubs.git",
+    "meteor-node-stubs": "^1.1.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-hot-toast": "^2.0.0",
