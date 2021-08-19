@@ -47,14 +47,17 @@ Meteor.methods({
 
     const zbc = new ZBClient()
 
-    await zbc.createProcessInstance(diagramProcessId, {
-      created_at: encrypt(new Date().toJSON()),
-      created_by: encrypt(Meteor.userId()!),
-      updated_at: encrypt(new Date().toJSON()),
-    }).then(
-      (res) => {
-        debug(`created new instance ${diagramProcessId}, response: ${JSON.stringify(res)}`)
-      })
+    try {
+      const createProcessInstanceResponse = await Promise.resolve(zbc.createProcessInstance(diagramProcessId, {
+        created_at: encrypt(new Date().toJSON()),
+        created_by: encrypt(Meteor.userId()!),
+        updated_at: encrypt(new Date().toJSON()),
+      }))
+      debug(`created new instance ${diagramProcessId}, response: ${JSON.stringify(createProcessInstanceResponse)}`)
+      return createProcessInstanceResponse?.processKey
+    } catch (e) {
+      throw new Meteor.Error(500, `Unable to start a new workflow. Please contact the admin to verify the server. ${e}`)
+    }
   },
   async submit(key, formData, formMetaData: FormioActivityLog) {
     if (!is_allowed_to_submit(key)) {

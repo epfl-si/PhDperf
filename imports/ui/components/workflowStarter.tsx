@@ -1,8 +1,6 @@
-import {Meteor} from "meteor/meteor";
+import {global_Error, Meteor} from "meteor/meteor";
 import React, {useState} from "react";
 import toast from 'react-hot-toast';
-
-const notify = (message: string) => toast(message);
 
 export const WorkflowStarter = () => {
   const [isWaiting, setIsWaiting] = useState(false);
@@ -10,15 +8,16 @@ export const WorkflowStarter = () => {
   const onClick = () => {
     setIsWaiting(true)
     Meteor.call(
-      "start_workflow", (error: any) => {
+      "start_workflow",  {}, (error: global_Error | Meteor.Error | undefined, result: any) => {
         if (error) {
-          notify(`Error: ${error}`)
+          toast.error(`${error}`)
+        } else {
+          toast.success(`New workflow instance created (id: ${result})`)
         }
-        notify(`New workflow instance created`)
         setIsWaiting(false)
       }
     )
-  };
+  }
 
   return (
     <div id={'worklow-actions'} className={'mb-4'}>

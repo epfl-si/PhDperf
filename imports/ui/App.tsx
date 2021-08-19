@@ -3,13 +3,13 @@ import {
   BrowserRouter, RouteProps, Route, Switch,
   useParams, useRouteMatch
 } from "react-router-dom"
-import {Toaster, resolveValue} from 'react-hot-toast';
-import {Alert, FooterLight} from "epfl-sti-react-library"
+import {FooterLight} from "epfl-sti-react-library"
 import {PhDHeader} from "./components/PhDHeader"
 import {Breadcrumbs} from "epfl-sti-react-library"
 import TaskList from "./components/TaskList"
 import {Task} from "./components/Task"
-import {ZeebeStatus} from "/imports/ui/components/ZeebeStatus";
+import {ZeebeStatus} from "/imports/ui/components/ZeebeStatus"
+import {Toaster} from "react-hot-toast";
 
 const PageRoute: React.FC<RouteProps> = (props) => (
   <Route {...props}>
@@ -34,11 +34,7 @@ export const App = () => {
           <TheTask/>
         </PageRoute>
         <PageRoute path="/">
-          <Toaster>
-            {(t) => (
-              <Alert message={resolveValue(t.message, t)} alertType={'success'}/>
-            )}
-          </Toaster>
+          <Toaster/>
           <h1 className={'h2'}>PhD Assess</h1>
           <TaskList/>
         </PageRoute>
