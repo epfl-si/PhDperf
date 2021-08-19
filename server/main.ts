@@ -39,7 +39,7 @@ Meteor.publish('tasks', function () {
 })
 
 Meteor.methods({
-  async start_workflow() {  // aka start a new instance in Zeebe terms
+  async startWorkflow() {  // aka start a new instance in Zeebe terms
     // TODO: check the right to start a workflow, into the "Start workflow button"?
     const diagramProcessId = 'phdAssessProcess'
 

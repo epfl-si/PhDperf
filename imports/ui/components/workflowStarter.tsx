@@ -8,7 +8,7 @@ export const WorkflowStarter = () => {
   const onClick = () => {
     setIsWaiting(true)
     Meteor.call(
-      "start_workflow",  {}, (error: global_Error | Meteor.Error | undefined, result: any) => {
+      "startWorkflow",  {}, (error: global_Error | Meteor.Error | undefined, result: any) => {
         if (error) {
           toast.error(`${error}`)
         } else {
