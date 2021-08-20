@@ -22,6 +22,7 @@
     "epfl-sti-react-library": "git+https://gitlab+deploy-token-65:rvdyy-as5yR5G2UyyWK-@gitlab.epfl.ch/sti-it/epfl-sti-react-library.git",
     "find-up": "^5.0.0",
     "formiojs": "^4.13.0-rc.19",
+    "html-react-parser": "^1.2.8",
     "lodash": "^4.17.21",
     "meteor-node-stubs": "^1.1.0",
     "react": "^17.0.1",

@@ -1,4 +1,5 @@
 import React, {useState} from 'react'
+import ReactDOM from 'react-dom'
 import {Errors, Form} from '@formio/react'
 import {customEvent} from '/imports/ui/model/formIo'
 import {Tasks} from '/imports/api/tasks'
@@ -10,11 +11,11 @@ import _ from "lodash";
 import findDisabledFields from "/imports/lib/formIOUtils";
 import { useHistory } from "react-router-dom";
 import {Templates} from "formiojs";
-import {newInputForm} from "/imports/ui/components/formIOComponents/sciperInput";
+import {sciperToUserField, UserSciperField} from "/imports/ui/components/formIOComponents/sciperInput";
 
 Templates.current = {
   'input-programAssistantSciper': {
-    form: newInputForm
+    form: sciperToUserField
   }
 };
 
@@ -54,6 +55,7 @@ export function Task({workflowKey}: { workflowKey: string }) {
                       noDefaultSubmitButton={true}
                       onSubmit={onSubmit}
                       onCustomEvent={(event: customEvent) => event.type == 'cancelClicked' && history.push('/')}
+                      onRender={onRender}
                 />
               </>)
         }</>
@@ -103,4 +105,12 @@ export function Task({workflowKey}: { workflowKey: string }) {
       setMeteorError(error.message)
     }
   }
+
+  function onRender() {
+    // rehydrate component written by the FormIO templates
+    ReactDOM.hydrate(<UserSciperField />, document.getElementById('myDehydratedElement'))
+  }
 }
+
+
+//refs https://help.form.io/developers/form-templates

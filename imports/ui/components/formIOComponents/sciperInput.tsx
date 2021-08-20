@@ -7,16 +7,21 @@ import ReactDOMServer from 'react-dom/server';
 import parse from 'html-react-parser';
 import { Templates } from 'formiojs';
 
-
-type NameFormProps = {
+type UserSciperFieldProps = {
+  formIOSciperField: any
 };
 
-type NameFormState = {
+type UserSciperFieldState = {
   value: string;
 };
 
-class NameForm extends React.Component<NameFormProps, NameFormState> {
-  state: NameFormState = {
+export class UserSciperField extends React.Component<UserSciperFieldProps, UserSciperFieldState> {
+  constructor(props: UserSciperFieldProps) {
+    super(props);
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  state: UserSciperFieldState = {
     // optional second annotation for better type inference
     value: '',
   };
@@ -28,22 +33,28 @@ class NameForm extends React.Component<NameFormProps, NameFormState> {
   render() {
     return (
       <>
-        <label>
-          Name {this.state.value}:
-          <input type="text" value={this.state.value} onChange={() => alert('wtf')} />
-        </label>
+        <div>
+          {this.state.value}
+          <label>Sciper</label>
+          <Input value={this.state.value} onChangeFn={this.handleChange} />
+        </div>
+        <div>
+          <label>Or name</label>
+          <Input onChangeFn={() => alert('you are changing !')} />
+        </div>
       </>
-    );
+    )
   }
 }
 
-const inputTemplate = Templates.current.input.form;
-
-export const newInputForm = (ctx: any) => ReactDOMServer.renderToString(
+export const sciperToUserField = (ctx: any) => ReactDOMServer.renderToString(
   (
-    <div>
-      <NameForm />
-      { parse(inputTemplate(ctx)) }
+    <div id={'myDehydratedElement'}>
+      <UserSciperField formIOSciperField={ctx} />
     </div>
   )
 )
+
+// Check this in case we want to transform the html provided by FormIO to some React Elements
+//import { Templates } from 'formiojs';
+//{ parse(inputTemplate(ctx)) }
