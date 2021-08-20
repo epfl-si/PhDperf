@@ -9,6 +9,16 @@ import {Link} from "react-router-dom"
 import _ from "lodash";
 import findDisabledFields from "/imports/lib/formIOUtils";
 import { useHistory } from "react-router-dom";
+import {Templates} from "formiojs";
+import {UserSciperInput} from "/imports/ui/components/UserSciperInput";
+import findDisabledFields from "/imports/lib/formIOUtils";
+import {reactToFormIO} from "/imports/lib/formio-react-component";
+
+Templates.current = {
+  'input-programAssistantSciper': {
+      form: reactToFormIO(UserSciperInput)
+  }
+};
 
 export function Task({workflowKey}: { workflowKey: string }) {
   const taskLoading = useTracker(() => {
