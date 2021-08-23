@@ -6,6 +6,7 @@ import React from 'react'
 import ReactDOMServer from 'react-dom/server';
 import parse from 'html-react-parser';
 import { Templates } from 'formiojs';
+import {Input} from "epfl-sti-react-library"
 
 type UserSciperFieldProps = {
   formIOSciperField: any
