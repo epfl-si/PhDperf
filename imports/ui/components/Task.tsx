@@ -10,14 +10,7 @@ import {Link} from "react-router-dom"
 import _ from "lodash";
 import findDisabledFields from "/imports/lib/formIOUtils";
 import { useHistory } from "react-router-dom";
-import {Templates} from "formiojs";
-import {sciperToUserField, UserSciperField} from "/imports/ui/components/formIOComponents/sciperInput";
-
-Templates.current = {
-  'input-programAssistantSciper': {
-    form: sciperToUserField
-  }
-};
+import {UserSciperField} from "/imports/ui/components/formIOComponents/sciperInput";
 
 export function Task({workflowKey}: { workflowKey: string }) {
   const taskLoading = useTracker(() => {
@@ -108,9 +101,9 @@ export function Task({workflowKey}: { workflowKey: string }) {
 
   function onRender() {
     // rehydrate component written by the FormIO templates
-    ReactDOM.hydrate(<UserSciperField />, document.getElementById('myDehydratedElement'))
+    Array.from(document.getElementsByClassName('hydrateMeElement')).forEach((element) => {
+      // WIP: element.nodeName is not the good one, only a wip
+      ReactDOM.hydrate(<UserSciperField originalFieldName={element.nodeName} />, element)
+    });
   }
 }
-
-
-//refs https://help.form.io/developers/form-templates

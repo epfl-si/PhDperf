@@ -8,8 +8,65 @@ import parse from 'html-react-parser';
 import { Templates } from 'formiojs';
 import {Input} from "epfl-sti-react-library"
 
+const inputTemplate = Templates.current.input.form;
+
+// Let's do some react hydration, as the responsibility to write down the inputs come from the
+// formio templating feature
+const sciperToUserField = (ctx: any) => {
+  const originalField = parse(inputTemplate(ctx)) as JSX.Element[]
+
+  let ctxReact = originalField.filter((x) => typeof x === 'object')
+
+  if (ctxReact.length < 0 ) {
+    throw new Error('Unable to find a valid formIO field to create the react one')
+  }
+
+  const originalFieldReacted = ctxReact[0]
+  // fix react not being happy with a value not being a state
+  const modifiedFieldReacted = React.cloneElement(
+    originalFieldReacted,
+    { defaultValue: originalFieldReacted?.props.value,
+      value: ''
+    }
+  )
+
+  // WIP : maybe connect/wrap a ref from this component to the original input
+  // See https://reactjs.org/docs/integrating-with-other-libraries.html
+
+  return ReactDOMServer.renderToString(
+    (
+      <>
+        <div className={'hydrateMeElement'}>
+          <UserSciperField originalFieldName={modifiedFieldReacted.props.name}/>
+        </div>
+      </>
+    )
+  )
+}
+
+Templates.current = {
+  'input-programAssistantSciper': {
+    form: sciperToUserField
+  },
+  'input-phdStudentSciper': {
+    form: sciperToUserField
+  },
+  'input-thesisDirectorSciper': {
+    form: sciperToUserField
+  },
+  'input-thesisCoDirectorSciper': {
+    form: sciperToUserField
+  },
+  'input-programDirectorSciper': {
+    form: sciperToUserField
+  },
+  'input-mentorSciper': {
+    form: sciperToUserField
+  },
+};
+
 type UserSciperFieldProps = {
-  formIOSciperField: any
+  originalFieldName: string
 };
 
 type UserSciperFieldState = {
@@ -37,25 +94,13 @@ export class UserSciperField extends React.Component<UserSciperFieldProps, UserS
         <div>
           {this.state.value}
           <label>Sciper</label>
-          <Input value={this.state.value} onChangeFn={this.handleChange} />
+          <input value={this.state.value} onChange={this.handleChange} name={`${this.props.originalFieldName}`} />
         </div>
         <div>
           <label>Or name</label>
-          <Input onChangeFn={() => alert('you are changing !')} />
+          <Input onChangeFn={() => alert('you are changing !')} name={`${this.props.originalFieldName}`} />
         </div>
       </>
     )
   }
 }
-
-export const sciperToUserField = (ctx: any) => ReactDOMServer.renderToString(
-  (
-    <div id={'myDehydratedElement'}>
-      <UserSciperField formIOSciperField={ctx} />
-    </div>
-  )
-)
-
-// Check this in case we want to transform the html provided by FormIO to some React Elements
-//import { Templates } from 'formiojs';
-//{ parse(inputTemplate(ctx)) }
