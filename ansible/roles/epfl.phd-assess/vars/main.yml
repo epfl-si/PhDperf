@@ -1,0 +1,7 @@
+
+---
+# vars file for epfl.phd-assess
+app_name: "phd-assess"
+svc_name: "{{ app_name }}"
+route_name: "{{ app_name }}"
+cname: "phd-assess.epfl.ch"
