@@ -7,7 +7,7 @@ import {useTracker} from 'meteor/react-meteor-data'
 import {Alert, Button, Loader} from "epfl-sti-react-library"
 import {Link} from "react-router-dom"
 import _ from "lodash";
-import findDisabledFields from "/imports/lib/formIOUtils";
+import {findDisabledFields} from "/imports/lib/formIOUtils";
 import { useHistory } from "react-router-dom";
 
 export function Task({workflowKey}: { workflowKey: string }) {

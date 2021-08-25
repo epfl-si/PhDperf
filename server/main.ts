@@ -7,6 +7,7 @@ import findUp from 'find-up'
 import '/imports/policy'
 import {ZBClient} from "zeebe-node";
 import {
+  filter_unsubmittable_vars,
   get_user_permitted_tasks,
   is_allowed_to_submit
 } from './permission/tasks'
@@ -65,14 +66,24 @@ Meteor.methods({
       throw new Meteor.Error(403, 'Error 403: Not allowed', 'Check your permission')
     }
 
-    // TODO: check what is permitted to submit
-
-    // load the task we may need some values
     const task:TaskData | undefined = tasks.findOne({ _id: key } )
 
     if (task) {
-      delete formData['submit']  // no thanks, I already know that
-      delete formData['cancel']  // no thanks, I already know that
+      formData = filter_unsubmittable_vars(
+        formData,
+        task.customHeaders.formIO,
+        ['cancel', 'submit'],
+        [
+          'created_at',
+          'created_by',
+          'updated_at',
+        ]
+      )
+
+      if (formData.length == 0) {
+        throw new Meteor.Error(400, 'There is not enough valid data to validate this form. Canceling.')
+      }
+
       formData.updated_at = new Date().toJSON()
 
       formData = _.mapValues(formData, x => encrypt(x))  // encrypt all data
