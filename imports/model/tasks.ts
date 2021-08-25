@@ -62,7 +62,7 @@ export interface PhDInputVariables extends Participants, IInputVariables {
   created_by?: Sciper
   created_at?: Date  // JSON date
   updated_at?: Date  // JSON date
-  activityLogs?: FormioActivityLog[]
+  activityLogs?: string
   //[key: string]: any  // the others var
 }
 

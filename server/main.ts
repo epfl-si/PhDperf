@@ -76,7 +76,6 @@ Meteor.methods({
         [
           'created_at',
           'created_by',
-          'updated_at',
         ]
       )
 
@@ -89,9 +88,12 @@ Meteor.methods({
       formData = _.mapValues(formData, x => encrypt(x))  // encrypt all data
 
       // append activity over other activities
-      const currentActivityLog = task.variables.activityLogs || []
-      currentActivityLog.push(formMetaData)
-      formData.activityLogs = encrypt(JSON.stringify(currentActivityLog))  // add some info on the submitter
+      let activitiesLog: FormioActivityLog[] = []
+      if (task.variables.activityLogs) {
+        activitiesLog = JSON.parse(task.variables.activityLogs)
+        activitiesLog.push(formMetaData)
+      }
+      formData.activityLogs = encrypt(JSON.stringify(activitiesLog))
 
       await WorkersClient.success(task._id, formData)
       tasks.remove({_id: task._id})
