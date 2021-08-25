@@ -56,7 +56,7 @@ export const filter_unsubmittable_vars = (dataToSubmit: any, formIODefinition: a
   const dataAllowedToSubmit = _.pick(dataToSubmit, allowedKeys)
   const diff = _.differenceWith(Object.keys(dataToSubmit), allowedKeys, _.isEqual)
   if (diff) {
-    debug(`Removed key has unauthorized to send: ${diff}`)
+    debug(`Removed this keys has they are unauthorized to be sent: ${diff}`)
   }
 
   return dataAllowedToSubmit
