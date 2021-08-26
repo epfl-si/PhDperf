@@ -7,7 +7,12 @@
     "test-bpmn": "bpmnlint --config bpmn-model/bpmn-lint-rules.json bpmn-model/phdAssessProcess.bpmn",
     "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",
     "visualize": "meteor --production --extra-packages bundle-visualizer",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "cypress:ui": "cypress open",
+    "cypress:headless": "cypress run",
+    "e2e": "METEOR_LOCAL_DIR=.meteor/test BABEL_ENV=test DISABLE_REACT_FAST_REFRESH=1 meteor run  --settings=settings.json --port 4000",
+    "test:dev:ui": "start-test 'npm run e2e' :4000 'npm run cypress:ui'",
+    "test:dev:headless": "start-test 'npm run e2e' :4000 'npm run cypress:headless'"
   },
   "dependencies": {
     "@babel/runtime": "^7.11.2",
@@ -46,7 +51,9 @@
     "@types/react-router-dom": "^5.1.7",
     "@types/simpl-schema": "^1.10.3",
     "bpmnlint": "^7.2.1",
+    "cypress": "^8.3.0",
     "patch-package": "^6.4.7",
+    "start-server-and-test": "^1.13.1",
     "ts-node": "^9.1.1",
     "typescript": "^4.0.2"
   },
