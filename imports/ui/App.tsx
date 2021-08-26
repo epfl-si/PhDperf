@@ -29,12 +29,12 @@ const PageRoute: React.FC<RouteProps> = (props) => (
 export const App = () => {
   return (
     <BrowserRouter>
+      <Toaster/>
       <Switch>
         <PageRoute path="/tasks/:key">
           <TheTask/>
         </PageRoute>
         <PageRoute path="/">
-          <Toaster/>
           <h1 className={'h2'}>PhD Assess</h1>
           <TaskList/>
         </PageRoute>
