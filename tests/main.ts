@@ -1,10 +1,10 @@
 import { Meteor } from 'meteor/meteor';
 import assert from 'assert';
 
-describe('PhDperf', function () {
+describe('PhDAssess', function () {
   it('package.json has correct name', async function () {
     const { name } = await import('../package.json');
-    assert.strictEqual(name, 'PhDperf');
+    assert.strictEqual(name, 'phd-assess');
   });
 
   if (Meteor.isClient) {
