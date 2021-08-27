@@ -62,6 +62,57 @@
   shell: "oc -n {{openshift_namespace}} start-build --wait zeebe-broker"
   delegate_to: localhost
 
+- name: zeebe-broker Deployment Config
+  openshift:
+    apiVersion: apps.openshift.io/v1
+    kind: DeploymentConfig
+    metadata:
+      name: zeebe-broker
+      namespace: "{{openshift_namespace}}"
+    spec:
+      replicas: 1
+      selector:
+        deployment-config.name: zeebe-broker
+      strategy:
+        activeDeadlineSeconds: 21600
+        resources: { }
+        rollingParams:
+          intervalSeconds: 1
+          maxSurge: 25%
+          maxUnavailable: 25%
+          timeoutSeconds: 600
+          updatePeriodSeconds: 1
+        type: Rolling
+      template:
+        metadata:
+          creationTimestamp: null
+          labels:
+            deployment-config.name: zeebe-broker
+        spec:
+          containers:
+            - env:
+              - name: 'ZEEBE_LOG_LEVEL'
+                value: 'info'
+              image: 'docker-registry.default.svc:5000/{{openshift_namespace}}/zeebe-broker:latest'
+              imagePullPolicy: Always
+              name: zeebe-broker
+              resources: {}
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: { }
+        terminationGracePeriodSeconds: 30
+      triggers:
+      - type: ImageChange
+        imageChangeParams:
+          automatic: true
+          containerNames:
+          - zeebe-broker
+          from:
+            kind: ImageStreamTag
+            name: 'zeebe-broker:latest'
+            namespace: "{{openshift_namespace}}"
+
 - name: zeebe-broker Service
   openshift:
     state: latest
