@@ -83,6 +83,10 @@
           timeoutSeconds: 600
           updatePeriodSeconds: 1
         type: Rolling
+        resources:
+          limits:
+            cpu: 10m
+            memory: 200M
       template:
         metadata:
           creationTimestamp: null
@@ -96,7 +100,10 @@
               image: 'docker-registry.default.svc:5000/{{openshift_namespace}}/zeebe-broker:latest'
               imagePullPolicy: Always
               name: zeebe-broker
-              resources: {}
+              resources:
+                limits:
+                  cpu: 10m
+                  memory: 200M
         dnsPolicy: ClusterFirst
         restartPolicy: Always
         schedulerName: default-scheduler
