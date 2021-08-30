@@ -1,0 +1,1 @@
+FROM geoffreybooth/meteor-base
