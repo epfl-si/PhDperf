@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {Errors, Form} from '@formio/react'
 import {customEvent} from '/imports/ui/model/formIo'
 import {Tasks} from '/imports/api/tasks'
@@ -32,7 +32,9 @@ export function Task({workflowKey}: { workflowKey: string }) {
   const history = useHistory()
 
   // Remove the current notification
-  toast.dismiss(toastId)
+  useEffect(() => {
+    toast.dismiss(toastId)
+  });
 
   if (task) {
     if (!task.customHeaders.formIO) {
