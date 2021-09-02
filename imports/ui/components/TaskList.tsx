@@ -23,8 +23,10 @@ function Task({task}: TaskProps) {
             <span>Updated {task.variables.updated_at?.toLocaleString('fr-CH')}</span>
           </span>
           <span className={'small'}>
-            <a href={task.monitorUri} target="_blank" className={'pr-3'}>on Monitor <span
-              className={"fa fa-external-link"}/></a>
+            { Meteor.user()?.isAdmin &&
+              <a href={task.monitorUri} target="_blank" className={'pr-3'}>on Monitor <span
+                className={"fa fa-external-link"}/></a>
+            }
             <Link className={''} to={`tasks/${task._id}`}><Button label={'Proceed'}
                  onClickFn={() => void 0}/></Link>
           </span>
@@ -62,7 +64,10 @@ export default function TaskList() {
 
   return (
     <>
-      <WorkflowStarter/>
+      {
+        Meteor.user()?.isAdmin &&
+        <WorkflowStarter/>
+      }
       {listLoading ? (
         <Loader message={'Fetching tasks...'}/>
       ) : (
