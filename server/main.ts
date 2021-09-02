@@ -62,8 +62,8 @@ Meteor.methods({
   },
   async submit(key, formData, formMetaData: FormioActivityLog) {
     if (!is_allowed_to_submit(key)) {
-      debug("Unallowed user is trying to sumbit a task")
-      throw new Meteor.Error(403, 'Error 403: Not allowed', 'Check your permission')
+      debug(`Unallowed user is trying to sumbit the task ${key}`)
+      throw new Meteor.Error(403, 'You are not allowed to submit this task')
     }
 
     const task:TaskData | undefined = tasks.findOne({ _id: key } )
