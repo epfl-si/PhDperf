@@ -1,2 +1,10 @@
 .meteor/local/
 node_modules/
+docker/simple-monitor
+docker/volumes
+docker/zeebe-hazelcast
+docker/docker-compose.yml
+doc
+.idea
+Dockerfile
+.env
