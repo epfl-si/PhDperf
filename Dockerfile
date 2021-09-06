@@ -3,7 +3,7 @@ FROM ubuntu:focal
 # build-essential:
 RUN set -e -x; export DEBIAN_FRONTEND=noninteractive; \
     apt -qy update; \
-    apt -qy install nodejs npm curl build-essential
+    apt -qy install nodejs npm curl build-essential git openssh-client
 
 RUN curl https://install.meteor.com/ | sh
 
