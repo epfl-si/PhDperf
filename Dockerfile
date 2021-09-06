@@ -3,7 +3,9 @@ FROM ubuntu:focal
 # build-essential:
 RUN set -e -x; export DEBIAN_FRONTEND=noninteractive; \
     apt -qy update; \
-    apt -qy install nodejs npm curl build-essential git openssh-client
+    apt -qy install curl build-essential git openssh-client
+
+RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash - && apt-get install -y nodejs
 
 RUN curl https://install.meteor.com/ | sh
 
