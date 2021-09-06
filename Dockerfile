@@ -1,4 +1,4 @@
-FROM ubuntu:focal
+FROM ubuntu:focal AS trunk
 
 # build-essential:
 RUN set -e -x; export DEBIAN_FRONTEND=noninteractive; \
@@ -7,6 +7,9 @@ RUN set -e -x; export DEBIAN_FRONTEND=noninteractive; \
 
 RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash - && apt-get install -y nodejs
 
+FROM trunk AS build
+
+# not recommended by the Meteor guide
 RUN curl https://install.meteor.com/ | sh
 
 # If you want to run MongoDB in-docker for some reason (e.g. you have a persistent
@@ -19,6 +22,16 @@ RUN set -e -x; export DEBIAN_FRONTEND=noninteractive; \
 
 RUN mkdir -p /usr/src/app/
 COPY . /usr/src/app/
-# RUN cd /usr/src/app/; meteor npm i
-#  
-# RUN meteor build /usr/src/app
+WORKDIR /usr/src/app/
+RUN meteor npm i && meteor npm run postinstall
+RUN meteor build --allow-superuser /usr/bundle
+RUN tar -C /usr -zxf /usr/bundle/app.tar.gz
+WORKDIR /usr/bundle
+RUN cd programs/server && npm install
+
+FROM trunk AS run
+
+COPY --from=build /usr/bundle /usr/bundle/
+WORKDIR /usr/bundle
+
+CMD node main.js
