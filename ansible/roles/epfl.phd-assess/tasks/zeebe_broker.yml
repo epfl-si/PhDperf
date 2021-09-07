@@ -15,7 +15,7 @@
         - annotations: null
           from:
             kind: DockerImage
-            name: 'zeebe-brokerlatest'
+            name: 'zeebe-broker:latest'
           generation: 3
           importPolicy: {}
           name: latest
