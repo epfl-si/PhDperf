@@ -3,3 +3,6 @@
 
 - name: Including zeebe broker task...
   include_tasks: '{{ "zeebe_broker.yml" }}'
+
+- name: Including phd assess meteor task...
+  include_tasks: '{{ "phd_assess_meteor.yml" }}'
