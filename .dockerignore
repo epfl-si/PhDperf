@@ -1,4 +1,5 @@
 .meteor/local/
+ansible
 node_modules/
 docker/simple-monitor
 docker/volumes
