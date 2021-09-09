@@ -3,9 +3,9 @@ import {
   BrowserRouter, RouteProps, Route, Switch,
   useParams, useRouteMatch
 } from "react-router-dom"
-import {FooterLight} from "epfl-sti-react-library"
+import {FooterLight} from "@epfl/epfl-sti-react-library"
 import {PhDHeader} from "./components/PhDHeader"
-import {Breadcrumbs} from "epfl-sti-react-library"
+import {Breadcrumbs} from "@epfl/epfl-sti-react-library"
 import TaskList from "./components/TaskList"
 import {Task} from "./components/Task"
 import {ZeebeStatus} from "/imports/ui/components/ZeebeStatus"

@@ -1,1 +1,1 @@
-declare module 'epfl-sti-react-library';
+declare module '@epfl/epfl-sti-react-library';

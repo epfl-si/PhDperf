@@ -4,7 +4,7 @@ import _ from "lodash"
 import {useTracker} from 'meteor/react-meteor-data'
 import {Task, Tasks} from '/imports/api/tasks'
 import {WorkflowStarter} from './workflowStarter'
-import {Button, Loader} from "epfl-sti-react-library"
+import {Button, Loader} from "@epfl/epfl-sti-react-library"
 import {Link} from "react-router-dom"
 import {Participant} from "/imports/ui/components/Participant";
 
