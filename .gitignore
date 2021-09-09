@@ -4,3 +4,4 @@ node_modules/
 /docker/simple-monitor/*.jar
 /docker/volumes
 tsconfig.tsbuildinfo
+dist
