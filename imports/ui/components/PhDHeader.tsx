@@ -1,5 +1,5 @@
 import React from "react"
-import { Drawer, Logo } from "epfl-sti-react-library"
+import { Drawer, Logo } from "@epfl/epfl-sti-react-library"
 import { UserAuthButton } from "./UserAuthButton"
 
 export function PhDHeader() {
