@@ -1,4 +1,27 @@
+- name: Locally build and tag phd-assess-meteor image
+  tags:
+    - meteor-build
+    - never
+  shell: "docker build .. -t phd-assess/meteor && docker tag phd-assess/meteor os-docker-registry.epfl.ch/phd-assess/phd-assess-meteor:latest"
+  delegate_to: localhost
+
+- name: Log into the Openshift docker repository
+  tags:
+    - meteor-push
+    - never
+  shell: "oc whoami -t | docker login os-docker-registry.epfl.ch -u toto --password-stdin"
+  delegate_to: localhost
+
+- name: Push the phd-assess-meteor image
+  tags:
+    - meteor-push
+    - never
+  shell: "docker push os-docker-registry.epfl.ch/phd-assess/phd-assess-meteor:latest"
+  delegate_to: localhost
+
 - name: phd-assess-meteor Deployment Config
+  tags:
+    - meteor
   openshift:
     apiVersion: apps.openshift.io/v1
     kind: DeploymentConfig
@@ -67,6 +90,8 @@
             namespace: "{{openshift_namespace}}"
 
 - name: phd-assess-meteor Service
+  tags:
+    - meteor
   openshift:
     state: latest
     apiVersion: v1

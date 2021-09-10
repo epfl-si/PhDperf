@@ -3,9 +3,11 @@
 
 - name: Including zeebe broker task...
   include_tasks: '{{ "zeebe_broker.yml" }}'
+  tags: [zeebe]
 
 - name: Including phd assess meteor task...
   include_tasks: '{{ "phd_assess_meteor.yml" }}'
+  tags: [meteor, meteor-build, meteor-push]
 
 - name: Including route task...
   include_tasks: '{{ "route.yml" }}'
