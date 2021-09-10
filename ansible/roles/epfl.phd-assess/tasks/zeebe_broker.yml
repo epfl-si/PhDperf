@@ -35,11 +35,11 @@
     spec:
       resources:
         limits:
-          cpu: 10m
-          memory: 200M
+          cpu: 500m
+          memory: 400M
         requests:
-          cpu: 10m
-          memory: 200M
+          cpu: 500m
+          memory: 400M
       output:
         to:
           kind: ImageStreamTag
@@ -75,7 +75,6 @@
         deployment-config.name: zeebe-broker
       strategy:
         activeDeadlineSeconds: 21600
-        resources: { }
         rollingParams:
           intervalSeconds: 1
           maxSurge: 25%
@@ -85,8 +84,8 @@
         type: Rolling
         resources:
           limits:
-            cpu: 10m
-            memory: 200M
+            cpu: 500m
+            memory: 400M
       template:
         metadata:
           creationTimestamp: null

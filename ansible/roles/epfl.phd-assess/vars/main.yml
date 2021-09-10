@@ -15,3 +15,5 @@ phd_assess_meteor_port_name: "80"
 phd_assess_meteor_port: 80
 phd_assess_meteor_targetport: 3000
 phd_assess_meteor_servicename: "phd-assess-meteor"
+secret_name: "phd-assess.secrets"
+encryption_key_name: "PHDASSESS_ENCRYPTION_KEY"

@@ -4,11 +4,11 @@
 #
 # Usage ("ansible" mode):
 #
-#   ./exportsible -m raw all -a 'uptime'
+#   ./phdsible -m raw all -a 'uptime'
 #
 # Usage ("ansible-playbook" mode):
 #
-#   ./anbisble/exportsible
+#   ./anbisble/phdsible
 #
 # If you are unfamiliar with Ansible, read up on it at
 # - https://www.ansible.com/overview/how-ansible-works
