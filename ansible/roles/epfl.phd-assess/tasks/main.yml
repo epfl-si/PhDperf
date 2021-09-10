@@ -1,13 +1,17 @@
-- name: Including secrets tasks...
+- name: Secrets tasks
   include_tasks: '{{ "secrets.yml" }}'
 
-- name: Including zeebe broker task...
+- name: Zeebe broker tasks
   include_tasks: '{{ "zeebe_broker.yml" }}'
   tags: [zeebe]
 
-- name: Including phd assess meteor task...
+- name: Phd assess meteor tasks
   include_tasks: '{{ "phd_assess_meteor.yml" }}'
   tags: [meteor, meteor-build, meteor-push]
 
-- name: Including route task...
+- name: Route tasks
   include_tasks: '{{ "route.yml" }}'
+
+- name: Bpmn tasks
+  include_tasks: '{{ "bpmn.yml" }}'
+  tags: [bpmn-deploy]
