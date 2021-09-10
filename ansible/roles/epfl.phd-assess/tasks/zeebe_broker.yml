@@ -96,14 +96,18 @@
           containers:
             - env:
               - name: 'ZEEBE_LOG_LEVEL'
-                value: 'info'
+                value: 'debug'
+              - name: 'PORT'
+                value: '26500'
+              - name: 'zeebe.client.broker.contactPoint'
+                value: 'zeebe-broker:26500'
               image: 'docker-registry.default.svc:5000/{{openshift_namespace}}/zeebe-broker:latest'
               imagePullPolicy: Always
               name: zeebe-broker
               resources:
                 limits:
-                  cpu: 10m
-                  memory: 200M
+                  cpu: 1000m
+                  memory: 500M
         dnsPolicy: ClusterFirst
         restartPolicy: Always
         schedulerName: default-scheduler

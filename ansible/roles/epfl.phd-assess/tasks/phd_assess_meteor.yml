@@ -21,8 +21,8 @@
         type: Rolling
         resources:
           limits:
-            cpu: 50m
-            memory: 2000M
+            cpu: 1000m
+            memory: 1000M
       template:
         metadata:
           creationTimestamp: null
@@ -31,17 +31,21 @@
         spec:
           containers:
             - env:
+              - name: 'PORT'
+                value: '3000'
               - name: 'ROOT_URL'
                 value: "{{ full_cname }}"
               - name: 'MONGO_URL'
                 value: 'mongodb://localhost:27017/meteor'
+              - name: 'ZEEBE_ADDRESS'
+                value: 'zeebe-broker:26500'
               image: 'docker-registry.default.svc:5000/{{openshift_namespace}}/phd-assess-meteor:latest'
               imagePullPolicy: Always
               name: phd-assess-meteor
               resources:
                 limits:
-                  cpu: 50m
-                  memory: 2000M
+                  cpu: 1000m
+                  memory: 1000M
         dnsPolicy: ClusterFirst
         restartPolicy: Always
         schedulerName: default-scheduler
