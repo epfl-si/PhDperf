@@ -1,12 +1,13 @@
 import {ParticipantIDs, TaskData, TasksCollection} from "/imports/model/tasks"
 import {ParticipantsInfo} from "/imports/ui/components/Participant"
+import {Meteor} from "meteor/meteor";
 
 // add some useful thing for the front
 export type Task = TaskData & {
   uri: string
   participants?: ParticipantsInfo[]
   detail: any
-  monitorUri: string  // not for prod
+  monitorUri: string | undefined  // not for prod
 }
 
 const Tasks_ = TasksCollection<Task>((data) => {
@@ -36,7 +37,10 @@ const Tasks_ = TasksCollection<Task>((data) => {
     `workflow version: ${task.processDefinitionVersion}`,
     `activityLogs: ${JSON.stringify(task.variables.activityLogs, null, 2)}`,
   ].join(", ")
-  task.monitorUri = `http://localhost:8082/views/instances/${task.processInstanceKey}`
+
+  task.monitorUri = Meteor.user()?.isAdmin && Meteor.settings.public.monitor_address ?
+    `http://${Meteor.settings.public.monitor_address}/views/instances/${task.processInstanceKey}` :
+    undefined
 
   return task
 })

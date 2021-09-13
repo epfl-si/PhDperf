@@ -23,7 +23,7 @@ function Task({task}: TaskProps) {
             <span>Updated {task.variables.updated_at?.toLocaleString('fr-CH')}</span>
           </span>
           <span className={'small'}>
-            { Meteor.user()?.isAdmin &&
+            { task.monitorUri &&
               <a href={task.monitorUri} target="_blank" className={'pr-3'}>on Monitor <span
                 className={"fa fa-external-link"}/></a>
             }

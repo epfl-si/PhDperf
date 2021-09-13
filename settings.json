@@ -5,5 +5,8 @@
       "displayname": "Julien Delasoie",
       "group": "idev-fsd-membres"
     }
+  },
+  "public": {
+    "monitor_address": "localhost:8082"
   }
 }
