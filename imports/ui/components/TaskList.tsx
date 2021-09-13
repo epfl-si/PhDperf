@@ -19,8 +19,8 @@ function Task({task}: TaskProps) {
         <summary className={'d-flex align-items-center'}>
           <span className={'mr-auto small'}>
             <span className={'mr-1'}>Created by {task.variables.created_by}</span>
-            <span className={'mr-1'}>Created {task.variables.created_at?.toLocaleString('fr-CH')}</span>
-            <span>Updated {task.variables.updated_at?.toLocaleString('fr-CH')}</span>
+            <span className={'mr-1'}>Created {task.created_at?.toLocaleString('fr-CH')}</span>
+            <span>Updated {task.updated_at?.toLocaleString('fr-CH')}</span>
           </span>
           <span className={'small'}>
             { task.monitorUri &&

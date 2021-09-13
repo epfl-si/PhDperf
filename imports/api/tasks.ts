@@ -2,16 +2,21 @@ import {ParticipantIDs, TaskData, TasksCollection} from "/imports/model/tasks"
 import {ParticipantsInfo} from "/imports/ui/components/Participant"
 import {Meteor} from "meteor/meteor";
 
-// add some useful thing for the front
+// add some useful thing for the frontend
 export type Task = TaskData & {
   uri: string
   participants?: ParticipantsInfo[]
   detail: any
   monitorUri: string | undefined  // not for prod
+  created_at?: Date
+  updated_at?: Date
 }
 
 const Tasks_ = TasksCollection<Task>((data) => {
   const task = data as Task
+
+  if (task.variables.created_at) task.created_at = new Date(task.variables.created_at)
+  if (task.variables.updated_at) task.updated_at = new Date(task.variables.updated_at)
 
   // yep, participants are tricky, as we can not save a structured dict into Zeebe,
   // we fetch them from well known values, divided in ..Sciper and ..Info parts

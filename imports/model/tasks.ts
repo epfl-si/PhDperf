@@ -60,8 +60,8 @@ export class Participants {
 export interface PhDInputVariables extends Participants, IInputVariables {
   assigneeSciper?: Sciper
   created_by?: Sciper
-  created_at?: Date  // JSON date
-  updated_at?: Date  // JSON date
+  created_at?: string  // JSON date
+  updated_at?: string  // JSON date
   activityLogs?: string
   //[key: string]: any  // the others var
 }
