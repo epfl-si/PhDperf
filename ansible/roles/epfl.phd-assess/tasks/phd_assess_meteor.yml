@@ -46,7 +46,7 @@
         type: Rolling
         resources:
           limits:
-            cpu: 1000m
+            cpu: 1
             memory: 1000M
       template:
         metadata:
@@ -74,13 +74,13 @@
               name: phd-assess-meteor
               resources:
                 limits:
-                  cpu: 1000m
+                  cpu: 1
                   memory: 1000M
-        dnsPolicy: ClusterFirst
-        restartPolicy: Always
-        schedulerName: default-scheduler
-        securityContext: { }
-        terminationGracePeriodSeconds: 30
+          dnsPolicy: ClusterFirst
+          restartPolicy: Always
+          schedulerName: default-scheduler
+          securityContext: { }
+          terminationGracePeriodSeconds: 30
       triggers:
       - type: ImageChange
         imageChangeParams:

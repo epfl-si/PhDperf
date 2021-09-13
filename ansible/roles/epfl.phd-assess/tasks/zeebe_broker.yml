@@ -1,4 +1,6 @@
 - name: Zeebe broker Image Stream
+  tags:
+    - zeebe
   openshift:
     state: latest
     apiVersion: v1
@@ -23,6 +25,8 @@
             type: Source
 
 - name: Zeebe broker Build Config
+  tags:
+    - zeebe
   openshift:
     state: latest
     apiVersion: v1
@@ -58,11 +62,15 @@
   register: _openshift_image_zeebe_broker
 
 - name: "Rebuild Zeebe Broker image now"
+  tags:
+    - zeebe
   when: _openshift_image_zeebe_broker is changed
   shell: "oc -n {{openshift_namespace}} start-build --wait zeebe-broker"
   delegate_to: localhost
 
 - name: zeebe-broker Deployment Config
+  tags:
+    - zeebe
   openshift:
     apiVersion: apps.openshift.io/v1
     kind: DeploymentConfig
@@ -84,8 +92,8 @@
         type: Rolling
         resources:
           limits:
-            cpu: 500m
-            memory: 400M
+            cpu: 1
+            memory: 1000M
       template:
         metadata:
           creationTimestamp: null
@@ -105,13 +113,20 @@
               name: zeebe-broker
               resources:
                 limits:
-                  cpu: 1000m
-                  memory: 500M
-        dnsPolicy: ClusterFirst
-        restartPolicy: Always
-        schedulerName: default-scheduler
-        securityContext: { }
-        terminationGracePeriodSeconds: 30
+                  cpu: 1
+                  memory: 1000M
+              volumeMounts:
+                - mountPath: /usr/local/zeebe/data
+                  name: "{{ volume_zeebe_name }}"
+          dnsPolicy: ClusterFirst
+          restartPolicy: Always
+          schedulerName: default-scheduler
+          securityContext: { }
+          terminationGracePeriodSeconds: 30
+          volumes:
+            - name: "{{ volume_zeebe_name }}"
+              persistentVolumeClaim:
+                claimName: "{{ volume_zeebe_name }}"
       triggers:
       - type: ImageChange
         imageChangeParams:
@@ -124,6 +139,8 @@
             namespace: "{{openshift_namespace}}"
 
 - name: zeebe-broker Service
+  tags:
+    - zeebe
   openshift:
     state: latest
     apiVersion: v1

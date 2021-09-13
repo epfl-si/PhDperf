@@ -17,3 +17,4 @@ phd_assess_meteor_targetport: 3000
 phd_assess_meteor_servicename: "phd-assess-meteor"
 secret_name: "phd-assess.secrets"
 encryption_key_name: "PHDASSESS_ENCRYPTION_KEY"
+volume_zeebe_name: "svc0166-{{ app_name }}-zeebe-partition-app"
