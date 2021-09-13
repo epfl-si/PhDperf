@@ -1,0 +1,17 @@
+- name: Secrets tasks
+  include_tasks: '{{ "secrets.yml" }}'
+
+- name: Zeebe broker tasks
+  include_tasks: '{{ "zeebe_broker.yml" }}'
+  tags: [zeebe]
+
+- name: Phd assess meteor tasks
+  include_tasks: '{{ "phd_assess_meteor.yml" }}'
+  tags: [meteor, meteor-build, meteor-push]
+
+- name: Route tasks
+  include_tasks: '{{ "route.yml" }}'
+
+- name: Bpmn tasks
+  include_tasks: '{{ "bpmn.yml" }}'
+  tags: [bpmn-deploy]

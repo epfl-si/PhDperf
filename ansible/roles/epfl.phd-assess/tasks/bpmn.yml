@@ -1,0 +1,23 @@
+- name: Deploy the local bpmn to Zeebe
+  tags:
+    - bpmn-deploy
+  shell: |
+    set -e -x
+    oc -n {{ openshift_namespace }} port-forward service/zeebe-broker 26500 &
+    OCPID=$!
+
+    for retry in 1 2 3; do
+      if zbctl deploy --insecure ../bpmn-model/phdAssessProcess.bpmn; then
+        ok=1
+        break
+      fi
+      sleep 1
+    done
+
+    kill $OCPID
+
+    if [ "$ok" != 1 ];
+      then exit 1;
+    fi
+
+  delegate_to: localhost

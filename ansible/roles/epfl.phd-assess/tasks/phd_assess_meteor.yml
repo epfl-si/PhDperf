@@ -1,0 +1,113 @@
+- name: Locally build and tag phd-assess-meteor image
+  tags:
+    - meteor-build
+    - never
+  shell: |
+    set -e -x
+    docker build .. -t phd-assess/meteor
+    docker tag phd-assess/meteor os-docker-registry.epfl.ch/phd-assess/phd-assess-meteor:latest
+  delegate_to: localhost
+
+- name: Log into the Openshift docker repository
+  tags:
+    - meteor-push
+    - never
+  shell: "oc whoami -t | docker login os-docker-registry.epfl.ch -u unused --password-stdin"
+  delegate_to: localhost
+
+- name: Push the phd-assess-meteor image
+  tags:
+    - meteor-push
+    - never
+  shell: "docker push os-docker-registry.epfl.ch/phd-assess/phd-assess-meteor:latest"
+  delegate_to: localhost
+
+- name: phd-assess-meteor Deployment Config
+  tags:
+    - meteor
+  openshift:
+    apiVersion: apps.openshift.io/v1
+    kind: DeploymentConfig
+    metadata:
+      name: phd-assess-meteor
+      namespace: "{{openshift_namespace}}"
+    spec:
+      replicas: 1
+      selector:
+        deployment-config.name: phd-assess-meteor
+      strategy:
+        activeDeadlineSeconds: 21600
+        rollingParams:
+          intervalSeconds: 1
+          maxSurge: 25%
+          maxUnavailable: 25%
+          timeoutSeconds: 600
+          updatePeriodSeconds: 1
+        type: Rolling
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1000M
+      template:
+        metadata:
+          creationTimestamp: null
+          labels:
+            deployment-config.name: phd-assess-meteor
+        spec:
+          containers:
+            - env:
+              - name: 'PORT'
+                value: '3000'
+              - name: 'ROOT_URL'
+                value: "{{ full_cname }}"
+              - name: 'MONGO_URL'
+                value: 'mongodb://localhost:27017/meteor'
+              - name: 'ZEEBE_ADDRESS'
+                value: 'zeebe-broker:26500'
+              - name: "{{ encryption_key_name }}"
+                valueFrom:
+                  secretKeyRef:
+                    name: "{{ secret_name }}"
+                    key: "{{ encryption_key_name }}"
+              image: 'docker-registry.default.svc:5000/{{openshift_namespace}}/phd-assess-meteor:latest'
+              imagePullPolicy: Always
+              name: phd-assess-meteor
+              resources:
+                limits:
+                  cpu: 1000m
+                  memory: 1000M
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: { }
+        terminationGracePeriodSeconds: 30
+      triggers:
+      - type: ImageChange
+        imageChangeParams:
+          automatic: true
+          containerNames:
+          - phd-assess-meteor
+          from:
+            kind: ImageStreamTag
+            name: 'phd-assess-meteor:latest'
+            namespace: "{{openshift_namespace}}"
+
+- name: phd-assess-meteor Service
+  tags:
+    - meteor
+  openshift:
+    state: latest
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: "{{ phd_assess_meteor_servicename }}"
+      namespace: "{{openshift_namespace}}"
+    spec:
+      type: ClusterIP
+      ports:
+        - name: "{{ phd_assess_meteor_port_name }}"
+          port: "{{ phd_assess_meteor_port }}"
+          protocol: TCP
+          targetPort: "{{ phd_assess_meteor_targetport }}"
+      selector:
+        deployment-config.name: phd-assess-meteor
