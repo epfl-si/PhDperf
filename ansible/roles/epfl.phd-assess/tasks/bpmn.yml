@@ -1,6 +1,7 @@
 - name: Deploy the local bpmn to Zeebe
   tags:
     - bpmn-deploy
+    - never
   shell: |
     set -e -x
     oc -n {{ openshift_namespace }} port-forward service/zeebe-broker 26500 &
