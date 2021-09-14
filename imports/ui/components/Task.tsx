@@ -68,7 +68,9 @@ export function Task({workflowKey}: { workflowKey: string }) {
           <Link to={`/`}><Button label={'To task list'} onClickFn={() => void 0}/></Link>
         </>
       ) : (
-        <div>Unable to find the task no {workflowKey}. Please try again or go <Link to={`/`}>back to the task list</Link></div>
+        <div>Unable to find the task no {workflowKey}.<br/>
+          Please try again or go <Link to={`/`}>back to the task list</Link>
+        </div>
       )
       }</>)
   }

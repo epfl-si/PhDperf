@@ -40,6 +40,12 @@ export const is_allowed_to_submit = (taskKey: string) : boolean => {
     }).count() > 0
 }
 
+export const isAllowedDeleteProcessInstance = (taskKey: string) : boolean => {
+  if (Meteor.user()?.isAdmin) {
+    return true
+  }
+}
+
 /*
  * Limit what can be submitted per step, by reading the provided formIO
  * @param dataToSubmit The raw data coming from the UI

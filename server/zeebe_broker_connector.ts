@@ -29,7 +29,7 @@ interface PhDZeebeJob<WorkerInputVariables = PhDInputVariables, CustomHeaderShap
 }
 
 const tasks = TasksCollection<TaskData>()
-let zBClient: ZeebeSpreadingClient | null = null
+export let zBClient: ZeebeSpreadingClient | null = null
 
 function zeebeJobToTask(job: PhDZeebeJob): TaskData {
   // decrypt the variables before saving into memory (keep the typed values too)

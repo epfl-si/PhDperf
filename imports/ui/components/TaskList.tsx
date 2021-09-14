@@ -1,4 +1,4 @@
-import {Meteor} from "meteor/meteor"
+import {global_Error, Meteor} from "meteor/meteor"
 import React from "react"
 import _ from "lodash"
 import {useTracker} from 'meteor/react-meteor-data'
@@ -7,6 +7,7 @@ import {WorkflowStarter} from './workflowStarter'
 import {Button, Loader} from "@epfl/epfl-sti-react-library"
 import {Link} from "react-router-dom"
 import {Participant} from "/imports/ui/components/Participant";
+import toast from "react-hot-toast";
 
 type TaskProps = {
   task: Task
@@ -27,8 +28,35 @@ function Task({task}: TaskProps) {
               <a href={task.monitorUri} target="_blank" className={'pr-3'}>on Monitor <span
                 className={"fa fa-external-link"}/></a>
             }
-            <Link className={''} to={`tasks/${task._id}`}><Button label={'Proceed'}
-                 onClickFn={() => void 0}/></Link>
+            { Meteor.user().isAdmin &&
+              <span className={"mr-1"}>
+                <Button
+                  label={'Cancel process'}
+                  onClickFn={(event) => {
+                      event.preventDefault();
+                      if (window.confirm('Delete the process instance?')) {
+                        Meteor.apply(
+                          "deleteProcessInstance", [task.key, task.processInstanceKey], {wait: true, noRetry: true},
+                          (error: global_Error | Meteor.Error | undefined, result: any) => {
+                            if (error) {
+                              toast.error(`${error}`)
+                            } else {
+                              toast.success(`Sucessfully removed the instance (id: ${result})`)
+                            }
+                          }
+                        )
+                      }
+                    }
+                  }
+                />
+              </span>
+            }
+            <Link className={''} to={`tasks/${task._id}`}>
+              <Button
+                label={'Proceed'}
+                onClickFn={() => void 0}
+              />
+            </Link>
           </span>
         </summary>
         <pre><code>{task.detail}</code></pre>
