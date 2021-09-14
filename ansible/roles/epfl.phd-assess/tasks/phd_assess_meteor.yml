@@ -1,26 +1,37 @@
+- name: Locally meteor build
+  tags:
+    - meteor-build
+    - never
+  shell: |
+    set -e -x
+    rm -f --  ../dist/PhDAssess.tar.gz
+    meteor build ../dist
+  delegate_to: localhost
+  register: output_meteor_build
+- debug: var=output_meteor_build.stdout_lines
+
 - name: Locally build and tag phd-assess-meteor image
   tags:
     - meteor-build
     - never
   shell: |
     set -e -x
-    docker build .. -t phd-assess/meteor
-    docker tag phd-assess/meteor os-docker-registry.epfl.ch/phd-assess/phd-assess-meteor:latest
+    docker build .. -t os-docker-registry.epfl.ch/phd-assess/phd-assess-meteor:latest
   delegate_to: localhost
+  register: output_docker_build
+- debug: var=output_docker_build.stdout_lines
 
-- name: Log into the Openshift docker repository
+- name: Log into the Openshift docker repository and push the image
   tags:
     - meteor-push
     - never
-  shell: "oc whoami -t | docker login os-docker-registry.epfl.ch -u unused --password-stdin"
+  shell: |
+    set -e -x
+    oc whoami -t | docker login os-docker-registry.epfl.ch -u unused --password-stdin
+    docker push os-docker-registry.epfl.ch/phd-assess/phd-assess-meteor:latest
+  register: output_push_image
   delegate_to: localhost
-
-- name: Push the phd-assess-meteor image
-  tags:
-    - meteor-push
-    - never
-  shell: "docker push os-docker-registry.epfl.ch/phd-assess/phd-assess-meteor:latest"
-  delegate_to: localhost
+- debug: var=output_push_image.stdout_lines
 
 - name: phd-assess-meteor Deployment Config
   tags:
