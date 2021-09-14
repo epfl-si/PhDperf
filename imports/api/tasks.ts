@@ -39,6 +39,7 @@ const Tasks_ = TasksCollection<Task>((data) => {
 
   task.detail = [
     `Job key: ${task._id}`,
+    `Process instance key: ${task.processInstanceKey}`,
     `workflow version: ${task.processDefinitionVersion}`,
     `activityLogs: ${JSON.stringify(task.variables.activityLogs, null, 2)}`,
   ].join(", ")
