@@ -4,7 +4,7 @@ import WorkersClient from './zeebe_broker_connector'
 import Tequila from 'meteor/epfl:accounts-tequila'
 import findUp from 'find-up'
 import '/imports/policy'
-import { get_user_permitted_tasks } from './permission/tasks'
+import { get_user_permitted_tasks } from '/imports/policy/tasks'
 
 require("dotenv").config({path: findUp.sync(".env")})
 

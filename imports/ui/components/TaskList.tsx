@@ -8,6 +8,10 @@ import {Button, Loader} from "@epfl/epfl-sti-react-library"
 import {Link} from "react-router-dom"
 import {Participant} from "/imports/ui/components/Participant";
 import toast from "react-hot-toast";
+import {
+  canStartProcessInstance,
+  canDeleteProcessInstance
+} from "/imports/policy/tasks";
 
 type TaskProps = {
   task: Task
@@ -31,7 +35,7 @@ function Task({task}: TaskProps) {
               <a href={task.monitorUri} target="_blank" className={'pr-3'}>on Monitor <span
                 className={"fa fa-external-link"}/></a>
             }
-            { Meteor.user()?.isAdmin &&
+            { canDeleteProcessInstance() &&
               <span className={"mr-1"}>
                 <Button
                   label={'Cancel process'}
@@ -97,7 +101,7 @@ export default function TaskList() {
   return (
     <>
       {
-        Meteor.user()?.isAdmin &&
+        canStartProcessInstance() &&
         <WorkflowStarter/>
       }
       {listLoading ? (

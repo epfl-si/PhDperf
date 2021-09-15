@@ -1,7 +1,7 @@
 import {Meteor} from "meteor/meteor";
 import {encrypt} from "/server/encryption";
 import {FormioActivityLog, TaskData, TasksCollection} from "/imports/model/tasks";
-import {filter_unsubmittable_vars, is_allowed_to_submit, isAllowedDeleteProcessInstance} from "/server/permission/tasks";
+import {filterUnsubmittableVars, canSubmit, canDeleteProcessInstance} from "/imports/policy/tasks";
 import _ from "lodash";
 import {zBClient} from "/server/zeebe_broker_connector";
 import WorkersClient from './zeebe_broker_connector'
@@ -33,7 +33,7 @@ Meteor.methods({
   },
 
   async submit(key, formData, formMetaData: FormioActivityLog) {
-    if (!is_allowed_to_submit(key)) {
+    if (!canSubmit(key)) {
       debug(`Unallowed user is trying to sumbit the task ${key}`)
       throw new Meteor.Error(403, 'You are not allowed to submit this task')
     }
@@ -41,7 +41,7 @@ Meteor.methods({
     const task:TaskData | undefined = tasks.findOne({ _id: key } )
 
     if (task) {
-      formData = filter_unsubmittable_vars(
+      formData = filterUnsubmittableVars(
         formData,
         task.customHeaders.formIO,
         ['cancel', 'submit'],
@@ -77,7 +77,7 @@ Meteor.methods({
   },
 
   async deleteProcessInstance(jobKey, processInstanceKey) {
-    if (!isAllowedDeleteProcessInstance()) {
+    if (!canDeleteProcessInstance()) {
       debug(`Unallowed user to delete the process instance key ${processInstanceKey}`)
       throw new Meteor.Error(403, 'You are not allowed to delete a process instance')
     }
