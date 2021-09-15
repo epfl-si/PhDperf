@@ -28,20 +28,21 @@ function Task({task}: TaskProps) {
               <a href={task.monitorUri} target="_blank" className={'pr-3'}>on Monitor <span
                 className={"fa fa-external-link"}/></a>
             }
-            { Meteor.user().isAdmin &&
+            { Meteor.user()?.isAdmin &&
               <span className={"mr-1"}>
                 <Button
                   label={'Cancel process'}
-                  onClickFn={(event) => {
+                  onClickFn={(event: React.FormEvent<HTMLButtonElement>) => {
                       event.preventDefault();
                       if (window.confirm('Delete the process instance?')) {
                         Meteor.apply(
-                          "deleteProcessInstance", [task.key, task.processInstanceKey], {wait: true, noRetry: true},
-                          (error: global_Error | Meteor.Error | undefined, result: any) => {
+                          // @ts-ignore, because doc is saying noRetry exists
+                          "deleteProcessInstance", [task.key, task.processInstanceKey], { wait: true, noRetry: true },
+                          (error: global_Error | Meteor.Error | undefined) => {
                             if (error) {
                               toast.error(`${error}`)
                             } else {
-                              toast.success(`Sucessfully removed the instance (id: ${result})`)
+                              toast.success(`Successfully removed the process instance`)
                             }
                           }
                         )

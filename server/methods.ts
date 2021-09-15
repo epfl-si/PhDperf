@@ -87,12 +87,11 @@ Meteor.methods({
     if(!zBClient) throw new Meteor.Error(500, `The Zeebe client has not been able to start on the server.`)
 
     try {
-      const cancelMessage = await zBClient.cancelProcessInstance(processInstanceKey)
-      // delete in db too the job key
+      await zBClient.cancelProcessInstance(processInstanceKey)
+      // delete in db too
       tasks.remove({_id: jobKey})
-      return cancelMessage
     } catch (error) {
-      debug("Error can not cancel process instance")
+      debug(`Error: Unable to cancel the process instance ${processInstanceKey}. ${error}`)
       tasks.remove({_id: jobKey})
       throw new Meteor.Error(500, `Unable to cancel the task. ${error}. Deleting locally anyway`)
     }
