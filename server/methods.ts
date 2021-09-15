@@ -89,7 +89,8 @@ Meteor.methods({
       return cancelMessage
     } catch (error) {
       debug("Error can not cancel process instance")
-      throw new Meteor.Error(500, `Unable to cancel the task. ${error}`, 'Check the task still exist by refreshing your browser')
+      tasks.remove({_id: jobKey})
+      throw new Meteor.Error(500, `Unable to cancel the task. ${error}. Deleting locally anyway`)
     }
   },
 })
