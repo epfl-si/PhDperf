@@ -8,6 +8,10 @@ import {Button, Loader} from "@epfl/epfl-sti-react-library"
 import {Link} from "react-router-dom"
 import {Participant} from "/imports/ui/components/Participant";
 import toast from "react-hot-toast";
+import {
+  canStartProcessInstance,
+  canDeleteProcessInstance
+} from "/imports/policy/tasks";
 
 type TaskProps = {
   task: Task
@@ -16,6 +20,9 @@ type TaskProps = {
 function Task({task}: TaskProps) {
   return (
     <div className={'border-top p-2'}>
+      { Meteor.user()?.isAdmin && task.undecryptableVariablesKey.length > 0 &&
+        <span className={'alert alert-danger'}>Can not decrypt this keys: { task.undecryptableVariablesKey.join(', ') }</span>
+      }
       <details>
         <summary className={'d-flex align-items-center'}>
           <span className={'mr-auto small'}>
@@ -28,20 +35,21 @@ function Task({task}: TaskProps) {
               <a href={task.monitorUri} target="_blank" className={'pr-3'}>on Monitor <span
                 className={"fa fa-external-link"}/></a>
             }
-            { Meteor.user().isAdmin &&
+            { canDeleteProcessInstance() &&
               <span className={"mr-1"}>
                 <Button
                   label={'Cancel process'}
-                  onClickFn={(event) => {
+                  onClickFn={(event: React.FormEvent<HTMLButtonElement>) => {
                       event.preventDefault();
                       if (window.confirm('Delete the process instance?')) {
                         Meteor.apply(
-                          "deleteProcessInstance", [task.key, task.processInstanceKey], {wait: true, noRetry: true},
-                          (error: global_Error | Meteor.Error | undefined, result: any) => {
+                          // @ts-ignore, because doc is saying noRetry exists
+                          "deleteProcessInstance", [task.key, task.processInstanceKey], { wait: true, noRetry: true },
+                          (error: global_Error | Meteor.Error | undefined) => {
                             if (error) {
                               toast.error(`${error}`)
                             } else {
-                              toast.success(`Sucessfully removed the instance (id: ${result})`)
+                              toast.success(`Successfully removed the process instance`)
                             }
                           }
                         )
@@ -93,7 +101,7 @@ export default function TaskList() {
   return (
     <>
       {
-        Meteor.user()?.isAdmin &&
+        canStartProcessInstance() &&
         <WorkflowStarter/>
       }
       {listLoading ? (

@@ -1,7 +1,7 @@
 import {Meteor} from "meteor/meteor";
 import {encrypt} from "/server/encryption";
 import {FormioActivityLog, TaskData, TasksCollection} from "/imports/model/tasks";
-import {filter_unsubmittable_vars, is_allowed_to_submit, isAllowedDeleteProcessInstance} from "/server/permission/tasks";
+import {filterUnsubmittableVars, canSubmit, canDeleteProcessInstance} from "/imports/policy/tasks";
 import _ from "lodash";
 import {zBClient} from "/server/zeebe_broker_connector";
 import WorkersClient from './zeebe_broker_connector'
@@ -17,8 +17,9 @@ Meteor.methods({
 
     debug(`calling for a new "phdAssessProcess" instance`)
 
+    if(!zBClient) throw new Meteor.Error(500, `The Zeebe client has not been able to start on the server.`)
+
     try {
-      if(!zBClient) throw `The Zeebe client has not been able to start on the server.`
       const createProcessInstanceResponse = await Promise.resolve(zBClient.createProcessInstance(diagramProcessId, {
         created_at: encrypt(new Date().toJSON()),
         created_by: encrypt(Meteor.userId()!),
@@ -32,7 +33,7 @@ Meteor.methods({
   },
 
   async submit(key, formData, formMetaData: FormioActivityLog) {
-    if (!is_allowed_to_submit(key)) {
+    if (!canSubmit(key)) {
       debug(`Unallowed user is trying to sumbit the task ${key}`)
       throw new Meteor.Error(403, 'You are not allowed to submit this task')
     }
@@ -40,7 +41,7 @@ Meteor.methods({
     const task:TaskData | undefined = tasks.findOne({ _id: key } )
 
     if (task) {
-      formData = filter_unsubmittable_vars(
+      formData = filterUnsubmittableVars(
         formData,
         task.customHeaders.formIO,
         ['cancel', 'submit'],
@@ -76,20 +77,23 @@ Meteor.methods({
   },
 
   async deleteProcessInstance(jobKey, processInstanceKey) {
-    if (!isAllowedDeleteProcessInstance(processInstanceKey)) {
+    if (!canDeleteProcessInstance()) {
       debug(`Unallowed user to delete the process instance key ${processInstanceKey}`)
       throw new Meteor.Error(403, 'You are not allowed to delete a process instance')
     }
 
+    debug(`Asking to delete an process instance ${processInstanceKey}`)
+
+    if(!zBClient) throw new Meteor.Error(500, `The Zeebe client has not been able to start on the server.`)
+
     try {
-      if(!zBClient) throw `The Zeebe client has not been able to start on the server.`
-      const cancelMessage = await zBClient.cancelProcessInstance(processInstanceKey)
-      // delete in db too the job key
+      await zBClient.cancelProcessInstance(processInstanceKey)
+      // delete in db too
       tasks.remove({_id: jobKey})
-      return cancelMessage
     } catch (error) {
-      debug("Error can not cancel process instance")
-      throw new Meteor.Error(500, `Unable to cancel the task. ${error}`, 'Check the task still exist by refreshing your browser')
+      debug(`Error: Unable to cancel the process instance ${processInstanceKey}. ${error}`)
+      tasks.remove({_id: jobKey})
+      throw new Meteor.Error(500, `Unable to cancel the task. ${error}. Deleting locally anyway`)
     }
   },
 })
