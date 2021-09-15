@@ -72,6 +72,7 @@ export interface Task<WorkerInputVariables = PhDInputVariables, CustomHeaderShap
 
 export type TaskData = Task & {
   _id: string
+  undecryptableVariablesKey: string[]
 }
 
 // Due to restrictions in the Meteor model, this function can only be

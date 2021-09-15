@@ -16,6 +16,9 @@ type TaskProps = {
 function Task({task}: TaskProps) {
   return (
     <div className={'border-top p-2'}>
+      { Meteor.user()?.isAdmin && task.undecryptableVariablesKey.length > 0 &&
+        <span className={'alert alert-danger'}>Can not decrypt this keys: { task.undecryptableVariablesKey.join(', ') }</span>
+      }
       <details>
         <summary className={'d-flex align-items-center'}>
           <span className={'mr-auto small'}>

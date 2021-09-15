@@ -36,14 +36,18 @@ function zeebeJobToTask(job: PhDZeebeJob): TaskData {
   // Typescript hack with the "any" : make it writable by bypassing typescript. Well know it's bad,
   // but still, better than rebuilding the whole Zeebe interfaces to get it writeable
   const decryptedVariables: PhDInputVariables = {}
+  const undecryptableVariablesKey: string[] = []
 
   Object.keys(job.variables).map((key) => {
     try {
       decryptedVariables[key] = decrypt(job.variables[key])
     } catch (e) {
       if (e instanceof SyntaxError) {
-        debug(`Can't decrypt ${key}`)
-        throw e
+        // not good, some values are not readable. Get the error for now,
+        // but raise it after the whole decrypt
+        // we may need to do something afterward
+        debug(`Can't decrypt the key: ${key}`)
+        undecryptableVariablesKey.push(key)
       } else {
         throw e
       }
@@ -52,7 +56,8 @@ function zeebeJobToTask(job: PhDZeebeJob): TaskData {
 
   return Object.assign(job, {
     _id: job.key,
-    variables: decryptedVariables
+    variables: decryptedVariables,
+    undecryptableVariablesKey: undecryptableVariablesKey
   })
 }
 
@@ -108,5 +113,4 @@ export default {
     })
     debug(`Worker ${key} sent complete and successful status to Zeebe`)
   }
-
 }
