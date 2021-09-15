@@ -65,7 +65,7 @@ export function Task({workflowKey}: { workflowKey: string }) {
       {submitted ? (
         <>
           <Alert message={'Data submitted !'} alertType={'success'}/>
-          <Link to={`/`}><Button label={'To task list'} onClickFn={() => void 0}/></Link>
+          <Link to={`/`}><Button label={'Back'} onClickFn={() => void 0}/></Link>
         </>
       ) : (
         <div>Unable to find the task no {workflowKey}.<br/>
