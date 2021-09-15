@@ -17,8 +17,9 @@ Meteor.methods({
 
     debug(`calling for a new "phdAssessProcess" instance`)
 
+    if(!zBClient) throw new Meteor.Error(500, `The Zeebe client has not been able to start on the server.`)
+
     try {
-      if(!zBClient) throw `The Zeebe client has not been able to start on the server.`
       const createProcessInstanceResponse = await Promise.resolve(zBClient.createProcessInstance(diagramProcessId, {
         created_at: encrypt(new Date().toJSON()),
         created_by: encrypt(Meteor.userId()!),
@@ -81,8 +82,11 @@ Meteor.methods({
       throw new Meteor.Error(403, 'You are not allowed to delete a process instance')
     }
 
+    debug(`Asking to delete an process instance ${processInstanceKey}`)
+
+    if(!zBClient) throw new Meteor.Error(500, `The Zeebe client has not been able to start on the server.`)
+
     try {
-      if(!zBClient) throw `The Zeebe client has not been able to start on the server.`
       const cancelMessage = await zBClient.cancelProcessInstance(processInstanceKey)
       // delete in db too the job key
       tasks.remove({_id: jobKey})
