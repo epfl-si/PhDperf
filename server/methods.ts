@@ -18,6 +18,7 @@ Meteor.methods({
     debug(`calling for a new "phdAssessProcess" instance`)
 
     try {
+      if(!zBClient) throw `The Zeebe client has not been able to start on the server.`
       const createProcessInstanceResponse = await Promise.resolve(zBClient.createProcessInstance(diagramProcessId, {
         created_at: encrypt(new Date().toJSON()),
         created_by: encrypt(Meteor.userId()!),
@@ -81,13 +82,14 @@ Meteor.methods({
     }
 
     try {
+      if(!zBClient) throw `The Zeebe client has not been able to start on the server.`
       const cancelMessage = await zBClient.cancelProcessInstance(processInstanceKey)
       // delete in db too the job key
       tasks.remove({_id: jobKey})
       return cancelMessage
     } catch (error) {
       debug("Error can not cancel process instance")
-      throw new Meteor.Error(500, `Unable to cancel the task. ${error}`, 'Check the task exist by refreshing your browser')
+      throw new Meteor.Error(500, `Unable to cancel the task. ${error}`, 'Check the task still exist by refreshing your browser')
     }
   },
 })
