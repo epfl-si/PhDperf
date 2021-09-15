@@ -76,7 +76,7 @@ Meteor.methods({
   },
 
   async deleteProcessInstance(jobKey, processInstanceKey) {
-    if (!isAllowedDeleteProcessInstance(processInstanceKey)) {
+    if (!isAllowedDeleteProcessInstance()) {
       debug(`Unallowed user to delete the process instance key ${processInstanceKey}`)
       throw new Meteor.Error(403, 'You are not allowed to delete a process instance')
     }

@@ -40,10 +40,8 @@ export const is_allowed_to_submit = (taskKey: string) : boolean => {
     }).count() > 0
 }
 
-export const isAllowedDeleteProcessInstance = (taskKey: string) : boolean => {
-  if (Meteor.user()?.isAdmin) {
-    return true
-  }
+export const isAllowedDeleteProcessInstance = () : boolean => {
+  return !!Meteor.user()?.isAdmin;
 }
 
 /*
