@@ -15,6 +15,9 @@ phd_assess_meteor_port_name: "80"
 phd_assess_meteor_port: 80
 phd_assess_meteor_targetport: 3000
 phd_assess_meteor_servicename: "phd-assess-meteor"
+openshift_image_registry: "os-docker-registry.epfl.ch"
+openshift_local_image_registry: "docker-registry.default.svc:5000"
+phd_assess_meteor_image_tag: "{{openshift_image_registry}}/{{openshift_namespace}}/{{phd_assess_meteor_servicename}}:latest"
 secret_name: "phd-assess.secrets"
 encryption_key_name: "PHDASSESS_ENCRYPTION_KEY"
 volume_zeebe_name: "svc0166-{{ app_name }}-zeebe-partition-app"

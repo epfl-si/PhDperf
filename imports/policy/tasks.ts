@@ -10,32 +10,45 @@ export const get_user_permitted_tasks = () => {
   } else {
     const groups = Meteor.user()?.groupList
 
-    return Tasks.find({
-      $or: [
-        {"customHeaders.allowedGroups": {$in: groups}},  // Get tasks for the group
-        {"variables.assigneeSciper": Meteor.user()?._id},  // Get assigned tasks
-      ]
-    })
+    if (groups && groups.length > 0) {
+      return Tasks.find({
+        $or: [
+          { "customHeaders.allowedGroups": { $in: groups } },  // Get tasks for the group
+          { "variables.assigneeSciper": Meteor.user()?._id },  // Get assigned tasks
+        ]
+      })
+    } else {
+      return Tasks.find({ "variables.assigneeSciper": Meteor.user()?._id })
+    }
   }
 }
 
 export const canSubmit = (taskKey: string) : boolean => {
   if (Meteor.user()?.isAdmin) {
     return true
-  }
+  } else {
+    const groups = Meteor.user()?.groupList
 
-  return Tasks.find({$and : [
-      {
-        "key": taskKey
-      },
-      {
-        $or: [
-          {"customHeaders.allowedGroups": {$in: Meteor.user()?.groupList}},
-          {"variables.assigneeSciper": Meteor.user()?._id}
+    if (groups && groups.length > 0) {
+      return Tasks.find({
+        $and: [
+          { "key": taskKey },
+          { $or: [
+              { "customHeaders.allowedGroups": {$in: Meteor.user()?.groupList} },
+              { "variables.assigneeSciper": Meteor.user()?._id }
+            ]
+          }
         ]
-      }
-    ]
-    }).count() > 0
+      }).count() > 0
+    } else {
+      return Tasks.find({
+        $and: [
+          { "key": taskKey },
+          { "variables.assigneeSciper": Meteor.user()?._id }
+        ]
+      }).count() > 0
+    }
+  }
 }
 
 export const canStartProcessInstance = () : boolean => {
