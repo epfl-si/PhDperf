@@ -35,7 +35,7 @@ export const App = () => {
           <TheTask/>
         </PageRoute>
         <PageRoute path="/">
-          <h1 className={'h2'}>PhD Assess</h1>
+          <h1 className={'h2'}>Annual Report</h1>
           <TaskList/>
         </PageRoute>
       </Switch>
@@ -52,7 +52,7 @@ function PhDBreadcrumbs() {
   const breadcrumbs = [
     {link: "https://www.epfl.ch/education/phd/", anchor: "École Doctorale"},
     // TODO: We should fashion this out of a <Link>
-    {link: "/", anchor: "PhDperf"}
+    {link: "/", anchor: "Annual Report"}
   ]
 
   const {path} = useRouteMatch()
