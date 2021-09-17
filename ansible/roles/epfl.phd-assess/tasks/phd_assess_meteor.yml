@@ -39,7 +39,7 @@
   delegate_to: localhost
 - debug: var=output_push_image.stdout_lines
   tags:
-    - meteor-build
+    - meteor-push
     - never
 
 - name: phd-assess-meteor Deployment Config
