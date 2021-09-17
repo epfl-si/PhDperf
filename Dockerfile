@@ -44,4 +44,4 @@ EXPOSE 3000
 
 ### user name recognition at runtime w/ an arbitrary uid - for OpenShift deployments
 #ENTRYPOINT [ "uid_entrypoint" ]
-CMD mongod --dbpath /home/data/db & node main.js
+CMD mongod --dbpath --quiet /home/data/db & node main.js
