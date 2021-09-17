@@ -9,29 +9,38 @@
   delegate_to: localhost
   register: output_meteor_build
 - debug: var=output_meteor_build.stdout_lines
+  tags:
+    - meteor-build
+    - never
 
-- name: Locally build and tag phd-assess-meteor image
+- name: Locally build and tag the image
   tags:
     - meteor-build
     - never
   shell: |
     set -e -x
-    docker build .. -t os-docker-registry.epfl.ch/phd-assess/phd-assess-meteor:latest
+    docker build .. -t {{ phd_assess_meteor_image_tag }}
   delegate_to: localhost
   register: output_docker_build
 - debug: var=output_docker_build.stdout_lines
+  tags:
+    - meteor-build
+    - never
 
-- name: Log into the Openshift docker repository and push the image
+- name: Log into the Openshift docker repository and push the tagged image
   tags:
     - meteor-push
     - never
   shell: |
     set -e -x
-    oc whoami -t | docker login os-docker-registry.epfl.ch -u unused --password-stdin
-    docker push os-docker-registry.epfl.ch/phd-assess/phd-assess-meteor:latest
+    oc whoami -t | docker login {{ openshift_image_registry }} -u unused --password-stdin
+    docker push {{ phd_assess_meteor_image_tag }}
   register: output_push_image
   delegate_to: localhost
 - debug: var=output_push_image.stdout_lines
+  tags:
+    - meteor-build
+    - never
 
 - name: phd-assess-meteor Deployment Config
   tags:
@@ -80,7 +89,7 @@
                   secretKeyRef:
                     name: "{{ secret_name }}"
                     key: "{{ encryption_key_name }}"
-              image: 'docker-registry.default.svc:5000/{{openshift_namespace}}/phd-assess-meteor:latest'
+              image: '{{ openshift_local_image_registry }}/{{openshift_namespace}}/{{ phd_assess_meteor_servicename }}:latest'
               imagePullPolicy: Always
               name: phd-assess-meteor
               resources:
