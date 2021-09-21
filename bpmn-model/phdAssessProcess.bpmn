@@ -372,7 +372,8 @@
           <zeebe:header key="mesage" value="&#60;em&#62;English below&#60;/em&#62;  &#60;p&#62;Dans le cadre du rapport annuel de {{ phdStudent }},  au moins une des personnes impliquées dans le travail de thèse n’approuve pas le contenu :&#60;p&#62;   &#60;p&#62;Une réunion avec le doctorant et le directeur de thèse (et le co-directeur le cas échéant) doit avoir lieu, afin de rechercher des mesures appropriées pour résoudre les éventuels problèmes et conflits.&#60;/p&#62;  &#60;p&#62;Nous vous remercions pour le suivi et vous prions d’agréer nos meilleures salutations.&#60;/p&#62;  &#60;p&#62;***&#60;/p&#62;    &#60;p&#62;In {{ phdStudent }}&#39;s annual report, at least one of the people involved in the thesis work does not approve the content: &#60;/p&#62;  &#60;p&#62;A meeting with the doctoral student and the thesis director (and the codirector if applicable) should be held, in order to seek appropriate measures to resolve possible problems and conflicts.&#60;/p&#62;  &#60;p&#62;Thank you for the follow-up and best regards,&#60;/p&#62;  &#60;p&#62;L’Ecole doctorale / The Doctoral School&#60;/p&#62;" />
         </zeebe:taskHeaders>
         <zeebe:ioMapping>
-          <zeebe:input source="= [ programDirectorEmail , programAssistantEmail ]" target="to" />
+          <zeebe:input source="= programDirectorEmail" target="to" />
+          <zeebe:input source="= doctoralProgramEmail" target="cc" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0bw508m</bpmn:incoming>
@@ -382,7 +383,8 @@
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="notification" retries="0" />
         <zeebe:ioMapping>
-          <zeebe:input source="= [ programDirectorEmail , programAssistantEmail ]" target="to" />
+          <zeebe:input source="= programDirectorEmail" target="to" />
+          <zeebe:input source="= doctoralProgramEmail" target="cc" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
           <zeebe:header key="subject" value="Notification to Pgm director + Admin assistant if result is “unsatisfactory”" />
