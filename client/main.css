@@ -36,3 +36,7 @@ label.field-required:after {
   display: revert !important;
   overflow-y: auto !important;
 }
+
+.form-group label {
+  color: inherit;
+}
