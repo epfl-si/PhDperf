@@ -83,3 +83,7 @@ table .btn {
 td > .form-group {
   margin-bottom: 0;
 }
+
+.formio-editor-read-only-content {
+  color: #707070;
+}
