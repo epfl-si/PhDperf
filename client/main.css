@@ -26,17 +26,60 @@ body .breadcrumb-container::before {
   border-radius: 2px;
 }
 
-label.field-required:after {
-  content: " *";
-  color: red;
-}
 
 .table {
   height: auto !important;
   display: revert !important;
   overflow-y: auto !important;
+
+}
+
+.table tfoot tr td button {
+  margin-bottom: 6px !important;
+  margin-top: 6px !important;
+}
+
+.formio-component-label-hidden {
+  position: relative;
 }
 
 .form-group label {
   color: inherit !important;
+}
+
+.formio-select-autocomplete-input {
+  opacity: 0;
+  position: relative;
+  z-index: -1;
+  display: block;
+  height: 0;
+  border: none;
+}
+
+.formio-component-resource .control-label--hidden.field-required, .formio-component-select .control-label--hidden.field-required {
+  right: 40px;
+  z-index: 2;
+}
+
+.field-required::after {
+  position: relative;
+  z-index: 10;
+}
+.field-required::after, .tab-error::after {
+  content: " *";
+  color: #eb0000;
+}
+
+.control-label--hidden {
+  position: absolute;
+  top: 6px;
+  right: 5px;
+}
+
+table .btn {
+  padding: .375rem .75rem !important;
+}
+
+td > .form-group {
+  margin-bottom: 0;
 }
