@@ -17,6 +17,7 @@
     "@fortawesome/free-solid-svg-icons": "^5.15.3",
     "@fortawesome/react-fontawesome": "^0.1.14",
     "@popperjs/core": "^2.9.1",
+    "console-log-json": "^2.8.0",
     "crypto-js": "^4.0.0",
     "debug": "^4.3.1",
     "dotenv": "^8.2.0",
