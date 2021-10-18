@@ -1,4 +1,4 @@
-- name: Locally meteor build
+- name: Locally build the meteor app
   tags:
     - meteor-build
     - never
@@ -13,7 +13,7 @@
     - meteor-build
     - never
 
-- name: Locally build and tag the image
+- name: Locally build thedocker image and tag it
   tags:
     - meteor-build
     - never
