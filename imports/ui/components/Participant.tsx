@@ -1,27 +1,23 @@
 import React from "react"
-import {Sciper} from "/imports/api/datatypes";
-import {ParticipantDetail} from "/imports/model/tasks";
+import {ParticipantDetail} from "/imports/model/participants";
 
 const allGoodBoxColor = 'bg-success text-white'
 const awaitingBoxColor = 'bg-info text-white'
 
 export type ParticipantsInfo = {
   role: string
-  sciper: Sciper
   info?: ParticipantDetail
   isAssignee?: boolean  // is the current user the one awaited to fullfil the task
 }
 
-export const Participant = ({role, sciper, info, isAssignee}: ParticipantsInfo) => {
-  return (
-    <>
-      {sciper &&
-      <div className={`participant border col m-1 p-2 ${isAssignee ? awaitingBoxColor : allGoodBoxColor}`}>
-        <div className={`small border-bottom border-white`}>Role: {role}</div>
-        <div className={`small`}>Sciper: {sciper}</div>
-        <div className={`small`}>Display name: {info?.name}</div>
-      </div>
-      }
-    </>
-  )
-}
+const camelCaseToLabel = (text: string) => text.replace(/([A-Z])/g, ' $1').replace(/^./, function(str: string){ return str.toUpperCase(); })
+
+export const Participant = ({role, info, isAssignee}: ParticipantsInfo) =>
+  <>
+    {info &&
+    <div className={`participant border col m-1 p-2 ${isAssignee ? awaitingBoxColor : allGoodBoxColor}`}>
+      <div className={`small border-bottom border-white`}>{camelCaseToLabel(role)}</div>
+      <div className={`small`}>{info.name} ({info.sciper})</div>
+    </div>
+    }
+  </>

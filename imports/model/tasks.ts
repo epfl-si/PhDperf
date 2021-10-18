@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor'
 import { Mongo } from 'meteor/mongo'
 import {Sciper} from "/imports/api/datatypes";
 import {ICustomHeaders, IInputVariables, Job} from "zeebe-node";
+import {ZeebeParticipantsVariables} from './participants';
 
 export class PhDCustomHeaderShape implements ICustomHeaders {
   groups?: string[]  // manage permission groupwise
@@ -22,42 +23,11 @@ export interface FormioActivityLog {
   onLine?: boolean;
 }
 
-export const ParticipantIDs = [
-  "programAssistant" ,
-  "phdStudent" ,
-  "thesisDirector" ,
-  "thesisCoDirector" ,
-  "programDirector" ,
-  "mentor",
-]
-
-export type ParticipantDetail = {
-  name: string
-}
-
-// throw in a flatten participants list
-// dont' try to hide it under a structured var, as
-// participants.mentor is not a thing with zeebe + crypted data
-export class Participants {
-  programAssistantSciper?: Sciper
-  programAssistantInfo?: ParticipantDetail
-  phdStudentSciper?: Sciper
-  phdStudentInfo?: ParticipantDetail
-  thesisDirectorSciper?: Sciper
-  thesisDirectorInfo?: ParticipantDetail
-  thesisCoDirectorSciper?: Sciper
-  thesisCoDirectorInfo?: ParticipantDetail
-  programDirectorSciper?: Sciper
-  programDirectorInfo?: ParticipantDetail
-  mentorSciper?: Sciper
-  mentorInfo?: ParticipantDetail
-}
-
 // This are the bpmn variables we could find for every steps and
 // we will need through the code.
 // Why a class instead an interface here ? To be able to read the
 // keys later in the process. See https://stackoverflow.com/a/59806829
-export interface PhDInputVariables extends Participants, IInputVariables {
+export interface PhDInputVariables extends ZeebeParticipantsVariables, IInputVariables {
   assigneeSciper?: Sciper
   created_by?: Sciper
   created_at?: string  // JSON date

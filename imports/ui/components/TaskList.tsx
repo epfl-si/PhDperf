@@ -71,14 +71,16 @@ function Task({task}: TaskProps) {
 
         <div className={'container'}>
           <div className="row">
-          {task.participants &&
-            task.participants.map((participant) => (
+            { task.participants &&
+              Object.entries(task.participants).map(([role, info]) =>
                 <Participant
-                  key={`${task._id}-${participant.role}`}
-                  {...participant}
+                  key={`${task._id}-${role}`}
+                  role={role}
+                  info={info}
+                  isAssignee={task.variables.assigneeSciper === info?.sciper}
                 />
-            )
-          )}
+              )
+            }
           </div>
         </div>
 

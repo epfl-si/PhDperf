@@ -5,6 +5,8 @@ import {filterUnsubmittableVars, canSubmit, canDeleteProcessInstance} from "/imp
 import _ from "lodash";
 import {zBClient} from "/server/zeebe_broker_connector";
 import WorkersClient from './zeebe_broker_connector'
+import {updateParticipantsFromSciper} from "/server/userFetcher";
+
 
 const tasks = TasksCollection<TaskData>()
 const debug = require('debug')('server/methods')
@@ -54,6 +56,9 @@ Meteor.methods({
       if (formData.length == 0) {
         throw new Meteor.Error(400, 'There is not enough valid data to validate this form. Canceling.')
       }
+
+      // update Users info, based on sciper
+      formData = await updateParticipantsFromSciper(formData)
 
       formData.updated_at = new Date().toJSON()
 

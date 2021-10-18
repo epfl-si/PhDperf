@@ -1,6 +1,7 @@
 import { fetch, Headers } from 'meteor/fetch'
 import memoize from 'timed-memoize'
-import {ParticipantIDs, PhDInputVariables} from "/imports/model/tasks";
+import {PhDInputVariables} from "/imports/model/tasks";
+import {ParticipantIDs} from "/imports/model/participants";
 
 const debug = require('debug')('server/userFetcher')
 
@@ -39,9 +40,9 @@ interface GetPersonGoodResult {
   result: PersonInfo
 }
 
-export async function getUserInfo (sciper: string | number): Promise<GetPersonGoodResult> {
+export async function getUserInfo (sciper: string | number): Promise<PersonInfo> {
   const app = 'SWLM'
-  const server = 'https://test-websrv.epfl.ch/'
+  const server = 'https://websrv.epfl.ch/'
   const url = `${server}cgi-bin/rwspersons/getPerson?id=${sciper}&app=${app}`
 
   debug(`Requesting ${server} for user info for ${sciper}`)
@@ -62,21 +63,37 @@ export async function getUserInfo (sciper: string | number): Promise<GetPersonGo
     const badJsonResponse = jsonResponse as GetPersonBadResult
     throw new Error(badJsonResponse.error.text)
   }
-  const goodJsonResponse = jsonResponse
+  const goodJsonResponse = jsonResponse as GetPersonGoodResult
   debug(`response for the user info fetch ${sciper} : ${JSON.stringify(goodJsonResponse)}`)
-  return goodJsonResponse
+  return goodJsonResponse.result
 }
 
-export const getUserInfoMemoized = memoize(getUserInfo, {timeout: 86400000, hot:false})  // keep it in memory for 24 hours
+// keep users info in memory for 24 hours
+export const getUserInfoMemoized = memoize(getUserInfo, {timeout: 86400000, hot:false})
 
 /*
- * Return updated variables (if needed) of participants for a specific task variables
+ * Transform outputting Meteor Participants into Zeebe Variables
+ * We read all the variables, and set the info for all the vars ending with 'Sciper'
  */
-export const getUpdatedParticipantsInfo = async (variables: PhDInputVariables) => {
-  ParticipantIDs.reduce(async (acc: any, participantName) => {
-    if (variables[`${participantName}Sciper`]) {
-      acc[`${participantName}Info`] = await getUserInfo(variables[`${participantName}Sciper`])
-      return acc
+export const updateParticipantsFromSciper = async (variables: PhDInputVariables) => {
+  for (const participantName of ParticipantIDs) {
+    const sciper = variables[`${participantName}Sciper`]
+    if (sciper) {
+      const participantInfo = await getUserInfoMemoized(variables[`${participantName}Sciper`])
+
+      // assert all data are here, or raise a problem
+      if (!(participantInfo.name && participantInfo.email && participantInfo.sex)) {
+        throw `The participant  ${participantName} is missing one or more values ( ${participantInfo})`;
+      }
+      variables[`${participantName}Email`] = participantInfo.email
+
+      // build the name
+      let fullName = []
+      fullName.push(participantInfo.firstnameus || participantInfo.firstname)
+      fullName.push(participantInfo.nameus || participantInfo.name)
+      variables[`${participantName}Name`] = fullName.join(' ')
     }
-  }, {})
+  }
+
+  return variables
 }
