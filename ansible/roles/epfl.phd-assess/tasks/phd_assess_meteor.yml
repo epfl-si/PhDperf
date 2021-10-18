@@ -84,8 +84,6 @@
                 value: 'mongodb://localhost:27017/meteor'
               - name: 'ZEEBE_ADDRESS'
                 value: 'zeebe-broker:26500'
-              - name: 'CONSOLE_LOG_JSON_NO_STACK_FOR_NON_ERROR'
-                value: 'true'
               - name: "{{ encryption_key_name }}"
                 valueFrom:
                   secretKeyRef:

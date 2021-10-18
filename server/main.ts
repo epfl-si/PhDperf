@@ -5,14 +5,8 @@ import Tequila from 'meteor/epfl:accounts-tequila'
 import findUp from 'find-up'
 import '/imports/policy'
 import { get_user_permitted_tasks } from '/imports/policy/tasks'
-import { LoggerAdaptToConsole } from "console-log-json";
 
 require("dotenv").config({path: findUp.sync(".env")})
-
-// Start logging as JSON if we are not in debug mode
-if (!process.env.DEBUG?.search('/\*/')) {
-  LoggerAdaptToConsole()
-}
 
 Meteor.startup(() => {
   WorkersClient.start()
