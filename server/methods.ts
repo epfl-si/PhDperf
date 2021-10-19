@@ -14,7 +14,6 @@ const debug = require('debug')('server/methods')
 Meteor.methods({
 
   async startWorkflow() {  // aka start a new instance in Zeebe terms
-    // TODO: check the right to start a workflow, into the "Start workflow button"?
     const diagramProcessId = 'phdAssessProcess'
 
     debug(`calling for a new "phdAssessProcess" instance`)
@@ -26,6 +25,7 @@ Meteor.methods({
         created_at: encrypt(new Date().toJSON()),
         created_by: encrypt(Meteor.userId()!),
         updated_at: encrypt(new Date().toJSON()),
+        assigneeSciper: encrypt(Meteor.user()!._id),
       }))
       debug(`created new instance ${diagramProcessId}, response: ${JSON.stringify(createProcessInstanceResponse)}`)
       return createProcessInstanceResponse?.processKey

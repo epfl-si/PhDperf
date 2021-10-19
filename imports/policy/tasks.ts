@@ -52,6 +52,12 @@ export const canSubmit = (taskKey: string) : boolean => {
 }
 
 export const canStartProcessInstance = () : boolean => {
+  if (process.env.PHDASSESS_PROGRAM_ASSISTANT_GROUP) {
+    if (Meteor.user()?.groupList.includes(process.env.PHDASSESS_PROGRAM_ASSISTANT_GROUP)) {
+      return true
+    }
+  }
+
   return !!Meteor.user()?.isAdmin
 }
 

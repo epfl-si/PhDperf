@@ -84,6 +84,8 @@
                 value: 'mongodb://localhost:27017/meteor'
               - name: 'ZEEBE_ADDRESS'
                 value: 'zeebe-broker:26500'
+              - name: 'PHDASSESS_PROGRAM_ASSISTANT_GROUP'
+                value: 'PhDAssess-Activity_Specify_Participants-Test'
               - name: "{{ encryption_key_name }}"
                 valueFrom:
                   secretKeyRef:
