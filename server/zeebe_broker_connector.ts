@@ -40,7 +40,14 @@ function zeebeJobToTask(job: PhDZeebeJob): TaskData {
 
   Object.keys(job.variables).map((key) => {
     try {
-      decryptedVariables[key] = decrypt(job.variables[key])
+      if (Array.isArray(job.variables[key])) {key
+        decryptedVariables[key] = job.variables[key].reduce((acc: string[], item: string) => {
+            acc.push(decrypt(item))
+            return acc
+          }, [])
+      } else {
+        decryptedVariables[key] = decrypt(job.variables[key])
+      }
     } catch (e) {
       if (e instanceof SyntaxError) {
         // not good, some values are not readable. Get the error for now,
