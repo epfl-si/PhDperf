@@ -26,16 +26,16 @@ function Task({task}: TaskProps) {
       <details>
         <summary className={'d-flex align-items-center'}>
           <span className={'mr-auto small'}>
-            {task.variables &&
-              task.variables.created_by &&
-                <span className={'mr-1'}>Created by {task.variables.created_by}</span>
-            }
-            {task.created_at &&
-              <span className={'mr-1'}>Created {task.created_at.toLocaleString('fr-CH')}</span>
-            }
-            {task.updated_at &&
-              <span>Updated {task.updated_at.toLocaleString('fr-CH')}</span>
-            }
+          {task.created_at &&
+            <span className={'mr-2'}>Created {task.created_at.toLocaleString('fr-CH')}</span>
+          }
+          {task.updated_at &&
+            <span>Updated {task.updated_at.toLocaleString('fr-CH')}</span>
+          }
+          {task.created_by &&
+          task.created_by !== Meteor.user()?._id &&
+            <span className={'ml-2'}>By {task.variables.created_by}</span>
+          }
           </span>
           <span className={'small'}>
             { task.monitorUri &&
