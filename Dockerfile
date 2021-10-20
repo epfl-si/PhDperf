@@ -1,47 +1,37 @@
-FROM mongo:focal AS trunk
+FROM ubuntu:focal AS trunk
 
-LABEL io.openshift.tags=mongodb,meteor,phd-assess
-LABEL io.k8s.description="The PhD assess Meteor UI, to be connected to Zeebe"
-LABEL version="1.0"
-
+# build-essential:
 RUN set -e -x; export DEBIAN_FRONTEND=noninteractive; \
-    apt-get -qy update && \
-    apt-get install -y \
-    curl \
-  && rm -rf /var/lib/apt/lists/*
+    apt -qy update; \
+    apt -qy install curl build-essential git openssh-client
 
-# get node+npm, to a specific version, as needed by meteor
-ENV NODE_VERSION=14.17.6
-ARG XDG_CONFIG_HOME=/home
-RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.38.0/install.sh | bash
-ARG NVM_DIR=/home/nvm
-RUN . "$NVM_DIR/nvm.sh" && nvm install ${NODE_VERSION}
-RUN . "$NVM_DIR/nvm.sh" && nvm use v${NODE_VERSION}
-RUN . "$NVM_DIR/nvm.sh" && nvm alias default v${NODE_VERSION}
-ARG NODE_DIR="$NVM_DIR/versions/node/v${NODE_VERSION}/bin/"
-ENV PATH="$NODE_DIR:${PATH}"
+RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash - && apt-get install -y nodejs
 
-ARG APP_ROOT=/usr/bundle
-COPY /dist/PhDAssess.tar.gz ${APP_ROOT}/app.tar.gz
+FROM trunk AS build
+
+# not recommended by the Meteor guide
+RUN curl https://install.meteor.com/ | sh
+
+# If you want to run MongoDB in-docker for some reason (e.g. you have a persistent
+# volume, or you don't care about persistence in the first place):
+RUN curl https://www.mongodb.org/static/pgp/server-5.0.asc | apt-key add -
+RUN echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/5.0 multiverse" > /etc/apt/sources.list.d/mongodb-org-5.0.list
+RUN set -e -x; export DEBIAN_FRONTEND=noninteractive; \
+    apt -qy update; \
+    apt -qy install mongodb-org
+
+RUN mkdir -p /usr/src/app/
+COPY . /usr/src/app/
+WORKDIR /usr/src/app/
+RUN meteor npm i && meteor npm run postinstall
+RUN meteor build --allow-superuser /usr/bundle
+RUN tar -C /usr -zxf /usr/bundle/app.tar.gz
+WORKDIR /usr/bundle
+RUN cd programs/server && npm install
+
+FROM trunk AS run
+
+COPY --from=build /usr/bundle /usr/bundle/
 WORKDIR /usr/bundle
 
-# Set for Openshift user permissions
-RUN chgrp -R 0 ${APP_ROOT} && \
-    chmod -R g=u ${APP_ROOT}
-RUN chmod -R a+rwx ${NODE_DIR} && \
-    chgrp -R 0 ${NODE_DIR} && \
-    chmod -R g=u ${NODE_DIR}
-RUN mkdir -p /home/data/db \
-    && chown -R mongodb:mongodb /home/data/db \
-    && chmod -R 777 /home/data/db
-
-RUN tar -C /usr -zxf app.tar.gz && rm app.tar.gz
-RUN cd programs/server && npm install --production
-
-# Set a user, like Openshift do
-USER 10000
-EXPOSE 3000
-
-### user name recognition at runtime w/ an arbitrary uid - for OpenShift deployments
-#ENTRYPOINT [ "uid_entrypoint" ]
-CMD mongod --quiet --dbpath /home/data/db & node main.js
+CMD node main.js

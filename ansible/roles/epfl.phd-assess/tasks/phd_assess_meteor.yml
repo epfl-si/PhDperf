@@ -1,31 +1,57 @@
-- name: Locally build the meteor app
-  tags:
-    - meteor-build
-    - never
-  shell: |
-    set -e -x
-    rm -f --  ../dist/PhDAssess.tar.gz
-    meteor build ../dist
+- name: "Pull upstream {{ phd_assess_ubuntu_base_image_mirrored_from }} image into {{ phd_assess_ubuntu_base_image_mirrored_to }}"
+  when: openshift_namespace == phd_assess_build_namespace
   delegate_to: localhost
-  register: output_meteor_build
-- debug: var=output_meteor_build.stdout_lines
-  tags:
-    - meteor-build
-    - never
+  openshift_imagestream:
+    metadata:
+      name: ubuntu
+      namespace: "{{ openshift_namespace }}"
+    from: "{{ phd_assess_ubuntu_base_image_mirrored_from }}"
+    tag: "{{ phd_assess_ubuntu_base_image_tag }}"
 
-- name: Locally build thedocker image and tag it
   tags:
+    - meteor
     - meteor-build
-    - never
-  shell: |
-    set -e -x
-    docker build .. -t {{ phd_assess_meteor_image_tag }}
+
+- name: "Build Meteor serving image in OpenShift"
+  when: openshift_namespace == phd_assess_build_namespace
   delegate_to: localhost
-  register: output_docker_build
-- debug: var=output_docker_build.stdout_lines
+  openshift_imagestream:
+    metadata:
+      name: "{{ phd_assess_meteor_image_name }}"
+      namespace: "{{ phd_assess_build_namespace }}"
+    git:
+      repository: "https://github.com/epfl-si/PhDAssess"
+      ref: refactor/meteor-build-and-mongo  ## TODO: revert to master once merged
+    spec:
+      resources:
+        limits:
+          memory: "1G"
   tags:
+    - meteor
     - meteor-build
+
+- name: "Rebuild Meteor serving image now"
+  debug:
+    msg: "Not quite done yet"
+  tags:
     - never
+    - meteor-build.now
+
+- name: "Promote images from phd_assess_build_namespace to openshift_namespace"
+  when: openshift_namespace != phd_assess_build_namespace
+  include_tasks:
+    file: _promote_image.yml
+    apply:
+      tags:
+        - meteor
+        - meteor-build
+  vars:
+    promote_image_name: "{{ phd_assess_meteor_image_name }}"
+    promote_image_tag: "latest"
+    promote_from_namespace: "{{ phd_assess_build_namespace }}"
+  tags:
+    - meteor
+    - meteor-build
 
 - name: Log into the Openshift docker repository and push the tagged image
   tags:
