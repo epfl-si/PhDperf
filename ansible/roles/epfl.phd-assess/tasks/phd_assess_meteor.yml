@@ -93,6 +93,7 @@
   tags:
     - meteor
   openshift:
+    state: latest
     apiVersion: apps.openshift.io/v1
     kind: DeploymentConfig
     metadata:
