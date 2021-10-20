@@ -12,7 +12,7 @@
     - meteor
     - meteor-build
 
-- name: "Build Meteor base image in OpenShift"
+- name: "Build NodeJS base image in OpenShift"
   when: openshift_namespace == phd_assess_build_namespace
   delegate_to: localhost
   openshift_imagestream:
@@ -23,7 +23,7 @@
     git:
       repository: "https://github.com/epfl-si/PhDAssess"
       ref: refactor/meteor-build-and-mongo  ## TODO: revert to master once merged
-      path: meteor-mongo-base
+      path: node-base
     spec:
       resources:
         limits:
