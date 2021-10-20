@@ -1,4 +1,4 @@
-FROM docker-registry.default.svc:5000/phd-assess/meteor-mongo-base:latest
+FROM docker-registry.default.svc:5000/phd-assess/meteor-base:latest
 
 # build-essential needed at build time, but not run time:
 RUN set -e -x; export DEBIAN_FRONTEND=noninteractive; \
@@ -13,7 +13,7 @@ RUN tar -C /usr -zxf /usr/bundle/app.tar.gz
 WORKDIR /usr/bundle
 RUN cd programs/server && npm install
 
-FROM docker-registry.default.svc:5000/phd-assess/meteor-mongo-base:latest
+FROM docker-registry.default.svc:5000/phd-assess/meteor-base:latest
 
 COPY --from=0 /usr/bundle /usr/bundle/
 WORKDIR /usr/bundle

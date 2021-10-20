@@ -17,7 +17,7 @@
   delegate_to: localhost
   openshift_imagestream:
     metadata:
-      name: "{{ phd_assess_meteor_mongo_base_image_name }}"
+      name: "{{ phd_assess_meteor_base_image_name }}"
       namespace: "{{ phd_assess_build_namespace }}"
     from: "ubuntu:{{ phd_assess_ubuntu_base_image_tag }}"
     git:
@@ -39,7 +39,7 @@
     metadata:
       name: "{{ phd_assess_meteor_image_name }}"
       namespace: "{{ phd_assess_build_namespace }}"
-    from: "{{ phd_assess_meteor_mongo_base_image_name }}:latest"
+    from: "{{ phd_assess_meteor_base_image_name }}:latest"
     git:
       repository: "https://github.com/epfl-si/PhDAssess"
       ref: refactor/meteor-build-and-mongo  ## TODO: revert to master once merged

@@ -26,5 +26,5 @@ phd_assess_build_namespace: phd-assess  # TODO: change when we have a test ns
 phd_assess_ubuntu_base_image_mirrored_from: "docker.io/ubuntu:{{ phd_assess_ubuntu_base_image_tag }}"
 phd_assess_ubuntu_base_image_tag: focal
 phd_assess_ubuntu_base_image_mirrored_to: docker-registry.default.svc:5000/{{openshift_namespace}}/ubuntu
-phd_assess_meteor_mongo_base_image_name: "meteor-mongo-base"
+phd_assess_meteor_base_image_name: "meteor-base"
 phd_assess_meteor_image_name: "phd-assess-meteor"
