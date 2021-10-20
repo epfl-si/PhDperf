@@ -51,6 +51,7 @@ oc_check () {
   case "$(oc version | grep Client)" in
     "Client Version: 3"*) fatal "Please update your oc to >4.7";;
     "Client Version: 4"*) :;;
+    "Client Version: v4"*) :;;
     *) fatal "Please install oc >4.7";;
   esac
 

@@ -1,31 +1,76 @@
-- name: Locally build the meteor app
-  tags:
-    - meteor-build
-    - never
-  shell: |
-    set -e -x
-    rm -f --  ../dist/PhDAssess.tar.gz
-    meteor build ../dist
+- name: "Pull upstream {{ phd_assess_ubuntu_base_image_mirrored_from }} image into {{ phd_assess_ubuntu_base_image_mirrored_to }}"
+  when: openshift_namespace == phd_assess_build_namespace
   delegate_to: localhost
-  register: output_meteor_build
-- debug: var=output_meteor_build.stdout_lines
-  tags:
-    - meteor-build
-    - never
+  openshift_imagestream:
+    metadata:
+      name: ubuntu
+      namespace: "{{ openshift_namespace }}"
+    from: "{{ phd_assess_ubuntu_base_image_mirrored_from }}"
+    tag: "{{ phd_assess_ubuntu_base_image_tag }}"
 
-- name: Locally build thedocker image and tag it
   tags:
+    - meteor
     - meteor-build
-    - never
-  shell: |
-    set -e -x
-    docker build .. -t {{ phd_assess_meteor_image_tag }}
+
+- name: "Build NodeJS base image in OpenShift"
+  when: openshift_namespace == phd_assess_build_namespace
   delegate_to: localhost
-  register: output_docker_build
-- debug: var=output_docker_build.stdout_lines
+  openshift_imagestream:
+    metadata:
+      name: "{{ phd_assess_meteor_base_image_name }}"
+      namespace: "{{ phd_assess_build_namespace }}"
+    from: "ubuntu:{{ phd_assess_ubuntu_base_image_tag }}"
+    git:
+      repository: "https://github.com/epfl-si/PhDAssess"
+      path: node-base
+    spec:
+      resources:
+        limits:
+          memory: "1G"
   tags:
+    - meteor
     - meteor-build
+
+- name: "Build Meteor serving image in OpenShift"
+  when: openshift_namespace == phd_assess_build_namespace
+  delegate_to: localhost
+  openshift_imagestream:
+    metadata:
+      name: "{{ phd_assess_meteor_image_name }}"
+      namespace: "{{ phd_assess_build_namespace }}"
+    from: "{{ phd_assess_meteor_base_image_name }}:latest"
+    git:
+      repository: "https://github.com/epfl-si/PhDAssess"
+    spec:
+      resources:
+        limits:
+          memory: "1G"
+  tags:
+    - meteor
+    - meteor-build
+
+- name: "Rebuild Meteor serving image now"
+  debug:
+    msg: "Not quite done yet"
+  tags:
     - never
+    - meteor-build.now
+
+- name: "Promote images from phd_assess_build_namespace to openshift_namespace"
+  when: openshift_namespace != phd_assess_build_namespace
+  include_tasks:
+    file: _promote_image.yml
+    apply:
+      tags:
+        - meteor
+        - meteor-build
+  vars:
+    promote_image_name: "{{ phd_assess_meteor_image_name }}"
+    promote_image_tag: "latest"
+    promote_from_namespace: "{{ phd_assess_build_namespace }}"
+  tags:
+    - meteor
+    - meteor-build
 
 - name: Log into the Openshift docker repository and push the tagged image
   tags:
@@ -46,6 +91,7 @@
   tags:
     - meteor
   openshift:
+    state: latest
     apiVersion: apps.openshift.io/v1
     kind: DeploymentConfig
     metadata:
@@ -67,7 +113,7 @@
         resources:
           limits:
             cpu: 1
-            memory: 1000M
+            memory: 100M
       template:
         metadata:
           creationTimestamp: null
@@ -75,13 +121,15 @@
             deployment-config.name: phd-assess-meteor
         spec:
           containers:
-            - env:
+            - name: phd-assess-meteor
+              image: '{{ openshift_local_image_registry }}/{{openshift_namespace}}/{{ phd_assess_meteor_servicename }}:latest'
+              env:
               - name: 'PORT'
                 value: '3000'
               - name: 'ROOT_URL'
                 value: "{{ full_cname }}"
               - name: 'MONGO_URL'
-                value: 'mongodb://localhost:27017/meteor'
+                value: 'mongodb://mongo:27017/meteor'
               - name: 'ZEEBE_ADDRESS'
                 value: 'zeebe-broker:26500'
               - name: 'PHDASSESS_PROGRAM_ASSISTANT_GROUP'
@@ -91,13 +139,14 @@
                   secretKeyRef:
                     name: "{{ secret_name }}"
                     key: "{{ encryption_key_name }}"
-              image: '{{ openshift_local_image_registry }}/{{openshift_namespace}}/{{ phd_assess_meteor_servicename }}:latest'
-              imagePullPolicy: Always
+              command:
+                - /usr/bin/node
+                - main.js
               name: phd-assess-meteor
               resources:
                 limits:
                   cpu: 1
-                  memory: 1000M
+                  memory: 800M
           dnsPolicy: ClusterFirst
           restartPolicy: Always
           schedulerName: default-scheduler

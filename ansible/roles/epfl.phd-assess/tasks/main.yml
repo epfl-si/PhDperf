@@ -5,6 +5,10 @@
   include_tasks: '{{ "zeebe_broker.yml" }}'
   tags: [zeebe]
 
+- name: Phd assess MongoDB tasks
+  include_tasks: '{{ "phd_assess_mongo.yml" }}'
+  tags: [meteor, meteor-mongo]
+
 - name: Phd assess meteor tasks
   include_tasks: '{{ "phd_assess_meteor.yml" }}'
   tags: [meteor, meteor-build, meteor-push]

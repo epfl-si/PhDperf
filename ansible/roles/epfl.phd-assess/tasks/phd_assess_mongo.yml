@@ -1,0 +1,81 @@
+- name: "Pull upstream {{ phd_assess_mongo_image_mirrored_from }} image into {{ phd_assess_mongo_image_mirrored_to }}"
+  delegate_to: localhost
+  openshift_imagestream:
+    metadata:
+      name: mongo
+      namespace: "{{ openshift_namespace }}"
+    from: "{{ phd_assess_mongo_image_mirrored_from }}"
+    tag: "{{ phd_assess_mongo_image_tag }}"
+
+  tags:
+    - meteor
+    - meteor-mongo
+
+- name: phd-assess-mongo Deployment Config
+  tags:
+    - meteor
+    - meteor-mongo
+  openshift:
+    state: latest
+    apiVersion: apps.openshift.io/v1
+    kind: DeploymentConfig
+    metadata:
+      name: phd-assess-mongo
+      namespace: "{{openshift_namespace}}"
+    spec:
+      replicas: 1
+      selector:
+        deployment-config.name: phd-assess-mongo
+      strategy:
+        resources:
+          limits:
+            cpu: 1
+            memory: 100M
+      template:
+        metadata:
+          labels:
+            deployment-config.name: phd-assess-mongo
+        spec:
+          containers:
+            - name: mongodb
+              image: "{{phd_assess_mongo_image_mirrored_to}}:{{ phd_assess_mongo_image_tag }}"
+              resources:
+                limits:
+                  cpu: 1
+                  memory: 200M
+              volumeMounts:
+                - name: data-db
+                  mountPath: /data/db
+          volumes:
+            - name: data-db
+              emptyDir: {}
+      triggers:
+      - type: ImageChange
+        imageChangeParams:
+          automatic: true
+          containerNames:
+          - mongodb
+          from:
+            kind: ImageStreamTag
+            name: "mongo:{{ phd_assess_mongo_image_tag }}"
+            namespace: "{{openshift_namespace}}"
+
+- name: phd-assess-mongo Service
+  tags:
+    - meteor
+    - meteor-mongo
+  openshift:
+    state: latest
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: mongo
+      namespace: "{{openshift_namespace}}"
+    spec:
+      type: ClusterIP
+      ports:
+        - name: mongo
+          port: 27017
+          targetPort: 27017
+      selector:
+        deployment-config.name: phd-assess-mongo
