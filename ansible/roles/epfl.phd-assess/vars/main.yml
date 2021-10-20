@@ -23,8 +23,12 @@ encryption_key_name: "PHDASSESS_ENCRYPTION_KEY"
 volume_zeebe_name: "svc0166-{{ app_name }}-zeebe-partition-app"
 
 phd_assess_build_namespace: phd-assess  # TODO: change when we have a test ns
-phd_assess_ubuntu_base_image_mirrored_from: "docker.io/ubuntu:{{ phd_assess_ubuntu_base_image_tag }}"
+phd_assess_ubuntu_base_image_mirrored_from: "docker.io/library/ubuntu:{{ phd_assess_ubuntu_base_image_tag }}"
 phd_assess_ubuntu_base_image_tag: focal
-phd_assess_ubuntu_base_image_mirrored_to: docker-registry.default.svc:5000/{{openshift_namespace}}/ubuntu
+phd_assess_ubuntu_base_image_mirrored_to: "{{openshift_local_image_registry}}/{{openshift_namespace}}/ubuntu"
 phd_assess_meteor_base_image_name: "meteor-base"
 phd_assess_meteor_image_name: "phd-assess-meteor"
+
+phd_assess_mongo_image_mirrored_from: "docker.io/library/mongo:{{ phd_assess_mongo_image_tag }}"
+phd_assess_mongo_image_tag: focal
+phd_assess_mongo_image_mirrored_to: "{{openshift_local_image_registry}}/{{openshift_namespace}}/mongo"
