@@ -22,7 +22,6 @@
     from: "ubuntu:{{ phd_assess_ubuntu_base_image_tag }}"
     git:
       repository: "https://github.com/epfl-si/PhDAssess"
-      ref: refactor/meteor-build-and-mongo  ## TODO: revert to master once merged
       path: node-base
     spec:
       resources:
@@ -42,7 +41,6 @@
     from: "{{ phd_assess_meteor_base_image_name }}:latest"
     git:
       repository: "https://github.com/epfl-si/PhDAssess"
-      ref: refactor/meteor-build-and-mongo  ## TODO: revert to master once merged
     spec:
       resources:
         limits:
