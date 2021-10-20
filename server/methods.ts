@@ -58,7 +58,11 @@ Meteor.methods({
       }
 
       // update Users info, based on sciper
-      formData = await updateParticipantsFromSciper(formData)
+      try {
+        formData = await updateParticipantsFromSciper(formData)
+      } catch (e) {
+        throw new Meteor.Error(400, `There is a problem with a participant: ${e}`)
+      }
 
       formData.updated_at = new Date().toJSON()
 

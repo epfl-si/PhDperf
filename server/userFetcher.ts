@@ -82,8 +82,8 @@ export const updateParticipantsFromSciper = async (variables: PhDInputVariables)
       const participantInfo = await getUserInfoMemoized(variables[`${participantName}Sciper`])
 
       // assert all data are here, or raise a problem
-      if (!(participantInfo.name && participantInfo.email && participantInfo.sex)) {
-        throw `The participant  ${participantName} is missing one or more values ( ${participantInfo})`;
+      if (!(participantInfo.name && participantInfo.email)) {
+        throw `The ${participantName} (${participantInfo.sciper}) is missing a name or an email from the API`;
       }
       variables[`${participantName}Email`] = participantInfo.email
 
