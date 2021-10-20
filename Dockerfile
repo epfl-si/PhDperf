@@ -1,5 +1,9 @@
 FROM docker-registry.default.svc:5000/phd-assess/meteor-mongo-base:latest
 
+# build-essential needed at build time, but not run time:
+RUN set -e -x; export DEBIAN_FRONTEND=noninteractive; \
+    apt -qy install build-essential git openssh-client
+
 RUN mkdir -p /usr/src/app/
 COPY . /usr/src/app/
 WORKDIR /usr/src/app/
