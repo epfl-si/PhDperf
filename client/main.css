@@ -88,3 +88,7 @@ td > .form-group {
   color: #707070;
   white-space: pre-wrap;
 }
+
+.invalid-feedback {
+  display: block !important;
+}
