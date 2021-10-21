@@ -12,5 +12,6 @@ build:
 # to, for want of enough RAM.
 .PHONY: push
 push:
+	oc whoami -t | docker login os-docker-registry.epfl.ch -u toto --password-stdin
 	docker tag docker-registry.default.svc:5000/phd-assess/phd-assess-meteor:latest os-docker-registry.epfl.ch/phd-assess/phd-assess-meteor:latest
 	docker push os-docker-registry.epfl.ch/phd-assess/phd-assess-meteor:latest
