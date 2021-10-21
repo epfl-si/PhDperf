@@ -5,7 +5,7 @@ User.transform.addComputedField('groupList', (user) => {
 })
 
 User.transform.addComputedField('isAdmin', (user) => {
-    return user.tequila?.group?.split(',').includes('idev-fsd-membres')
+    return user.tequila?.group?.split(',').includes('PhD-annual-report-admin')
   }
 )
 
