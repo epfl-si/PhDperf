@@ -9,6 +9,7 @@ declare module "meteor/meteor" {
         interface User {
             displayname: string
             isAdmin: boolean
+            isProgramAssistant: boolean
             groupList: string[]
             tequila: {
               provider: string

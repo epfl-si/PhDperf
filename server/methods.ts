@@ -1,7 +1,12 @@
 import {Meteor} from "meteor/meteor";
 import {encrypt} from "/server/encryption";
 import {FormioActivityLog, TaskData, TasksCollection} from "/imports/model/tasks";
-import {filterUnsubmittableVars, canSubmit, canDeleteProcessInstance} from "/imports/policy/tasks";
+import {
+  filterUnsubmittableVars,
+  canSubmit,
+  canDeleteProcessInstance,
+  canStartProcessInstance
+} from "/imports/policy/tasks";
 import _ from "lodash";
 import {zBClient} from "/server/zeebe_broker_connector";
 import WorkersClient from './zeebe_broker_connector'
@@ -14,6 +19,11 @@ const debug = require('debug')('server/methods')
 Meteor.methods({
 
   async startWorkflow() {  // aka start a new instance in Zeebe terms
+    if (!canStartProcessInstance()) {
+      debug(`Unallowed user ${Meteor.user()?._id} is trying to start a workflow`)
+      throw new Meteor.Error(403, 'You are not allowed to start a workflow')
+    }
+
     const diagramProcessId = 'phdAssessProcess'
 
     debug(`calling for a new "phdAssessProcess" instance`)
