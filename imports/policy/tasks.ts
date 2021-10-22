@@ -1,26 +1,43 @@
 import {Meteor} from "meteor/meteor";
 import {Tasks} from "/imports/api/tasks";
-import {findFieldKeysToSubmit} from "/imports/lib/formIOUtils";
+import {findFieldKeysToSubmit} from "/imports/lib/formIOUtils"
 import _ from "lodash";
+import { Mongo } from 'meteor/mongo';
 const debug = require('debug')('import/policy/tasks.ts')
 
 export const get_user_permitted_tasks = () => {
+  let taskQuery
+
+  // by default, filter out mentor infos from client
+  let taskFields: Mongo.FieldSpecifier | undefined = {
+    'variables.mentorSciper': 0,
+    'variables.mentorName': 0,
+    'variables.mentorEmail': 0
+  }
+
   if (Meteor.user()?.isAdmin) {
-    return Tasks.find({})
+    // query all the tasks
+    taskQuery = {}
   } else {
     const groups = Meteor.user()?.groupList
 
     if (groups && groups.length > 0) {
-      return Tasks.find({
+      taskQuery = {
         $or: [
           { "customHeaders.allowedGroups": { $in: groups } },  // Get tasks for the group
           { "variables.assigneeSciper": Meteor.user()?._id },  // Get assigned tasks
         ]
-      })
+      }
     } else {
-      return Tasks.find({ "variables.assigneeSciper": Meteor.user()?._id })
+      taskQuery = { "variables.assigneeSciper": Meteor.user()?._id }
     }
   }
+
+  if (canSeeMentorInfos()) {
+    taskFields = {}
+  }
+
+  return Tasks.find(taskQuery, { 'fields': taskFields })
 }
 
 export const canSubmit = (taskKey: string) : boolean => {
@@ -60,6 +77,10 @@ export const canStartProcessInstance = () : boolean => {
 }
 
 export const canDeleteProcessInstance = () : boolean => {
+  return !!Meteor.user()?.isAdmin
+}
+
+export const canSeeMentorInfos = () : boolean => {
   return !!Meteor.user()?.isAdmin
 }
 
