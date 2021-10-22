@@ -92,3 +92,7 @@ td > .form-group {
 .invalid-feedback {
   display: block !important;
 }
+
+div[id^=error-list].alert-success {
+  display: none;
+}
