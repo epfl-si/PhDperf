@@ -28,7 +28,7 @@ export const WorkflowStarter = () => {
       }
       {!isWaiting &&
       <button className="btn btn-secondary" onClick={() => onClick()}>
-        <i className="fa fa-plus"/>&nbsp;&nbsp;New PhD Assessment
+        <i className="fa fa-plus"/>&nbsp;&nbsp;New annual report process
       </button>
       }
     </div>
