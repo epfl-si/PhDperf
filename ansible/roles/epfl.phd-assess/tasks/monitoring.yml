@@ -59,6 +59,7 @@
     data:
       prometheus.yml: >
         {{ lookup("template", "prometheus-config.yml") }}
+  register: _prometheus_configmap
 
 - name: Traefik ConfigMap Static (configuration and sync scripts)
   openshift:
@@ -153,4 +154,17 @@
             - name: traefik-config-dynamic
               configMap:
                 name: traefikdyna
+  register: _prometheus_statefulset
 
+- name: Restart Prometheus
+  when: >-
+    ( (_prometheus_statefulset | default({})) is changed )
+    or
+    ( (_prometheus_configmap | default({})) is changed )
+    or
+    ( "monitoring.restart" in ansible_run_tags )
+  delegate_to: localhost
+  shell:
+    cmd: |
+      oc delete pod prometheus-0
+  tags: monitoring.restart
