@@ -36,7 +36,10 @@ fatal () {
 platform_check () {
     if ! test -f ~/.ansible/ansible-suitcase/.versions 2>/dev/null; then
         curl https://raw.githubusercontent.com/epfl-si/ansible.suitcase/master/install.sh | \
-            SUITCASE_DIR=~/.ansible/ansible-suitcase SUITCASE_ANSIBLE_REQUIREMENTS=requirements.yml sh -x
+            SUITCASE_DIR=~/.ansible/ansible-suitcase \
+            SUITCASE_ANSIBLE_REQUIREMENTS=requirements.yml \
+            SUITCASE_PIP_EXTRA="bcrypt passlib" \
+            sh -x
     fi
     export PATH="~/.ansible/ansible-suitcase/bin:$PATH"
     export ANSIBLE_ROLES_PATH="~/.ansible/ansible-suitcase/roles"
