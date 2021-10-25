@@ -19,3 +19,13 @@
 - name: Bpmn tasks
   include_tasks: '{{ "bpmn.yml" }}'
   tags: [bpmn-deploy]
+
+- name: Monitoring
+  tags: monitoring
+  when: >-
+    "test" not in openshift_namespace
+  include_tasks:
+    file: "monitoring.yml"
+    apply:
+      tags:
+        - monitoring

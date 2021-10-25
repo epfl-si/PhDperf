@@ -33,3 +33,11 @@ phd_assess_meteor_image_name: "phd-assess-meteor"
 phd_assess_mongo_image_mirrored_from: "docker.io/library/mongo:{{ phd_assess_mongo_image_tag }}"
 phd_assess_mongo_image_tag: focal
 phd_assess_mongo_image_mirrored_to: "{{openshift_local_image_registry}}/{{openshift_namespace}}/mongo"
+
+monitoring_traefik_base_image_mirrored_from: docker.io/library/traefik
+monitoring_traefik_base_image_mirrored_to: "docker-registry.default.svc:5000/{{ openshift_namespace }}/traefik"
+monitoring_prometheus_external_hostname: prometheus-phdassess.epfl.ch
+monitoring_prometheus_htpass: |-
+  {% for cred in lookup("file", "/keybase/team/epfl_phdassess/prometheus-credentials.yml") | from_yaml %}
+  {{ cred.user }}:{{ cred.password | password_hash('bcrypt', cred.salt) }}
+  {% endfor %}
