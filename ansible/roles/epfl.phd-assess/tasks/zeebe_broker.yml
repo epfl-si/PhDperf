@@ -60,6 +60,8 @@
                 value: 'fixed'
               - name: 'ZEEBE_BROKER_BACKPRESSURE_FIXEDLIMIT_LIMIT'
                 value: '300'
+              - name: 'ZEEBE_BROKER_NETWORK_MONITORINGAPI_HOST'
+                value: '0.0.0.0'
               image: 'docker-registry.default.svc:5000/{{openshift_namespace}}/zeebe:{{ zeebe_broker_version }}'
               imagePullPolicy: Always
               name: zeebe-broker
