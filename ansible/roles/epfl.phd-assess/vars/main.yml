@@ -6,6 +6,7 @@ svc_name: "{{ app_name }}"
 route_name: "{{ app_name }}"
 cname: "phd-annual-report.epfl.ch"
 full_cname: "https://phd-annual-report.epfl.ch"
+zeebe_broker_version: 1.2.2
 zeebe_broker_port1: 26500
 zeebe_broker_port_name1: "26500"
 zeebe_broker_port2: 9600

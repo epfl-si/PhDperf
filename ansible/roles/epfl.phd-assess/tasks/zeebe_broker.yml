@@ -1,64 +1,14 @@
 - name: Zeebe broker Image Stream
   tags:
     - zeebe
-  openshift:
+  openshift_imagestream:
     state: latest
-    apiVersion: v1
-    kind: ImageStream
     metadata:
       name: zeebe-broker
       namespace: "{{openshift_namespace}}"
-      labels:
-        build: zeebe-broker
-    spec:
-      lookupPolicy:
-        local: false
-      tags:
-        - annotations: null
-          from:
-            kind: DockerImage
-            name: 'zeebe-broker:latest'
-          generation: 3
-          importPolicy: {}
-          name: latest
-          referencePolicy:
-            type: Source
-
-- name: Zeebe broker Build Config
-  tags:
-    - zeebe
-  openshift:
-    state: latest
-    apiVersion: v1
-    kind: BuildConfig
-    metadata:
-      name: zeebe-broker
-      namespace: "{{openshift_namespace}}"
-      labels:
-        build: zeebe-broker
-    spec:
-      resources:
-        limits:
-          cpu: 500m
-          memory: 400M
-        requests:
-          cpu: 500m
-          memory: 400M
-      output:
-        to:
-          kind: ImageStreamTag
-          name: 'zeebe-broker:latest'
-      runPolicy: Serial
-      source:
-        git:
-          uri: "https://github.com/epfl-si/PhDAssess"
-          ref: "ansible"
-        contextDir: "dockerOpenShift"
-      strategy:
-        dockerStrategy:
-          forcePull: true
-          noCache: true
-        type: Docker
+    from:
+      kind: DockerImage
+      name: "camunda/zeebe:{{ zeebe_broker_version }}"
   register: _openshift_image_zeebe_broker
 
 - name: "Rebuild Zeebe Broker image now"
@@ -108,7 +58,11 @@
                 value: '26500'
               - name: 'zeebe.client.broker.contactPoint'
                 value: 'zeebe-broker:26500'
-              image: 'docker-registry.default.svc:5000/{{openshift_namespace}}/zeebe-broker:latest'
+              - name: 'ZEEBE_BROKER_BACKPRESSURE_ALGORITHM'
+                value: 'fixed'
+              - name: 'ZEEBE_BROKER_BACKPRESSURE_FIXEDLIMIT_LIMIT'
+                value: '300'
+              image: 'docker-registry.default.svc:5000/{{openshift_namespace}}/zeebe:{{ zeebe_broker_version }}'
               imagePullPolicy: Always
               name: zeebe-broker
               resources:
