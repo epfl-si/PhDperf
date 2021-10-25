@@ -56,8 +56,6 @@
                 value: 'debug'
               - name: 'PORT'
                 value: '26500'
-              - name: 'zeebe.client.broker.contactPoint'
-                value: 'zeebe-broker:26500'
               - name: 'ZEEBE_BROKER_BACKPRESSURE_ALGORITHM'
                 value: 'fixed'
               - name: 'ZEEBE_BROKER_BACKPRESSURE_FIXEDLIMIT_LIMIT'
