@@ -140,7 +140,6 @@
               command:
                 - /usr/bin/node
                 - main.js
-              name: phd-assess-meteor
               resources:
                 limits:
                   cpu: '1'
