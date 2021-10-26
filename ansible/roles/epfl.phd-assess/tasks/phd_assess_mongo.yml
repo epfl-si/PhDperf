@@ -29,7 +29,7 @@
       strategy:
         resources:
           limits:
-            cpu: 1
+            cpu: '1'
             memory: 100M
       template:
         metadata:
@@ -41,7 +41,7 @@
               image: "{{phd_assess_mongo_image_mirrored_to}}:{{ phd_assess_mongo_image_tag }}"
               resources:
                 limits:
-                  cpu: 1
+                  cpu: '1'
                   memory: 200M
               volumeMounts:
                 - name: data-db

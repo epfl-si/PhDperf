@@ -42,7 +42,7 @@
         type: Rolling
         resources:
           limits:
-            cpu: 1
+            cpu: '1'
             memory: 1000M
       template:
         metadata:
@@ -67,7 +67,7 @@
               name: zeebe-broker
               resources:
                 limits:
-                  cpu: 1
+                  cpu: '1'
                   memory: 1000M
               volumeMounts:
                 - mountPath: /usr/local/zeebe/data

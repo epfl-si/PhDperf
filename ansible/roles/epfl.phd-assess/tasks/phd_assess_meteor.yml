@@ -112,7 +112,7 @@
         type: Rolling
         resources:
           limits:
-            cpu: 1
+            cpu: '1'
             memory: 100M
       template:
         metadata:
@@ -143,7 +143,7 @@
               name: phd-assess-meteor
               resources:
                 limits:
-                  cpu: 1
+                  cpu: '1'
                   memory: 800M
           dnsPolicy: ClusterFirst
           restartPolicy: Always
