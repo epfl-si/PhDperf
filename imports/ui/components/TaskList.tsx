@@ -9,7 +9,6 @@ import {Link} from "react-router-dom"
 import {Participant} from "/imports/ui/components/Participant";
 import toast from "react-hot-toast";
 import {
-  canStartProcessInstance,
   canDeleteProcessInstance
 } from "/imports/policy/tasks";
 
@@ -109,10 +108,8 @@ export default function TaskList() {
 
   return (
     <>
-      {
-        canStartProcessInstance() &&
-        <WorkflowStarter/>
-      }
+      <WorkflowStarter/>
+
       {listLoading ? (
         <Loader message={'Fetching tasks...'}/>
       ) : (

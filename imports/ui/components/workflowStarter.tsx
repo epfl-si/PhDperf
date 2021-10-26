@@ -1,8 +1,14 @@
 import {global_Error, Meteor} from "meteor/meteor";
 import React, {useState} from "react";
 import toast from 'react-hot-toast';
+import {useTracker} from "meteor/react-meteor-data";
+import {canStartProcessInstance} from "/imports/policy/tasks";
 
 export const WorkflowStarter = () => {
+  const userLoaded = !!useTracker(() => {
+    return Meteor.user();
+  }, []);
+
   const [isWaiting, setIsWaiting] = useState(false);
 
   const onClick = () => {
@@ -20,17 +26,20 @@ export const WorkflowStarter = () => {
   }
 
   return (
-    <div id={'worklow-actions'} className={'mb-4'}>
-      {isWaiting &&
-      <button className="btn btn-secondary disabled">
-        <i className="fa fa-spinner fa-pulse"/>&nbsp;&nbsp;Creating a new PhD Assessment...
-      </button>
+    <>
+      {userLoaded && canStartProcessInstance() &&
+      <div id={'worklow-actions'} className={'mb-3'}>
+        {isWaiting &&
+        <button className="btn btn-secondary disabled">
+          <i className="fa fa-spinner fa-pulse"/>&nbsp;&nbsp;Creating a new PhD Assessment...
+        </button>
+        }
+        {!isWaiting &&
+        <button className="btn btn-secondary" onClick={() => onClick()}>
+          <i className="fa fa-plus"/>&nbsp;&nbsp;New annual report process
+        </button>
+        }
+      </div>
       }
-      {!isWaiting &&
-      <button className="btn btn-secondary" onClick={() => onClick()}>
-        <i className="fa fa-plus"/>&nbsp;&nbsp;New annual report process
-      </button>
-      }
-    </div>
-  )
+    </>)
 }
