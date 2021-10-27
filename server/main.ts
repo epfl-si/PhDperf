@@ -1,12 +1,13 @@
 import {Meteor} from 'meteor/meteor'
 import './methods'
+import './publish'
 import WorkersClient from './zeebe_broker_connector'
 import Tequila from 'meteor/epfl:accounts-tequila'
 import findUp from 'find-up'
 import '/imports/policy'
-import { get_user_permitted_tasks } from '/imports/policy/tasks'
 
 require("dotenv").config({path: findUp.sync(".env")})
+
 
 Meteor.startup(() => {
   WorkersClient.start()
@@ -21,6 +22,3 @@ Meteor.startup(() => {
   })
 })
 
-Meteor.publish('tasks', function () {
-  return get_user_permitted_tasks()
-})
