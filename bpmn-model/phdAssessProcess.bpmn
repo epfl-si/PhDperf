@@ -33,7 +33,7 @@
         <bpmn:flowNodeRef>Activity_Thesis_Director_Signs</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1qftu4l</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_unsatisfactory_check</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_Thesis_Director_Review_Sign_Fill_Form</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_Thesis_Director_Collaborative_Review_Signs</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1kh591k</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1tdv8a8</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1m9wltd</bpmn:flowNodeRef>
@@ -516,7 +516,7 @@
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=thesisCoDirectorSciper!=""</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_056ne9y" sourceRef="Activity_0pelgwh" targetRef="Activity_0jbwxb1" />
-    <bpmn:sequenceFlow id="Flow_1sd2f0p" sourceRef="Activity_Thesis_Director_Review_Sign_Fill_Form" targetRef="Gateway_1qftu4l" />
+    <bpmn:sequenceFlow id="Flow_1sd2f0p" sourceRef="Activity_Thesis_Director_Collaborative_Review_Signs" targetRef="Gateway_1qftu4l" />
     <bpmn:sequenceFlow id="Flow_0pq7nor" sourceRef="Gateway_1qftu4l" targetRef="Gateway_unsatisfactory_check" />
     <bpmn:sequenceFlow id="Flow_0sgf5ok" sourceRef="Gateway_1qftu4l" targetRef="Gateway_is_thesis_co_director" />
     <bpmn:sequenceFlow id="Flow_0apc4au" sourceRef="Activity_PHD_Signs" targetRef="Gateway_145opmc" />
@@ -545,7 +545,7 @@
     <bpmn:sequenceFlow id="Flow_0r3q628" name="no" sourceRef="Gateway_1osgngt" targetRef="Gateway_1m9wltd" />
     <bpmn:sequenceFlow id="Flow_0yg2ypo" sourceRef="Gateway_0w5d3x0" targetRef="Gateway_1m9wltd" />
     <bpmn:sequenceFlow id="Flow_1a31ekj" sourceRef="Gateway_1m9wltd" targetRef="Gateway_1kh591k" />
-    <bpmn:sequenceFlow id="Flow_071vbx1" sourceRef="Gateway_1kh591k" targetRef="Activity_Thesis_Director_Review_Sign_Fill_Form" />
+    <bpmn:sequenceFlow id="Flow_071vbx1" sourceRef="Gateway_1kh591k" targetRef="Activity_Thesis_Director_Collaborative_Review_Signs" />
     <bpmn:sequenceFlow id="Flow_08398id" sourceRef="Gateway_1kh591k" targetRef="Activity_1tdv8a8" />
     <bpmn:parallelGateway id="Gateway_1qftu4l">
       <bpmn:incoming>Flow_1sd2f0p</bpmn:incoming>
@@ -570,7 +570,7 @@
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1jkk0ln</bpmn:incoming>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_Thesis_Director_Review_Sign_Fill_Form" name="Collaborative Review">
+    <bpmn:serviceTask id="Activity_Thesis_Director_Collaborative_Review_Signs" name="Collaborative Review">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="phdAssessFillForm" retries="0" />
         <zeebe:taskHeaders>
@@ -622,7 +622,7 @@
     <bpmn:textAnnotation id="TextAnnotation_0qwyl9d">
       <bpmn:text>with the PhD Common Section C</bpmn:text>
     </bpmn:textAnnotation>
-    <bpmn:association id="Association_0x6dd06" sourceRef="Activity_Thesis_Director_Review_Sign_Fill_Form" targetRef="TextAnnotation_0qwyl9d" />
+    <bpmn:association id="Association_0x6dd06" sourceRef="Activity_Thesis_Director_Collaborative_Review_Signs" targetRef="TextAnnotation_0qwyl9d" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_13he9tk">
@@ -1065,7 +1065,7 @@
       <bpmndi:BPMNShape id="Activity_0nvflgj_di" bpmnElement="Activity_14o47pb">
         <dc:Bounds x="1460" y="1290" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1s43jmr_di" bpmnElement="Activity_Thesis_Director_Review_Sign_Fill_Form">
+      <bpmndi:BPMNShape id="Activity_1s43jmr_di" bpmnElement="Activity_Thesis_Director_Collaborative_Review_Signs">
         <dc:Bounds x="1350" y="730" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0byrnzh_di" bpmnElement="Gateway_1kh591k">
