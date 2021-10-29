@@ -2,10 +2,8 @@ import {Meteor} from "meteor/meteor";
 import {encrypt} from "/server/encryption";
 import {FormioActivityLog, TaskData, TasksCollection} from "/imports/model/tasks";
 import {
-  filterUnsubmittableVars,
-  canSubmit,
-  canDeleteProcessInstance,
-  canStartProcessInstance
+  filterUnsubmittableVars, canSubmit, canDeleteProcessInstance,
+  canStartProcessInstance, canRefreshProcessInstance
 } from "/imports/policy/tasks";
 import _ from "lodash";
 import {zBClient} from "/server/zeebe_broker_connector";
@@ -95,7 +93,7 @@ Meteor.methods({
     }
   },
 
-  async deleteProcessInstance(jobKey, processInstanceKey) {
+  async deleteProcessInstance(processInstanceKey) {
     if (!canDeleteProcessInstance()) {
       debug(`Unallowed user to delete the process instance key ${processInstanceKey}`)
       throw new Meteor.Error(403, 'You are not allowed to delete a process instance')
@@ -108,11 +106,21 @@ Meteor.methods({
     try {
       await zBClient.cancelProcessInstance(processInstanceKey)
       // delete in db too
-      tasks.remove({_id: jobKey})
+      tasks.remove({processInstanceKey: processInstanceKey})
     } catch (error) {
       debug(`Error: Unable to cancel the process instance ${processInstanceKey}. ${error}`)
-      tasks.remove({_id: jobKey})
+      tasks.remove({processInstanceKey: processInstanceKey})
       throw new Meteor.Error(500, `Unable to cancel the task. ${error}. Deleting locally anyway`)
     }
+  },
+
+  async refreshProcessInstance(processInstanceKey) {
+    if (!canRefreshProcessInstance()) {
+      debug(`Unallowed user to refresh the process instance key ${processInstanceKey}`)
+      throw new Meteor.Error(403, 'You are not allowed to refresh a process instance')
+    }
+
+    debug(`Asking to refresh an process instance ${processInstanceKey}`)
+    tasks.remove({processInstanceKey: processInstanceKey})
   },
 })

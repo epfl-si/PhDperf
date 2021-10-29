@@ -121,6 +121,11 @@ export const canDeleteProcessInstance = () : boolean => {
   return !!Meteor.user()?.isAdmin
 }
 
+export const canRefreshProcessInstance = () : boolean => {
+  return !!Meteor.user()?.isAdmin
+}
+
+
 /*
  * Limit what can be submitted per step, by reading the provided formIO
  * @param dataToSubmit The raw data coming from the UI

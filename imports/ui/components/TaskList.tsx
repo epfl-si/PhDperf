@@ -9,7 +9,7 @@ import {Link} from "react-router-dom"
 import {Participant} from "/imports/ui/components/Participant";
 import toast from "react-hot-toast";
 import {
-  canDeleteProcessInstance
+  canDeleteProcessInstance, canRefreshProcessInstance
 } from "/imports/policy/tasks";
 
 type TaskProps = {
@@ -50,7 +50,7 @@ function Task({task}: TaskProps) {
                       if (window.confirm('Delete the process instance?')) {
                         Meteor.apply(
                           // @ts-ignore, because doc is saying noRetry exists
-                          "deleteProcessInstance", [task.key, task.processInstanceKey], { wait: true, noRetry: true },
+                          "deleteProcessInstance", [task.processInstanceKey], { wait: true, noRetry: true },
                           (error: global_Error | Meteor.Error | undefined) => {
                             if (error) {
                               toast.error(`${error}`)
@@ -61,6 +61,30 @@ function Task({task}: TaskProps) {
                         )
                       }
                     }
+                  }
+                />
+              </span>
+            }
+            { canRefreshProcessInstance() &&
+            <span className={"mr-1"}>
+                <Button
+                  label={'Refresh'}
+                  onClickFn={(event: React.FormEvent<HTMLButtonElement>) => {
+                    event.preventDefault();
+                    if (window.confirm('Remove the process instance so it is refreshed?')) {
+                      Meteor.apply(
+                        // @ts-ignore, because doc is saying noRetry exists
+                        "refreshProcessInstance", [task.processInstanceKey], { wait: true, noRetry: true },
+                        (error: global_Error | Meteor.Error | undefined) => {
+                          if (error) {
+                            toast.error(`${error}`)
+                          } else {
+                            toast.success(`Successfully refreshed the process instance by removing it from the app`)
+                          }
+                        }
+                      )
+                    }
+                  }
                   }
                 />
               </span>
