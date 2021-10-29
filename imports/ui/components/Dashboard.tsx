@@ -5,7 +5,6 @@ import _ from "lodash"
 import React from "react"
 import {Loader} from "@epfl/epfl-sti-react-library";
 import {canAccessDashboard} from "/imports/policy/tasks";
-import {Link} from "react-router-dom";
 import {getAssignee} from "/imports/model/participants";
 
 
@@ -181,19 +180,4 @@ export function Dashboard() {
       )}
     </>
   )
-}
-
-export const LinkToDashboard = () => {
-  const userLoaded = useTracker(() => {
-    return Meteor.user();
-  }, []);
-
-  return (<>
-    {
-      userLoaded && canAccessDashboard() &&
-      <div className={'mb-3'}>
-        <Link to={`/dashboard`}>Dashboard</Link>
-      </div>
-    }
-  </>)
 }
