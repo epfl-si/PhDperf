@@ -83,3 +83,15 @@ export const participantsFromZeebe = (variables: PhDInputVariables): Participant
 
   return participants
 }
+
+export const getAssignee = (sciper: string | undefined, participants: ParticipantList | undefined) => {
+  if (sciper && participants) {
+    for (let participantID of ParticipantIDs) {
+      if (participantID in participants) {
+        if (participants[participantID]?.sciper && participants[participantID]?.sciper === sciper) {
+          return participants[participantID]
+        }
+      }
+    }
+  }
+}

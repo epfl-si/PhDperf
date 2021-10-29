@@ -5,6 +5,11 @@ import _ from "lodash";
 import { Mongo } from 'meteor/mongo';
 const debug = require('debug')('import/policy/tasks.ts')
 
+export const canSeeMentorInfos = () : boolean => {
+  return !!Meteor.user()?.isAdmin
+}
+
+// Define which tasks can be seen from the task list
 export const get_user_permitted_tasks = () => {
   let taskQuery
 
@@ -30,6 +35,46 @@ export const get_user_permitted_tasks = () => {
       }
     } else {
       taskQuery = { "variables.assigneeSciper": Meteor.user()?._id }
+    }
+  }
+
+  if (canSeeMentorInfos()) {
+    taskFields = {}
+  }
+
+  return Tasks.find(taskQuery, { 'fields': taskFields })
+}
+
+export const canAccessDashboard = () : boolean => {
+  return (Meteor.user()!.isProgramAssistant || Meteor.user()!.isAdmin)
+}
+
+// Define which tasks can be seen from the dashboard
+export const get_user_permitted_tasks_dashboard = () => {
+  let taskQuery
+
+  // by default, filter out mentor infos from client
+  let taskFields: Mongo.FieldSpecifier | undefined = {
+    'variables.mentorSciper': 0,
+    'variables.mentorName': 0,
+    'variables.mentorEmail': 0
+  }
+
+  if (Meteor.user()?.isAdmin) {
+    // query all the tasks
+    taskQuery = {}
+  } else {
+    const groups = Meteor.user()?.groupList
+
+    if (groups && groups.length > 0) {
+      taskQuery = {
+        $or: [
+          { "customHeaders.allowedGroups": { $in: groups } },  // Get tasks for the group
+          { "variables.programAssistantSciper": Meteor.user()?._id },  // Get assigned tasks
+        ]
+      }
+    } else {
+      taskQuery = { "variables.programAssistantSciper": Meteor.user()?._id }
     }
   }
 
@@ -69,18 +114,10 @@ export const canSubmit = (taskKey: string) : boolean => {
 }
 
 export const canStartProcessInstance = () : boolean => {
-  if (Meteor.user()?.isProgramAssistant) {
-    return true
-  }
-
-  return !!Meteor.user()?.isAdmin
+  return (Meteor.user()!.isProgramAssistant || Meteor.user()!.isAdmin)
 }
 
 export const canDeleteProcessInstance = () : boolean => {
-  return !!Meteor.user()?.isAdmin
-}
-
-export const canSeeMentorInfos = () : boolean => {
   return !!Meteor.user()?.isAdmin
 }
 

@@ -10,6 +10,8 @@ import TaskList from "./components/TaskList"
 import {Task} from "./components/Task"
 import {ZeebeStatus} from "/imports/ui/components/ZeebeStatus"
 import {Toaster} from "react-hot-toast";
+import {Dashboard, LinkToDashboard} from "/imports/ui/components/Dashboard";
+import {Link} from "react-router-dom"
 
 const PageRoute: React.FC<RouteProps> = (props) => (
   <Route {...props}>
@@ -25,16 +27,21 @@ const PageRoute: React.FC<RouteProps> = (props) => (
   </Route>
 )
 
-
 export const App = () => {
   return (
     <BrowserRouter>
       <Toaster/>
       <Switch>
+        <PageRoute path="/dashboard">
+          <Link to={`/`}>Tasks list</Link>
+          <h1 className={'h2 mt-4'}>Dashboard</h1>
+          <Dashboard/>
+        </PageRoute>
         <PageRoute path="/tasks/:key">
           <TheTask/>
         </PageRoute>
         <PageRoute path="/">
+          <LinkToDashboard />
           <h1 className={'h2'}>Annual Report</h1>
           <TaskList/>
         </PageRoute>
