@@ -129,6 +129,13 @@ const DrawProgress = ({tasks}: DrawProgressProps) => {
 }
 
 export function Dashboard() {
+  const userLoaded = !!useTracker(() => {
+    return Meteor.user();
+  }, []);
+
+  if (!userLoaded) return (<div>Loading user</div>)
+  if (userLoaded && !canAccessDashboard()) return (<div>Your permission does not allow you to see the dashboard </div>)
+
   const listLoading = useTracker(() => {
     // Note that this subscription will get cleaned up
     // when your component is unmounted or deps change.
