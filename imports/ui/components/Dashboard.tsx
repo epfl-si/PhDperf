@@ -89,7 +89,7 @@ const DrawProgress = ({tasks}: DrawProgressProps) => {
   let parallelPendingDone = false
   let pendingTasksIds = tasks.map(task => task.elementId)
 
-  return (<>
+  const progressBarDrawn = (<>
     {
     phdAssesSteps.map((x, i) => {
       if (Array.isArray(x)) {
@@ -125,6 +125,13 @@ const DrawProgress = ({tasks}: DrawProgressProps) => {
       }
     })
   }</>)
+
+  if (pendingDone) {
+    return progressBarDrawn
+  } else {
+    const unknownSteps = tasks.map(t => t.elementId)
+    return <div className={'col-6 p-2'}>Some steps are not identifiable : `${unknownSteps}`</div>
+  }
 }
 
 export function Dashboard() {
