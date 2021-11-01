@@ -73,6 +73,16 @@ type DrawProgressProps = {
   tasks: Task[]
 }
 
+const StepNotDone = () => <div className="participant border col m-1 p-2 text-white"/>
+
+const StepDone = () => <div className="participant border col m-1 p-2 bg-success text-white"/>
+
+const StepPending = ({task}: {task: Task}) =>
+  <div className="participant border col m-1 p-2 bg-awaiting text-white"
+   data-toggle="tooltip"
+   data-html="true"
+   title={ `${getAssignee(task!.variables.assigneeSciper, task!.participants)?.name} (${task!.variables.assigneeSciper}), Last updated :${task!.updated_at!.toLocaleString('fr-CH')}` } />
+
 const DrawProgress = ({tasks}: DrawProgressProps) => {
 
   let pendingDone = false
@@ -88,17 +98,12 @@ const DrawProgress = ({tasks}: DrawProgressProps) => {
           const task = tasks.find(t => t.elementId === y.id)
           const taskKey = `${task?.key}_${i}_${j}`
           if (pendingDone) {
-            return <div key={ taskKey } className="participant border col m-1 p-2 text-white"/>
+            return <StepNotDone key={ taskKey } />
           } else if (pendingTasksIds.includes(y.id)) {
             parallelPendingDone = true
-            return <div key={ taskKey }
-                        className="participant border col m-1 p-2 bg-awaiting text-white"
-                        data-toggle="tooltip"
-                        data-html="true"
-                        title={ `${getAssignee(task!.variables.assigneeSciper, task!.participants)?.name} (${task!.variables.assigneeSciper}), Last updated :${task!.updated_at!.toLocaleString('fr-CH')}` }
-            />
+            return <StepPending key={ taskKey } task={ task! } />
           } else {
-            return <div key={ taskKey } className="participant border col m-1 p-2 bg-success text-white"/>
+            return <StepDone key={ taskKey } />
           }
         })
 
@@ -110,17 +115,12 @@ const DrawProgress = ({tasks}: DrawProgressProps) => {
         const taskKey = `${task?.key}_${i}`
         if (pendingTasksIds.includes(x.id)) {
           pendingDone = true
-          return <div key={ taskKey }
-                      className="participant border col m-1 p-2 bg-awaiting text-white"
-                      data-toggle="tooltip"
-                      data-html="true"
-                      title={ `${getAssignee(task!.variables.assigneeSciper, task!.participants)?.name} (${task!.variables.assigneeSciper}), Last updated :${task!.updated_at!.toLocaleString('fr-CH')}` }
-          />
+          return <StepPending key={ taskKey } task={ task! } />
         } else if (pendingDone) {
-          return <div key={ taskKey } className="participant border col m-1 p-2 text-white"/>
+          return <StepNotDone key={ taskKey } />
         }
         else {
-          return <div key={ taskKey } className="participant border col m-1 p-2 bg-success text-white"/>
+          return <StepDone key={ taskKey } />
         }
       }
     })
