@@ -169,7 +169,7 @@ export function Dashboard() {
                 const workflowInstanceTasks = groupByWorkflowInstanceTasks[taskGrouper]
                 return (
                   <div className="row" key={ `${workflowInstanceTasks[0].key}_main_div` }>
-                    <div className="participant col-2 m-1 p-2 text-black" key={ `${workflowInstanceTasks[0].key}_phdStdentName` } >{ workflowInstanceTasks[0].variables.phdStudentName }</div>
+                    <div className="participant col-2 m-1 p-2 text-black" key={ `${workflowInstanceTasks[0].key}_phdStdentScioer` } >{ workflowInstanceTasks[0].variables.phdStudentName ?? workflowInstanceTasks[0].variables.phdStudentSciper }</div>
                     <div className="participant col m-1 p-2 text-black" key={ `${workflowInstanceTasks[0].key}_doctoralProgramName` } >{ workflowInstanceTasks[0].variables.doctoralProgramName }</div>
                     <DrawProgress tasks={ workflowInstanceTasks }  key={ workflowInstanceTasks[0].key } />
                   </div>
