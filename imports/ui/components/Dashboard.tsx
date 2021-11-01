@@ -132,9 +132,6 @@ export function Dashboard() {
     return Meteor.user();
   }, []);
 
-  if (!userLoaded) return (<div>Loading user</div>)
-  if (userLoaded && !canAccessDashboard()) return (<div>Your permission does not allow you to see the dashboard </div>)
-
   const listLoading = useTracker(() => {
     // Note that this subscription will get cleaned up
     // when your component is unmounted or deps change.
@@ -147,6 +144,9 @@ export function Dashboard() {
       .fetch())
       .filter((task) => task.elementId !== 'Activity_Program_Assistant_Assigns_Participants')
   const groupByWorkflowInstanceTasks = _.groupBy(allTasks, 'workflowInstanceKey')
+
+  if (!userLoaded) return (<div>Loading user</div>)
+  if (userLoaded && !canAccessDashboard()) return (<div>Your permission does not allow you to see the dashboard </div>)
 
   return (
     <>
