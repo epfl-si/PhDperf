@@ -1,6 +1,4 @@
 - name: Zeebe broker Image Stream
-  tags:
-    - zeebe
   openshift_imagestream:
     state: latest
     metadata:
@@ -12,15 +10,11 @@
   register: _openshift_image_zeebe_broker
 
 - name: "Rebuild Zeebe Broker image now"
-  tags:
-    - zeebe
   when: _openshift_image_zeebe_broker is changed
   shell: "oc -n {{openshift_namespace}} start-build --wait zeebe-broker"
   delegate_to: localhost
 
 - name: zeebe-broker Deployment Config
-  tags:
-    - zeebe
   openshift:
     apiVersion: apps.openshift.io/v1
     kind: DeploymentConfig
@@ -51,7 +45,9 @@
             deployment-config.name: zeebe-broker
         spec:
           containers:
-            - env:
+            - name: zeebe-broker
+              image: 'docker-registry.default.svc:5000/{{openshift_namespace}}/zeebe:{{ zeebe_broker_version }}'
+              env:
               - name: 'ZEEBE_LOG_LEVEL'
                 value: 'debug'
               - name: 'PORT'
@@ -62,9 +58,7 @@
                 value: '300'
               - name: 'ZEEBE_BROKER_NETWORK_MONITORINGAPI_HOST'
                 value: '0.0.0.0'
-              image: 'docker-registry.default.svc:5000/{{openshift_namespace}}/zeebe:{{ zeebe_broker_version }}'
               imagePullPolicy: Always
-              name: zeebe-broker
               resources:
                 limits:
                   cpu: '1'
@@ -93,8 +87,6 @@
             namespace: "{{openshift_namespace}}"
 
 - name: zeebe-broker Service
-  tags:
-    - zeebe
   openshift:
     state: latest
     apiVersion: v1

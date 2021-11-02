@@ -1,24 +1,54 @@
 - name: Secrets tasks
-  include_tasks: '{{ "secrets.yml" }}'
+  include_tasks:
+    file: "secrets.yml"
+    apply:
+      tags: secrets
+  tags: secrets
 
 - name: Zeebe broker tasks
-  include_tasks: '{{ "zeebe_broker.yml" }}'
-  tags: [zeebe]
+  include_tasks:
+    file: "zeebe_broker.yml"
+    apply:
+        tags: zeebe
+  tags: zeebe
 
 - name: Phd assess MongoDB tasks
-  include_tasks: '{{ "phd_assess_mongo.yml" }}'
-  tags: [meteor, meteor-mongo]
+  include_tasks:
+    file: "phd_assess_mongo.yml"
+    apply:
+      tags:
+        - meteor
+        - meteor-mongo
+  tags:
+    - meteor
+    - meteor-mongo
 
 - name: Phd assess meteor tasks
-  include_tasks: '{{ "phd_assess_meteor.yml" }}'
-  tags: [meteor, meteor-build, meteor-push]
+  include_tasks:
+    file: "phd_assess_meteor.yml"
+    apply:
+      tags: meteor
+  tags:
+    - meteor
+    - meteor-build
+    - meteor-build.now
+    - meteor-push
 
 - name: Route tasks
-  include_tasks: '{{ "route.yml" }}'
+  include_tasks:
+    file: "route.yml"
+    apply:
+      tags: route
+  tags: route
 
 - name: Bpmn tasks
-  include_tasks: '{{ "bpmn.yml" }}'
-  tags: [bpmn-deploy]
+  include_tasks:
+    file: "bpmn.yml"
+    apply:
+      tags: bpmn-deploy
+  tags:
+    - never
+    - bpmn-deploy
 
 - name: Monitoring
   tags: monitoring

@@ -7,10 +7,7 @@
       namespace: "{{ openshift_namespace }}"
     from: "{{ phd_assess_ubuntu_base_image_mirrored_from }}"
     tag: "{{ phd_assess_ubuntu_base_image_tag }}"
-
-  tags:
-    - meteor
-    - meteor-build
+  tags: meteor-build
 
 - name: "Build NodeJS base image in OpenShift"
   when: openshift_namespace == phd_assess_build_namespace
@@ -27,9 +24,7 @@
       resources:
         limits:
           memory: "1G"
-  tags:
-    - meteor
-    - meteor-build
+  tags: meteor-build
 
 - name: "Build Meteor serving image in OpenShift"
   when: openshift_namespace == phd_assess_build_namespace
@@ -45,16 +40,12 @@
       resources:
         limits:
           memory: "1G"
-  tags:
-    - meteor
-    - meteor-build
+  tags: meteor-build
 
 - name: "Rebuild Meteor serving image now"
   debug:
     msg: "Not quite done yet"
-  tags:
-    - never
-    - meteor-build.now
+  tags: meteor-build.now
 
 - name: "Promote images from phd_assess_build_namespace to openshift_namespace"
   when: openshift_namespace != phd_assess_build_namespace
@@ -68,9 +59,7 @@
     promote_image_name: "{{ phd_assess_meteor_image_name }}"
     promote_image_tag: "latest"
     promote_from_namespace: "{{ phd_assess_build_namespace }}"
-  tags:
-    - meteor
-    - meteor-build
+  tags: meteor-build
 
 - name: Log into the Openshift docker repository and push the tagged image
   tags:
@@ -88,8 +77,6 @@
     - never
 
 - name: phd-assess-meteor Deployment Config
-  tags:
-    - meteor
   openshift:
     state: latest
     apiVersion: apps.openshift.io/v1
@@ -161,8 +148,6 @@
             namespace: "{{openshift_namespace}}"
 
 - name: phd-assess-meteor Service
-  tags:
-    - meteor
   openshift:
     state: latest
     apiVersion: v1
