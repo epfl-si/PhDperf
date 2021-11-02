@@ -1,18 +1,38 @@
-- name: Zeebe broker Image Stream
+- name: "Pull upstream {{ zeebe_broker_base_image_mirrored_from }} into {{ zeebe_broker_base_image_mirrored_to }}"
   openshift_imagestream:
     state: latest
     metadata:
       name: zeebe-broker
       namespace: "{{openshift_namespace}}"
+    from: "{{ zeebe_broker_base_image_mirrored_from }}"
+    tag: "{{ zeebe_broker_version }}"
+
+- name: "Build custom Zeebe Broker image"
+  openshift_imagestream:
+    state: latest
+    metadata:
+      name: zeebe-broker-kafka
+      namespace: "{{openshift_namespace}}"
     from:
-      kind: DockerImage
-      name: "camunda/zeebe:{{ zeebe_broker_version }}"
+      kind: ImageStreamTag
+      name: "zeebe-broker:{{ zeebe_broker_version }}"
+      namespace: "{{ openshift_namespace }}"
+    source:
+      dockerfile: |
+        FROM camunda/zeebe
+        ADD "{{ zeebe_broker_kafka_exporter_jar_url }}" /usr/local/zeebe/lib/zeebe-kafka-exporter-with-dependencies.jar
+    spec:
+      resources:
+        limits:
+          cpu: '1'
+          memory: 100M
   register: _openshift_image_zeebe_broker
 
-- name: "Rebuild Zeebe Broker image now"
+- name: "Rebuild custom Zeebe Broker image now"
   when: _openshift_image_zeebe_broker is changed
-  shell: "oc -n {{openshift_namespace}} start-build --wait zeebe-broker"
+  shell: "oc -n {{openshift_namespace}} start-build --wait zeebe-broker-kafka"
   delegate_to: localhost
+
 
 - name: zeebe-broker Deployment Config
   openshift:

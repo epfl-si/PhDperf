@@ -12,6 +12,9 @@ zeebe_broker_port_name1: "26500"
 zeebe_broker_port2: 9600
 zeebe_broker_port_name2: "9600"
 zeebe_broker_servicename: "zeebe-broker"
+zeebe_broker_base_image_mirrored_from: "docker.io/camunda/zeebe:{{ zeebe_broker_version }}"
+zeebe_broker_base_image_mirrored_to: "{{openshift_local_image_registry}}/{{openshift_namespace}}/zeebe"
+zeebe_broker_kafka_exporter_jar_url: https://github.com/camunda-community-hub/zeebe-kafka-exporter/releases/download/3.0.0/zeebe-kafka-exporter-3.0.0-jar-with-dependencies.jar
 phd_assess_meteor_port_name: "80"
 phd_assess_meteor_port: 80
 phd_assess_meteor_targetport: 3000
