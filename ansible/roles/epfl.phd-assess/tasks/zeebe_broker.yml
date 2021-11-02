@@ -64,6 +64,9 @@
                 limits:
                   cpu: '1'
                   memory: 1G
+              ports:
+                - name: metrics
+                  containerPort: 9600
               volumeMounts:
                 - mountPath: /usr/local/zeebe/data
                   name: "{{ volume_zeebe_name }}"

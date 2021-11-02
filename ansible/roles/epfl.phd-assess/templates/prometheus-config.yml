@@ -16,7 +16,15 @@ scrape_configs:
     - targets: ['localhost:9090']
 
     # Discover scrapable targets in the same namespace
-  - job_name: "kubernetes-pods"
+  - job_name: "{{ openshift_namespace }}-pods"
     kubernetes_sd_configs:
       - role: pod
-    # TODO: pick more from https://github.com/prometheus/prometheus/blob/main/documentation/examples/prometheus-kubernetes.yml
+        namespaces:
+          names:
+            - "{{ openshift_namespace }}"
+    relabel_configs:
+      # Only keep targets whose port name is "prometheus"
+      - action: keep
+        source_labels:
+          - __meta_kubernetes_pod_container_port_name
+        regex: metrics
