@@ -168,3 +168,68 @@
     cmd: |
       oc delete pod prometheus-0
   tags: monitoring.restart
+
+
+- name: "Pull upstream {{ monitoring_node_base_image_mirrored_from }} image into {{ monitoring_node_base_image_mirrored_to }}"
+  when: openshift_namespace == phd_assess_build_namespace
+  delegate_to: localhost
+  openshift_imagestream:
+    metadata:
+      name: node
+      namespace: "{{ openshift_namespace }}"
+    from: "{{ monitoring_node_base_image_mirrored_from }}"
+    tag: "{{ monitoring_node_base_image_tag }}"
+
+- name: "Build the disk-usage-exporter image"
+  when: openshift_namespace == phd_assess_build_namespace
+  delegate_to: localhost
+  openshift_imagestream:
+    metadata:
+      name: disk-usage-exporter
+      namespace: "{{ openshift_namespace }}"
+    from: "node:{{ monitoring_node_base_image_tag }}"
+    git:
+      repository: "https://github.com/epfl-si/PhDAssess"
+      path: docker/monitoring
+    spec:
+      resources:
+        limits:
+          cpu: '1'
+          memory: 100M
+
+- name: "disk-usage-exporter DeploymentConfig"
+  openshift:
+    state: latest
+    apiVersion: apps.openshift.io/v1
+    kind: DeploymentConfig
+    metadata:
+      name: disk-usage-exporter
+      namespace: "{{ openshift_namespace }}"
+    spec:
+      selector:
+        deployment-config.name: disk-usage-exporter
+      template:
+        metadata:
+          labels:
+            deployment-config.name: disk-usage-exporter
+        spec:
+          containers:
+            - name: disk-image-exporter
+              image: "{{ monitoring_node_disk_usage_exporter_image }}"
+              volumeMounts:
+                - name: zeebe-data
+                  mountPath: /usr/local/zeebe/data
+              env:
+                - name: DISK_USAGE_TARGET
+                  value: /usr/local/zeebe/data
+              resources:
+                limits:
+                  cpu: '1'
+                  memory: 50M
+              ports:
+                - name: metrics
+                  containerPort: 3000
+          volumes:
+            - name: zeebe-data
+              persistentVolumeClaim:
+                claimName: "{{ volume_zeebe_name }}"
