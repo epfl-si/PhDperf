@@ -79,7 +79,7 @@ export const updateParticipantsFromSciper = async (variables: PhDInputVariables)
   for (const participantName of ParticipantIDs) {
     const sciper = variables[`${participantName}Sciper`]
     if (sciper) {
-      const participantInfo = await getUserInfoMemoized(variables[`${participantName}Sciper`])
+      const participantInfo = await getUserInfoMemoized(sciper)
 
       // assert all data are here, or raise a problem
       if (!(participantInfo.name && participantInfo.email)) {
