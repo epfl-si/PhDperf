@@ -68,8 +68,14 @@ Meteor.methods({
       // update Users info, based on sciper
       try {
         formData = await updateParticipantsFromSciper(formData)
-      } catch (e) {
-        throw new Meteor.Error(400, `There is a problem with a participant: ${e}`)
+      } catch (e: any) {
+        if (e.name == 'AbortError') {
+          // Look like the fetching of user info has got a timeout,
+          // make it bad only if we don't have already some data, or ignore it
+          if (!task.variables.phdStudentEmail) throw new Meteor.Error(422,'Unable to get users information, aborting. Please contact the administrator or try again later.')
+        } else {
+          throw new Meteor.Error(400, `There is a problem with a participant: ${e}`)
+        }
       }
 
       formData.updated_at = new Date().toJSON()

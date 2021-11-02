@@ -1,7 +1,9 @@
-import { fetch, Headers } from 'meteor/fetch'
+import { Headers } from 'meteor/fetch'
+import AbortController from 'abort-controller'
 import memoize from 'timed-memoize'
 import {PhDInputVariables} from "/imports/model/tasks";
 import {ParticipantIDs} from "/imports/model/participants";
+import {fetchTimeout} from "/imports/lib/fetchTimeout";
 
 const debug = require('debug')('server/userFetcher')
 
@@ -45,16 +47,19 @@ export async function getUserInfo (sciper: string | number): Promise<PersonInfo>
   const server = 'https://websrv.epfl.ch/'
   const url = `${server}cgi-bin/rwspersons/getPerson?id=${sciper}&app=${app}`
 
+  const controller = new AbortController()
+
   debug(`Requesting ${server} for user info for ${sciper}`)
 
-  const response = await fetch(url, {
-    "headers": new Headers({
-      "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-      "Pragma": "no-cache",
-      "Cache-Control": "no-cache"
-    }),
-    "method": "GET",
-  });
+  const response = await fetchTimeout(url, 4000, controller.signal, {
+      "headers": new Headers({
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+        "Pragma": "no-cache",
+        "Cache-Control": "no-cache"
+      }),
+      "method": "GET"
+    }
+  );
 
   const jsonResponse = await response.json()
 
