@@ -65,7 +65,7 @@ Meteor.methods({
         throw new Meteor.Error(400, 'There is not enough valid data to validate this form. Canceling.')
       }
 
-      // update Users info, based on sciper
+      // update Users info, based on sciper, if possible. Block only if we don't have any data on the PhD
       try {
         formData = await updateParticipantsFromSciper(formData)
       } catch (e: any) {
