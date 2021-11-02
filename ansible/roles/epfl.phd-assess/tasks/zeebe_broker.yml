@@ -38,7 +38,7 @@
         resources:
           limits:
             cpu: '1'
-            memory: 1000M
+            memory: 1G
       template:
         metadata:
           creationTimestamp: null
@@ -63,7 +63,7 @@
               resources:
                 limits:
                   cpu: '1'
-                  memory: 1000M
+                  memory: 1G
               volumeMounts:
                 - mountPath: /usr/local/zeebe/data
                   name: "{{ volume_zeebe_name }}"
