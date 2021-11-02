@@ -5,7 +5,9 @@ OPENSHIFT_BUILD_NAMESPACE := phd-assess
 .PHONY: build
 build:
 	docker build -t docker-registry.default.svc:5000/$(OPENSHIFT_BUILD_NAMESPACE)/node-base:latest node-base/
-	docker build -t docker-registry.default.svc:5000/$(OPENSHIFT_BUILD_NAMESPACE)/phd-assess-meteor:latest .
+	docker network inspect phd-assess-meteor-network >/dev/null 2>&1 || \
+      docker network create --driver bridge phd-assess-meteor-network
+	docker build -t docker-registry.default.svc:5000/$(OPENSHIFT_BUILD_NAMESPACE)/phd-assess-meteor:latest --network=phd-assess-meteor-network  .
 
 .PHONY: pull
 pull:

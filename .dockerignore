@@ -9,3 +9,5 @@ doc
 .idea
 Dockerfile
 .env
+package-lock.json
+node_modules

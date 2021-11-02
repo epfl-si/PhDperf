@@ -73,13 +73,23 @@ type DrawProgressProps = {
   tasks: Task[]
 }
 
+const StepNotDone = () => <div className="participant border col m-1 p-2 text-white"/>
+
+const StepDone = () => <div className="participant border col m-1 p-2 bg-success text-white"/>
+
+const StepPending = ({task}: {task: Task}) =>
+  <div className="participant border col m-1 p-2 bg-awaiting text-white"
+   data-toggle="tooltip"
+   data-html="true"
+   title={ `${getAssignee(task!.variables.assigneeSciper, task!.participants)?.name} (${task!.variables.assigneeSciper}), Last updated :${task!.updated_at!.toLocaleString('fr-CH')}` } />
+
 const DrawProgress = ({tasks}: DrawProgressProps) => {
 
   let pendingDone = false
   let parallelPendingDone = false
   let pendingTasksIds = tasks.map(task => task.elementId)
 
-  return (<>
+  const progressBarDrawn = (<>
     {
     phdAssesSteps.map((x, i) => {
       if (Array.isArray(x)) {
@@ -88,17 +98,12 @@ const DrawProgress = ({tasks}: DrawProgressProps) => {
           const task = tasks.find(t => t.elementId === y.id)
           const taskKey = `${task?.key}_${i}_${j}`
           if (pendingDone) {
-            return <div key={ taskKey } className="participant border col m-1 p-2 text-white"/>
+            return <StepNotDone key={ taskKey } />
           } else if (pendingTasksIds.includes(y.id)) {
             parallelPendingDone = true
-            return <div key={ taskKey }
-                        className="participant border col m-1 p-2 bg-awaiting text-white"
-                        data-toggle="tooltip"
-                        data-html="true"
-                        title={ `${getAssignee(task!.variables.assigneeSciper, task!.participants)?.name} (${task!.variables.assigneeSciper}), Last updated :${task!.updated_at!.toLocaleString('fr-CH')}` }
-            />
+            return <StepPending key={ taskKey } task={ task! } />
           } else {
-            return <div key={ taskKey } className="participant border col m-1 p-2 bg-success text-white"/>
+            return <StepDone key={ taskKey } />
           }
         })
 
@@ -110,30 +115,29 @@ const DrawProgress = ({tasks}: DrawProgressProps) => {
         const taskKey = `${task?.key}_${i}`
         if (pendingTasksIds.includes(x.id)) {
           pendingDone = true
-          return <div key={ taskKey }
-                      className="participant border col m-1 p-2 bg-awaiting text-white"
-                      data-toggle="tooltip"
-                      data-html="true"
-                      title={ `${getAssignee(task!.variables.assigneeSciper, task!.participants)?.name} (${task!.variables.assigneeSciper}), Last updated :${task!.updated_at!.toLocaleString('fr-CH')}` }
-          />
+          return <StepPending key={ taskKey } task={ task! } />
         } else if (pendingDone) {
-          return <div key={ taskKey } className="participant border col m-1 p-2 text-white"/>
+          return <StepNotDone key={ taskKey } />
         }
         else {
-          return <div key={ taskKey } className="participant border col m-1 p-2 bg-success text-white"/>
+          return <StepDone key={ taskKey } />
         }
       }
     })
   }</>)
+
+  if (pendingDone) {
+    return progressBarDrawn
+  } else {
+    const unknownSteps = tasks.map(t => t.elementId)
+    return <div className={'col-6 p-2'}>Some steps are not identifiable : `${unknownSteps}`</div>
+  }
 }
 
 export function Dashboard() {
   const userLoaded = !!useTracker(() => {
     return Meteor.user();
   }, []);
-
-  if (!userLoaded) return (<div>Loading user</div>)
-  if (userLoaded && !canAccessDashboard()) return (<div>Your permission does not allow you to see the dashboard </div>)
 
   const listLoading = useTracker(() => {
     // Note that this subscription will get cleaned up
@@ -147,6 +151,9 @@ export function Dashboard() {
       .fetch())
       .filter((task) => task.elementId !== 'Activity_Program_Assistant_Assigns_Participants')
   const groupByWorkflowInstanceTasks = _.groupBy(allTasks, 'workflowInstanceKey')
+
+  if (!userLoaded) return (<div>Loading user</div>)
+  if (userLoaded && !canAccessDashboard()) return (<div>Your permission does not allow you to see the dashboard </div>)
 
   return (
     <>
@@ -169,7 +176,7 @@ export function Dashboard() {
                 const workflowInstanceTasks = groupByWorkflowInstanceTasks[taskGrouper]
                 return (
                   <div className="row" key={ `${workflowInstanceTasks[0].key}_main_div` }>
-                    <div className="participant col-2 m-1 p-2 text-black" key={ `${workflowInstanceTasks[0].key}_phdStdentName` } >{ workflowInstanceTasks[0].variables.phdStudentName }</div>
+                    <div className="participant col-2 m-1 p-2 text-black" key={ `${workflowInstanceTasks[0].key}_phdStdentScioer` } >{ workflowInstanceTasks[0].variables.phdStudentName ?? workflowInstanceTasks[0].variables.phdStudentSciper }</div>
                     <div className="participant col m-1 p-2 text-black" key={ `${workflowInstanceTasks[0].key}_doctoralProgramName` } >{ workflowInstanceTasks[0].variables.doctoralProgramName }</div>
                     <DrawProgress tasks={ workflowInstanceTasks }  key={ workflowInstanceTasks[0].key } />
                   </div>
