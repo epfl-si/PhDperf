@@ -28,7 +28,8 @@
         app: prometheus
 
 
-- name: "Prometheus route (https://{{ monitoring_prometheus_external_hostname }}/)"
+- name: "Prometheus route (https://{{
+monitoring_prometheus_external_hostname }}/)"
   tags: monitoring.prometheus
   openshift:
     state: latest
@@ -97,7 +98,8 @@
       name: prometheus
       namespace: "{{ openshift_namespace }}"
     spec:
-      serviceName: prometheus  # Refs the service above, so that the pods get
+      serviceName: prometheus  # Refs the service above, so that the
+                               # pods get
                                # a predictable KubeDNS name
       selector:
         matchLabels:
@@ -142,7 +144,8 @@
                   memory: 100M
           volumes:
             - name: storage
-              emptyDir: {}  # TODO We probably want some persistence here
+              emptyDir: {}  # TODO We probably want some persistence
+                            # here
             - name: dynamic-config
               emptyDir: {}
             - name: static-config
@@ -170,7 +173,8 @@
   tags: monitoring.restart
 
 
-- name: "Pull upstream {{ monitoring_node_base_image_mirrored_from }} image into {{ monitoring_node_base_image_mirrored_to }}"
+- name: "Pull upstream {{ monitoring_node_base_image_mirrored_from }}
+image into {{ monitoring_node_base_image_mirrored_to }}"
   when: openshift_namespace == phd_assess_build_namespace
   delegate_to: localhost
   openshift_imagestream:
@@ -206,6 +210,12 @@
       name: disk-usage-exporter
       namespace: "{{ openshift_namespace }}"
     spec:
+      replicas: 1
+      strategy:
+        resources:
+          limits:
+            cpu: '1'
+            memory: 50M
       selector:
         deployment-config.name: disk-usage-exporter
       template:
@@ -214,7 +224,7 @@
             deployment-config.name: disk-usage-exporter
         spec:
           containers:
-            - name: disk-image-exporter
+            - name: disk-usage-exporter
               image: "{{ monitoring_node_disk_usage_exporter_image }}"
               volumeMounts:
                 - name: zeebe-data
@@ -225,7 +235,7 @@
               resources:
                 limits:
                   cpu: '1'
-                  memory: 50M
+                  memory: 100M
               ports:
                 - name: metrics
                   containerPort: 3000
@@ -233,3 +243,13 @@
             - name: zeebe-data
               persistentVolumeClaim:
                 claimName: "{{ volume_zeebe_name }}"
+      triggers:
+      - type: ImageChange
+        imageChangeParams:
+          automatic: true
+          containerNames:
+          - disk-usage-exporter
+          from:
+            kind: ImageStreamTag
+            name: 'disk-usage-exporter:latest'
+            namespace: "{{openshift_namespace}}"
