@@ -16,6 +16,7 @@
 
 - name: zeebe-broker Deployment Config
   openshift:
+    state: latest
     apiVersion: apps.openshift.io/v1
     kind: DeploymentConfig
     metadata:
