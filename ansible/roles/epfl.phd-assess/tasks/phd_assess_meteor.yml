@@ -124,6 +124,11 @@
                   secretKeyRef:
                     name: "{{ secret_name }}"
                     key: "{{ encryption_key_name }}"
+              - name: "{{ websrv_password_key_name }}"
+                valueFrom:
+                  secretKeyRef:
+                    name: "{{ secret_name }}"
+                    key: "{{ websrv_password_key_name }}"
               command:
                 - /usr/bin/node
                 - main.js

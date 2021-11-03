@@ -43,9 +43,11 @@ interface GetPersonGoodResult {
 }
 
 export async function getUserInfo (sciper: string | number): Promise<PersonInfo> {
-  const app = 'SWLM'
+  const app = 'phd-assess'
+  const caller = '000000'
+  const password = process.env.WEBSRV_PASSWORD
   const server = 'https://websrv.epfl.ch/'
-  const url = `${server}cgi-bin/rwspersons/getPerson?id=${sciper}&app=${app}`
+  const url = `${server}cgi-bin/rwspersons/getPerson?app=${app}&caller=${caller}&password=${password}&id=${sciper}`
 
   const controller = new AbortController()
 
