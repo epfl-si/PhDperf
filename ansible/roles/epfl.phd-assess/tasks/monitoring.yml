@@ -231,7 +231,7 @@ image into {{ monitoring_node_base_image_mirrored_to }}"
                   mountPath: /usr/local/zeebe/data
               env:
                 - name: DISK_USAGE_TARGET
-                  value: /usr/local/zeebe/data
+                  value: /usr/local/zeebe/data;/usr/local/zeebe/data/raft-partition/partitions/1/snapshots
               resources:
                 limits:
                   cpu: '1'
