@@ -69,10 +69,12 @@
             - name: zeebe-broker
               image: 'docker-registry.default.svc:5000/{{openshift_namespace}}/zeebe:{{ zeebe_broker_version }}'
               env:
-              - name: 'ZEEBE_LOG_LEVEL'
-                value: 'debug'
               - name: 'PORT'
                 value: '26500'
+              - name: 'ZEEBE_LOG_LEVEL'
+                value: 'info'
+              - name: 'ZEEBE_LOG_APPENDER'
+                value: 'Stackdriver'
               - name: 'ZEEBE_BROKER_BACKPRESSURE_ALGORITHM'
                 value: 'fixed'
               - name: 'ZEEBE_BROKER_BACKPRESSURE_FIXEDLIMIT_LIMIT'
