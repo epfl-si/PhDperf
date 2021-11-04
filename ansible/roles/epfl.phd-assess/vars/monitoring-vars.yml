@@ -1,0 +1,13 @@
+##### Monitoring-related variables #####
+monitoring_traefik_base_image_mirrored_from: docker.io/library/traefik
+monitoring_traefik_base_image_mirrored_to: "docker-registry.default.svc:5000/{{ openshift_namespace }}/traefik"
+monitoring_prometheus_external_hostname: prometheus-phdassess.epfl.ch
+monitoring_prometheus_htpass: |-
+  {% for cred in lookup("file", "/keybase/team/epfl_phdassess/prometheus-credentials.yml") | from_yaml %}
+  {{ cred.user }}:{{ cred.password | password_hash('bcrypt', cred.salt) }}
+  {% endfor %}
+
+monitoring_node_base_image_mirrored_from: "docker.io/library/node:{{ monitoring_node_base_image_tag }}"
+monitoring_node_base_image_tag: alpine
+monitoring_node_base_image_mirrored_to: "{{openshift_local_image_registry}}/{{openshift_namespace}}/node"
+monitoring_node_disk_usage_exporter_image: "{{openshift_local_image_registry}}/{{openshift_namespace}}/disk-usage-exporter"

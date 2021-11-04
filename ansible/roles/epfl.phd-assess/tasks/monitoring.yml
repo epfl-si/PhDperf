@@ -1,3 +1,6 @@
+- tags: always
+  include_vars: monitoring-vars.yml
+
 - name: "Pull traefik image into {{ monitoring_traefik_base_image_mirrored_to }}"
   tags: monitoring.prometheus
   openshift_imagestream:
