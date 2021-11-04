@@ -32,7 +32,7 @@
     - meteor
     - meteor-build
     - meteor-build.now
-    - meteor-push
+    - meteor-promote
 
 - name: Route tasks
   include_tasks:
