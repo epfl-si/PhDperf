@@ -27,7 +27,7 @@ encryption_key_name: "PHDASSESS_ENCRYPTION_KEY"
 websrv_password_key_name: "WEBSRV_PASSWORD"
 volume_zeebe_name: "svc0166-{{ app_name }}-zeebe-partition-app"
 
-phd_assess_build_namespace: phd-assess  # TODO: change when we have a test ns
+phd_assess_build_namespace: phd-assess-test
 phd_assess_ubuntu_base_image_mirrored_from: "docker.io/library/ubuntu:{{ phd_assess_ubuntu_base_image_tag }}"
 phd_assess_ubuntu_base_image_tag: focal
 phd_assess_ubuntu_base_image_mirrored_to: "{{openshift_local_image_registry}}/{{openshift_namespace}}/ubuntu"

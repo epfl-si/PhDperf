@@ -8,3 +8,4 @@ all:
         openshift_namespace: "{{ inventory_hostname }}"
       hosts:
         phd-assess: {}
+        phd-assess-test: {}
