@@ -31,7 +31,6 @@
 - name: "Rebuild custom Zeebe Broker image now"
   when: _openshift_image_zeebe_broker is changed
   shell: "oc -n {{openshift_namespace}} start-build --wait zeebe-broker-kafka"
-  delegate_to: localhost
 
 
 - name: zeebe-broker Deployment Config

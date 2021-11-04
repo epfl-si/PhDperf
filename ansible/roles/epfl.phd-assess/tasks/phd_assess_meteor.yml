@@ -1,6 +1,5 @@
 - name: "Pull upstream {{ phd_assess_ubuntu_base_image_mirrored_from }} image into {{ phd_assess_ubuntu_base_image_mirrored_to }}"
   when: openshift_namespace == phd_assess_build_namespace
-  delegate_to: localhost
   openshift_imagestream:
     metadata:
       name: ubuntu
@@ -11,7 +10,6 @@
 
 - name: "Build NodeJS base image in OpenShift"
   when: openshift_namespace == phd_assess_build_namespace
-  delegate_to: localhost
   openshift_imagestream:
     metadata:
       name: "{{ phd_assess_meteor_base_image_name }}"
@@ -28,7 +26,6 @@
 
 - name: "Build Meteor serving image in OpenShift"
   when: openshift_namespace == phd_assess_build_namespace
-  delegate_to: localhost
   openshift_imagestream:
     metadata:
       name: "{{ phd_assess_meteor_image_name }}"
@@ -45,7 +42,6 @@
 - name: "Rebuild Meteor serving image now"
   when: |
     (openshift_namespace == phd_assess_build_namespace)
-  delegate_to: localhost
   shell:
     cmd: |
       oc -n "{{ openshift_namespace }}" start-build "{{ phd_assess_meteor_image_name }}"

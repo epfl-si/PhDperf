@@ -17,5 +17,3 @@
     if [ "$ok" != 1 ];
       then exit 1;
     fi
-
-  delegate_to: localhost

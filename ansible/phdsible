@@ -101,7 +101,7 @@ esac
 set -e
 
 inventories () {
-    echo "-i hosts-oc-prod"
+    echo "-i inventory.yml"
 }
 
 platform_check

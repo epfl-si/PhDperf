@@ -1,5 +1,4 @@
 - name: "Pull upstream {{ phd_assess_mongo_image_mirrored_from }} image into {{ phd_assess_mongo_image_mirrored_to }}"
-  delegate_to: localhost
   openshift_imagestream:
     metadata:
       name: mongo
