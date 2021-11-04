@@ -8,6 +8,7 @@
     tag: "{{ zeebe_broker_version }}"
 
 - name: "Build custom Zeebe Broker image"
+  when: openshift_namespace == phd_assess_build_namespace
   openshift_imagestream:
     state: latest
     metadata:
@@ -29,8 +30,28 @@
   register: _openshift_image_zeebe_broker
 
 - name: "Rebuild custom Zeebe Broker image now"
-  when: _openshift_image_zeebe_broker is changed
+  when: |
+     ( openshift_namespace == phd_assess_build_namespace )
+     and
+     ( (_openshift_image_zeebe_broker | default({})) is changed )
   shell: "oc -n {{openshift_namespace}} start-build --wait zeebe-broker-kafka"
+
+- name: "Promote zeebe-broker-kafka from {{ phd_assess_build_namespace }} to production"
+  when: >-
+    (openshift_namespace != phd_assess_build_namespace)
+    and
+    ("zeebe-promote" in ansible_run_tags)
+  tags: zeebe-promote
+  include_tasks:
+    file: _promote_image.yml
+    apply:
+      tags:
+        - zeebe
+        - zeebe-promote
+  vars:
+    promote_image_name: zeebe-broker-kafka
+    promote_image_tag: "latest"
+    promote_from_namespace: "{{ phd_assess_build_namespace }}"
 
 
 - name: zeebe-broker Deployment Config
@@ -84,7 +105,9 @@
               resources:
                 limits:
                   cpu: '1'
-                  memory: 1G
+                  memory: >-
+                    {{ "300M" if "test" in openshift_namespace
+                    else "1G" }}
               ports:
                 - name: metrics
                   containerPort: 9600
