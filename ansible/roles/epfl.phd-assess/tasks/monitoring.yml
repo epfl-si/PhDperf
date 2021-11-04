@@ -174,8 +174,7 @@ monitoring_prometheus_external_hostname }}/)"
   tags: monitoring.restart
 
 
-- name: "Pull upstream {{ monitoring_node_base_image_mirrored_from }}
-image into {{ monitoring_node_base_image_mirrored_to }}"
+- name: "Pull upstream {{ monitoring_node_base_image_mirrored_from }} image into {{ monitoring_node_base_image_mirrored_to }}"
   when: openshift_namespace == phd_assess_build_namespace
   openshift_imagestream:
     metadata:
