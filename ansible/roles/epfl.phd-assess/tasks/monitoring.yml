@@ -2,6 +2,7 @@
   include_vars: monitoring-vars.yml
 
 - name: "Pull traefik image into {{ monitoring_traefik_base_image_mirrored_to }}"
+  when: monitoring_enabled_in_namespace |bool
   tags: monitoring.prometheus
   openshift_imagestream:
     metadata:
@@ -12,6 +13,7 @@
 
 
 - name: Prometheus service
+  when: monitoring_enabled_in_namespace |bool
   tags: monitoring.prometheus
   openshift:
     state: latest
@@ -32,6 +34,7 @@
 
 - name: "Prometheus route (https://{{
 monitoring_prometheus_external_hostname }}/)"
+  when: monitoring_enabled_in_namespace |bool
   tags: monitoring.prometheus
   openshift:
     state: latest
@@ -65,6 +68,7 @@ monitoring_prometheus_external_hostname }}/)"
   register: _prometheus_configmap
 
 - name: Traefik ConfigMap Static (configuration and sync scripts)
+  when: monitoring_enabled_in_namespace |bool
   openshift:
     state: latest
     apiVersion: v1
@@ -77,6 +81,7 @@ monitoring_prometheus_external_hostname }}/)"
         {{ lookup("template", "traefik-config-static.yml") }}
 
 - name: Traefik ConfigMap Dynamic (configuration and sync scripts)
+  when: monitoring_enabled_in_namespace |bool
   openshift:
     state: latest
     apiVersion: v1
@@ -90,6 +95,7 @@ monitoring_prometheus_external_hostname }}/)"
 
 
 - name: Prometheus StatefulSet
+  when: monitoring_enabled_in_namespace |bool
   tags: monitoring.prometheus
   vars:
   openshift:
@@ -163,11 +169,14 @@ monitoring_prometheus_external_hostname }}/)"
 
 - name: Restart Prometheus
   when: >-
+    monitoring_enabled_in_namespace
+    and (
     ( (_prometheus_statefulset | default({})) is changed )
     or
     ( (_prometheus_configmap | default({})) is changed )
     or
     ( "monitoring.restart" in ansible_run_tags )
+    )
   shell:
     cmd: |
       oc delete pod prometheus-0
@@ -200,6 +209,7 @@ monitoring_prometheus_external_hostname }}/)"
           memory: 100M
 
 - name: "disk-usage-exporter DeploymentConfig"
+  when: monitoring_enabled_in_namespace |bool
   openshift:
     state: latest
     apiVersion: apps.openshift.io/v1

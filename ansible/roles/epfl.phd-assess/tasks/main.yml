@@ -52,8 +52,6 @@
 
 - name: Monitoring
   tags: monitoring
-  when: >-
-    "test" not in openshift_namespace
   include_tasks:
     file: "monitoring.yml"
     apply:
