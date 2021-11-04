@@ -61,7 +61,8 @@
     promote_image_tag: "latest"
     promote_from_namespace: "{{ phd_assess_build_namespace }}"
 
-- name: Push locally built and tagged image
+- name: "Push locally built and tagged image to {{ phd_assess_build_namespace }}"
+  when: openshift_namespace == phd_assess_build_namespace
   tags:
     - meteor-push
     - never
