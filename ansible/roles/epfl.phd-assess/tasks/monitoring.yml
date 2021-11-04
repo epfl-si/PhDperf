@@ -208,6 +208,20 @@ monitoring_prometheus_external_hostname }}/)"
           cpu: '1'
           memory: 100M
 
+- name: "Promote disk-usage-exporter image from {{ phd_assess_build_namespace }} to production"
+  when: openshift_namespace != phd_assess_build_namespace
+  tags: monitoring-promote
+  include_tasks:
+    file: _promote_image.yml
+    apply:
+      tags:
+        - monitoring
+        - monitoring-promote
+  vars:
+    promote_image_name: disk-usage-exporter
+    promote_image_tag: "latest"
+    promote_from_namespace: "{{ phd_assess_build_namespace }}"
+
 - name: "disk-usage-exporter DeploymentConfig"
   when: monitoring_enabled_in_namespace |bool
   openshift:

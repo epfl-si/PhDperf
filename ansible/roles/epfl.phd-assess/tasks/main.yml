@@ -51,7 +51,9 @@
     - bpmn-deploy
 
 - name: Monitoring
-  tags: monitoring
+  tags:
+    - monitoring
+    - monitoring-promote
   include_tasks:
     file: "monitoring.yml"
     apply:
