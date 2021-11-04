@@ -13,10 +13,6 @@ import toast from 'react-hot-toast';
 import {ErrorIcon} from "react-hot-toast/src/components/error";
 import {toastClosable} from "/imports/ui/components/Toasters";
 
-function resetSubmitButton() {
-  const submitButton = document.getElementsByName('data[submit]')[0];
-  submitButton.textContent = "Submit"
-}
 
 export function Task({workflowKey}: { workflowKey: string }) {
   const taskLoading = useTracker(() => {
@@ -49,11 +45,10 @@ export function Task({workflowKey}: { workflowKey: string }) {
             (<>
               <h1 className={'h2'}>{task.customHeaders.title || `Task ${task._id}`}</h1>
               <Errors/>
-              <Form form={JSON.parse(task.customHeaders.formIO)}
-                    submission={{data: task.variables}}
-                    noDefaultSubmitButton={true}
-                    onSubmit={onSubmit}
-                    onCustomEvent={(event: customEvent) => event.type == 'cancelClicked' && history.push('/')}
+              <Form form={ JSON.parse(task.customHeaders.formIO) }
+                    submission={ {data: task.variables} }
+                    onCustomEvent={ (event: customEvent) => event.type == 'cancelClicked' && history.push('/') }
+                    options={ { hooks: { beforeSubmit: beforeSubmitHook,} } }
               />
             </>)
         }</>
@@ -75,7 +70,7 @@ export function Task({workflowKey}: { workflowKey: string }) {
       }</>)
   }
 
-  function onSubmit(this: any, formData: { data: any, metadata: any }) {
+  function beforeSubmitHook(this: any, formData: { data: any, metadata: any }, next: any) {
     toast.loading("Submitting...",
       {
         id: toastId,
@@ -85,7 +80,7 @@ export function Task({workflowKey}: { workflowKey: string }) {
     // As formio sent all the form fields (disabled included)
     // we remove the "disabled" one, so we can control
     // the workflow variables with only the needed values
-    const formDataPicked = _.omit(formData.data, findDisabledFields(this.form))
+    const formDataPicked = _.omit(formData.data, findDisabledFields(this))
 
     Meteor.call("submit",
       workflowKey,
@@ -101,11 +96,11 @@ export function Task({workflowKey}: { workflowKey: string }) {
               icon: <ErrorIcon />,
             }
           );
-          resetSubmitButton()
-          throw error
+          next(error)
         } else {
           toast.dismiss(toastId)
           setSubmitted(true)
+          next()
         }
       }
     )
