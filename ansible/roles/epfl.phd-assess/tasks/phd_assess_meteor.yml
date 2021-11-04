@@ -43,8 +43,12 @@
   tags: meteor-build
 
 - name: "Rebuild Meteor serving image now"
-  debug:
-    msg: "Not quite done yet"
+  when: |
+    (openshift_namespace == phd_assess_build_namespace)
+  delegate_to: localhost
+  shell:
+    cmd: |
+      oc -n "{{ openshift_namespace }}" start-build "{{ phd_assess_meteor_image_name }}"
   tags: meteor-build.now
 
 - name: "Promote images from phd_assess_build_namespace to openshift_namespace"
