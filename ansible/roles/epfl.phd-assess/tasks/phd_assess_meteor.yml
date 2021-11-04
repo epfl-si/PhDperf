@@ -39,7 +39,7 @@
     spec:
       resources:
         limits:
-          memory: "1G"
+          memory: "2G"
   tags: meteor-build
 
 - name: "Rebuild Meteor serving image now"
