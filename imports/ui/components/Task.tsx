@@ -24,7 +24,7 @@ export function Task({workflowKey}: { workflowKey: string }) {
 
   const task = useTracker(() => Tasks.findByKey(workflowKey), [workflowKey])
   const toastId = `toast-${workflowKey}`
-  const [submitted, setSubmitted] = useState(false)
+  const [toBeSubmitted, setToBeSubmitted] = useState<boolean | undefined>(true)
   const history = useHistory()
 
   // Remove the current notification
@@ -57,7 +57,7 @@ export function Task({workflowKey}: { workflowKey: string }) {
   } else {
     // if task is no more, it can be that we already submitted it or a 404
     return (<>
-      {submitted ? (
+      {!toBeSubmitted ? (
         <>
           <Alert message={'Data submitted !'} alertType={'success'}/>
           <Link to={`/`}><Button label={'Back'} onClickFn={() => void 0}/></Link>
@@ -99,7 +99,7 @@ export function Task({workflowKey}: { workflowKey: string }) {
           next(error)
         } else {
           toast.dismiss(toastId)
-          setSubmitted(true)
+          setToBeSubmitted(undefined)
           next()
         }
       }
