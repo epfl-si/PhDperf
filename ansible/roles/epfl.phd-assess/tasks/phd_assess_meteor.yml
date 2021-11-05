@@ -119,6 +119,8 @@
                 value: 'zeebe-broker:26500'
               - name: 'ZEEBE_NODE_LOG_LEVEL'
                 value: 'ERROR'
+              - name: 'DEBUG'
+                value: 'phd-assess:*'
               - name: "{{ encryption_key_name }}"
                 valueFrom:
                   secretKeyRef:
