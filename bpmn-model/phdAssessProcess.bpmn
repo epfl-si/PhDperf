@@ -599,7 +599,7 @@
         <zeebe:ioMapping>
           <zeebe:input source="= phdStudentEmail" target="to" />
           <zeebe:input source="= mentorEmail" target="bcc" />
-          <zeebe:input source="= if (thesisCoDirectorSciper=null) then thesisDirectorEmail else [thesisDirectorEmail, thesisCoDirectorEmail]" target="cc" />
+          <zeebe:input source="= if (thesisCoDirectorSciper!=&#34;&#34;) then [thesisDirectorEmail, thesisCoDirectorEmail] else thesisDirectorEmail" target="cc" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_19hd8zh</bpmn:incoming>
