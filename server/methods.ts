@@ -9,22 +9,23 @@ import _ from "lodash";
 import {zBClient} from "/server/zeebe_broker_connector";
 import WorkersClient from './zeebe_broker_connector'
 import {updateParticipantsFromSciper} from "/server/userFetcher";
-
+import {auditLogConsoleOut} from "/server/logging";
 
 const tasks = TasksCollection<TaskData>()
-const debug = require('debug')('server/methods')
+const auditLog = auditLogConsoleOut.extend('server/methods')
+
 
 Meteor.methods({
 
   async startWorkflow() {  // aka start a new instance in Zeebe terms
     if (!canStartProcessInstance()) {
-      debug(`Unallowed user ${Meteor.user()?._id} is trying to start a workflow`)
+      auditLog(`Unallowed user ${Meteor.user()?._id} is trying to start a workflow. The error has been thrown to user.`)
       throw new Meteor.Error(403, 'You are not allowed to start a workflow')
     }
 
     const diagramProcessId = 'phdAssessProcess'
 
-    debug(`calling for a new "phdAssessProcess" instance`)
+    auditLog(`calling for a new "phdAssessProcess" instance`)
 
     if(!zBClient) throw new Meteor.Error(500, `The Zeebe client has not been able to start on the server.`)
 
@@ -35,16 +36,17 @@ Meteor.methods({
         updated_at: encrypt(new Date().toJSON()),
         assigneeSciper: encrypt(Meteor.user()!._id),
       }))
-      debug(`created new instance ${diagramProcessId}, response: ${JSON.stringify(createProcessInstanceResponse)}`)
+      auditLog(`created new instance ${diagramProcessId}, response: ${JSON.stringify(createProcessInstanceResponse)}`)
       return createProcessInstanceResponse?.processKey
     } catch (e) {
+      auditLog(`Error creating a new workflow. The error has been thrown to user.`)
       throw new Meteor.Error(500, `Unable to start a new workflow. Please contact the admin to verify the server. ${e}`)
     }
   },
 
   async submit(key, formData, formMetaData: FormioActivityLog) {
     if (!canSubmit(key)) {
-      debug(`Unallowed user is trying to sumbit the task ${key}`)
+      auditLog(`Unallowed user ${Meteor.user()?._id} is trying to sumbit the task ${key}`)
       throw new Meteor.Error(403, 'You are not allowed to submit this task')
     }
 
@@ -62,6 +64,7 @@ Meteor.methods({
       )
 
       if (formData.length == 0) {
+        auditLog(`Error because a form as insufficient data. The error has been thrown to user.`)
         throw new Meteor.Error(400, 'There is not enough valid data to validate this form. Canceling.')
       }
 
@@ -72,8 +75,10 @@ Meteor.methods({
         if (e.name == 'AbortError') {
           // Look like the fetching of user info has got a timeout,
           // make it bad only if we don't have already some data, or ignore it
+          auditLog(`Time out Error in fetching scipers. The error has been thrown to user.`)
           if (!task.variables.phdStudentEmail) throw new Meteor.Error(422,'Unable to get users information, aborting. Please contact the administrator or try again later.')
         } else {
+          auditLog(`Error in parsing a participant ${e}. The error has been thrown to user.`)
           throw new Meteor.Error(400, `There is a problem with a participant: ${e}`)
         }
       }
@@ -92,20 +97,18 @@ Meteor.methods({
 
       await WorkersClient.success(task._id, formData)
       tasks.remove({_id: task._id})
-      debug("Submitted form result")
+      auditLog(`Successfully submitted form for task id ${task._id}.`)
     } else {
-      debug("Error can not find the task that is trying to be submitted")
+      auditLog("Error the task being submitted can not be found. Task id : ${task._id}. The error has been thrown to user.")
       throw new Meteor.Error(404, 'Unknown task', 'Check the task exist by refreshing your browser')
     }
   },
 
   async deleteProcessInstance(processInstanceKey) {
     if (!canDeleteProcessInstance()) {
-      debug(`Unallowed user to delete the process instance key ${processInstanceKey}`)
+      auditLog(`Unallowed user to delete the process instance key ${processInstanceKey}`)
       throw new Meteor.Error(403, 'You are not allowed to delete a process instance')
     }
-
-    debug(`Asking to delete an process instance ${processInstanceKey}`)
 
     if(!zBClient) throw new Meteor.Error(500, `The Zeebe client has not been able to start on the server.`)
 
@@ -113,8 +116,9 @@ Meteor.methods({
       await zBClient.cancelProcessInstance(processInstanceKey)
       // delete in db too
       tasks.remove({processInstanceKey: processInstanceKey})
+      auditLog(`Sucessfully deleted a process instance ${processInstanceKey}`)
     } catch (error) {
-      debug(`Error: Unable to cancel the process instance ${processInstanceKey}. ${error}`)
+      auditLog(`Error: Unable to cancel the process instance ${processInstanceKey}. ${error}`)
       tasks.remove({processInstanceKey: processInstanceKey})
       throw new Meteor.Error(500, `Unable to cancel the task. ${error}. Deleting locally anyway`)
     }
@@ -122,11 +126,11 @@ Meteor.methods({
 
   async refreshProcessInstance(processInstanceKey) {
     if (!canRefreshProcessInstance()) {
-      debug(`Unallowed user to refresh the process instance key ${processInstanceKey}`)
+      auditLog(`Unallowed user to refresh the process instance key ${processInstanceKey}. The error has been thrown to user.`)
       throw new Meteor.Error(403, 'You are not allowed to refresh a process instance')
     }
 
-    debug(`Asking to refresh an process instance ${processInstanceKey}`)
+    auditLog(`Refreshing a process instance ${processInstanceKey} by removing it from Meteor`)
     tasks.remove({processInstanceKey: processInstanceKey})
   },
 })

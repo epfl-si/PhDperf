@@ -16,7 +16,7 @@ import {
   TasksCollection
 } from "/imports/model/tasks"
 
-const debug = debug_('phdAssess:server:workflow')
+const debug = debug_('phd-assess:zeebe-connector')
 
 // what is send as result
 // should be the whole form, or an ACL decided value

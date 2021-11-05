@@ -116,6 +116,8 @@
                 value: 'mongodb://mongo:27017/meteor'
               - name: 'ZEEBE_ADDRESS'
                 value: 'zeebe-broker:26500'
+              - name: 'ZEEBE_NODE_LOG_LEVEL'
+                value: 'ERROR'
               - name: "{{ encryption_key_name }}"
                 valueFrom:
                   secretKeyRef:
