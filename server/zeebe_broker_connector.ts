@@ -40,7 +40,7 @@ function zeebeJobToTask(job: PhDZeebeJob): TaskData {
 
   Object.keys(job.variables).map((key) => {
     try {
-      if (Array.isArray(job.variables[key])) {key
+      if (Array.isArray(job.variables[key])) {
         decryptedVariables[key] = job.variables[key].reduce((acc: string[], item: string) => {
             acc.push(decrypt(item))
             return acc
@@ -48,18 +48,17 @@ function zeebeJobToTask(job: PhDZeebeJob): TaskData {
       } else {
         decryptedVariables[key] = decrypt(job.variables[key])
       }
-    } catch (e) {
-      if (e instanceof SyntaxError) {
-        // not good, some values are not readable. Get the error for now,
-        // but raise it after the whole decrypt
-        // we may need to do something afterward
-        debug(`Can't decrypt the key: ${key}`)
-        undecryptableVariablesKey.push(key)
-      } else {
-        throw e
-      }
+    } catch (error: SyntaxError | any) {
+      undecryptableVariablesKey.push(key)
     }
   })
+
+  if (undecryptableVariablesKey.length > 0) {
+    // not good, some values are not readable.
+    const cantDecryptError = new Error(`Error: Some fields are undecryptable. Fields : ${JSON.stringify(undecryptableVariablesKey)}`)
+    debug(`Can't decrypt one or more key: ${JSON.stringify(undecryptableVariablesKey)}`)
+    throw cantDecryptError
+  }
 
   return Object.assign(job, {
     _id: job.key,
@@ -91,9 +90,17 @@ export default {
             let task_id: string | undefined;
 
             if (!tasks.findOne({ _id: job.key } )) {  // Let's add this unknown task
-              let newTask = zeebeJobToTask(job)
-              task_id = tasks.insert(newTask)
-              debug(`Received a new job from Zeebe ${ task_id }`)
+              try {
+                let newTask = zeebeJobToTask(job)
+                task_id = tasks.insert(newTask)
+                debug(`Received a new job from Zeebe ${ task_id }`)
+              } catch (error) {
+                // unable to create the task or a variable is failing to be decrypted => no good at all
+                // we can't do better than alerting the logs
+                debug(`Received a undecryptable job (${job.key}) from Zeebe. Sending a task fail to the broker. Task process id : ${job.processInstanceKey}. ${error}.`)
+                // raise it as a zeebe critical error
+                return job.fail( `Unable to decrypt some values, failing the job. ${error}.`, 0)
+              }
             }
 
             return job.forward()  // tell Zeebe that result may come later, and free ourself for an another work
