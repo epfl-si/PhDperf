@@ -36,7 +36,7 @@ function zeebeJobToTask(job: PhDZeebeJob): TaskData {
   // Typescript hack with the "any" : make it writable by bypassing typescript. Well know it's bad,
   // but still, better than rebuilding the whole Zeebe interfaces to get it writeable
   const decryptedVariables: PhDInputVariables = {}
-  const undecryptableVariablesKey: string[] = []
+  let undecryptableVariablesKey: string[] = []
 
   Object.keys(job.variables).map((key) => {
     try {
