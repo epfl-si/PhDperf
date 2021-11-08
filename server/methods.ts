@@ -79,7 +79,7 @@ Meteor.methods({
           if (!task.variables.phdStudentEmail) throw new Meteor.Error(422,'Unable to get users information, aborting. Please contact the administrator or try again later.')
         } else {
           auditLog(`Error in parsing a participant ${e}. The error has been thrown to user.`)
-          throw new Meteor.Error(400, `There is a problem with a participant: ${e}`)
+          throw new Meteor.Error(422, `There is a problem with a participant: ${e}`)
         }
       }
 
