@@ -63,7 +63,6 @@ function zeebeJobToTask(job: PhDZeebeJob): TaskData {
   return Object.assign(job, {
     _id: job.key,
     variables: decryptedVariables,
-    undecryptableVariablesKey: undecryptableVariablesKey
   })
 }
 
