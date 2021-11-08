@@ -66,9 +66,9 @@ export const participantsFromZeebe = (variables: PhDInputVariables): Participant
     if (`${participantID}Sciper` in variables && variables[`${participantID}Sciper`]) {
       try {
         participants[participantID] = {
-          sciper: variables[`${participantID}Sciper`],
-          email: variables[`${participantID}Email`],
-          name: variables[`${participantID}Name`],
+          sciper: variables[`${participantID}Sciper`]!,
+          email: variables[`${participantID}Email`]!,
+          name: variables[`${participantID}Name`]!,
         }
       } catch (e) {
         if (e instanceof ReferenceError) {
