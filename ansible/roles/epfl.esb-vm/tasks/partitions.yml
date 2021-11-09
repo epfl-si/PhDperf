@@ -11,4 +11,12 @@
     size: 100%FREE
     shrink: no
 
+- name: Create a ext4 filesystem on /dev/ubuntu-vg/persistent and /dev/ubuntu-vg/docker-apps
+  community.general.filesystem:
+    fstype: ext4
+    dev: "{{item}}"
+  with_items:
+    - /dev/ubuntu-vg/persistent
+    - /dev/ubuntu-vg/docker-apps
+
 
