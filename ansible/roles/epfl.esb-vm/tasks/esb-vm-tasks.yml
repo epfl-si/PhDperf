@@ -21,3 +21,10 @@
 - name: Install Docker
   apt:
     name: docker.io
+
+- name: Fetch or build Docker images
+  include_tasks:
+    file: docker-images.yml
+    apply:
+      tags: vm-images
+  tags: vm-images

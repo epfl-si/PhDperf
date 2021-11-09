@@ -1,0 +1,22 @@
+- name: "Get OpenShift login token"
+  delegate_to: localhost
+  changed_when: false
+  no_log: true
+  shell:
+    cmd: oc whoami -t
+  register: _oc_whoami
+
+- name: "Pull images to the VM"
+  shell:
+    cmd: |
+      docker login {{ openshift_image_registry }} -u unused --password "{{ _oc_whoami.stdout }}"
+      {% for image in _images %}
+      docker pull {{ openshift_image_registry }}/{{ phd_assess_build_namespace }}/{{ image }}:latest
+      {% endfor %}
+      docker logout {{ openshift_image_registry }}
+  vars:
+    _images:
+      - zeebe-broker-with-exporters
+  register: _pull_images
+  changed_when: >-
+    "Downloaded newer image" in _pull_images.stdout

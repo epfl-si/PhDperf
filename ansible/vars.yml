@@ -1,0 +1,3 @@
+# Variables common to multiple roles go here.
+openshift_image_registry: "os-docker-registry.epfl.ch"
+phd_assess_build_namespace: phd-assess-test
