@@ -5,7 +5,6 @@ all:
       vars:
         ansible_connection: local
         ansible_python_interpreter: "{{ ansible_playbook_python }}"
+        # The name of the namespace is the Ansible inventory name (as defined
+        # in inventory/*.yml):
         openshift_namespace: "{{ inventory_hostname }}"
-      hosts:
-        phd-assess: {}
-        phd-assess-test: {}
