@@ -19,4 +19,15 @@
     - /dev/ubuntu-vg/persistent
     - /dev/ubuntu-vg/docker-apps
 
+- name: Mount up device by label
+  mount:
+    path: "{{item.path}}"
+    src: "{{item.src}}"
+    fstype: ext4
+    state: mounted
+  with_items:
+    - path: /var/lib/docker
+      src: /dev/ubuntu-vg/docker-apps
+    - path: /srv
+      src: /dev/ubuntu-vg/persistent
 
