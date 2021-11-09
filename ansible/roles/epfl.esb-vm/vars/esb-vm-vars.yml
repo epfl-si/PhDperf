@@ -1,0 +1,5 @@
+esb_vm_ssh_access_keys:
+  - https://github.com/domq.keys       # Dominique Quatravaux
+  - https://github.com/lvenries.keys   # Luc Venries
+  - https://github.com/jdelasoie.keys  # Julien Delasoie
+
