@@ -12,7 +12,7 @@
   openshift_imagestream:
     state: latest
     metadata:
-      name: zeebe-broker-kafka
+      name: zeebe-broker-with-exporters
       namespace: "{{openshift_namespace}}"
     from:
       kind: ImageStreamTag
@@ -22,6 +22,8 @@
       dockerfile: |
         FROM camunda/zeebe
         ADD "{{ zeebe_broker_kafka_exporter_jar_url }}" /usr/local/zeebe/lib/zeebe-kafka-exporter-with-dependencies.jar
+        ADD "{{ zeebe_broker_hazelcast_exporter_jar_url }}" /usr/local/zeebe/exporters/zeebe-hazelcast-exporter.jar
+        ADD "{{ zeebe_broker_mongodb_exporter_jar_url }}" /usr/local/zeebe/exporters/zeebe-mongo-exporter.jar
     spec:
       resources:
         limits:
@@ -34,9 +36,9 @@
      ( openshift_namespace == phd_assess_build_namespace )
      and
      ( (_openshift_image_zeebe_broker | default({})) is changed )
-  shell: "oc -n {{openshift_namespace}} start-build --wait zeebe-broker-kafka"
+  shell: "oc -n {{openshift_namespace}} start-build --wait zeebe-broker-with-exporters"
 
-- name: "Promote zeebe-broker-kafka from {{ phd_assess_build_namespace }} to production"
+- name: "Promote zeebe-broker-with-exporters from {{ phd_assess_build_namespace }} to production"
   when: >-
     (openshift_namespace != phd_assess_build_namespace)
     and
