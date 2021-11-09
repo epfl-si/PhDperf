@@ -5,6 +5,12 @@
     key: '{{ item }}'
   with_items: '{{ esb_vm_ssh_access_keys }}'
 
+- name: Remove default user phd
+  user:
+    name: phd
+    state: absent
+    remove: yes
+
 - name: Partition scheme
   include_tasks:
     file: partitions.yml
