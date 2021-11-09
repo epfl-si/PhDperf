@@ -2,8 +2,14 @@
 #
 #   ansible-playbook playbook.yml -i hosts-oc-prod
 
-- name: PhD Assess
-  hosts: all
+- name: ESB core on itsphdrepor0001
+  hosts: vms
+  gather_facts: no   # Unused
+  roles:
+    - role: roles/epfl.esb-vm
+
+- name: PhD Assess on OpenShift
+  hosts: openshift_namespaces
   gather_facts: no   # Not yet
   roles:
     - role: roles/epfl.phd-assess

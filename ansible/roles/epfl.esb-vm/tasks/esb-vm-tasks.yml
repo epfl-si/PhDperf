@@ -1,0 +1,10 @@
+- name: Partition scheme
+  include_tasks:
+    file: partitions.yml
+    apply:
+      tags: partitions
+  tags: partitions
+
+- name: Install Docker
+  apt:
+    name: docker

@@ -6,3 +6,7 @@ all:
     openshift_namespaces:
       hosts:
         phd-assess: {}
+    vms:
+      hosts:
+        itsphdrepor0001:
+          ansible_hostname: itsphdrepor0001.xaas.epfl.ch
