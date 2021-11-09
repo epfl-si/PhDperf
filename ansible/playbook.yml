@@ -2,6 +2,22 @@
 #
 #   ansible-playbook playbook.yml -i hosts-oc-prod
 
+- name: Unattended distribution upgrades on Ubuntu VMs
+  hosts: vms
+  # https://github.com/jnv/ansible-role-unattended-upgrades#for-ubuntu
+  roles:
+    - role: jnv.unattended-upgrades
+  vars:
+    unattended_remove_unused_dependencies: true
+    unattended_automatic_reboot: false
+    unattended_origins_patterns:
+      - 'origin=Ubuntu,archive=${distro_codename}-security'
+      - 'o=Ubuntu,a=${distro_codename}'
+      - 'o=Ubuntu,a=${distro_codename}-updates'
+      - 'o=Ubuntu,a=${distro_codename}-proposed-updates'
+    unattended_ignore_apps_require_restart: true
+    unattended_dpkg_options: ["--force-confdef"]
+
 - name: ESB core on itsphdrepor0001
   hosts: vms
   gather_facts: no   # Unused
