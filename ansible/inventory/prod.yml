@@ -9,4 +9,5 @@ all:
     vms:
       hosts:
         itsphdrepor0001:
-          ansible_hostname: itsphdrepor0001.xaas.epfl.ch
+          ansible_host: itsphdrepor0001.xaas.epfl.ch
+          ansible_user: root
