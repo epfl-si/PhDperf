@@ -22,15 +22,4 @@
   apt:
     name: docker
 
-- name: Create the logical volume for kafka data and zeebe raft
-  community.general.lvol:
-    vg: ubuntu-vg
-    lv: persistent
-    size: 10g
 
-- name: Create the logical volume for the docker apps (kafka, zeebe, zeebe-exporter, zeeqs, ...)
-  community.general.lvol:
-    vg: ubuntu-vg
-    lv: docker-apps
-    size: 100%FREE
-    shrink: no
