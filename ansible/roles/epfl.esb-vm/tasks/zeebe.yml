@@ -1,3 +1,6 @@
+- include_vars: zeebe-vars.yml
+  tags: always
+
 - name: "Get OpenShift login token"
   delegate_to: localhost
   changed_when: false
@@ -6,7 +9,7 @@
     cmd: oc whoami -t
   register: _oc_whoami
 
-- name: "Pull images to the VM"
+- name: "Pull OpenShift-built images to the VM"
   shell:
     cmd: |
       docker login {{ openshift_image_registry }} -u unused --password "{{ _oc_whoami.stdout }}"
@@ -20,3 +23,8 @@
   register: _pull_images
   changed_when: >-
     "Downloaded newer image" in _pull_images.stdout
+
+- name: "Pull {{ openssh_server_image }}"
+  community.docker.docker_image:
+    name: "{{ openssh_server_image }}:{{ openssh_server_image_tag }}"
+    source: pull

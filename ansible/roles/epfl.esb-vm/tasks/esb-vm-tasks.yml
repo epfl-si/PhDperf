@@ -25,16 +25,10 @@
       tags: docker
   tags: docker
 
-- name: Fetch or build Docker images
+- name: Run Zeebe quorum member and ssh tunnels
   include_tasks:
-    file: docker-images.yml
+    file: zeebe.yml
     apply:
-      tags: vm-images
-  tags: vm-images
-
-- name: OpenSSH tunnel server
-  include_tasks:
-    file: openssh-server.yml
-    apply:
-      tags: ssh
-  tags: ssh
+      tags: zeebe
+  tags:
+    - zeebe
