@@ -43,3 +43,18 @@
   register: _openssh_key_init
   changed_when: >-
     "NOCHANGE" not in _openssh_key_init.stdout
+
+- name: "{{ esb_docker_network }} Docker network"
+  community.docker.docker_network:
+    name: "{{ esb_docker_network }}"
+
+- name: "Run the OpenSSH server in Docker network {{ esb_docker_network }}"
+  community.docker.docker_container:
+    name: esb-openssh-tunnel-server
+    image: "{{ openssh_server_image }}:{{ openssh_server_image_tag }}"
+    published_ports:
+      - "{{ esb_ssh_port }}:2222"
+    networks:
+      - name: "{{ esb_docker_network }}"
+    volumes:
+      - "{{ openssh_server_keys_dir }}:/config/ssh_host_keys"
