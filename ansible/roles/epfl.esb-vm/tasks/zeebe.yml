@@ -28,3 +28,18 @@
   community.docker.docker_image:
     name: "{{ openssh_server_image }}:{{ openssh_server_image_tag }}"
     source: pull
+
+- name: "Initialize OpenSSH server keys in {{ openssh_server_keys_dir }}"
+  shell:
+    cmd: |
+      if [ -d "{{ openssh_server_keys_dir }}" ]; then
+        echo NOCHANGE
+        exit 0
+      fi
+
+      docker run -v "{{ openssh_server_keys_dir }}:/keys" \
+         "{{ openssh_server_image }}:{{ openssh_server_image_tag }}" \
+         bash -c "cp -a /etc/ssh/* /keys"
+  register: _openssh_key_init
+  changed_when: >-
+    "NOCHANGE" not in _openssh_key_init.stdout
