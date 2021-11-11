@@ -1,0 +1,2 @@
+openssh_server_image: linuxserver/openssh-server
+openssh_server_image_tag: 2021.10.31

@@ -1,0 +1,7 @@
+- include_vars: openssh-server-vars.yml
+  tags: always
+
+- name: "Pull {{ openssh_server_image }}"
+  community.docker.docker_image:
+    name: "{{ openssh_server_image }}:{{ openssh_server_image_tag }}"
+    source: pull
