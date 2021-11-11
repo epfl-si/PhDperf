@@ -18,9 +18,12 @@
       tags: partitions
   tags: partitions
 
-- name: Install Docker
-  apt:
-    name: docker.io
+- name: Install Docker and Docker API for Python
+  include_tasks:
+    file: docker.yml
+    apply:
+      tags: docker
+  tags: docker
 
 - name: Fetch or build Docker images
   include_tasks:

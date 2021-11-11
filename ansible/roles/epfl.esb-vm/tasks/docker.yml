@@ -1,0 +1,11 @@
+- name: Install Docker
+  apt:
+    name: docker.io
+
+- name: Install Pip
+  apt:
+    name: python3-pip
+
+- name: Install Docker Python API
+  pip:
+    name: docker
