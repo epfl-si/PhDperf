@@ -325,7 +325,7 @@
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="notification" retries="0" />
         <zeebe:taskHeaders>
-          <zeebe:header key="subject" value="Verification of the annual report by the doctoral program Director" />
+          <zeebe:header key="subject" value="Validation of the annual report of {{ phdStudentName }} (sciper {{ phdStudentSciper }})" />
           <zeebe:header key="message" value="&#60;p&#62;Dear {{ doctoralProgramName }} doctoral program Director,&#60;/p&#62;  &#60;p&#62;You can access the annual report of the doctoral student {{ phdStudentName }}, sciper {{ phdStudentSciper }}, by connecting via the link: &#60;a href=&#34;https://phd-annual-report.epfl.ch&#34;&#62;https://phd-annual-report.epfl.ch&#60;/a&#62;&#60;/p&#62;  &#60;p&#62;We thank you for confirming that you have checked it. You may indicate any comments you have.&#60;/p&#62;  &#60;p&#62;You will then receive a PDF copy of the report by email, as well as all the people involved in this annual report.&#60;/p&#62;  &#60;p&#62;Yours faithfully,&#60;/p&#62;  &#60;p&#62;The Doctoral School&#60;/p&#62;" />
         </zeebe:taskHeaders>
         <zeebe:ioMapping>
@@ -470,7 +470,7 @@
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
           <zeebe:header key="subject" value="Annual report of doctoral student {{ phdStudentName }} (sciper {{ phdStudentSciper }}): general appraisal of the progress unsatisfactory" />
-          <zeebe:header key="message" value="&#60;p&#62;Dear {{ doctoralProgramName }} doctoral program Director,&#60;/p&#62;  &#60;p&#62;Regarding the annual report of the doctoral {{ phdStudentName }}, sciper {{ phdStudentSciper }}, the general appraisal of the progress was judged to be unsatisfactory.  &#60;p&#62;A meeting between you, the doctoral student, and the thesis Director (and the co-Director if applicable) must take place, in order to set goals and appropriate deadlines for the completion.&#60;/p&#62;  &#60;p&#62;Thank you for the follow-up and best regards,&#60;/p&#62;  &#60;p&#62;The Doctoral School&#60;/p&#62;" />
+          <zeebe:header key="message" value="&#60;p&#62;Dear {{ doctoralProgramName }} doctoral program Director,&#60;/p&#62;  &#60;p&#62;Regarding the annual report of the doctoral student{{ phdStudentName }}, sciper {{ phdStudentSciper }}, the general appraisal of the progress was judged to be unsatisfactory.  &#60;p&#62;A meeting between you, the doctoral student, and the thesis Director (and the co-Director if applicable) must take place, in order to set goals and appropriate deadlines for the completion.&#60;/p&#62;  &#60;p&#62;Thank you for the follow-up and best regards,&#60;/p&#62;  &#60;p&#62;The Doctoral School&#60;/p&#62;" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1jkk0ln</bpmn:incoming>
