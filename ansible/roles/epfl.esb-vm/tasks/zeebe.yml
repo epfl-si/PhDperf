@@ -40,21 +40,49 @@
       docker run -v "{{ openssh_server_keys_dir }}:/keys" \
          "{{ openssh_server_image }}:{{ openssh_server_image_tag }}" \
          bash -c "cp -a /etc/ssh/* /keys"
-  register: _openssh_key_init
+  register: _openssh_server_key_init
   changed_when: >-
-    "NOCHANGE" not in _openssh_key_init.stdout
+    "NOCHANGE" not in _openssh_server_key_init.stdout
+
+- name: "{{ esb_ssh_tunnel.key_files.client | dirname }}"
+  ansible.builtin.file:
+    path: "{{ esb_ssh_tunnel.key_files.client | dirname }}"
+    state: directory
+    recurse: yes
+
+- name: "Initialize OpenSSH client keys in {{ esb_ssh_tunnel.key_files.client | dirname }}"
+  shell:
+    cmd: |
+      set -e -x
+      cd "{{ esb_ssh_tunnel.key_files.client | dirname }}"
+      if [ -f "id_rsa" ]; then
+        echo "NOCHANGE"
+        exit 0
+      fi
+      ssh-keygen -f id_rsa </dev/null
+  register: _openssh_client_key_init
+  changed_when: >-
+    "NOCHANGE" not in _openssh_client_key_init.stdout
 
 - name: "{{ esb_docker_network }} Docker network"
   community.docker.docker_network:
     name: "{{ esb_docker_network }}"
+
+- name: "Read public key out of {{ esb_ssh_tunnel.key_files.client }}"
+  shell: 'cat "{{ esb_ssh_tunnel.key_files.client }}"'
+  register: _esb_tunnel_ssh_client_public_key
+  changed_when: false
 
 - name: "Run the OpenSSH server in Docker network {{ esb_docker_network }}"
   community.docker.docker_container:
     name: esb-openssh-tunnel-server
     image: "{{ openssh_server_image }}:{{ openssh_server_image_tag }}"
     published_ports:
-      - "{{ esb_ssh_port }}:2222"
+      - "{{ esb_ssh_tunnel.port }}:2222"
     networks:
       - name: "{{ esb_docker_network }}"
+    env:
+      PUBLIC_KEY: "{{ _esb_tunnel_ssh_client_public_key.stdout }}"
+      USER_NAME: esb-tunnel
     volumes:
       - "{{ openssh_server_keys_dir }}:/config/ssh_host_keys"
