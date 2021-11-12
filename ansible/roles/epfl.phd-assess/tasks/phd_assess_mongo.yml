@@ -1,10 +1,10 @@
-- name: "Pull upstream {{ phd_assess_mongo_image_mirrored_from }} image into {{ phd_assess_mongo_image_mirrored_to }}"
+- name: "Pull upstream {{ phd_assess_mongo_image.qualified }} image into {{ phd_assess_mongo_image.mirrored }}"
   openshift_imagestream:
     metadata:
-      name: mongo
+      name: "{{ phd_assess_mongo_image.shortname }}"
       namespace: "{{ openshift_namespace }}"
-    from: "{{ phd_assess_mongo_image_mirrored_from }}"
-    tag: "{{ phd_assess_mongo_image_tag }}"
+    from: "{{ phd_assess_mongo_image.qualified }}"
+    tag: "{{ phd_assess_mongo_image.tag }}"
 
 - name: phd-assess-mongo Deployment Config
   openshift:
@@ -30,7 +30,7 @@
         spec:
           containers:
             - name: mongodb
-              image: "{{phd_assess_mongo_image_mirrored_to}}:{{ phd_assess_mongo_image_tag }}"
+              image: "{{ phd_assess_mongo_image.mirrored }}"
               resources:
                 limits:
                   cpu: '1'
@@ -49,8 +49,8 @@
           - mongodb
           from:
             kind: ImageStreamTag
-            name: "mongo:{{ phd_assess_mongo_image_tag }}"
-            namespace: "{{openshift_namespace}}"
+            name: "mongo:{{ phd_assess_mongo_image.tag }}"
+            namespace: "{{ openshift_namespace }}"
 
 - name: phd-assess-mongo Service
   openshift:

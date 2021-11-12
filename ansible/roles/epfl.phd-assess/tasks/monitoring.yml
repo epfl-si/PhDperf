@@ -1,14 +1,14 @@
 - tags: always
   include_vars: monitoring-vars.yml
 
-- name: "Pull traefik image into {{ monitoring_traefik_base_image_mirrored_to }}"
+- name: "Pull traefik image into {{ monitoring_traefik_base_image.mirrored }}"
   when: monitoring_enabled_in_namespace |bool
   tags: monitoring.prometheus
   openshift_imagestream:
     metadata:
-      name: traefik
+      name: "{{ monitoring_traefik_base_image.shortname }}"
       namespace: "{{ openshift_namespace }}"
-    from: "{{ monitoring_traefik_base_image_mirrored_from }}"
+    from: "{{ monitoring_traefik_base_image.qualified }}"
     tag: latest
 
 
@@ -137,7 +137,7 @@ monitoring_prometheus_external_hostname }}/)"
                   cpu: '1'
                   memory: 100M
             - name: traefik
-              image: "{{ monitoring_traefik_base_image_mirrored_to }}"
+              image: "{{ monitoring_traefik_base_image.mirrored }}"
               ports:
               - containerPort: 9999
                 name: traefik
@@ -183,14 +183,14 @@ monitoring_prometheus_external_hostname }}/)"
   tags: monitoring.restart
 
 
-- name: "Pull upstream {{ monitoring_node_base_image_mirrored_from }} image into {{ monitoring_node_base_image_mirrored_to }}"
+- name: "Pull upstream {{ monitoring_node_base_image.qualified }} image into {{ monitoring_node_base_image.mirrored }}"
   when: openshift_namespace == phd_assess_build_namespace
   openshift_imagestream:
     metadata:
-      name: node
+      name: "{{ monitoring_node_base_image.shortname }}"
       namespace: "{{ openshift_namespace }}"
-    from: "{{ monitoring_node_base_image_mirrored_from }}"
-    tag: "{{ monitoring_node_base_image_tag }}"
+    from: "{{ monitoring_node_base_image.qualified }}"
+    tag: "{{ monitoring_node_base_image.tag }}"
 
 - name: "Build the disk-usage-exporter image"
   when: openshift_namespace == phd_assess_build_namespace
@@ -198,7 +198,7 @@ monitoring_prometheus_external_hostname }}/)"
     metadata:
       name: disk-usage-exporter
       namespace: "{{ openshift_namespace }}"
-    from: "{{ openshift_local_image_registry }}/{{ phd_assess_build_namespace }}/node:{{ monitoring_node_base_image_tag }}"
+    from: "{{ monitoring_node_base_image.mirrored }}"
     git:
       repository: "https://github.com/epfl-si/PhDAssess"
       path: docker/monitoring

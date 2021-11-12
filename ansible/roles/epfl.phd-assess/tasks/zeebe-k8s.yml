@@ -1,11 +1,11 @@
-- name: "Pull upstream {{ zeebe_broker_base_image_mirrored_from }} into {{ zeebe_broker_base_image_mirrored_to }}"
+- name: "Pull upstream {{ zeebe_broker_base_image.qualified }} into {{ zeebe_broker_base_image.mirrored }}"
   openshift_imagestream:
     state: latest
     metadata:
-      name: zeebe-broker
-      namespace: "{{openshift_namespace}}"
-    from: "{{ zeebe_broker_base_image_mirrored_from }}"
-    tag: "{{ zeebe_broker_version }}"
+      name: "{{ zeebe_broker_base_image.shortname }}"
+      namespace: "{{ openshift_namespace }}"
+    from: "{{ zeebe_broker_base_image.qualified }}"
+    tag: "{{ zeebe_broker_base_image.tag }}"
 
 - name: "Build custom Zeebe Broker image"
   when: openshift_namespace == phd_assess_build_namespace
@@ -13,11 +13,8 @@
     state: latest
     metadata:
       name: zeebe-broker-with-exporters
-      namespace: "{{openshift_namespace}}"
-    from:
-      kind: ImageStreamTag
-      name: "zeebe-broker:{{ zeebe_broker_version }}"
       namespace: "{{ openshift_namespace }}"
+    from: "{{ zeebe_broker_base_image.mirrored }}"
     source:
       dockerfile: |
         FROM camunda/zeebe
@@ -89,7 +86,7 @@
         spec:
           containers:
             - name: zeebe-broker
-              image: "{{ openshift_local_image_registry }}/{{ openshift_namespace }}/zeebe-broker-with-exporters:latest"
+              image: "{{ openshift_local_images_base }}/zeebe-broker-with-exporters:latest"
               env:
               - name: 'PORT'
                 value: '{{ zeebe_port | string }}'
