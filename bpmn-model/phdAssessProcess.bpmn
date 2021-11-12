@@ -470,7 +470,7 @@
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
           <zeebe:header key="subject" value="Annual report of doctoral student {{ phdStudentName }} (sciper {{ phdStudentSciper }}): general appraisal of the progress unsatisfactory" />
-          <zeebe:header key="message" value="&#60;p&#62;Dear {{ doctoralProgramName }} doctoral program Director,&#60;/p&#62;  &#60;p&#62;Regarding the annual report of the doctoral student{{ phdStudentName }}, sciper {{ phdStudentSciper }}, the general appraisal of the progress was judged to be unsatisfactory.  &#60;p&#62;A meeting between you, the doctoral student, and the thesis director (and the co-Director if applicable) must take place, in order to set goals and appropriate deadlines for the completion.&#60;/p&#62;  &#60;p&#62;Thank you for the follow-up and best regards,&#60;/p&#62;  &#60;p&#62;The Doctoral School&#60;/p&#62;" />
+          <zeebe:header key="message" value="&#60;p&#62;Dear {{ doctoralProgramName }} doctoral program Director,&#60;/p&#62;  &#60;p&#62;Regarding the annual report of the doctoral student {{ phdStudentName }}, sciper {{ phdStudentSciper }}, the general appraisal of the progress was judged to be unsatisfactory.  &#60;p&#62;A meeting between you, the doctoral student, and the thesis director (and the co-Director if applicable) must take place, in order to set goals and appropriate deadlines for the completion.&#60;/p&#62;  &#60;p&#62;Thank you for the follow-up and best regards,&#60;/p&#62;  &#60;p&#62;The Doctoral School&#60;/p&#62;" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1jkk0ln</bpmn:incoming>
