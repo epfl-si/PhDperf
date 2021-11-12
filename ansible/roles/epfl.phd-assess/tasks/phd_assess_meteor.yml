@@ -38,10 +38,16 @@
         limits:
           memory: "3G"
   tags: meteor-build
+  register: _phd_assess_meteor_build
 
 - name: "Rebuild Meteor serving image now"
-  when: |
-    (openshift_namespace == phd_assess_build_namespace)
+  when:
+    - >-
+      openshift_namespace == phd_assess_build_namespace
+    - >-
+      ( (_phd_assess_meteor_build | default({})) is changed )
+      or
+      ( "meteor-build.now" in ansible_run_tags )
   shell:
     cmd: |
       oc -n "{{ openshift_namespace }}" start-build "{{ phd_assess_meteor_image_name }}"
