@@ -24,6 +24,9 @@ export const get_user_permitted_tasks = () => {
     // query all the tasks
     taskQuery = {}
   } else {
+    // hide any activities log if not admin
+    taskFields['variables.activityLogs'] = 0
+
     const groups = Meteor.user()?.groupList
 
     if (groups && groups.length > 0) {
