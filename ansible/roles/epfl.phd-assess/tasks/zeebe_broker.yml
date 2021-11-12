@@ -51,7 +51,7 @@
         - zeebe
         - zeebe-promote
   vars:
-    promote_image_name: zeebe-broker-kafka
+    promote_image_name: zeebe-broker-with-exporters
     promote_image_tag: "latest"
     promote_from_namespace: "{{ phd_assess_build_namespace }}"
 
@@ -89,7 +89,7 @@
         spec:
           containers:
             - name: zeebe-broker
-              image: 'docker-registry.default.svc:5000/{{openshift_namespace}}/zeebe:{{ zeebe_broker_version }}'
+              image: "{{ openshift_local_image_registry }}/{{ openshift_namespace }}/zeebe-broker-with-exporters:latest"
               env:
               - name: 'PORT'
                 value: '{{ zeebe_port | string }}'
