@@ -7,8 +7,6 @@ route_name: "{{ app_name }}"
 cname: "phd-annual-report.epfl.ch"
 full_cname: "https://phd-annual-report.epfl.ch"
 zeebe_broker_version: 1.2.2
-zeebe_broker_port1: 26500
-zeebe_broker_port_name1: "26500"
 zeebe_broker_servicename: "zeebe-broker"
 zeebe_broker_base_image_mirrored_from: "docker.io/camunda/zeebe:{{ zeebe_broker_version }}"
 zeebe_broker_base_image_mirrored_to: "{{openshift_local_image_registry}}/{{openshift_namespace}}/zeebe"
@@ -17,9 +15,6 @@ zeebe_broker_hazelcast_exporter_jar_url: https://github.com/camunda-community-hu
 zeebe_broker_kafka_exporter_jar_url: https://github.com/camunda-community-hub/zeebe-kafka-exporter/releases/download/3.0.0/zeebe-kafka-exporter-3.0.0-jar-with-dependencies.jar
 zeebe_broker_mongodb_exporter_jar_url: https://github.com/crossid/zeebe-mongo-exporter/releases/download/v0.4.1/zeebe-mongo-exporter.jar
 
-phd_assess_meteor_port_name: "80"
-phd_assess_meteor_port: 80
-phd_assess_meteor_targetport: 3000
 phd_assess_meteor_servicename: "phd-assess-meteor"
 openshift_local_image_registry: "docker-registry.default.svc:5000"
 phd_assess_meteor_image_tag: "{{openshift_image_registry}}/{{openshift_namespace}}/{{phd_assess_meteor_servicename}}:latest"

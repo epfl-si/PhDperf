@@ -165,9 +165,9 @@
     spec:
       type: ClusterIP
       ports:
-        - name: "{{ phd_assess_meteor_port_name }}"
-          port: "{{ phd_assess_meteor_port }}"
+        - name: "frontend"
+          port: 80
           protocol: TCP
-          targetPort: "{{ phd_assess_meteor_targetport }}"
+          targetPort: 3000
       selector:
         deployment-config.name: phd-assess-meteor

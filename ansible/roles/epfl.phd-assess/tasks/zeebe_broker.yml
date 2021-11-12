@@ -92,7 +92,7 @@
               image: 'docker-registry.default.svc:5000/{{openshift_namespace}}/zeebe:{{ zeebe_broker_version }}'
               env:
               - name: 'PORT'
-                value: '26500'
+                value: '{{ zeebe_port | string }}'
               - name: 'ZEEBE_LOG_LEVEL'
                 value: 'info'
               - name: 'ZEEBE_LOG_APPENDER'
@@ -147,9 +147,9 @@
     spec:
       type: ClusterIP
       ports:
-        - name: "{{ zeebe_broker_port_name1 }}"
-          port: "{{ zeebe_broker_port1 }}"
+        - name: "zeebe-api"
+          port: "{{ zeebe_port }}"
           protocol: TCP
-          targetPort: "{{ zeebe_broker_port1 }}"
+          targetPort: 26500
       selector:
         deployment-config.name: zeebe-broker
