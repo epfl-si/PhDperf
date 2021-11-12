@@ -12,6 +12,7 @@
   register: _oc_whoami
 
 - name: "Pull OpenShift-built images to the VM"
+  when: _oc_whoami is not skipped
   shell:
     cmd: |
       docker login {{ openshift_image_registry }} -u unused --password "{{ _oc_whoami.stdout }}"
@@ -76,6 +77,7 @@
   changed_when: false
 
 - name: "Run the OpenSSH server in Docker network {{ esb_docker_network }}"
+  when: _esb_tunnel_ssh_client_public_key is not skipped
   community.docker.docker_container:
     name: "{{ openssh_tunnel_server_container_name }}"
     image: "{{ openssh_server_image }}:{{ openssh_server_image_tag }}"

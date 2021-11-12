@@ -15,7 +15,9 @@
       oc get -o json -n {{ promote_from_namespace }} imagestream {{ promote_image_name }}
   register: _promote_get_imagestream
 
-- when: _promote_get_imagestream is success
+- when:
+   - _promote_get_imagestream is success
+   - _promote_get_imagestream is not skipped
   set_fact:
     _promote_current_tag: |-
       {{ (_promote_get_imagestream.stdout | imagestream_tag_map).get(promote_image_tag, "__NONE__") }}
