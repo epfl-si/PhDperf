@@ -47,17 +47,17 @@
   changed_when: >-
     "NOCHANGE" not in _openssh_server_key_init.stdout
 
-- name: "{{ esb_ssh_tunnel.key_files.client | dirname }}"
+- name: "{{ esb_ssh_tunnel.client_keys_dir }}"
   ansible.builtin.file:
-    path: "{{ esb_ssh_tunnel.key_files.client | dirname }}"
+    path: "{{ esb_ssh_tunnel.client_keys_dir }}"
     state: directory
     recurse: yes
 
-- name: "Initialize OpenSSH client keys in {{ esb_ssh_tunnel.key_files.client | dirname }}"
+- name: "Initialize OpenSSH client keys in {{ esb_ssh_tunnel.client_keys_dir }}"
   shell:
     cmd: |
       set -e -x
-      cd "{{ esb_ssh_tunnel.key_files.client | dirname }}"
+      cd "{{ esb_ssh_tunnel.client_keys_dir }}"
       if [ -f "id_rsa" ]; then
         echo "NOCHANGE"
         exit 0
@@ -71,8 +71,8 @@
   community.docker.docker_network:
     name: "{{ esb_docker_network }}"
 
-- name: "Read public key out of {{ esb_ssh_tunnel.key_files.client }}"
-  shell: 'cat "{{ esb_ssh_tunnel.key_files.client }}"'
+- name: "Read public key out of {{ esb_ssh_tunnel.client_keys_dir }}/id_rsa.pub"
+  shell: 'cat "{{ esb_ssh_tunnel.client_keys_dir }}/id_rsa.pub"'
   register: _esb_tunnel_ssh_client_public_key
   changed_when: false
 

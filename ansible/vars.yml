@@ -5,12 +5,10 @@ phd_assess_build_namespace: phd-assess-test
 toplevel_state_dir: /srv/esb
 
 esb_ssh_tunnel:
+  host: itsphdrepor0001
   port: 2222
   username: esb-tunnel
-  key_files:
-    host: itsphdrepor0001
-    client: "{{ toplevel_state_dir }}/openssh-tunnel/client/id_rsa.pub"
-    server: {}  # TODO: don't know under what format the client will want to know the server key
+  client_keys_dir: "{{ toplevel_state_dir }}/openssh-tunnel/client"
 
 # The rendezvous port for Zeebe API connections (to use by clients and k8s services)
 zeebe_port: 26500
