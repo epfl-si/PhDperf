@@ -25,7 +25,18 @@
       tags: docker
   tags: docker
 
-- name: Run Zeebe quorum member and ssh tunnels
+- name: "{{ esb_docker_network }} Docker network"
+  community.docker.docker_network:
+    name: "{{ esb_docker_network }}"
+
+- name: Set up and run ssh tunnel server
+  include_tasks:
+    file: ssh-tunnel-server.yml
+    apply:
+      tags: ssh
+  tags: ssh
+
+- name: Run Zeebe quorum member
   include_tasks:
     file: zeebe.yml
     apply:

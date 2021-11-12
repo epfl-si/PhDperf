@@ -1,7 +1,4 @@
-# Tasks to set up the Zeebe cluster member on the VM, and the ssh tunnel
-# (server-side) that goes with it
-- include_vars: zeebe-vars.yml
-  tags: always
+# Tasks to set up the Zeebe cluster member on the VM
 
 - name: "Get OpenShift login token"
   delegate_to: localhost
@@ -27,70 +24,6 @@
   changed_when: >-
     "Downloaded newer image" in _pull_images.stdout
 
-- name: "Pull {{ openssh_server_image }}"
-  community.docker.docker_image:
-    name: "{{ openssh_server_image }}:{{ openssh_server_image_tag }}"
-    source: pull
-
-- name: "Initialize OpenSSH server keys in {{ openssh_server_keys_dir }}"
-  shell:
-    cmd: |
-      if [ -d "{{ openssh_server_keys_dir }}" ]; then
-        echo NOCHANGE
-        exit 0
-      fi
-
-      docker run -v "{{ openssh_server_keys_dir }}:/keys" \
-         "{{ openssh_server_image }}:{{ openssh_server_image_tag }}" \
-         bash -c "cp -a /etc/ssh/* /keys"
-  register: _openssh_server_key_init
-  changed_when: >-
-    "NOCHANGE" not in _openssh_server_key_init.stdout
-
-- name: "{{ esb_ssh_tunnel.client_keys_dir }}"
-  ansible.builtin.file:
-    path: "{{ esb_ssh_tunnel.client_keys_dir }}"
-    state: directory
-    recurse: yes
-
-- name: "Initialize OpenSSH client keys in {{ esb_ssh_tunnel.client_keys_dir }}"
-  shell:
-    cmd: |
-      set -e -x
-      cd "{{ esb_ssh_tunnel.client_keys_dir }}"
-      if [ -f "id_rsa" ]; then
-        echo "NOCHANGE"
-        exit 0
-      fi
-      ssh-keygen -f id_rsa </dev/null
-  register: _openssh_client_key_init
-  changed_when: >-
-    "NOCHANGE" not in _openssh_client_key_init.stdout
-
-- name: "{{ esb_docker_network }} Docker network"
-  community.docker.docker_network:
-    name: "{{ esb_docker_network }}"
-
-- name: "Read public key out of {{ esb_ssh_tunnel.client_keys_dir }}/id_rsa.pub"
-  shell: 'cat "{{ esb_ssh_tunnel.client_keys_dir }}/id_rsa.pub"'
-  register: _esb_tunnel_ssh_client_public_key
-  changed_when: false
-
-- name: "Run the OpenSSH server in Docker network {{ esb_docker_network }}"
-  when: _esb_tunnel_ssh_client_public_key is not skipped
-  community.docker.docker_container:
-    name: "{{ openssh_tunnel_server_container_name }}"
-    image: "{{ openssh_server_image }}:{{ openssh_server_image_tag }}"
-    published_ports:
-      - "{{ esb_ssh_tunnel.port }}:2222"
-    networks:
-      - name: "{{ esb_docker_network }}"
-    env:
-      PUBLIC_KEY: "{{ _esb_tunnel_ssh_client_public_key.stdout }}"
-      USER_NAME: esb-tunnel
-    volumes:
-      - "{{ openssh_server_keys_dir }}:/config/ssh_host_keys"
-
 - name: "Run Zeebe"
   community.docker.docker_container:
     name: zeebe
@@ -109,5 +42,6 @@
         {{ ",".join(_reverse_tunnel_zeebe_endpoints) }}
   vars:
     _reverse_tunnel_zeebe_endpoints:
-      - "{{ openssh_tunnel_server_container_name }}:26501"
-      - "{{ openssh_tunnel_server_container_name }}:26502"
+      - "{{ ssh_tunnel_server_container_name }}:{{ _R_ports[0] }}"
+      - "{{ ssh_tunnel_server_container_name }}:{{ _R_ports[1] }}"
+    _R_ports: "{{ esb_ssh_tunnel.forwarded_ports.zeebe_quorum_to_k8s }}"
