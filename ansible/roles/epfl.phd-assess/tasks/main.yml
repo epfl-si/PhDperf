@@ -5,9 +5,9 @@
       tags: secrets
   tags: secrets
 
-- name: Zeebe broker tasks
+- name: Zeebe on Kubernetes
   include_tasks:
-    file: "zeebe_broker.yml"
+    file: zeebe-k8s.yml
     apply:
         tags: zeebe
   tags: zeebe
