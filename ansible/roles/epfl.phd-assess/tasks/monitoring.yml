@@ -198,7 +198,7 @@ monitoring_prometheus_external_hostname }}/)"
     metadata:
       name: disk-usage-exporter
       namespace: "{{ openshift_namespace }}"
-    from: "node:{{ monitoring_node_base_image_tag }}"
+    from: "{{ openshift_local_image_registry }}/{{ phd_assess_build_namespace }}/node:{{ monitoring_node_base_image_tag }}"
     git:
       repository: "https://github.com/epfl-si/PhDAssess"
       path: docker/monitoring
