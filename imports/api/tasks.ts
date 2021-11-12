@@ -29,8 +29,6 @@ const Tasks_ = TasksCollection<Task>((data) => {
     `Job key: ${task._id}`,
     `Process instance key: ${task.processInstanceKey}`,
     `workflow version: ${task.processDefinitionVersion}`,
-    `activityLogs: ${JSON.stringify(task.variables?.activityLogs, null, 2)}`,
-    `participants: ${JSON.stringify(task.participants)}`,
   ].join(", ")
 
   task.monitorUri = Meteor.user()?.isAdmin && Meteor.settings.public.monitor_address ?

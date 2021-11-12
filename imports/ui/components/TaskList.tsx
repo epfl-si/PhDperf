@@ -96,20 +96,22 @@ function Task({task}: TaskProps) {
         </summary>
         <pre><code>{task.detail}</code></pre>
 
+        {Meteor.user()?.isAdmin &&
         <div className={'container'}>
           <div className="row">
-            { task.participants &&
-              Object.entries(task.participants).map(([role, info]) =>
-                <Participant
-                  key={`${task._id}-${role}`}
-                  role={role}
-                  info={info}
-                  isAssignee={task.variables.assigneeSciper === info?.sciper}
-                />
-              )
+            {task.participants &&
+            Object.entries(task.participants).map(([role, info]) =>
+              <Participant
+                key={`${task._id}-${role}`}
+                role={role}
+                info={info}
+                isAssignee={task.variables.assigneeSciper === info?.sciper}
+              />
+            )
             }
           </div>
         </div>
+        }
 
       </details>
     </div>
