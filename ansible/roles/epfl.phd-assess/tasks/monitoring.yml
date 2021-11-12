@@ -32,8 +32,7 @@
         app: prometheus
 
 
-- name: "Prometheus route (https://{{
-monitoring_prometheus_external_hostname }}/)"
+- name: "Prometheus route (https://{{ monitoring_prometheus_external_hostname }}/)"
   when: monitoring_enabled_in_namespace |bool
   tags: monitoring.prometheus
   openshift:
