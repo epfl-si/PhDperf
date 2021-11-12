@@ -96,7 +96,7 @@
     networks:
       - name: "{{ esb_docker_network }}"
     env:
-      PORT: 26500
+      PORT: '26500'
       ZEEBE_BROKER_NETWORK_MONITORINGAPI_HOST: '0.0.0.0'
       # https://docs.camunda.io/docs/self-managed/zeebe-deployment/operations/setting-up-a-cluster/
       ZEEBE_BROKER_CLUSTER_CLUSTERNAME: epfl
