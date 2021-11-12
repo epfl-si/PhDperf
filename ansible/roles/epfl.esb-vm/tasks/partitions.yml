@@ -11,7 +11,7 @@
     size: 100%FREE
     shrink: no
 
-- name: Create a ext4 filesystem on /dev/ubuntu-vg/persistent and /dev/ubuntu-vg/docker-apps
+- name: Create ext4 filesystems on /dev/ubuntu-vg/persistent and /dev/ubuntu-vg/docker-apps
   community.general.filesystem:
     fstype: ext4
     dev: "{{item}}"
@@ -19,7 +19,7 @@
     - /dev/ubuntu-vg/persistent
     - /dev/ubuntu-vg/docker-apps
 
-- name: Mount up device by label
+- name: Mount filesystems
   mount:
     path: "{{item.path}}"
     src: "{{item.src}}"
@@ -30,4 +30,3 @@
       src: /dev/ubuntu-vg/docker-apps
     - path: /srv
       src: /dev/ubuntu-vg/persistent
-
