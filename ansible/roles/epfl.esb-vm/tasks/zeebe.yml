@@ -1,3 +1,5 @@
+# Tasks to set up the Zeebe cluster member on the VM, and the ssh tunnel
+# (server-side) that goes with it
 - include_vars: zeebe-vars.yml
   tags: always
 
