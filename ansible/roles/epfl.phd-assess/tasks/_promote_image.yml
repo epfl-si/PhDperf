@@ -7,12 +7,12 @@
 # - promote_image_tag
 # - promote_from_namespace
 
-- name: "Get current version of {{ promote_image_name }} in {{ openshift_namespace }}"
+- name: "Get current version of {{ promote_image_name }} in {{ promote_from_namespace }}"
   changed_when: false
   ignore_errors: yes
   shell:
     cmd: |
-      oc get -o json -n {{ openshift_namespace }} imagestream {{ promote_image_name }}
+      oc get -o json -n {{ promote_from_namespace }} imagestream {{ promote_image_name }}
   register: _promote_get_imagestream
 
 - when: _promote_get_imagestream is success
