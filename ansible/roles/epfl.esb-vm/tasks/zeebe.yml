@@ -75,7 +75,7 @@
 
 - name: "Run the OpenSSH server in Docker network {{ esb_docker_network }}"
   community.docker.docker_container:
-    name: esb-openssh-tunnel-server
+    name: "{{ openssh_tunnel_server_container_name }}"
     image: "{{ openssh_server_image }}:{{ openssh_server_image_tag }}"
     published_ports:
       - "{{ esb_ssh_tunnel.port }}:2222"

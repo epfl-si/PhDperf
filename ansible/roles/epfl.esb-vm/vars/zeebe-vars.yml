@@ -1,3 +1,5 @@
 openssh_server_image: linuxserver/openssh-server
 openssh_server_image_tag: 2021.10.31
 openssh_server_keys_dir: "{{ toplevel_state_dir }}/openssh-tunnel/server"
+
+openssh_tunnel_server_container_name: esb-openssh-tunnel-server
