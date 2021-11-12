@@ -39,7 +39,7 @@ function Task({task}: TaskProps) {
                 className={"fa fa-external-link"}/></a>
             }
             { canDeleteProcessInstance() &&
-              <span className={"mr-1"}>
+              <span className={"mr-2"}>
                 <Button
                   label={'Cancel process'}
                   onClickFn={(event: React.FormEvent<HTMLButtonElement>) => {
@@ -63,7 +63,7 @@ function Task({task}: TaskProps) {
               </span>
             }
             { canRefreshProcessInstance() &&
-            <span className={"mr-1"}>
+            <span className={"mr-2"}>
                 <Button
                   label={'Refresh'}
                   onClickFn={(event: React.FormEvent<HTMLButtonElement>) => {
