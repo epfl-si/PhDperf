@@ -1,6 +1,42 @@
 - include_vars: zeebe-tunnel-vars.yml
   tags: always
 
+- name: "Mirror {{ zeebe_tunnel_base_image.qualified }} to {{ zeebe_tunnel_base_image.mirrored }}"
+  when: openshift_namespace == phd_assess_build_namespace
+  openshift_imagestream:
+    metadata:
+      name: "{{ zeebe_tunnel_base_image.shortname }}"
+      namespace: "{{ openshift_namespace }}"
+    from: "{{ zeebe_tunnel_base_image.qualified }}"
+    tag: "{{ zeebe_tunnel_base_image.tag }}"
+
+- name: "Build {{ zeebe_tunnel_image_name }}"
+  when: openshift_namespace == phd_assess_build_namespace
+  openshift_imagestream:
+    metadata:
+      name: "{{ zeebe_tunnel_image_name }}"
+      namespace: "{{ openshift_namespace }}"
+    source:
+      dockerfile: |
+        FROM {{ zeebe_tunnel_base_image.mirrored }}
+        RUN apk --no-cache add openssh-client bash
+        # https://access.redhat.com/solutions/4665281 . SAD!
+        RUN chmod g=u /etc/passwd
+        RUN set -e -x; exec > /entrypoint.sh;       \
+          echo '#!/bin/bash -x';                    \
+          echo 'if ! whoami &> /dev/null; then';    \
+          echo '  echo "${USER_NAME:-default}:x:$(id -u):0:${USER_NAME:-default} user:${HOME}:/sbin/nologin" >> /etc/passwd'; \
+          echo 'fi';                                \
+          echo 'exec "$@"';                         \
+          chmod 755 /entrypoint.sh
+        ENTRYPOINT /entrypoint.sh
+    spec:
+      resources:
+        limits:
+          cpu: '1'
+          memory: 100M
+  register: _openshift_image_zeebe_broker
+
 - name: "Fetch keying material for ssh tunnel"
   no_log: true
   delegate_to: "{{ esb_ssh_tunnel.host | hostname_short }}"
@@ -27,3 +63,73 @@
       namespace: "{{ openshift_namespace }}"
     type: Opaque
     data: "{{ _ssh_tunnel_client_keys.stdout | from_yaml | base64_values }}"
+
+- name: "k8s DeploymentConfig for the tunnel pod"
+  # The -R flag occupies remote ports, therefore there can be only one tunnel:
+  when: >-
+    openshift_namespace == "phd-assess-test"
+  openshift:
+    apiVersion: v1
+    kind: DeploymentConfig
+    metadata:
+      name: "{{ zeebe_tunnel_dc_name }}"
+      namespace: "{{ openshift_namespace }}"
+    spec:
+      replicas: 1
+      strategy:
+        resources:
+          limits:
+            cpu: '1'
+            memory: 500M
+      template:
+        metadata:
+          labels:
+            name: "{{ zeebe_tunnel_dc_name }}"
+        spec:
+          containers:
+            - name: ssh
+              image: '{{ openshift_local_images_base }}/{{ zeebe_tunnel_image_name }}:latest'
+              command: ["/entrypoint.sh"]
+              args:
+                - ssh
+                - -vvv
+                - -p
+                - "{{ esb_ssh_tunnel.port | string }}"
+                - "{{ esb_ssh_tunnel.username }}@{{ esb_ssh_tunnel.host }}"
+                - "-R"
+                - "{{ _R_ports[0] }}:zeebe-quorum-1:26502"
+                - "-R"
+                - "{{ _R_ports[1] }}:zeebe-quorum-2:26502"
+                - "-L"
+                - "{{ _L_port }}:zeebe:26502"
+                - sleep
+                - infinity
+              resources:
+                limits:
+                  cpu: '1'
+                  memory: "50M"
+              ports:
+                - name: zeebe-quorum-vm
+                  containerPort: 26502
+              volumeMounts:
+                - name: sshkeys
+                  mountPath: /.ssh  # The HOME of OpenShift-managed users is /
+          volumes:
+            - name: sshkeys
+              secret:
+                secretName: "{{ zeebe_tunnel_secret_name }}"
+                defaultMode: 0400
+      triggers:
+      - type: ConfigChange
+      - type: ImageChange
+        imageChangeParams:
+          automatic: true
+          containerNames:
+          - ssh
+          from:
+            kind: ImageStreamTag
+            name: '{{ zeebe_tunnel_image_name }}:latest'
+            namespace: "{{openshift_namespace}}"
+  vars:
+    _L_port: "{{ esb_ssh_tunnel.forwarded_ports.zeebe_quorum_to_vm }}"
+    _R_ports: "{{ esb_ssh_tunnel.forwarded_ports.zeebe_quorum_to_k8s }}"
