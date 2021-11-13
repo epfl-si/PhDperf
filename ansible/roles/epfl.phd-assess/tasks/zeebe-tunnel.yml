@@ -1,0 +1,29 @@
+- include_vars: zeebe-tunnel-vars.yml
+  tags: always
+
+- name: "Fetch keying material for ssh tunnel"
+  no_log: true
+  delegate_to: "{{ esb_ssh_tunnel.host | hostname_short }}"
+  changed_when: false
+  shell:
+    cmd: |
+      set -e -x
+      cd "{{ esb_ssh_tunnel.client_keys_dir }}"
+      for file in id_rsa id_rsa.pub known_hosts; do
+        # Poor man's YAML!
+        echo "$file: |"
+        sed -e 's/^/  /' < $file
+      done
+  register: _ssh_tunnel_client_keys
+
+- name: "{{ zeebe_tunnel_secret_name }} Secret"
+  when: _ssh_tunnel_client_keys is not skipped
+  openshift:
+    state: latest
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: "{{ zeebe_tunnel_secret_name }}"
+      namespace: "{{ openshift_namespace }}"
+    type: Opaque
+    data: "{{ _ssh_tunnel_client_keys.stdout | from_yaml | base64_values }}"

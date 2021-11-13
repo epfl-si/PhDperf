@@ -12,6 +12,17 @@
         tags: zeebe
   tags: zeebe
 
+- name: "Zeebe tunnel to {{ esb_ssh_tunnel.host }}"
+  include_tasks:
+    file: zeebe-tunnel.yml
+    apply:
+        tags:
+          - zeebe
+          - zeebe-tunnel
+  tags:
+    - zeebe
+    - zeebe-tunnel
+
 - name: Phd assess MongoDB tasks
   include_tasks:
     file: "phd_assess_mongo.yml"
