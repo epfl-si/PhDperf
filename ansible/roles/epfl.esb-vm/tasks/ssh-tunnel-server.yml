@@ -79,8 +79,7 @@
       done
 
       # Sigh.
-      perl -i -pe 's/{{ esb_ssh_tunnel.host
-                        | regex_replace('[.].*$', '')
+      perl -i -pe 's/{{ esb_ssh_tunnel.host | hostname_short
                      }}(?![.])/{{ esb_ssh_tunnel.host }}/' known_hosts.NEW
 
       if [ -f known_hosts ] && cmp known_hosts.NEW known_hosts >/dev/null 2>&1; then
