@@ -65,8 +65,10 @@
 
 - name: "{{ esb_ssh_tunnel.client_keys_dir }}/known_hosts"
   shell:
+    executable: /bin/bash
     cmd: |
       set -e -x
+      set -o pipefail
       cd "{{ esb_ssh_tunnel.client_keys_dir }}"
       for retry in $(seq 1 5); do
         if ssh-keyscan -p {{ esb_ssh_tunnel.port }} {{ esb_ssh_tunnel.host }} \
@@ -79,14 +81,18 @@
       done
 
       # Sigh.
-      perl -i -pe 's/{{ esb_ssh_tunnel.host | hostname_short
-                     }}(?![.])/{{ esb_ssh_tunnel.host }}/' known_hosts.NEW
+      perl -pe 's/{{ esb_ssh_tunnel.host | hostname_short
+                     }}(?![.])/{{ esb_ssh_tunnel.host }}/' known_hosts.NEW | \
+         sort > known_hosts.SORTED
+      rm known_hosts.NEW
 
-      if [ -f known_hosts ] && cmp known_hosts.NEW known_hosts >/dev/null 2>&1; then
+      if [ -f known_hosts ] && cmp known_hosts.SORTED known_hosts >/dev/null 2>&1; then
         echo "NOCHANGE"
         exit 0
       else
-        mv known_hosts.NEW known_hosts
+        (echo "Before:"; echo; cat known_hosts) >&2
+        (echo "After:"; echo; cat known_hosts.SORTED) >&2
+        mv known_hosts.SORTED known_hosts
       fi
   register: _ssh_tunnel_known_hosts
   changed_when: >-
