@@ -62,3 +62,33 @@
       USER_NAME: "{{ esb_ssh_tunnel.username }}"
     volumes:
       - "{{ ssh_tunnel_server_keys_dir }}:/config/ssh_host_keys"
+
+- name: "{{ esb_ssh_tunnel.client_keys_dir }}/known_hosts"
+  shell:
+    cmd: |
+      set -e -x
+      cd "{{ esb_ssh_tunnel.client_keys_dir }}"
+      for retry in $(seq 1 5); do
+        if ssh-keyscan -p {{ esb_ssh_tunnel.port }} {{ esb_ssh_tunnel.host }} \
+          > known_hosts.NEW
+        then
+          break
+        else
+          sleep 6
+        fi
+      done
+
+      # Sigh.
+      perl -i -pe 's/{{ esb_ssh_tunnel.host
+                        | regex_replace('[.].*$', '')
+                     }}(?![.])/{{ esb_ssh_tunnel.host }}/' known_hosts.NEW
+
+      if [ -f known_hosts ] && cmp known_hosts.NEW known_hosts >/dev/null 2>&1; then
+        echo "NOCHANGE"
+        exit 0
+      else
+        mv known_hosts.NEW known_hosts
+      fi
+  register: _ssh_tunnel_known_hosts
+  changed_when: >-
+    "NOCHANGE" not in _ssh_tunnel_known_hosts.stdout

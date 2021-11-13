@@ -5,7 +5,7 @@ phd_assess_build_namespace: phd-assess-test
 toplevel_state_dir: /srv/esb
 
 esb_ssh_tunnel:
-  host: itsphdrepor0001
+  host: itsphdrepor0001.xaas.epfl.ch
   port: 2222
   username: esb-tunnel
   client_keys_dir: "{{ toplevel_state_dir }}/ssh-tunnel/client"
