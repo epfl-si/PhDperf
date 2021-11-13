@@ -1,0 +1,14 @@
+# Maintained by Ansible, do not edit
+
+# These parts come from the Docker container's original sshd_config:
+PasswordAuthentication no
+AuthorizedKeysFile	.ssh/authorized_keys
+X11Forwarding no
+PidFile /config/sshd.pid
+Subsystem	sftp	/usr/lib/ssh/sftp-server -u 022
+
+# These were tweaked so that we can have nice things:
+AllowTcpForwarding yes
+GatewayPorts yes
+PermitListen 0.0.0.0:{{ esb_ssh_tunnel.forwarded_ports.zeebe_quorum_to_k8s[0] }} 0.0.0.0:{{ esb_ssh_tunnel.forwarded_ports.zeebe_quorum_to_k8s[1] }}
+PermitOpen zeebe:{{ esb_ssh_tunnel.forwarded_ports.zeebe_quorum_to_vm }}
