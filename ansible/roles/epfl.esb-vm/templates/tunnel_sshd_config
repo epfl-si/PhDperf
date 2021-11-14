@@ -12,3 +12,7 @@ AllowTcpForwarding yes
 GatewayPorts yes
 PermitListen 0.0.0.0:{{ esb_ssh_tunnel.forwarded_ports.zeebe_quorum_to_k8s[0] }} 0.0.0.0:{{ esb_ssh_tunnel.forwarded_ports.zeebe_quorum_to_k8s[1] }}
 PermitOpen zeebe:{{ esb_ssh_tunnel.forwarded_ports.zeebe_quorum_to_vm }}
+
+{% if ssh_tunnel_debug %}
+LogLevel DEBUG
+{% endif %}

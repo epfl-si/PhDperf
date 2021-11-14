@@ -17,6 +17,7 @@
     dest: "{{ ssh_tunnel_server_image_build_dir }}/Dockerfile"
     content: |
       FROM {{ ssh_tunnel_server_base_image.qualified }}
+      RUN rm -rf /etc/services.d/openssh-server/log/
 
 - name: "Build {{ ssh_tunnel_server_image }}"
   community.docker.docker_image:
@@ -46,7 +47,7 @@
   copy:
     dest: "{{ _sshd_config }}"
     content: >-
-      {{ lookup("template"), "tunnel_sshd_config" }}
+      {{ lookup("template", "tunnel_sshd_config") }}
   register: _sshd_config
 
 - name: "{{ esb_ssh_tunnel.client_keys_dir }}"

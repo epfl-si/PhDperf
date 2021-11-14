@@ -90,20 +90,8 @@
             - name: ssh
               image: '{{ openshift_local_images_base }}/{{ zeebe_tunnel_image_name }}:latest'
               command: ["/entrypoint.sh"]
-              args:
-                - ssh
-                - -vvv
-                - -p
-                - "{{ esb_ssh_tunnel.port | string }}"
-                - "{{ esb_ssh_tunnel.username }}@{{ esb_ssh_tunnel.host }}"
-                - "-R"
-                - "{{ _R_ports[0] }}:zeebe-quorum-1:26502"
-                - "-R"
-                - "{{ _R_ports[1] }}:zeebe-quorum-2:26502"
-                - "-L"
-                - "{{ _L_port }}:zeebe:26502"
-                - sleep
-                - infinity
+              args: >-
+                {{ ["ssh"] + (["-vvv"] if ssh_tunnel_debug else []) + _ssh_flags }}
               resources:
                 limits:
                   cpu: '1'
@@ -133,3 +121,15 @@
   vars:
     _L_port: "{{ esb_ssh_tunnel.forwarded_ports.zeebe_quorum_to_vm }}"
     _R_ports: "{{ esb_ssh_tunnel.forwarded_ports.zeebe_quorum_to_k8s }}"
+    _ssh_flags:
+      - -p
+      - "{{ esb_ssh_tunnel.port | string }}"
+      - "{{ esb_ssh_tunnel.username }}@{{ esb_ssh_tunnel.host }}"
+      - "-R"
+      - "0.0.0.0:{{ _R_ports[0] }}:zeebe-quorum-1:26502"
+      - "-R"
+      - "0.0.0.0:{{ _R_ports[1] }}:zeebe-quorum-2:26502"
+      - "-L"
+      - "0.0.0.0:{{ _L_port }}:zeebe:26502"
+      - sleep
+      - infinity
