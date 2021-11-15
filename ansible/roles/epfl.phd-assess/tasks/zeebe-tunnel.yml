@@ -133,3 +133,21 @@
       - "0.0.0.0:{{ _L_port }}:zeebe:26502"
       - sleep
       - infinity
+
+- name: "zeebe-quorum-0 service"
+  openshift:
+    state: latest
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: zeebe-quorum-0
+      namespace: "{{openshift_namespace}}"
+    spec:
+      type: ClusterIP
+      ports:
+        - name: "zeebe"
+          port: 26502
+          protocol: TCP
+          targetPort: 26502
+      selector:
+        deploymentconfig: "{{ zeebe_tunnel_dc_name }}"
