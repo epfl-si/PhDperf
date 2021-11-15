@@ -2,11 +2,28 @@
 - include_vars: ssh-tunnel-server-vars.yml
   tags: always
 
-
-- name: "Pull {{ ssh_tunnel_server_image }}"
+- name: "Pull {{ ssh_tunnel_server_base_image.qualified }}"
   community.docker.docker_image:
-    name: "{{ ssh_tunnel_server_image }}:{{ ssh_tunnel_server_image_tag }}"
+    name: "{{ ssh_tunnel_server_base_image.qualified }}"
     source: pull
+
+- name: "{{ ssh_tunnel_server_image_build_dir }}"
+  ansible.builtin.file:
+    path: "{{ ssh_tunnel_server_image_build_dir }}"
+    state: directory
+
+- name: "{{ ssh_tunnel_server_image_build_dir }}/Dockerfile"
+  ansible.builtin.copy:
+    dest: "{{ ssh_tunnel_server_image_build_dir }}/Dockerfile"
+    content: |
+      FROM {{ ssh_tunnel_server_base_image.qualified }}
+
+- name: "Build {{ ssh_tunnel_server_image }}"
+  community.docker.docker_image:
+    name: "{{ ssh_tunnel_server_image }}"
+    source: build  
+    build:
+      path: "{{ ssh_tunnel_server_image_build_dir }}"
 
 - name: "Initialize OpenSSH server keys in {{ ssh_tunnel_server_keys_dir }}"
   shell:
@@ -17,7 +34,7 @@
       fi
 
       docker run -v "{{ ssh_tunnel_server_keys_dir }}:/keys" \
-         "{{ ssh_tunnel_server_image }}:{{ ssh_tunnel_server_image_tag }}" \
+         "{{ ssh_tunnel_server_base_image.qualified }}" \
          bash -c "cp -a /etc/ssh/* /keys"
   register: _ssh_tunnel_server_key_init
   changed_when: >-
@@ -62,7 +79,7 @@
   community.docker.docker_container:
     restart: "{{ _sshd_config is not skipped and _sshd_config is changed }}"
     name: "{{ ssh_tunnel_server_container_name }}"
-    image: "{{ ssh_tunnel_server_image }}:{{ ssh_tunnel_server_image_tag }}"
+    image: "{{ ssh_tunnel_server_image }}"
     published_ports:
       - "{{ esb_ssh_tunnel.port }}:2222"
     networks:
@@ -97,18 +114,19 @@
       done
 
       # Sigh.
-      perl -pe 's/{{ esb_ssh_tunnel.host | hostname_short
-                     }}(?![.])/{{ esb_ssh_tunnel.host }}/' known_hosts.NEW | \
-         sort > known_hosts.SORTED
+      cat known_hosts.NEW | \
+          perl -pe 's/{{ esb_ssh_tunnel.host | hostname_short
+                      }}(?![.])/{{ esb_ssh_tunnel.host }}/' | \
+         sort > known_hosts.NEW.CLEAN
       rm known_hosts.NEW
 
-      if [ -f known_hosts ] && cmp known_hosts.SORTED known_hosts >/dev/null 2>&1; then
+      if [ -f known_hosts ] && cmp known_hosts.NEW.CLEAN known_hosts >/dev/null 2>&1; then
         echo "NOCHANGE"
         exit 0
       else
         (echo "Before:"; echo; cat known_hosts) >&2
-        (echo "After:"; echo; cat known_hosts.SORTED) >&2
-        mv known_hosts.SORTED known_hosts
+        (echo "After:"; echo; cat known_hosts.NEW.CLEAN) >&2
+        mv known_hosts.NEW.CLEAN known_hosts
       fi
   register: _ssh_tunnel_known_hosts
   changed_when: >-
