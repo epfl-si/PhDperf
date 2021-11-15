@@ -1,5 +1,8 @@
 - tags: always
-  include_vars: monitoring-vars.yml
+  include_vars: "{{ item }}"
+  with_items:
+    - monitoring-vars.yml
+    - common-k8s-vars.yml
 
 - name: "Pull traefik image into {{ monitoring_traefik_base_image.mirrored }}"
   when: monitoring_enabled_in_namespace |bool
@@ -232,11 +235,7 @@
       namespace: "{{ openshift_namespace }}"
     spec:
       replicas: 1
-      strategy:
-        resources:
-          limits:
-            cpu: '1'
-            memory: 50M
+      strategy: "{{ k8s_frugal_strategy }}"
       selector:
         deployment-config.name: disk-usage-exporter
       template:

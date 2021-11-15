@@ -1,3 +1,6 @@
+- include_vars: common-k8s-vars.yml
+  tags: always
+
 - name: "Pull upstream {{ phd_assess_ubuntu_base_image.qualified }} image into {{ phd_assess_ubuntu_base_image.mirrored }}"
   when: openshift_namespace == phd_assess_build_namespace
   openshift_imagestream:
@@ -92,19 +95,7 @@
       replicas: 1
       selector:
         deployment-config.name: phd-assess-meteor
-      strategy:
-        activeDeadlineSeconds: 21600
-        rollingParams:
-          intervalSeconds: 1
-          maxSurge: 25%
-          maxUnavailable: 25%
-          timeoutSeconds: 600
-          updatePeriodSeconds: 1
-        type: Rolling
-        resources:
-          limits:
-            cpu: '1'
-            memory: 100M
+      strategy: "{{ k8s_frugal_strategy }}"
       template:
         metadata:
           creationTimestamp: null

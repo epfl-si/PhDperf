@@ -1,3 +1,6 @@
+- include_vars: common-k8s-vars.yml
+  tags: always
+
 - name: "Pull upstream {{ phd_assess_mongo_image.qualified }} image into {{ phd_assess_mongo_image.mirrored }}"
   openshift_imagestream:
     metadata:
@@ -18,11 +21,7 @@
       replicas: 1
       selector:
         deployment-config.name: phd-assess-mongo
-      strategy:
-        resources:
-          limits:
-            cpu: '1'
-            memory: 100M
+      strategy: "{{ k8s_frugal_strategy }}"
       template:
         metadata:
           labels:

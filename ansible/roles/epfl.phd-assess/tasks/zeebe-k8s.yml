@@ -1,3 +1,6 @@
+- tags: always
+  include_vars: common-k8s-vars.yml
+
 - name: "Pull upstream {{ zeebe_broker_base_image.qualified }} into {{ zeebe_broker_base_image.mirrored }}"
   when: openshift_namespace == phd_assess_build_namespace
   openshift_imagestream:

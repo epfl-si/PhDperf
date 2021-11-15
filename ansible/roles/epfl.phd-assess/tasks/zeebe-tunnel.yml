@@ -1,5 +1,8 @@
-- include_vars: zeebe-tunnel-vars.yml
-  tags: always
+- tags: always
+  include_vars: "{{ item }}"
+  with_items:
+    - common-k8s-vars.yml
+    - zeebe-tunnel-vars.yml
 
 - name: "Mirror {{ zeebe_tunnel_base_image.qualified }} to {{ zeebe_tunnel_base_image.mirrored }}"
   when: openshift_namespace == phd_assess_build_namespace
@@ -76,11 +79,7 @@
       namespace: "{{ openshift_namespace }}"
     spec:
       replicas: 1
-      strategy:
-        resources:
-          limits:
-            cpu: '1'
-            memory: 500M
+      strategy: "{{ k8s_frugal_strategy }}"
       template:
         metadata:
           labels:

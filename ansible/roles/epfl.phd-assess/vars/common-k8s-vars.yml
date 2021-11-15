@@ -1,0 +1,8 @@
+k8s_frugal_strategy:
+  # This reservation is enough for OpenShift's deploy container do its
+  # job. In namespaces with a quota, stipulating this is required for
+  # said deploy container to schedule.
+  resources:
+    limits:
+      cpu: '1'
+      memory: 100M
