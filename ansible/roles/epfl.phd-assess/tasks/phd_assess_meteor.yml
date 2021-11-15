@@ -135,11 +135,6 @@
                 limits:
                   cpu: '1'
                   memory: 800M
-          dnsPolicy: ClusterFirst
-          restartPolicy: Always
-          schedulerName: default-scheduler
-          securityContext: { }
-          terminationGracePeriodSeconds: 30
       triggers:
       - type: ImageChange
         imageChangeParams:

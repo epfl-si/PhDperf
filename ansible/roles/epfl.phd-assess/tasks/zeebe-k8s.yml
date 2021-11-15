@@ -117,11 +117,6 @@
               volumeMounts:
                 - mountPath: /usr/local/zeebe/data
                   name: "{{ volume_zeebe_name }}"
-          dnsPolicy: ClusterFirst
-          restartPolicy: Always
-          schedulerName: default-scheduler
-          securityContext: { }
-          terminationGracePeriodSeconds: 30
           volumes:
             - name: "{{ volume_zeebe_name }}"
               persistentVolumeClaim:
