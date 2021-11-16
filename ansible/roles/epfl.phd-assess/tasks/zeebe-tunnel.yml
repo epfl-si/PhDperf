@@ -95,6 +95,20 @@
 
   tags: zeebe-rebuild
 
+- name: "Promote {{ zeebe_tunnel_image_name }} from {{ phd_assess_build_namespace }}"
+  when: >-
+    (openshift_namespace != phd_assess_build_namespace)
+    and
+    ("zeebe-tunnel-promote" in ansible_run_tags)
+  tags: zeebe-tunnel-promote
+  include_tasks:
+    file: _promote_image.yml
+    apply:
+      tags:
+        - zeebe
+        - zeebe-tunnel
+        - zeebe-tunnel-promote
+
 - name: "Fetch keying material for ssh tunnel"
   no_log: true
   delegate_to: "{{ esb_ssh_tunnels.host | hostname_short }}"
