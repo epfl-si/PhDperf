@@ -22,16 +22,18 @@
     source:
       dockerfile: |
         FROM {{ zeebe_tunnel_base_image.mirrored }}
-        RUN apk --no-cache add openssh-client bash
+        RUN apk --no-cache add openssh-client bash runit
+        RUN set -e -x; mkdir -p /etc/service/ssh-tunnel-quorum-1 /etc/service/ssh-tunnel-quorum-2; \
+            ({{ _run_tunnel_1_script | to_shell_echo }}) > /etc/service/ssh-tunnel-quorum-1/run;   \
+            ({{ _run_tunnel_2_script | to_shell_echo }}) > /etc/service/ssh-tunnel-quorum-2/run;   \
+            chmod 755 /etc/service/ssh-tunnel-quorum-*/run;                                        \
+            chmod 775 /etc/service /etc/service/*
+
         # https://access.redhat.com/solutions/4665281 . SAD!
         RUN chmod g=u /etc/passwd
-        RUN set -e -x; exec > /entrypoint.sh;       \
-          echo '#!/bin/bash -x';                    \
-          echo 'if ! whoami &> /dev/null; then';    \
-          echo '  echo "${USER_NAME:-default}:x:$(id -u):0:${USER_NAME:-default} user:${HOME}:/sbin/nologin" >> /etc/passwd'; \
-          echo 'fi';                                \
-          echo 'exec "$@"';                         \
+        RUN set -e -x; ({{ _entrypoint_script | to_shell_echo }}) > /entrypoint.sh; \
           chmod 755 /entrypoint.sh
+
         ENTRYPOINT /entrypoint.sh
     spec:
       resources:
@@ -39,15 +41,49 @@
           cpu: '1'
           memory: 100M
   register: _openshift_image_zeebe_broker
+  vars:
+    _entrypoint_script: |
+      #!/bin/bash -x
+      if ! whoami &> /dev/null; then
+        echo "${USER_NAME:-default}:x:$(id -u):0:${USER_NAME:-default} user:${HOME}:/sbin/nologin" >> /etc/passwd
+      fi
+      exec runsvdir /etc/service
+    _run_tunnel_1_script: |
+      {{ _tunnel_script_header }}
+
+      do_ssh_tunnel \
+        -p {{ esb_ssh_tunnels.reverse_ports[0].via }} \
+        -R "0.0.0.0:{{ zeebe_ports.quorum }}:zeebe-quorum-1:{{ zeebe_ports.quorum }}" \
+        -L "0.0.0.0:{{ zeebe_ports.quorum }}:zeebe:{{ zeebe_ports.quorum }}"
+    _run_tunnel_2_script: |
+      {{ _tunnel_script_header }}
+
+      do_ssh_tunnel \
+        -p {{ esb_ssh_tunnels.reverse_ports[1].via }} \
+        -R "0.0.0.0:{{ zeebe_ports.quorum }}:zeebe-quorum-2:{{ zeebe_ports.quorum }}"
+    _tunnel_script_header: |
+      #!/bin/bash
+      set -e -x
+
+      do_ssh_tunnel () {
+        local v=
+        if [ -n "$SSH_TUNNEL_DEBUG" ]; then
+          v="-vvv"
+        fi
+
+        exec ssh $v "$@" \
+        {{ esb_ssh_tunnels.username }}@{{ esb_ssh_tunnels.host }} \
+        sleep infinity
+      }
 
 - name: "Fetch keying material for ssh tunnel"
   no_log: true
-  delegate_to: "{{ esb_ssh_tunnel.host | hostname_short }}"
+  delegate_to: "{{ esb_ssh_tunnels.host | hostname_short }}"
   changed_when: false
   shell:
     cmd: |
       set -e -x
-      cd "{{ esb_ssh_tunnel.client_keys_dir }}"
+      cd "{{ esb_ssh_tunnels.client_keys_dir }}"
       for file in id_rsa id_rsa.pub known_hosts; do
         # Poor man's YAML!
         echo "$file: |"
@@ -68,9 +104,11 @@
     data: "{{ _ssh_tunnel_client_keys.stdout | from_yaml | base64_values }}"
 
 - name: "k8s DeploymentConfig for the tunnel pod"
-  # The -R flag occupies remote ports, therefore there can be only one tunnel:
   when: >-
     openshift_namespace == "phd-assess-test"
+  ## TODO(CHG0041195): change this to
+  # when: >-
+  #   openshift_namespace == "phd-assess"
   openshift:
     apiVersion: v1
     kind: DeploymentConfig
@@ -88,16 +126,17 @@
           containers:
             - name: ssh
               image: '{{ openshift_local_images_base }}/{{ zeebe_tunnel_image_name }}:latest'
-              command: ["/entrypoint.sh"]
-              args: >-
-                {{ ["ssh"] + (["-vvv"] if ssh_tunnel_debug else []) + _ssh_flags }}
+              env: >-
+                {{ [dict(name="SSH_TUNNEL_DEBUG", value="1")]
+                if ssh_tunnel_debug
+                else [] }}
               resources:
                 limits:
                   cpu: '1'
                   memory: "50M"
               ports:
-                - name: zeebe-quorum-vm
-                  containerPort: 26502
+                - name: zeebe-quorum-0
+                  containerPort: "{{ 26502 }}"
               volumeMounts:
                 - name: sshkeys
                   mountPath: /.ssh  # The HOME of OpenShift-managed users is /
@@ -116,22 +155,7 @@
           from:
             kind: ImageStreamTag
             name: '{{ zeebe_tunnel_image_name }}:latest'
-            namespace: "{{openshift_namespace}}"
-  vars:
-    _L_port: "{{ esb_ssh_tunnel.forwarded_ports.zeebe_quorum_to_vm }}"
-    _R_ports: "{{ esb_ssh_tunnel.forwarded_ports.zeebe_quorum_to_k8s }}"
-    _ssh_flags:
-      - -p
-      - "{{ esb_ssh_tunnel.port | string }}"
-      - "{{ esb_ssh_tunnel.username }}@{{ esb_ssh_tunnel.host }}"
-      - "-R"
-      - "0.0.0.0:{{ _R_ports[0] }}:zeebe-quorum-1:26502"
-      - "-R"
-      - "0.0.0.0:{{ _R_ports[1] }}:zeebe-quorum-2:26502"
-      - "-L"
-      - "0.0.0.0:{{ _L_port }}:zeebe:26502"
-      - sleep
-      - infinity
+            namespace: "{{ openshift_namespace }}"
 
 - name: "zeebe-quorum-0 service"
   openshift:
@@ -145,8 +169,8 @@
       type: ClusterIP
       ports:
         - name: "zeebe"
-          port: 26502
+          port: "{{ zeebe_ports.quorum }}"
           protocol: TCP
-          targetPort: 26502
+          targetPort: "{{ zeebe_ports.quorum }}"
       selector:
         deploymentconfig: "{{ zeebe_tunnel_dc_name }}"

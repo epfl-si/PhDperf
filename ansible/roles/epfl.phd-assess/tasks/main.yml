@@ -12,7 +12,7 @@
         tags: zeebe
   tags: zeebe
 
-- name: "Zeebe tunnel to {{ esb_ssh_tunnel.host }}"
+- name: "Zeebe tunnel to {{ esb_ssh_tunnels.host }}"
   include_tasks:
     file: zeebe-tunnel.yml
     apply:

@@ -5,4 +5,4 @@ zeebe_tunnel_base_image: >-
   parse_external_docker_tag(mirrored_base=openshift_local_images_base)
   }}
 zeebe_tunnel_image_name: zeebe-tunnel
-zeebe_tunnel_dc_name: "ssh-tunnel-{{ esb_ssh_tunnel.host | hostname_short }}"
+zeebe_tunnel_dc_name: "ssh-tunnel-{{ esb_ssh_tunnels.host | hostname_short }}"

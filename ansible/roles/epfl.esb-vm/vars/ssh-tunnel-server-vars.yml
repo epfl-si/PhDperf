@@ -4,5 +4,3 @@ ssh_tunnel_server_keys_dir: "{{ toplevel_state_dir }}/ssh-tunnel/server"
 
 ssh_tunnel_server_image: "epflsi/openssh-server"
 ssh_tunnel_server_image_build_dir: "{{ toplevel_state_dir }}/ssh-tunnel/build"
-
-ssh_tunnel_server_container_name: esb-openssh-tunnel-server

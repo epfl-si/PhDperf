@@ -50,17 +50,17 @@
       {{ lookup("template", "tunnel_sshd_config") }}
   register: _sshd_config
 
-- name: "{{ esb_ssh_tunnel.client_keys_dir }}"
+- name: "{{ esb_ssh_tunnels.client_keys_dir }}"
   ansible.builtin.file:
-    path: "{{ esb_ssh_tunnel.client_keys_dir }}"
+    path: "{{ esb_ssh_tunnels.client_keys_dir }}"
     state: directory
     recurse: yes
 
-- name: "Initialize OpenSSH client keys in {{ esb_ssh_tunnel.client_keys_dir }}"
+- name: "Initialize OpenSSH client keys in {{ esb_ssh_tunnels.client_keys_dir }}"
   shell:
     cmd: |
       set -e -x
-      cd "{{ esb_ssh_tunnel.client_keys_dir }}"
+      cd "{{ esb_ssh_tunnels.client_keys_dir }}"
       if [ -f "id_rsa" ]; then
         echo "NOCHANGE"
         exit 0
@@ -70,64 +70,64 @@
   changed_when: >-
     "NOCHANGE" not in _ssh_tunnel_client_key_init.stdout
 
-- name: "Read public key out of {{ esb_ssh_tunnel.client_keys_dir }}/id_rsa.pub"
-  shell: 'cat "{{ esb_ssh_tunnel.client_keys_dir }}/id_rsa.pub"'
+- name: "Read public key out of {{ esb_ssh_tunnels.client_keys_dir }}/id_rsa.pub"
+  shell: 'cat "{{ esb_ssh_tunnels.client_keys_dir }}/id_rsa.pub"'
   register: _esb_tunnel_ssh_client_public_key
   changed_when: false
 
-- name: "Run the OpenSSH server in Docker network {{ esb_docker_network }}"
+# Zeebe's “gossip” feature kind of insists that quorum members be seen
+# from the same hostname and port from everywhere in the cluster. In
+# order to achieve this, we need two separate ssh tunnel endpoints.
+- name: "OpenSSH servers in Docker network {{ esb_docker_network }}"
   when: _esb_tunnel_ssh_client_public_key is not skipped
   community.docker.docker_container:
     restart: "{{ _sshd_config is not skipped and _sshd_config is changed }}"
-    name: "{{ ssh_tunnel_server_container_name }}"
+    name: "{{ item.name }}"
     image: "{{ ssh_tunnel_server_image }}"
     published_ports:
-      - "{{ esb_ssh_tunnel.port }}:2222"
+      - "{{ item.via }}:2222"
     networks:
       - name: "{{ esb_docker_network }}"
     env:
       PUBLIC_KEY: >-
         no-pty,command="/bin/sleep infinity"
         {{ _esb_tunnel_ssh_client_public_key.stdout }}
-      USER_NAME: "{{ esb_ssh_tunnel.username }}"
+      USER_NAME: "{{ esb_ssh_tunnels.username }}"
     volumes:
       - "{{ ssh_tunnel_server_keys_dir }}:/config/ssh_host_keys:ro"
-  vars:
-    _L_host: zeebe
-    _L_port: "{{ esb_ssh_tunnel.forwarded_ports.zeebe_quorum_to_vm }}"
-    _R_ports: "{{ esb_ssh_tunnel.forwarded_ports.zeebe_quorum_to_k8s }}"
+  with_items: "{{ esb_ssh_tunnels.reverse_ports }}"
 
-- name: "{{ esb_ssh_tunnel.client_keys_dir }}/known_hosts"
+- name: "{{ esb_ssh_tunnels.client_keys_dir }}/known_hosts"
   shell:
     executable: /bin/bash
     cmd: |
       set -e -x
       set -o pipefail
-      cd "{{ esb_ssh_tunnel.client_keys_dir }}"
-      for retry in $(seq 1 5); do
-        if ssh-keyscan -p {{ esb_ssh_tunnel.port }} {{ esb_ssh_tunnel.host }} \
-          > known_hosts.NEW
-        then
-          break
-        else
-          sleep 6
-        fi
+      cd "{{ esb_ssh_tunnels.client_keys_dir }}"
+      for port in {{ esb_ssh_tunnels.reverse_ports | map(attribute="via") | join(" ") }}; do
+        for retry in $(seq 1 5); do
+          if ssh-keyscan -p $port  {{ esb_ssh_tunnels.host }} > known_hosts.$port.NEW; then
+            break
+          else
+            sleep 6
+          fi
+        done
       done
 
       # Sigh.
-      cat known_hosts.NEW | \
-          perl -pe 's/{{ esb_ssh_tunnel.host | hostname_short
-                      }}(?![.])/{{ esb_ssh_tunnel.host }}/' | \
-         sort > known_hosts.NEW.CLEAN
-      rm known_hosts.NEW
+      cat known_hosts.*.NEW | \
+          perl -pe 's/{{ esb_ssh_tunnels.host | hostname_short
+                      }}(?![.])/{{ esb_ssh_tunnels.host }}/' | \
+         sort > known_hosts.NEW
+      rm known_hosts.*.NEW
 
-      if [ -f known_hosts ] && cmp known_hosts.NEW.CLEAN known_hosts >/dev/null 2>&1; then
+      if [ -f known_hosts ] && cmp known_hosts.NEW known_hosts >/dev/null 2>&1; then
         echo "NOCHANGE"
         exit 0
       else
         (echo "Before:"; echo; cat known_hosts) >&2
-        (echo "After:"; echo; cat known_hosts.NEW.CLEAN) >&2
-        mv known_hosts.NEW.CLEAN known_hosts
+        (echo "After:"; echo; cat known_hosts.NEW) >&2
+        mv known_hosts.NEW known_hosts
       fi
   register: _ssh_tunnel_known_hosts
   changed_when: >-

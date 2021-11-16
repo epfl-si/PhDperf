@@ -1,0 +1,76 @@
+## This tasks file is invoked with `import_tasks` as many times as we
+## want k8s-run quorum members in the Zeebe cluster.
+##
+## The expected variables are:
+##
+## - node_id
+##
+##   The node ID as an integer between 0 (inclusive) and the
+##   cluster size (exclusive)
+##
+## - data_volume
+##
+##   The description of the volume to use to store /usr/local/zeebe/data,
+##   as a Kubernetes-compliant data structure described at
+##   https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#volume-v1-core
+##   (in practice, either an `emptyDir:` or a `persistentVolumeClaim:` dict)
+##
+## - peers
+##
+##   A list of host:port addresses to use to talk to the other quorum members
+
+- name: "{{ _name }} StatefulSet"
+  openshift:
+    state: latest
+    apiVersion: apps/v1
+    kind: StatefulSet
+    metadata:
+      name: "{{ _name }}"
+      namespace: "{{ openshift_namespace }}"
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          zeebe-quorum-member: "{{ _quorum_name }}"
+      template:
+        metadata:
+          labels:
+            for-service: "{{ zeebe_broker_servicename }}"
+            zeebe-quorum-member: "{{ _quorum_name }}"
+        spec:
+          containers:
+            - name: zeebe-broker
+              image: "{{ openshift_local_images_base }}/zeebe-broker-with-exporters:latest"
+              env: >-
+                {{ zeebe_broker_common_env
+                | combine(_specific_env)
+                | to_k8s_env }}
+              resources:
+                limits:
+                  cpu: '1'
+                  memory: >-
+                    {{ "500M" if "test" in openshift_namespace
+                    else "1G" }}
+              ports:
+                - name: metrics
+                  containerPort: 9600
+              volumeMounts:
+                - name: zeebe-data
+                  mountPath: /usr/local/zeebe/data
+          volumes:
+            - >-
+              {{ _volume_name | combine(data_volume) }}
+  vars:
+    _name: "zeebe-broker-{{ node_id }}"
+    _quorum_name: "zeebe-quorum-{{ node_id }}"
+    _volume_name:
+      name: zeebe-data
+      # Gets merged with `data_volume` provided by caller
+    _specific_env:
+      ZEEBE_BROKER_CLUSTER_NODEID: "{{ node_id | string }}"
+      ZEEBE_BROKER_CLUSTER_INITIALCONTACTPOINTS: >-
+        {{ ",".join(peers) }}
+      # https://github.com/camunda-cloud/zeebe/issues/5410 and
+      # https://github.com/camunda-cloud/zeebe/blob/develop/qa/integration-tests/src/test/java/io/camunda/zeebe/it/network/AdvertisedAddressTest.java#L150
+      ZEEBE_BROKER_NETWORK_INTERNALAPI_ADVERTISEDHOST: >-
+        {{ _quorum_name }}

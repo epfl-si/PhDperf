@@ -30,18 +30,17 @@
     image: "{{ openshift_image_registry }}/{{ phd_assess_build_namespace }}/zeebe-broker-with-exporters:latest"
     networks:
       - name: "{{ esb_docker_network }}"
-    env:
-      PORT: '26500'
-      ZEEBE_BROKER_NETWORK_MONITORINGAPI_HOST: '0.0.0.0'
+    env: >-
+      {{ zeebe_broker_common_env | combine(_specific_env) }}
       # https://docs.camunda.io/docs/self-managed/zeebe-deployment/operations/setting-up-a-cluster/
-      ZEEBE_BROKER_CLUSTER_CLUSTERNAME: epfl
+  vars:
+    _specific_env:
       ZEEBE_BROKER_CLUSTER_NODEID: "0"
-      ZEEBE_BROKER_CLUSTER_REPLICATIONFACTOR: "3"
-      ZEEBE_BROKER_CLUSTER_CLUSTERSIZE: "3"
       ZEEBE_BROKER_CLUSTER_INITIALCONTACTPOINTS: >-
         {{ ",".join(_reverse_tunnel_zeebe_endpoints) }}
-  vars:
+      # https://github.com/camunda-cloud/zeebe/issues/5410 and
+      # https://github.com/camunda-cloud/zeebe/blob/develop/qa/integration-tests/src/test/java/io/camunda/zeebe/it/network/AdvertisedAddressTest.java#L150
+      ZEEBE_BROKER_NETWORK_INTERNALAPI_ADVERTISEDHOST: zeebe-quorum-0
     _reverse_tunnel_zeebe_endpoints:
-      - "{{ ssh_tunnel_server_container_name }}:{{ _R_ports[0] }}"
-      - "{{ ssh_tunnel_server_container_name }}:{{ _R_ports[1] }}"
-    _R_ports: "{{ esb_ssh_tunnel.forwarded_ports.zeebe_quorum_to_k8s }}"
+      - "{{ esb_ssh_tunnels.reverse_ports[0].name }}:{{ zeebe_ports.quorum }}"
+      - "{{ esb_ssh_tunnels.reverse_ports[1].name }}:{{ zeebe_ports.quorum }}"

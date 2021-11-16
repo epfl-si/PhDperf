@@ -4,14 +4,29 @@ phd_assess_build_namespace: phd-assess-test
 
 toplevel_state_dir: /srv/esb
 
-esb_ssh_tunnel:
+esb_ssh_tunnels:
   host: itsphdrepor0001.xaas.epfl.ch
-  port: 2222
   username: esb-tunnel
   client_keys_dir: "{{ toplevel_state_dir }}/ssh-tunnel/client"
-  forwarded_ports:
-    zeebe_quorum_to_vm: 26502
-    zeebe_quorum_to_k8s: [26503, 26504]
+  reverse_ports:
+    - name: zeebe-quorum-1
+      via: 22222
+    - name: zeebe-quorum-2
+      via: 22223
 
 # The rendezvous port for Zeebe API connections (to use by clients and k8s services)
-zeebe_port: 26500
+zeebe_ports:
+  api: 26500
+  quorum: 26502
+
+zeebe_broker_common_env:
+  PORT: '{{ zeebe_ports.api | string }}'
+  ZEEBE_BROKER_NETWORK_MONITORINGAPI_HOST: '0.0.0.0'
+  # https://docs.camunda.io/docs/self-managed/zeebe-deployment/operations/setting-up-a-cluster/
+  ZEEBE_BROKER_CLUSTER_CLUSTERNAME: epfl
+  ZEEBE_BROKER_CLUSTER_CLUSTERSIZE: "3"
+  ZEEBE_BROKER_CLUSTER_REPLICATIONFACTOR: "3"
+  ZEEBE_LOG_LEVEL: info
+  ZEEBE_LOG_APPENDER: Stackdriver
+  ZEEBE_BROKER_BACKPRESSURE_ALGORITHM: fixed
+  ZEEBE_BROKER_BACKPRESSURE_FIXEDLIMIT_LIMIT: '300'
