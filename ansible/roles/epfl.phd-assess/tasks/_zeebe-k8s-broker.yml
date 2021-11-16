@@ -74,3 +74,5 @@
       # https://github.com/camunda-cloud/zeebe/blob/develop/qa/integration-tests/src/test/java/io/camunda/zeebe/it/network/AdvertisedAddressTest.java#L150
       ZEEBE_BROKER_NETWORK_INTERNALAPI_ADVERTISEDHOST: >-
         {{ _quorum_name }}
+      ZEEBE_BROKER_NETWORK_COMMANDAPI_ADVERTISEDHOST: >-
+        {{ _quorum_name }}

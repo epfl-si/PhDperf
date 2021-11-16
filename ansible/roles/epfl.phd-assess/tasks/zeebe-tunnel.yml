@@ -53,14 +53,17 @@
 
       do_ssh_tunnel \
         -p {{ esb_ssh_tunnels.reverse_ports[0].via }} \
-        -R "0.0.0.0:{{ zeebe_ports.quorum }}:zeebe-quorum-1:{{ zeebe_ports.quorum }}" \
-        -L "0.0.0.0:{{ zeebe_ports.quorum }}:zeebe:{{ zeebe_ports.quorum }}"
+        -R "0.0.0.0:{{ zeebe_ports.quorum  }}:zeebe-quorum-1:{{ zeebe_ports.quorum  }}" \
+        -R "0.0.0.0:{{ zeebe_ports.command }}:zeebe-quorum-1:{{ zeebe_ports.command }}" \
+        -L "0.0.0.0:{{ zeebe_ports.quorum  }}:zeebe:{{ zeebe_ports.quorum  }}"
+        -L "0.0.0.0:{{ zeebe_ports.command }}:zeebe:{{ zeebe_ports.command }}"
     _run_tunnel_2_script: |
       {{ _tunnel_script_header }}
 
       do_ssh_tunnel \
         -p {{ esb_ssh_tunnels.reverse_ports[1].via }} \
-        -R "0.0.0.0:{{ zeebe_ports.quorum }}:zeebe-quorum-2:{{ zeebe_ports.quorum }}"
+        -R "0.0.0.0:{{ zeebe_ports.quorum  }}:zeebe-quorum-2:{{ zeebe_ports.quorum  }}"
+        -R "0.0.0.0:{{ zeebe_ports.command }}:zeebe-quorum-2:{{ zeebe_ports.command }}"
     _tunnel_script_header: |
       #!/bin/bash
       set -e -x
@@ -168,9 +171,13 @@
     spec:
       type: ClusterIP
       ports:
-        - name: "zeebe"
+        - name: "zeebe-raft"
           port: "{{ zeebe_ports.quorum }}"
           protocol: TCP
           targetPort: "{{ zeebe_ports.quorum }}"
+        - name: "zeebe-command"
+          port: "{{ zeebe_ports.command }}"
+          protocol: TCP
+          targetPort: "{{ zeebe_ports.command }}"
       selector:
         deploymentconfig: "{{ zeebe_tunnel_dc_name }}"

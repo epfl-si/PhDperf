@@ -41,6 +41,7 @@
       # https://github.com/camunda-cloud/zeebe/issues/5410 and
       # https://github.com/camunda-cloud/zeebe/blob/develop/qa/integration-tests/src/test/java/io/camunda/zeebe/it/network/AdvertisedAddressTest.java#L150
       ZEEBE_BROKER_NETWORK_INTERNALAPI_ADVERTISEDHOST: zeebe-quorum-0
+      ZEEBE_BROKER_NETWORK_COMMANDLAPI_ADVERTISEDHOST: zeebe-quorum-0
     _reverse_tunnel_zeebe_endpoints:
       - "{{ esb_ssh_tunnels.reverse_ports[0].name }}:{{ zeebe_ports.quorum }}"
       - "{{ esb_ssh_tunnels.reverse_ports[1].name }}:{{ zeebe_ports.quorum }}"
