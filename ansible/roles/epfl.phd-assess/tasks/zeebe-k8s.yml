@@ -23,8 +23,9 @@
       dockerfile: |
         FROM camunda/zeebe
         ADD "{{ zeebe_broker_kafka_exporter_jar_url }}" /usr/local/zeebe/lib/zeebe-kafka-exporter-with-dependencies.jar
-        ADD "{{ zeebe_broker_hazelcast_exporter_jar_url }}" /usr/local/zeebe/exporters/zeebe-hazelcast-exporter.jar
-        ADD "{{ zeebe_broker_mongodb_exporter_jar_url }}" /usr/local/zeebe/exporters/zeebe-mongo-exporter.jar
+        ADD "{{ zeebe_broker_hazelcast_exporter_jar_url }}" /usr/local/zeebe/lib/zeebe-hazelcast-exporter.jar
+        ADD "{{ zeebe_broker_mongodb_exporter_jar_url }}" /usr/local/zeebe/lib/zeebe-mongo-exporter.jar
+        RUN chmod 755 /usr/local/zeebe/lib/*jar
     spec:
       resources:
         limits:
