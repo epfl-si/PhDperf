@@ -11,7 +11,7 @@
       name: "{{ zeebe_tunnel_base_image.shortname }}"
       namespace: "{{ openshift_namespace }}"
     from: "{{ zeebe_tunnel_base_image.qualified }}"
-    tag: "{{ zeebe_tunnel_base_image.tag }}"
+    tag: "{{ zeebe_tunnel_base_image.tag | string }}"
 
 - name: "Build {{ zeebe_tunnel_image_name }}"
   when: openshift_namespace == phd_assess_build_namespace

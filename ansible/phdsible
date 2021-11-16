@@ -46,6 +46,7 @@ platform_check () {
     export PATH="$PWD/ansible-deps-cache/bin:$PATH"
     export ANSIBLE_ROLES_PATH="$PWD/ansible-deps-cache/roles"
     export ANSIBLE_COLLECTIONS_PATHS="$PWD/ansible-deps-cache/"
+    export ANSIBLE_JINJA2_NATIVE=true
 
     oc_check
     zbctl_check
