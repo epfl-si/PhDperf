@@ -81,6 +81,20 @@
         {{ esb_ssh_tunnels.username }}@{{ esb_ssh_tunnels.host }}
       }
 
+- name: "Rebuild {{ zeebe_tunnel_image_name }} now"
+  when:
+    - openshift_namespace == phd_assess_build_namespace
+    - >-
+      (_openshift_image_zeebe_broker is not skipped
+      and _openshift_image_zeebe_broker is changed)
+      or
+      ("zeebe-rebuild" in ansible_run_tags)
+  shell:
+    cmd: |
+      oc -n "{{ openshift_namespace }}" start-build --wait "{{ zeebe_tunnel_image_name }}"
+
+  tags: zeebe-rebuild
+
 - name: "Fetch keying material for ssh tunnel"
   no_log: true
   delegate_to: "{{ esb_ssh_tunnels.host | hostname_short }}"
