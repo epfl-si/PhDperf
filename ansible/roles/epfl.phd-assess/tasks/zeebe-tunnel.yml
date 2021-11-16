@@ -22,7 +22,7 @@
     source:
       dockerfile: |
         FROM {{ zeebe_tunnel_base_image.mirrored }}
-        RUN apk --no-cache add openssh-client bash runit
+        RUN apk --no-cache add openssh-client autossh bash runit
         RUN set -e -x; mkdir -p /etc/service/ssh-tunnel-quorum-1 /etc/service/ssh-tunnel-quorum-2; \
             ({{ _run_tunnel_1_script | to_shell_echo }}) > /etc/service/ssh-tunnel-quorum-1/run;   \
             ({{ _run_tunnel_2_script | to_shell_echo }}) > /etc/service/ssh-tunnel-quorum-2/run;   \
@@ -51,7 +51,7 @@
     _run_tunnel_1_script: |
       {{ _tunnel_script_header }}
 
-      do_ssh_tunnel \
+      do_ssh_tunnel -M 20000 \
         -p {{ esb_ssh_tunnels.reverse_ports[0].via }} \
         -R "0.0.0.0:{{ zeebe_ports.quorum  }}:zeebe-quorum-1:{{ zeebe_ports.quorum  }}" \
         -R "0.0.0.0:{{ zeebe_ports.command }}:zeebe-quorum-1:{{ zeebe_ports.command }}" \
@@ -60,7 +60,7 @@
     _run_tunnel_2_script: |
       {{ _tunnel_script_header }}
 
-      do_ssh_tunnel \
+      do_ssh_tunnel -M 20004 \
         -p {{ esb_ssh_tunnels.reverse_ports[1].via }} \
         -R "0.0.0.0:{{ zeebe_ports.quorum  }}:zeebe-quorum-2:{{ zeebe_ports.quorum  }}"
         -R "0.0.0.0:{{ zeebe_ports.command }}:zeebe-quorum-2:{{ zeebe_ports.command }}"
@@ -72,11 +72,13 @@
         local v=
         if [ -n "$SSH_TUNNEL_DEBUG" ]; then
           v="-vvv"
+          export AUTOSSH_DEBUG=t
         fi
 
-        exec ssh $v "$@" \
-        {{ esb_ssh_tunnels.username }}@{{ esb_ssh_tunnels.host }} \
-        sleep infinity
+        exec autossh $v -N \
+        -o "ServerAliveInterval 10" -o "ServerAliveCountMax 2" \
+        "$@" \
+        {{ esb_ssh_tunnels.username }}@{{ esb_ssh_tunnels.host }}
       }
 
 - name: "Fetch keying material for ssh tunnel"
