@@ -109,7 +109,7 @@
               - name: 'PORT'
                 value: '3000'
               - name: 'ROOT_URL'
-                value: "{{ full_cname }}"
+                value: "{{ frontend_url }}"
               - name: 'MONGO_URL'
                 value: 'mongodb://mongo:27017/meteor'
               - name: 'ZEEBE_ADDRESS'

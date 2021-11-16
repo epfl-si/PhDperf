@@ -7,8 +7,16 @@ openshift_local_images_base: "docker-registry.default.svc:5000/{{ openshift_name
 app_name: "phd-assess"
 svc_name: "{{ app_name }}"
 route_name: "{{ app_name }}"
-cname: "phd-annual-report.epfl.ch"
-full_cname: "https://phd-annual-report.epfl.ch"
+
+_frontend_hostname_suffix: >-
+  {{ openshift_namespace | replace("phd-assess", "") |
+  regex_replace("^-", "") }}
+frontend_hostname: >-
+  {{ "phd-annual-report" if (openshift_namespace == "phd-assess")
+  else ("phd-annual-report-" + _frontend_hostname_suffix) }}
+frontend_fqdn: "{{ frontend_hostname }}.epfl.ch"
+
+frontend_url: "https://{{ frontend_hostname }}"
 zeebe_broker_servicename: "zeebe-broker"
 zeebe_broker_base_image: >-
   {{ "docker.io/camunda/zeebe:1.2.2" |

@@ -17,7 +17,7 @@
         annotations:
           authors: idev-fsd
       spec:
-        host: "{{ cname }}"
+        host: "{{ frontend_fqdn }}"
         port:
           targetPort: "frontend"
         tls:
