@@ -18,6 +18,11 @@
 ## - peers
 ##
 ##   A list of host:port addresses to use to talk to the other quorum members
+##
+## - env
+##
+##   An optional dict of environment variables to set or override, e.g. to
+##   configure an exporter
 
 - name: "{{ _name }} StatefulSet"
   openshift:
@@ -45,6 +50,7 @@
               env: >-
                 {{ zeebe_broker_common_env
                 | combine(_specific_env)
+                | combine(env | default({}))
                 | to_k8s_env }}
               resources:
                 limits:
