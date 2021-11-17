@@ -10,7 +10,9 @@
     file: zeebe-k8s.yml
     apply:
         tags: zeebe
-  tags: zeebe
+  tags:
+    - zeebe
+    - zeebe-promote
 
 - name: "Zeebe tunnel to {{ esb_ssh_tunnels.host }}"
   include_tasks:

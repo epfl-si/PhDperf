@@ -108,6 +108,10 @@
         - zeebe
         - zeebe-tunnel
         - zeebe-tunnel-promote
+  vars:
+    promote_image_name: "{{ zeebe_tunnel_image_name }}"
+    promote_image_tag: "latest"
+    promote_from_namespace: "{{ phd_assess_build_namespace }}"
 
 - name: "Fetch keying material for ssh tunnel"
   no_log: true
