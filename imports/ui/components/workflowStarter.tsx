@@ -3,6 +3,8 @@ import React, {useState} from "react";
 import toast from 'react-hot-toast';
 import {useTracker} from "meteor/react-meteor-data";
 import {canStartProcessInstance} from "/imports/policy/tasks";
+import {toastClosable} from "/imports/ui/components/Toasters";
+import {ErrorIcon} from "react-hot-toast/src/components/error";
 
 export const WorkflowStarter = () => {
   const userLoaded = !!useTracker(() => {
@@ -11,12 +13,21 @@ export const WorkflowStarter = () => {
 
   const [isWaiting, setIsWaiting] = useState(false);
 
+  const toastId = `toast-workflowstarter`
+
   const onClick = () => {
     setIsWaiting(true)
     Meteor.call(
       "startWorkflow",  {}, (error: global_Error | Meteor.Error | undefined, result: any) => {
         if (error) {
-          toast.error(`${error}`)
+          toast(
+            toastClosable(toastId, `${error}`),
+            {
+              id: toastId,
+              duration: Infinity,
+              icon: <ErrorIcon />,
+            }
+          )
         } else {
           toast.success(`New workflow instance created (id: ${result})`)
         }
