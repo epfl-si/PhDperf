@@ -19,7 +19,7 @@ frontend_fqdn: "{{ frontend_hostname }}.epfl.ch"
 frontend_url: "https://{{ frontend_hostname }}"
 zeebe_gateway_servicename: "zeebe-gateway"
 zeebe_broker_base_image: >-
-  {{ "docker.io/camunda/zeebe:1.2.2" |
+  {{ "docker.io/camunda/zeebe:1.2.4" |
   parse_external_docker_tag(mirrored_base=openshift_local_images_base) }}
 
 zeebe_broker_hazelcast_exporter_jar_url: https://github.com/camunda-community-hub/zeebe-hazelcast-exporter/releases/download/1.0.1/zeebe-hazelcast-exporter-1.0.1-jar-with-dependencies.jar
