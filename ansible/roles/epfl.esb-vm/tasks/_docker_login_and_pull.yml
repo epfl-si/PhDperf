@@ -1,0 +1,27 @@
+## “Steal” an image from the OpenShift Docker registry for the purpose
+## of running it in Docker on the VM.
+##
+## Caller must set the following variables:
+##
+## - image
+##
+##   The name of the image to pull
+
+- name: "Get OpenShift login token"
+  delegate_to: localhost
+  changed_when: false
+  no_log: true
+  shell:
+    cmd: oc whoami -t
+  register: _oc_whoami
+
+- name: "Pull {{ image }} to the VM"
+  when: _oc_whoami is not skipped
+  shell:
+    cmd: |
+      docker login {{ openshift_image_registry }} -u unused --password "{{ _oc_whoami.stdout }}"
+      docker pull {{ openshift_image_registry }}/{{ phd_assess_build_namespace }}/{{ image }}:latest
+      docker logout {{ openshift_image_registry }}
+  register: _pull_image
+  changed_when: >-
+    "Downloaded newer image" in _pull_image.stdout

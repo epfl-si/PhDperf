@@ -1,28 +1,9 @@
 # Tasks to set up the Zeebe cluster member on the VM
 
-- name: "Get OpenShift login token"
-  delegate_to: localhost
-  changed_when: false
-  no_log: true
-  shell:
-    cmd: oc whoami -t
-  register: _oc_whoami
-
-- name: "Pull OpenShift-built images to the VM"
-  when: _oc_whoami is not skipped
-  shell:
-    cmd: |
-      docker login {{ openshift_image_registry }} -u unused --password "{{ _oc_whoami.stdout }}"
-      {% for image in _images %}
-      docker pull {{ openshift_image_registry }}/{{ phd_assess_build_namespace }}/{{ image }}:latest
-      {% endfor %}
-      docker logout {{ openshift_image_registry }}
+- name: "Pull Zeebe broker image to the VM"
+  import_tasks: _docker_login_and_pull.yml
   vars:
-    _images:
-      - zeebe-broker-with-exporters
-  register: _pull_images
-  changed_when: >-
-    "Downloaded newer image" in _pull_images.stdout
+    image: zeebe-broker-with-exporters
 
 - name: "Run Zeebe"
   community.docker.docker_container:
