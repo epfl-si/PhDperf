@@ -10,8 +10,8 @@ Subsystem	sftp	/usr/lib/ssh/sftp-server -u 022
 # These were tweaked so that we can have nice things:
 AllowTcpForwarding yes
 GatewayPorts yes
-PermitListen 0.0.0.0:{{ zeebe_ports.quorum }} 0.0.0.0:{{ zeebe_ports.command }}
-PermitOpen zeebe:{{ zeebe_ports.quorum }} zeebe:{{ zeebe_ports.command }}
+PermitListen 0.0.0.0:{{ zeebe_ports.quorum }} 0.0.0.0:{{ zeebe_ports.command }} 20000 20004
+PermitOpen zeebe:{{ zeebe_ports.quorum }} zeebe:{{ zeebe_ports.command }} localhost:20000 localhost:20004
 
 {% if ssh_tunnel_debug %}
 LogLevel DEBUG
