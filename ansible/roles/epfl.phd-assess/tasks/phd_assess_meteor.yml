@@ -113,7 +113,7 @@
               - name: 'MONGO_URL'
                 value: 'mongodb://mongo:27017/meteor'
               - name: 'ZEEBE_ADDRESS'
-                value: 'zeebe-broker:26500'
+                value: '{{ zeebe_gateway_servicename }}:{{ zeebe_ports.api }}'
               - name: 'ZEEBE_NODE_LOG_LEVEL'
                 value: 'ERROR'
               - name: 'DEBUG'

@@ -84,12 +84,12 @@
       - zeebe-quorum-1:26502
       - zeebe-quorum-0:26502
 
-- name: "{{ zeebe_broker_servicename }} Service"
+- name: "{{ zeebe_gateway_servicename }} Service"
   openshift:
     apiVersion: v1
     kind: Service
     metadata:
-      name: "{{ zeebe_broker_servicename }}"
+      name: "{{ zeebe_gateway_servicename }}"
       namespace: "{{ openshift_namespace }}"
     spec:
        type: ClusterIP
