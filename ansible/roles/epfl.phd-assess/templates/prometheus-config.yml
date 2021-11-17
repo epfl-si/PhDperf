@@ -23,8 +23,13 @@ scrape_configs:
           names:
             - "{{ openshift_namespace }}"
     relabel_configs:
-      # Only keep targets whose port name is "metrics"
+      # Only keep targets whose port name contains "metrics"
       - action: keep
         source_labels:
           - __meta_kubernetes_pod_container_port_name
-        regex: metrics
+        regex: .*metrics.*
+      - action: labelmap
+        regex: __meta_kubernetes_pod_label_(.+)
+      - action: replace
+        source_labels: [__meta_kubernetes_pod_name]
+        target_label: instance
