@@ -170,7 +170,7 @@
                   memory: "50M"
               ports:
                 - name: zeebe-quorum-0
-                  containerPort: "{{ 26502 }}"
+                  containerPort: "{{ zeebe_ports.api }}"
               volumeMounts:
                 - name: sshkeys
                   mountPath: /.ssh  # The HOME of OpenShift-managed users is /

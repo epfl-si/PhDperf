@@ -69,8 +69,8 @@
       {{ _data_volume_prod if openshift_namespace == "phd-assess"
       else dict(emptyDir=dict()) }}
     peers:
-      - zeebe-quorum-2:26502
-      - zeebe-quorum-0:26502
+      - "zeebe-quorum-2:{{ zeebe_ports.api }}"
+      - "zeebe-quorum-0:{{ zeebe_ports.api }}"
     _data_volume_prod:
       persistentVolumeClaim:
         claimName: "{{ volume_zeebe_name }}"
@@ -81,8 +81,8 @@
     data_volume:
       emptyDir: {}
     peers:
-      - zeebe-quorum-1:26502
-      - zeebe-quorum-0:26502
+      - "zeebe-quorum-1:{{ zeebe_ports.api }}"
+      - "zeebe-quorum-0:{{ zeebe_ports.api }}"
 
 - name: "{{ zeebe_gateway_servicename }} Service"
   openshift:
