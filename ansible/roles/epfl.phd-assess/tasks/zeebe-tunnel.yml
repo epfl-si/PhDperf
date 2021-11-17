@@ -138,10 +138,7 @@
 
 - name: "k8s DeploymentConfig for the tunnel pod"
   when: >-
-    openshift_namespace == "phd-assess-test"
-  ## TODO(CHG0041195): change this to
-  # when: >-
-  #   openshift_namespace == "phd-assess"
+    openshift_namespace == "phd-assess"
   openshift:
     apiVersion: v1
     kind: DeploymentConfig

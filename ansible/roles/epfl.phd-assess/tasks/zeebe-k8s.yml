@@ -98,19 +98,8 @@
           port: "{{ zeebe_ports.api }}"
           protocol: TCP
           targetPort: "{{ zeebe_ports.api }}"
-       selector: >-
-         {{ _old_style_selector if _is_old_style_quorum
-         else _post_CHG0041195_selector }}
-  vars:
-    ## TODO(CHG0041195): upon starting the change, this variable
-    ## should always be false (i.e. one should remove it, simplify
-    ## the ternary construct above, and delete all these vars)
-    _is_old_style_quorum: >-
-      {{ openshift_namespace == "phd-assess" }}
-    _old_style_selector:
-      deployment-config.name: "zeebe-broker"
-    _post_CHG0041195_selector:
-      for-service: zeebe-broker
+       selector:
+         for-service: zeebe-broker
 
 - name: >-
     {{ esb_ssh_tunnels.reverse_ports | map(attribute="name") | join(" and ") }} Services
