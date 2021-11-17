@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faUserShield } from '@fortawesome/free-solid-svg-icons'
 import { Popper, PopperOptions } from './Popper'
 import {User} from "/imports/model/user";
+import packageJson from '/package.json'
 
 export function UserAuthButton() {
   const user: User | undefined = useTracker(() => Meteor.user() || undefined)
@@ -32,12 +33,16 @@ export function UserAuthButton() {
     </button>
     <Popper relativeTo={buttonRef.current} options={popperOptions} visible={visible}
             onClickElsewhere={() => setVisibility(false)}>
-    <div className="dropdown-menu-popper p-2 mt-2">
-      <p>
+    <div className="dropdown-menu-popper mt-3">
+      <p className={'mx-3 my-3'}>
         Logged in as { user?.tequila?.displayname }
         { user?.isAdmin && ` (admin)` }
+        { user?.isAdmin &&
+        <p className={'small'}>
+          Version {packageJson.version}
+        </p>
+        }
       </p>
-      [Log out]
     </div>
     </Popper>
   </>
