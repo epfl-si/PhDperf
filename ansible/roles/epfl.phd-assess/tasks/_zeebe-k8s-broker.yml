@@ -37,6 +37,7 @@
           labels:
             for-service: "{{ zeebe_gateway_servicename }}"
             zeebe-quorum-member: "{{ _quorum_name }}"
+            for-prometheus-job: zeebe
         spec:
           containers:
             - name: zeebe-broker

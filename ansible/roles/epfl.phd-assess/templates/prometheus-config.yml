@@ -28,8 +28,17 @@ scrape_configs:
         source_labels:
           - __meta_kubernetes_pod_container_port_name
         regex: .*metrics.*
+      # Convert all labels as time series labels
       - action: labelmap
         regex: __meta_kubernetes_pod_label_(.+)
+      # Give a special meaning to some of them
       - action: replace
-        source_labels: [__meta_kubernetes_pod_name]
+        source_labels:
+          - __meta_kubernetes_pod_name
         target_label: instance
+      - action: replace
+        source_labels:
+          - for_prometheus_job
+        target_label: job
+      - action: labeldrop
+        regex: for_prometheus_job
