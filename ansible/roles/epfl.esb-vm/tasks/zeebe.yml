@@ -33,6 +33,8 @@
     env: >-
       {{ zeebe_broker_common_env | combine(_specific_env) }}
       # https://docs.camunda.io/docs/self-managed/zeebe-deployment/operations/setting-up-a-cluster/
+    volumes:
+      - "{{ toplevel_state_dir }}/zeebe-data:/usr/local/zeebe/data"
   vars:
     _specific_env:
       ZEEBE_BROKER_CLUSTER_NODEID: "0"
