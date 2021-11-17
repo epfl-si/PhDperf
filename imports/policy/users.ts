@@ -10,6 +10,6 @@ User.transform.addComputedField('isAdmin', (user) => {
 )
 
 User.transform.addComputedField('isProgramAssistant', (user) => {
-    return user.tequila?.group?.split(',').includes('PhDAssess-Activity_Specify_Participants-Test')
+    return user.tequila?.group?.split(',').includes('PhD-annual-report-administrative-assistant')
   }
 )
