@@ -99,7 +99,7 @@
           protocol: TCP
           targetPort: "{{ zeebe_ports.api }}"
        selector:
-         for-service: zeebe-broker
+         for-service: "{{ zeebe_gateway_servicename }}"
 
 - name: >-
     {{ esb_ssh_tunnels.reverse_ports | map(attribute="name") | join(" and ") }} Services
