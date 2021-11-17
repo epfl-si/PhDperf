@@ -57,6 +57,7 @@
 
 
 - name: Prometheus ConfigMap (configuration and sync scripts)
+  when: monitoring_enabled_in_namespace |bool
   openshift:
     state: latest
     apiVersion: v1
