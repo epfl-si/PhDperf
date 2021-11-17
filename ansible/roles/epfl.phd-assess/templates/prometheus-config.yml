@@ -23,7 +23,7 @@ scrape_configs:
           names:
             - "{{ openshift_namespace }}"
     relabel_configs:
-      # Only keep targets whose port name is "prometheus"
+      # Only keep targets whose port name is "metrics"
       - action: keep
         source_labels:
           - __meta_kubernetes_pod_container_port_name
