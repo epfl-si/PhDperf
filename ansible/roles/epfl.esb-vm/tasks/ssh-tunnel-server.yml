@@ -85,7 +85,8 @@
   when: _esb_tunnel_ssh_client_public_key is not skipped
   community.docker.docker_container:
     restart: "{{ _sshd_config is not skipped and _sshd_config is changed }}"
-    name: "{{ item.name }}"
+    name: "ssh-tunnel-server-{{ item.quorum_id }}"
+    hostname: "{{ item.name }}"
     image: "{{ ssh_tunnel_server_image }}"
     published_ports:
       - "{{ item.via }}:2222"
