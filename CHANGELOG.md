@@ -1,9 +1,9 @@
 # CHANGELOG
 
-*Unreleased*
+*1.1.0*
 - Set group for permissions from environment variables
-- Set user notifications on error persistent
-- Rework User information, so the admin can see the current version
+- Set user notifications UI persistent for errors
+- Rework User information panel, so admins can see the current version
 
 *1.0.0* (2021-11-17)
 - ✨ First day in prod !
