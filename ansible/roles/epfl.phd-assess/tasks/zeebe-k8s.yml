@@ -102,7 +102,7 @@
          for-service: "{{ zeebe_gateway_servicename }}"
 
 - name: >-
-    {{ esb_ssh_tunnels.reverse_ports | map(attribute="name") | join(" and ") }} Services
+    {{ esb_ssh_tunnels.reverse.zeebe | map(attribute="name") | join(" and ") }} Services
   openshift:
     state: latest
     apiVersion: v1
@@ -123,4 +123,4 @@
           targetPort: "{{ zeebe_ports.command }}"
       selector:
         zeebe-quorum-member: "{{ item.name }}"
-  with_items: "{{ esb_ssh_tunnels.reverse_ports }}"
+  with_items: "{{ esb_ssh_tunnels.reverse.zeebe }}"

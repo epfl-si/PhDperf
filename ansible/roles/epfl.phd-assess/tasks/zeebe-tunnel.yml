@@ -52,7 +52,7 @@
       {{ _tunnel_script_header }}
 
       do_ssh_tunnel -M 20000 \
-        -p {{ esb_ssh_tunnels.reverse_ports[0].via }} \
+        -p {{ esb_ssh_tunnels.reverse.zeebe[0].via }} \
         -R "0.0.0.0:{{ zeebe_ports.quorum  }}:zeebe-quorum-1:{{ zeebe_ports.quorum  }}" \
         -R "0.0.0.0:{{ zeebe_ports.command }}:zeebe-quorum-1:{{ zeebe_ports.command }}" \
         -L "0.0.0.0:{{ zeebe_ports.quorum  }}:zeebe:{{ zeebe_ports.quorum  }}"          \
@@ -61,7 +61,7 @@
       {{ _tunnel_script_header }}
 
       do_ssh_tunnel -M 20004 \
-        -p {{ esb_ssh_tunnels.reverse_ports[1].via }} \
+        -p {{ esb_ssh_tunnels.reverse.zeebe[1].via }} \
         -R "0.0.0.0:{{ zeebe_ports.quorum  }}:zeebe-quorum-2:{{ zeebe_ports.quorum  }}"
         -R "0.0.0.0:{{ zeebe_ports.command }}:zeebe-quorum-2:{{ zeebe_ports.command }}"
     _tunnel_script_header: |
@@ -199,7 +199,7 @@
     apiVersion: v1
     kind: Service
     metadata:
-      name: zeebe-quorum-0
+      name: "{{ esb_ssh_tunnels.forward.zeebe[0].name }}"
       namespace: "{{openshift_namespace}}"
     spec:
       type: ClusterIP

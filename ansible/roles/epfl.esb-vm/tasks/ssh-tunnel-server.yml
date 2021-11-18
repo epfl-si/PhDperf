@@ -99,7 +99,7 @@
       USER_NAME: "{{ esb_ssh_tunnels.username }}"
     volumes:
       - "{{ ssh_tunnel_server_keys_dir }}:/config/ssh_host_keys:ro"
-  with_items: "{{ esb_ssh_tunnels.reverse_ports }}"
+  with_items: "{{ esb_ssh_tunnels.reverse.zeebe }}"
 
 - name: "{{ esb_ssh_tunnels.client_keys_dir }}/known_hosts"
   shell:
@@ -108,7 +108,7 @@
       set -e -x
       set -o pipefail
       cd "{{ esb_ssh_tunnels.client_keys_dir }}"
-      for port in {{ esb_ssh_tunnels.reverse_ports | map(attribute="via") | join(" ") }}; do
+      for port in {{ esb_ssh_tunnels.reverse.zeebe | map(attribute="via") | join(" ") }}; do
         for retry in $(seq 1 5); do
           if ssh-keyscan -p $port  {{ esb_ssh_tunnels.host }} > known_hosts.$port.NEW; then
             break
