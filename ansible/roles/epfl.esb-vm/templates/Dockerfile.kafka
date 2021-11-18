@@ -1,0 +1,13 @@
+FROM {{ kafka_base_image.qualified }}
+
+# Adjustements to the stock image for a Kraft (no-Zookeeper) setup
+# With inspiration from https://github.com/confluentinc/cp-all-in-one/blob/master/cp-all-in-one-kraft/update_run.sh
+
+# Remove check for KAFKA_ZOOKEEPER_CONNECT parameter
+RUN sed -i '/KAFKA_ZOOKEEPER_CONNECT/d' /etc/confluent/docker/configure
+
+# Ignore cub zk-ready
+RUN sed -i 's/cub zk-ready/echo ignore zk-ready/' /etc/confluent/docker/ensure
+
+# KRaft required step: Format the storage directory with a new cluster ID
+RUN echo "kafka-storage format --ignore-formatted -t $(kafka-storage random-uuid) -c /etc/kafka/kafka.properties" >> /etc/confluent/docker/ensure

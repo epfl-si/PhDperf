@@ -1,2 +1,5 @@
 ssh_tunnel_server_base_image: >-
   {{ "linuxserver/openssh-server:2021.10.31" | parse_external_docker_tag }}
+
+kafka_base_image: >-
+  {{ "confluentinc/cp-kafka:7.0.0" | parse_external_docker_tag }}
