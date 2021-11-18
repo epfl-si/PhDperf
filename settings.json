@@ -7,6 +7,8 @@
     }
   },
   "public": {
-    "monitor_address": "localhost:8082"
+    "monitor_address": "localhost:8082",
+    "phdAssessRoleAdmin":"PhD-annual-report-admin",
+    "phdAssessRoleProgramAssistant":"PhD-annual-report-administrative-assistant"
   }
 }
