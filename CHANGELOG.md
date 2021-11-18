@@ -1,8 +1,8 @@
 # CHANGELOG
 
 *Unreleased*
-- Set group for permissions from environnement variables
-- Set user notifications on error persistant
+- Set group for permissions from environment variables
+- Set user notifications on error persistent
 - Rework User information, so the admin can see the current version
 
 *1.0.0* (2021-11-17)
