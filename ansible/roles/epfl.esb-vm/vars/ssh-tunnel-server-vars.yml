@@ -1,5 +1,3 @@
-ssh_tunnel_server_base_image: >-
-  {{ "linuxserver/openssh-server:2021.10.31" | parse_external_docker_tag }}
 ssh_tunnel_server_keys_dir: "{{ toplevel_state_dir }}/ssh-tunnel/server"
 
 ssh_tunnel_server_image: "epflsi/openssh-server"
