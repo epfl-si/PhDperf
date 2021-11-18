@@ -11,7 +11,7 @@ build:
 
 .PHONY: pull
 pull:
-	docker pull camunda/zeebe:1.2.2
+	docker pull camunda/zeebe:1.2.4
 
 # TODO: we don't want to build locally and push; but currently we have
 # to, for want of enough RAM.
@@ -27,5 +27,5 @@ push-meteor:
 .PHONY: push-zeebe
 push-zeebe:
 	oc whoami -t | docker login os-docker-registry.epfl.ch -u toto --password-stdin
-	docker tag camunda/zeebe:1.2.2 os-docker-registry.epfl.ch/phd-assess/zeebe-broker:1.2.2
-	docker push os-docker-registry.epfl.ch/phd-assess/zeebe-broker:1.2.2
+	docker tag camunda/zeebe:1.2.4 os-docker-registry.epfl.ch/phd-assess/zeebe-broker:1.2.4
+	docker push os-docker-registry.epfl.ch/phd-assess/zeebe-broker:1.2.4
