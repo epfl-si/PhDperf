@@ -118,6 +118,10 @@
                 value: 'ERROR'
               - name: 'DEBUG'
                 value: 'phd-assess:*'
+              - name: 'PHDASSESS_ROLE_ADMIN'
+                value: 'PhD-annual-report-admin'
+              - name: 'PHDASSESS_ROLE_PROGRAM_ASSISTANT'
+                value: 'PhD-annual-report-administrative-assistant'
               - name: "{{ encryption_key_name }}"
                 valueFrom:
                   secretKeyRef:
