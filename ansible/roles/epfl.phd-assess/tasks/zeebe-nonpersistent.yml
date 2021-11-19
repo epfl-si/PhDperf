@@ -1,0 +1,7 @@
+- tags: always
+  include_vars: common-k8s-vars.yml
+
+- import_tasks: _zeebe-k8s-broker.yml
+  vars:
+    data_volume:
+      emptyDir: {}
