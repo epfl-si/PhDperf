@@ -32,6 +32,7 @@
   community.docker.docker_image:
     name: "{{ kafka_image }}"
     source: build
+    force_source: yes
     build:
       path: "{{ kafka_build_dir }}"
 
