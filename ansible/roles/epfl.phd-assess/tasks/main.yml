@@ -50,6 +50,18 @@
        selector:
          for-service: "{{ zeebe_gateway_servicename }}"
 
+- name: "Zeebe tunnel build"
+  include_tasks:
+    file: zeebe-tunnel-build.yml
+    apply:
+        tags:
+          - zeebe
+          - zeebe-tunnel
+  tags:
+    - zeebe
+    - zeebe-tunnel
+    - zeebe-tunnel-promote
+
 - name: "Zeebe tunnel to {{ esb_ssh_tunnels.host }}"
   when: zeebe_has_high_availability_quorum
   include_tasks:
@@ -61,7 +73,6 @@
   tags:
     - zeebe
     - zeebe-tunnel
-    - zeebe-tunnel-promote
 
 - name: Phd assess MongoDB tasks
   include_tasks:

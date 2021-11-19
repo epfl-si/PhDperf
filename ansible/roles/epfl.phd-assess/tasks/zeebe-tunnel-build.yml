@@ -1,0 +1,112 @@
+- tags: always
+  include_vars: zeebe-tunnel-vars.yml
+
+- name: "Mirror {{ zeebe_tunnel_base_image.qualified }} to {{ zeebe_tunnel_base_image.mirrored }}"
+  when: openshift_namespace == phd_assess_build_namespace
+  openshift_imagestream:
+    metadata:
+      name: "{{ zeebe_tunnel_base_image.shortname }}"
+      namespace: "{{ openshift_namespace }}"
+    from: "{{ zeebe_tunnel_base_image.qualified }}"
+    tag: "{{ zeebe_tunnel_base_image.tag | string }}"
+
+- name: "Build {{ zeebe_tunnel_image_name }}"
+  when: openshift_namespace == phd_assess_build_namespace
+  openshift_imagestream:
+    metadata:
+      name: "{{ zeebe_tunnel_image_name }}"
+      namespace: "{{ openshift_namespace }}"
+    source:
+      dockerfile: |
+        FROM {{ zeebe_tunnel_base_image.mirrored }}
+        RUN apk --no-cache add openssh-client autossh bash runit
+        RUN set -e -x; mkdir -p /etc/service/ssh-tunnel-quorum-1 /etc/service/ssh-tunnel-quorum-2; \
+            ({{ _run_tunnel_1_script | to_shell_echo }}) > /etc/service/ssh-tunnel-quorum-1/run;   \
+            ({{ _run_tunnel_2_script | to_shell_echo }}) > /etc/service/ssh-tunnel-quorum-2/run;   \
+            chmod 755 /etc/service/ssh-tunnel-quorum-*/run;                                        \
+            chmod 775 /etc/service /etc/service/*
+
+        # https://access.redhat.com/solutions/4665281 . SAD!
+        RUN chmod g=u /etc/passwd
+        RUN set -e -x; ({{ _entrypoint_script | to_shell_echo }}) > /entrypoint.sh; \
+          chmod 755 /entrypoint.sh
+
+        ENTRYPOINT /entrypoint.sh
+    spec:
+      resources:
+        limits:
+          cpu: '1'
+          memory: 100M
+  register: _openshift_image_zeebe_broker
+  vars:
+    _entrypoint_script: |
+      #!/bin/bash -x
+      if ! whoami &> /dev/null; then
+        echo "${USER_NAME:-default}:x:$(id -u):0:${USER_NAME:-default} user:${HOME}:/sbin/nologin" >> /etc/passwd
+      fi
+      exec runsvdir /etc/service
+    _run_tunnel_1_script: |
+      {{ _tunnel_script_header }}
+
+      do_ssh_tunnel -M 20000 \
+        -p {{ esb_ssh_tunnels.reverse.zeebe[0].via }} \
+        -R "0.0.0.0:{{ zeebe_ports.quorum  }}:zeebe-quorum-1:{{ zeebe_ports.quorum  }}" \
+        -R "0.0.0.0:{{ zeebe_ports.command }}:zeebe-quorum-1:{{ zeebe_ports.command }}" \
+        -L "0.0.0.0:{{ zeebe_ports.quorum  }}:zeebe:{{ zeebe_ports.quorum  }}"          \
+        -L "0.0.0.0:{{ zeebe_ports.command }}:zeebe:{{ zeebe_ports.command }}"
+    _run_tunnel_2_script: |
+      {{ _tunnel_script_header }}
+
+      do_ssh_tunnel -M 20004 \
+        -p {{ esb_ssh_tunnels.reverse.zeebe[1].via }} \
+        -R "0.0.0.0:{{ zeebe_ports.quorum  }}:zeebe-quorum-2:{{ zeebe_ports.quorum  }}" \
+        -R "0.0.0.0:{{ zeebe_ports.command }}:zeebe-quorum-2:{{ zeebe_ports.command }}" \
+        -R "0.0.0.0:9090:prometheus:9090"
+    _tunnel_script_header: |
+      #!/bin/bash
+      set -e -x
+
+      do_ssh_tunnel () {
+        local v=
+        if [ -n "$SSH_TUNNEL_DEBUG" ]; then
+          v="-vvv"
+          export AUTOSSH_DEBUG=t
+        fi
+
+        exec autossh $v -N \
+        -o "ServerAliveInterval 10" -o "ServerAliveCountMax 2" \
+        "$@" \
+        {{ esb_ssh_tunnels.username }}@{{ esb_ssh_tunnels.host }}
+      }
+
+- name: "Rebuild {{ zeebe_tunnel_image_name }} now"
+  when:
+    - openshift_namespace == phd_assess_build_namespace
+    - >-
+      (_openshift_image_zeebe_broker is not skipped
+      and _openshift_image_zeebe_broker is changed)
+      or
+      ("zeebe-rebuild" in ansible_run_tags)
+  shell:
+    cmd: |
+      oc -n "{{ openshift_namespace }}" start-build --wait "{{ zeebe_tunnel_image_name }}"
+
+  tags: zeebe-rebuild
+
+- name: "Promote {{ zeebe_tunnel_image_name }} from {{ phd_assess_build_namespace }}"
+  when: >-
+    (openshift_namespace != phd_assess_build_namespace)
+    and
+    ("zeebe-tunnel-promote" in ansible_run_tags)
+  tags: zeebe-tunnel-promote
+  include_tasks:
+    file: _promote_image.yml
+    apply:
+      tags:
+        - zeebe
+        - zeebe-tunnel
+        - zeebe-tunnel-promote
+  vars:
+    promote_image_name: "{{ zeebe_tunnel_image_name }}"
+    promote_image_tag: "latest"
+    promote_from_namespace: "{{ phd_assess_build_namespace }}"
