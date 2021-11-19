@@ -5,16 +5,53 @@
       tags: secrets
   tags: secrets
 
-- name: Zeebe on Kubernetes
+- name: Zeebe images
   include_tasks:
-    file: zeebe-k8s.yml
+    file: zeebe-images.yml
     apply:
         tags: zeebe
   tags:
     - zeebe
     - zeebe-promote
 
+- name: Zeebe 3-way production quorum (Kubernetes side)
+  when: zeebe_has_high_availability_quorum
+  include_tasks:
+    file: zeebe-high-availability.yml
+    apply:
+        tags: zeebe
+  tags:
+    - zeebe
+
+- name: Zeebe test setup (single node, no persistence)
+  when: not zeebe_has_high_availability_quorum
+  include_tasks:
+    file: zeebe-nonpersistent.yml
+    apply:
+        tags: zeebe
+  tags:
+    - zeebe
+
+- name: "{{ zeebe_gateway_servicename }} Service"
+  tags: zeebe
+  openshift:
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: "{{ zeebe_gateway_servicename }}"
+      namespace: "{{ openshift_namespace }}"
+    spec:
+       type: ClusterIP
+       ports:
+        - name: "zeebe-api"
+          port: "{{ zeebe_ports.api }}"
+          protocol: TCP
+          targetPort: "{{ zeebe_ports.api }}"
+       selector:
+         for-service: "{{ zeebe_gateway_servicename }}"
+
 - name: "Zeebe tunnel to {{ esb_ssh_tunnels.host }}"
+  when: zeebe_has_high_availability_quorum
   include_tasks:
     file: zeebe-tunnel.yml
     apply:

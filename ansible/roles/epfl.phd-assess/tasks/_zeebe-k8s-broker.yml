@@ -17,7 +17,8 @@
 ##
 ## - peers
 ##
-##   A list of host:port addresses to use to talk to the other quorum members
+##   A list of host:port addresses to use to talk to the other quorum members.
+##   If `peers` is not set, run a single-instance cluster
 ##
 ## - env
 ##
@@ -35,21 +36,23 @@
     spec:
       replicas: 1
       selector:
-        matchLabels:
-          zeebe-quorum-member: "{{ _quorum_name }}"
+         matchLabels: >-
+           {{ _ha_labels if _has_ha
+           else _match_labels_single_node }}
       template:
         metadata:
-          labels:
-            for-service: "{{ zeebe_gateway_servicename }}"
-            zeebe-quorum-member: "{{ _quorum_name }}"
-            for-prometheus-job: zeebe
+          labels: >-
+            {{ _common_labels
+            | combine(_ha_labels if _has_ha else {})
+            }}
         spec:
           containers:
             - name: zeebe-broker
               image: "{{ openshift_local_images_base }}/zeebe-broker-with-exporters:latest"
               env: >-
                 {{ zeebe_broker_common_env
-                | combine(_specific_env)
+                | combine(zeebe_broker_common_high_availability_env if _has_ha else {})
+                | combine(_ha_env if _has_ha else {})
                 | combine(env | default({}))
                 | to_k8s_env }}
               resources:
@@ -68,15 +71,27 @@
             - >-
               {{ _volume_name | combine(data_volume) }}
   vars:
-    _name: "zeebe-broker-{{ node_id }}"
-    _quorum_name: "zeebe-quorum-{{ node_id }}"
+    # Note that HA-specific vars still get expanded even when useless
+    # (i.e. in a single-node situation); therefore, they must plan for
+    # variables to be missing.
+    _has_ha: "{{ peers is defined }}"
+    _name: >-
+      {{ "zeebe-broker-" + (node_id | string) if _has_ha else "zeebe-broker" }}
+    _quorum_name: "zeebe-quorum-{{ node_id | default('_') }}"
     _volume_name:
       name: zeebe-data
-      # Gets merged with `data_volume` provided by caller
-    _specific_env:
-      ZEEBE_BROKER_CLUSTER_NODEID: "{{ node_id | string }}"
+    _common_labels:
+      for-service: "{{ zeebe_gateway_servicename }}"
+      for-prometheus-job: zeebe
+    _ha_labels:
+      zeebe-quorum-member: "{{ _quorum_name }}"
+    _match_labels_single_node:
+      for-service: "{{ zeebe_gateway_servicename }}"
+    # Gets merged with `data_volume` provided by caller
+    _ha_env:
+      ZEEBE_BROKER_CLUSTER_NODEID: "{{ node_id | default('_') | string }}"
       ZEEBE_BROKER_CLUSTER_INITIALCONTACTPOINTS: >-
-        {{ ",".join(peers) }}
+        {{ ",".join(peers | default([])) }}
       # https://github.com/camunda-cloud/zeebe/issues/5410 and
       # https://github.com/camunda-cloud/zeebe/blob/develop/qa/integration-tests/src/test/java/io/camunda/zeebe/it/network/AdvertisedAddressTest.java#L150
       ZEEBE_BROKER_NETWORK_INTERNALAPI_ADVERTISEDHOST: >-

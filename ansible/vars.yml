@@ -38,10 +38,12 @@ zeebe_broker_common_env:
   PORT: '{{ zeebe_ports.api | string }}'
   ZEEBE_BROKER_NETWORK_MONITORINGAPI_HOST: '0.0.0.0'
   # https://docs.camunda.io/docs/self-managed/zeebe-deployment/operations/setting-up-a-cluster/
-  ZEEBE_BROKER_CLUSTER_CLUSTERNAME: epfl
-  ZEEBE_BROKER_CLUSTER_CLUSTERSIZE: "3"
-  ZEEBE_BROKER_CLUSTER_REPLICATIONFACTOR: "3"
   ZEEBE_LOG_LEVEL: info
   ZEEBE_LOG_APPENDER: Stackdriver
   ZEEBE_BROKER_BACKPRESSURE_ALGORITHM: fixed
   ZEEBE_BROKER_BACKPRESSURE_FIXEDLIMIT_LIMIT: '300'
+
+zeebe_broker_common_high_availability_env:
+  ZEEBE_BROKER_CLUSTER_CLUSTERNAME: epfl
+  ZEEBE_BROKER_CLUSTER_CLUSTERSIZE: "3"
+  ZEEBE_BROKER_CLUSTER_REPLICATIONFACTOR: "3"
