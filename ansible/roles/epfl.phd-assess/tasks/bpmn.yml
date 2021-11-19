@@ -1,4 +1,5 @@
 - name: Deploy the local bpmn to Zeebe
+  throttle: 1   # There is only one port available locally for `oc port-forward`
   shell: |
     set -e -x
     oc -n {{ openshift_namespace }} port-forward service/{{ zeebe_gateway_servicename }} {{ zeebe_ports.api }} &
