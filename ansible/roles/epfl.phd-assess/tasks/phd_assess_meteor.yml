@@ -128,7 +128,7 @@
               - name: "{{ websrv_password_key_name }}"
                 valueFrom:
                   secretKeyRef:
-                    name: "{{ secret_name }}"
+                    name: "{{ meteor_secret_name }}"
                     key: "{{ websrv_password_key_name }}"
               command:
                 - /usr/bin/node
