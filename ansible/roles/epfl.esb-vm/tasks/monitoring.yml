@@ -1,0 +1,45 @@
+- tags: always
+  include_vars: monitoring-vars.yml
+
+- name: "Pull disk usage monitoring image to the VM"
+  import_tasks: _docker_login_and_pull.yml
+  vars:
+    image: disk-usage-exporter
+
+- name: "{{ monitoring_prometheus_config_dir }}"
+  ansible.builtin.file:
+    path: "{{ monitoring_prometheus_config_dir }}"
+    state: directory
+
+- name: "{{ monitoring_prometheus_config_dir }}/prometheus.yml"
+  ansible.builtin.copy:
+    dest: "{{ monitoring_prometheus_config_dir }}/prometheus.yml"
+    content: >-
+      {{ lookup("template", "prometheus-config.yml") }}
+  register: _prometheus_config
+
+- name: "{{ monitoring_prometheus_data_dir }}"
+  ansible.builtin.file:
+    path: "{{ monitoring_prometheus_data_dir }}"
+    state: directory
+    mode: "1777"
+
+- name: "Prometheus container"
+  community.docker.docker_container:
+    name: prometheus
+    networks:
+      - name: "{{ esb_docker_network }}"
+    image: quay.io/prometheus/prometheus
+    volumes:
+      - "{{ monitoring_prometheus_data_dir }}:/prometheus"
+      - "{{ monitoring_prometheus_config_dir }}/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
+    restart: >-
+      {{
+      _prometheus_config is not skipped and _prometheus_config is changed
+      }}
+
+- name: "{{ monitoring_prometheus_traefik_config_file }}"
+  ansible.builtin.copy:
+    dest: "{{ monitoring_prometheus_traefik_config_file }}"
+    content: >-
+      {{ lookup("template", "traefik-prometheus.yml") }}

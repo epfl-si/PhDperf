@@ -3,15 +3,15 @@ http:
     prometheus:
       service: "prometheus"
       middlewares:
-        - "basic-auth-middleware"
-      entryPoints: ["web"]
+        - "prometheus-basic-auth"
+      entryPoints: ["websecure"]
       rule: "Host(`{{ monitoring_prometheus_external_hostname }}`)"
   services:
     prometheus:
       loadBalancer:
         servers:
-          - url: "http://prometheus-0:9090"
+          - url: "http://prometheus:9090"
   middlewares:
-    basic-auth-middleware:
+    prometheus-basic-auth:
       basicAuth:
-        users: {{ monitoring_prometheus_htpass }}
+        users: "{{ monitoring_prometheus_htpass | trim }}"

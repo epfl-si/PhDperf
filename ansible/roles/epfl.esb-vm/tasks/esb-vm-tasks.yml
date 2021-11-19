@@ -51,3 +51,22 @@
       tags: kafka
   tags:
     - kafka
+
+- name: Træfik
+  include_role:
+    role: epfl_si.traefik.docker_traefik
+    apply:
+      tags: traefik
+  tags: traefik
+  vars:
+    # traefik_root_location is defined in ../vars/esb-vm-vars.yml
+    traefik_networks:
+      - name: "{{ esb_docker_network }}"
+
+- name: Monitoring
+  include_tasks:
+    file: monitoring.yml
+    apply:
+      tags: monitoring
+  tags:
+    - monitoring

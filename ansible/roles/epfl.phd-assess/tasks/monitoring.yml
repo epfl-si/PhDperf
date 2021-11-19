@@ -4,16 +4,6 @@
     - monitoring-vars.yml
     - common-k8s-vars.yml
 
-- name: "Pull traefik image into {{ monitoring_traefik_base_image.mirrored }}"
-  when: monitoring_enabled_in_namespace |bool
-  tags: monitoring.prometheus
-  openshift_imagestream:
-    metadata:
-      name: "{{ monitoring_traefik_base_image.shortname }}"
-      namespace: "{{ openshift_namespace }}"
-    from: "{{ monitoring_traefik_base_image.qualified }}"
-    tag: latest
-
 
 - name: Prometheus service
   when: monitoring_enabled_in_namespace |bool
@@ -29,31 +19,10 @@
         app: prometheus
     spec:
       ports:
-        - name: traefik
-          port: 9999
+        - name: prometheus
+          port: 9090
       selector:
         app: prometheus
-
-
-- name: "Prometheus route (https://{{ monitoring_prometheus_external_hostname }}/)"
-  when: monitoring_enabled_in_namespace |bool
-  tags: monitoring.prometheus
-  openshift:
-    state: latest
-    apiVersion: route.openshift.io/v1
-    kind: Route
-    metadata:
-      name: prometheus
-      namespace: "{{ openshift_namespace }}"
-    spec:
-      host: "{{ monitoring_prometheus_external_hostname }}"
-      port:
-        targetPort: traefik
-      tls:
-        termination: edge
-      to:
-        kind: Service
-        name: prometheus
 
 
 - name: Prometheus ConfigMap (configuration and sync scripts)
@@ -69,32 +38,6 @@
       prometheus.yml: >
         {{ lookup("template", "prometheus-config.yml") }}
   register: _prometheus_configmap
-
-- name: Traefik ConfigMap Static (configuration and sync scripts)
-  when: monitoring_enabled_in_namespace |bool
-  openshift:
-    state: latest
-    apiVersion: v1
-    kind: ConfigMap
-    metadata:
-      name: traefik
-      namespace: "{{ openshift_namespace }}"
-    data:
-      traefik.yml: >
-        {{ lookup("template", "traefik-config-static.yml") }}
-
-- name: Traefik ConfigMap Dynamic (configuration and sync scripts)
-  when: monitoring_enabled_in_namespace |bool
-  openshift:
-    state: latest
-    apiVersion: v1
-    kind: ConfigMap
-    metadata:
-      name: traefikdyna
-      namespace: "{{ openshift_namespace }}"
-    data:
-      basic-auth.yml: >
-        {{ lookup("template", "traefik-config-dynamic.yml") }}
 
 
 - name: Prometheus StatefulSet
@@ -139,35 +82,14 @@
                 limits:
                   cpu: '1'
                   memory: 100M
-            - name: traefik
-              image: "{{ monitoring_traefik_base_image.mirrored }}"
-              ports:
-              - containerPort: 9999
-                name: traefik
-              volumeMounts:
-                - name: traefik-config-static
-                  mountPath: /etc/traefik
-                - name: traefik-config-dynamic
-                  mountPath: /etc/traefik/dynamic
-              resources:
-                limits:
-                  cpu: '1'
-                  memory: 100M
           volumes:
             - name: storage
-              emptyDir: {}  # TODO We probably want some persistence
-                            # here
+              emptyDir: {}
             - name: dynamic-config
               emptyDir: {}
             - name: static-config
               configMap:
                 name: prometheus
-            - name: traefik-config-static
-              configMap:
-                name: traefik
-            - name: traefik-config-dynamic
-              configMap:
-                name: traefikdyna
   register: _prometheus_statefulset
 
 - name: Restart Prometheus

@@ -62,8 +62,9 @@
 
       do_ssh_tunnel -M 20004 \
         -p {{ esb_ssh_tunnels.reverse.zeebe[1].via }} \
-        -R "0.0.0.0:{{ zeebe_ports.quorum  }}:zeebe-quorum-2:{{ zeebe_ports.quorum  }}"
-        -R "0.0.0.0:{{ zeebe_ports.command }}:zeebe-quorum-2:{{ zeebe_ports.command }}"
+        -R "0.0.0.0:{{ zeebe_ports.quorum  }}:zeebe-quorum-2:{{ zeebe_ports.quorum  }}" \
+        -R "0.0.0.0:{{ zeebe_ports.command }}:zeebe-quorum-2:{{ zeebe_ports.command }}" \
+        -R "0.0.0.0:9090:prometheus:9090"
     _tunnel_script_header: |
       #!/bin/bash
       set -e -x

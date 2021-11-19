@@ -2,6 +2,7 @@
 collections:
   - community.general
   - community.docker
+  - epfl_si.traefik
 roles:
   - src: epfl_si.ansible_module_openshift
   - jnv.unattended-upgrades

@@ -1,0 +1,43 @@
+# Prometheus configuration for the VM side
+global:
+  scrape_interval:     15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  # scrape_timeout is set to the global default (10s).
+
+scrape_configs:
+  # Prometheus scraping itself.
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: 'prometheus'
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+    - targets: ['localhost:9090']
+
+  # Scrape Docker containers also running on the ESB VM
+  - job_name: 'zeebe'
+    static_configs:
+      - targets: ['zeebe:9600']
+        labels:
+          instance: 'zeebe-broker-0'
+  - job_name: 'traefik'
+    static_configs:
+      - targets: ['traefik:8080']
+
+  # Federate from the other Prometheus (the one in Kubernetes) through the ssh tunnel
+  - job_name: 'federate-k8s'
+    scrape_interval: 15s
+
+    honor_labels: true
+    metrics_path: '/federate'
+
+    params:
+      'match[]':
+        - '{job="prometheus"}'
+        - '{job="zeebe"}'
+        - '{__name__=~".*disk_usage.*"}'
+
+    static_configs:
+      - targets:
+        - 'ssh-tunnel-server-2:9090'

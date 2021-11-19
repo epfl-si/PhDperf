@@ -1,0 +1,13 @@
+monitoring_traefik_base_image: >-
+  {{ "docker.io/library/traefik" |
+  parse_external_docker_tag(mirrored_base=openshift_local_images_base) }}
+monitoring_prometheus_htpass: |-
+  {% for cred in lookup("file", "/keybase/team/epfl_phdassess/prometheus-credentials.yml") | from_yaml %}
+  {{ cred.user }}:{{ cred.password | password_hash('bcrypt', cred.salt) }}
+  {% endfor %}
+
+monitoring_prometheus_config_dir: "{{ toplevel_state_dir }}/prometheus/config"
+monitoring_prometheus_data_dir: "{{ toplevel_state_dir }}/prometheus/data"
+
+monitoring_prometheus_external_hostname: prometheus-phdassess.epfl.ch
+monitoring_prometheus_traefik_config_file: "{{ traefik_root_location }}/conf/dynamic/traefik-prometheus.yml"
