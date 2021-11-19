@@ -21,7 +21,6 @@
   ansible.builtin.file:
     path: "{{ kafka_build_dir }}"
     state: directory
-    recurse: yes
 
 - name: "{{ kafka_build_dir }}/Dockerfile"
   ansible.builtin.copy:
@@ -40,7 +39,6 @@
   ansible.builtin.file:
     path: "{{ kafka_data_dir }}"
     state: directory
-    recurse: yes
     mode: "1777"
 
 - name: Kafka broker container (no ZooKeeper, no replication)
