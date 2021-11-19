@@ -57,7 +57,11 @@
   tags: meteor-build.now
 
 - name: "Promote images from {{ phd_assess_build_namespace }} to production"
-  when: openshift_namespace != phd_assess_build_namespace
+  when:
+    - >-
+      openshift_namespace != phd_assess_build_namespace
+    - >-
+      "meteor-promote" in ansible_run_tags
   tags: meteor-promote
   include_tasks:
     file: _promote_image.yml

@@ -212,7 +212,11 @@
           memory: 100M
 
 - name: "Promote disk-usage-exporter image from {{ phd_assess_build_namespace }} to production"
-  when: openshift_namespace != phd_assess_build_namespace
+  when:
+    - >-
+      openshift_namespace != phd_assess_build_namespace
+    - >-
+      "monitoring-promote" in ansible_run_tags
   tags: monitoring-promote
   include_tasks:
     file: _promote_image.yml
