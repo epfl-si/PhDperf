@@ -11,3 +11,10 @@ RUN sed -i 's/cub zk-ready/echo ignore zk-ready/' /etc/confluent/docker/ensure
 
 # KRaft required step: Format the storage directory with a new cluster ID
 RUN echo "kafka-storage format --ignore-formatted -t $(kafka-storage random-uuid) -c /etc/kafka/kafka.properties" >> /etc/confluent/docker/ensure
+
+# Prometheus monitoring, as per https://github.com/prometheus/jmx_exporter
+ADD https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.16.1/jmx_prometheus_javaagent-0.16.1.jar /usr/app/jmx_prometheus_javaagent.jar
+USER 0
+RUN chmod 755 /usr/app/jmx_prometheus_javaagent.jar
+USER appuser
+ENV KAFKA_OPTS=-javaagent:/usr/app/jmx_prometheus_javaagent.jar=9000:/dev/null

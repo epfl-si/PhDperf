@@ -24,6 +24,9 @@ scrape_configs:
   - job_name: 'traefik'
     static_configs:
       - targets: ['traefik:8080']
+  - job_name: 'kafka'
+    static_configs:
+      - targets: ['kafka-broker:9000']
 
   # Federate from the other Prometheus (the one in Kubernetes) through the ssh tunnel
   - job_name: 'federate-k8s'
