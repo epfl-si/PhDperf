@@ -17,7 +17,7 @@ GatewayPorts yes
  # that port as `-R`, then `-L`s right back into it in order to
  # monitor liveness:
  #}
-PermitListen 0.0.0.0:{{ zeebe_ports.quorum }} 0.0.0.0:{{ zeebe_ports.command }} 9090 20000 20004
+PermitListen *:{{ zeebe_ports.quorum }} *:{{ zeebe_ports.command }} *:9090 *:20000 *:20004
 PermitOpen zeebe:{{ zeebe_ports.quorum }} zeebe:{{ zeebe_ports.command }} localhost:20000 localhost:20004
 
 {% if ssh_tunnel_debug %}
