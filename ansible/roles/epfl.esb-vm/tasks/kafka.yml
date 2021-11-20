@@ -5,10 +5,7 @@
 ## connector) are *not* running on the VM.
 
 - tags: always
-  include_vars: "{{ item }}"
-  with_items:
-    - versions.yml
-    - kafka-vars.yml
+  include_vars: kafka-vars.yml
 
 - name: Pull Kafka-related images
   community.docker.docker_image:

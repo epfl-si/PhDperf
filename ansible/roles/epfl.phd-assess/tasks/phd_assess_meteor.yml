@@ -15,7 +15,7 @@
   when: openshift_namespace == phd_assess_build_namespace
   openshift_imagestream:
     metadata:
-      name: "{{ phd_assess_meteor_base_image_name }}"
+      name: "node-base"
       namespace: "{{ phd_assess_build_namespace }}"
     from: "{{ phd_assess_ubuntu_base_image.mirrored }}"
     git:
@@ -33,7 +33,7 @@
     metadata:
       name: "{{ phd_assess_meteor_image_name }}"
       namespace: "{{ phd_assess_build_namespace }}"
-    from: "{{ phd_assess_meteor_base_image_name }}:latest"
+    from: "{{ openshift_local_images_base }}/node-base"
     git:
       repository: "https://github.com/epfl-si/PhDAssess"
     spec:

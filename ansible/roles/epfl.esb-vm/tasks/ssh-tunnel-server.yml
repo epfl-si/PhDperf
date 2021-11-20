@@ -1,9 +1,6 @@
 # Tasks to set up the Zeebe cluster member on the VM
 - tags: always
-  include_vars: "{{ item }}"
-  with_items:
-    - ssh-tunnel-server-vars.yml
-    - versions.yml
+  include_vars: ssh-tunnel-server-vars.yml
 
 - name: "Pull {{ ssh_tunnel_server_base_image.qualified }}"
   community.docker.docker_image:

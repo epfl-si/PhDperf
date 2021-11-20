@@ -1,0 +1,30 @@
+# Versions of software in use in the PhDAssess / ESB cluster
+
+zeebe_broker_base_image: >-
+  {{ "docker.io/camunda/zeebe:1.2.4"
+  | parse_external_docker_tag(mirrored_base=openshift_local_images_base) }}
+
+ssh_tunnel_server_base_image: >-
+  {{ "linuxserver/openssh-server:2021.10.31" | parse_external_docker_tag }}
+ssh_tunnel_client_base_image: >-
+  {{ "alpine:3.13"
+  | parse_external_docker_tag(mirrored_base=openshift_local_images_base)
+  }}
+
+kafka_base_image: >-
+  {{ "confluentinc/cp-kafka:7.0.0"
+  | parse_external_docker_tag(mirrored_base=openshift_local_images_base) }}
+
+# For the small TypeScript utility that monitors disk usage:
+monitoring_node_base_image: >-
+  {{ "docker.io/library/node:alpine"
+  | parse_external_docker_tag(mirrored_base=openshift_local_images_base) }}
+
+# We build the Meteor app on top of this:
+phd_assess_ubuntu_base_image: >-
+  {{ "ubuntu:focal"
+  | parse_external_docker_tag(mirrored_base=openshift_local_images_base) }}
+
+phd_assess_mongo_image: >-
+  {{ "docker.io/library/mongo:focal"
+  | parse_external_docker_tag(mirrored_base=openshift_local_images_base) }}

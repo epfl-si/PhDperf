@@ -18,9 +18,6 @@ frontend_fqdn: "{{ frontend_hostname }}.epfl.ch"
 
 frontend_url: "https://{{ frontend_hostname }}"
 zeebe_gateway_servicename: "zeebe-gateway"
-zeebe_broker_base_image: >-
-  {{ "docker.io/camunda/zeebe:1.2.4" |
-  parse_external_docker_tag(mirrored_base=openshift_local_images_base) }}
 
 zeebe_broker_hazelcast_exporter_jar_url: https://github.com/camunda-community-hub/zeebe-hazelcast-exporter/releases/download/1.0.1/zeebe-hazelcast-exporter-1.0.1-jar-with-dependencies.jar
 zeebe_broker_kafka_exporter_jar_url: https://github.com/camunda-community-hub/zeebe-kafka-exporter/releases/download/3.0.0/zeebe-kafka-exporter-3.0.0-jar-with-dependencies.jar
@@ -37,14 +34,4 @@ encryption_key_name: "PHDASSESS_ENCRYPTION_KEY"
 websrv_password_key_name: "WEBSRV_PASSWORD"
 volume_zeebe_name: "svc0166-{{ app_name }}-zeebe-partition-app"
 
-phd_assess_ubuntu_base_image: >-
-  {{ "ubuntu:focal" |
-  parse_external_docker_tag(mirrored_base=openshift_local_images_base) }}
-
-phd_assess_meteor_base_image_name: "node-base"
 phd_assess_meteor_image_name: "phd-assess-meteor"
-
-phd_assess_mongo_image: >-
-  {{ "docker.io/library/mongo:focal" |
-  parse_external_docker_tag(mirrored_base=openshift_local_images_base) }}
-

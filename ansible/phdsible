@@ -94,7 +94,7 @@ inventories () {
 mode=ansible-playbook
 
 declare -a ansible_args
-ansible_args=(-e @vars.yml)
+ansible_args=(-e @vars.yml -e @versions.yml)
 while [ "$#" -gt 0 ]; do
   case "$1" in
         -m) mode=ansible

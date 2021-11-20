@@ -9,8 +9,4 @@ monitoring_enabled_in_namespace: |
 # TODO: this will soon become a responsibility of the VM.
 monitoring_prometheus_external_hostname: prometheus-phdassess.epfl.ch
 
-monitoring_node_base_image: >-
-  {{ "docker.io/library/node:alpine" |
-  parse_external_docker_tag(mirrored_base=openshift_local_images_base) }}
-
 monitoring_node_disk_usage_exporter_image: "{{ openshift_local_images_base }}/disk-usage-exporter"
