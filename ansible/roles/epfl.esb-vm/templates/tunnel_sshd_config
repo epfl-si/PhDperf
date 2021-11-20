@@ -10,6 +10,13 @@ Subsystem	sftp	/usr/lib/ssh/sftp-server -u 022
 # These were tweaked so that we can have nice things:
 AllowTcpForwarding yes
 GatewayPorts yes
+{# Must keep PermitListen and PermitOpen stanzas in sync with the
+ # requirements of the client, as seen in the DeploymentConfig in
+ # ../../epfl.phd-assess/tasks/ssh-tunnel-client.yml. Note that the
+ # `-M` port needs to be permitted both ways, as `autossh` sets up
+ # that port as `-R`, then `-L`s right back into it in order to
+ # monitor liveness:
+ #}
 PermitListen 0.0.0.0:{{ zeebe_ports.quorum }} 0.0.0.0:{{ zeebe_ports.command }} 9090 20000 20004
 PermitOpen zeebe:{{ zeebe_ports.quorum }} zeebe:{{ zeebe_ports.command }} localhost:20000 localhost:20004
 

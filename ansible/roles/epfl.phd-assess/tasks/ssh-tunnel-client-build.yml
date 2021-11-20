@@ -20,11 +20,9 @@
       dockerfile: |
         FROM {{ ssh_tunnel_client_base_image.mirrored }}
         RUN apk --no-cache add openssh-client autossh bash runit
-        RUN set -e -x; mkdir -p /etc/service/ssh-tunnel-quorum-1 /etc/service/ssh-tunnel-quorum-2; \
-            ({{ _run_tunnel_1_script | to_shell_echo }}) > /etc/service/ssh-tunnel-quorum-1/run;   \
-            ({{ _run_tunnel_2_script | to_shell_echo }}) > /etc/service/ssh-tunnel-quorum-2/run;   \
-            chmod 755 /etc/service/ssh-tunnel-quorum-*/run;                                        \
-            chmod 775 /etc/service /etc/service/*
+        RUN mkdir -p /etc/service && chmod 1777 /etc/service
+        RUN set -e -x; mkdir -p /usr/local/lib; \
+            ({{ _tunnel_script_shell_include | to_shell_echo }}) > /usr/local/lib/ssh-tunnels-lib.sh
 
         # https://access.redhat.com/solutions/4665281 . SAD!
         RUN chmod g=u /etc/passwd
@@ -40,33 +38,32 @@
   register: _ssh_tunnel_client_image
   vars:
     _entrypoint_script: |
-      #!/bin/bash -x
-      if ! whoami &> /dev/null; then
-        echo "${USER_NAME:-default}:x:$(id -u):0:${USER_NAME:-default} user:${HOME}:/sbin/nologin" >> /etc/passwd
-      fi
-      exec runsvdir /etc/service
-    _run_tunnel_1_script: |
-      {{ _tunnel_script_header }}
-
-      do_ssh_tunnel -M 20000 \
-        -p {{ esb_ssh_tunnels.reverse.zeebe[0].via }} \
-        -R "0.0.0.0:{{ zeebe_ports.quorum  }}:zeebe-quorum-1:{{ zeebe_ports.quorum  }}" \
-        -R "0.0.0.0:{{ zeebe_ports.command }}:zeebe-quorum-1:{{ zeebe_ports.command }}" \
-        -L "0.0.0.0:{{ zeebe_ports.quorum  }}:zeebe:{{ zeebe_ports.quorum  }}"          \
-        -L "0.0.0.0:{{ zeebe_ports.command }}:zeebe:{{ zeebe_ports.command }}"
-    _run_tunnel_2_script: |
-      {{ _tunnel_script_header }}
-
-      do_ssh_tunnel -M 20004 \
-        -p {{ esb_ssh_tunnels.reverse.zeebe[1].via }} \
-        -R "0.0.0.0:{{ zeebe_ports.quorum  }}:zeebe-quorum-2:{{ zeebe_ports.quorum  }}" \
-        -R "0.0.0.0:{{ zeebe_ports.command }}:zeebe-quorum-2:{{ zeebe_ports.command }}" \
-        -R "0.0.0.0:9090:prometheus:9090"
-    _tunnel_script_header: |
       #!/bin/bash
       set -e -x
 
-      do_ssh_tunnel () {
+      if ! whoami &> /dev/null; then
+        echo "${USER_NAME:-default}:x:$(id -u):0:${USER_NAME:-default} user:${HOME}:/sbin/nologin" >> /etc/passwd
+      fi
+
+      tunnel_count=1
+      for script in "$@"; do
+        runit_dir="/etc/service/ssh-tunnel-$((tunnel_count++))"
+        mkdir -p "$runit_dir"
+        (
+          echo "#!/bin/bash"
+          echo "source /usr/local/lib/ssh-tunnels-lib.sh"
+          echo
+          echo "$script"
+        ) > "$runit_dir"/run
+        chmod 755 "$runit_dir"/run
+      done
+
+      exec runsvdir /etc/service
+    _tunnel_script_shell_include: |
+      #!/bin/bash
+      set -e -x
+
+      ssh_tunnel () {
         local v=
         if [ -n "$SSH_TUNNEL_DEBUG" ]; then
           v="-vvv"
@@ -75,8 +72,7 @@
 
         exec autossh $v -N \
         -o "ServerAliveInterval 10" -o "ServerAliveCountMax 2" \
-        "$@" \
-        {{ esb_ssh_tunnels.username }}@{{ esb_ssh_tunnels.host }}
+        "$@"
       }
 
 - name: "Rebuild {{ ssh_tunnel_client_image_name }} now"

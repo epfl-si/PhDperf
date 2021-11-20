@@ -51,6 +51,30 @@
           containers:
             - name: ssh
               image: '{{ openshift_local_images_base }}/{{ ssh_tunnel_client_image_name }}:latest'
+              command:
+                # The image runs each arg separately as a runit `run`
+                # script (see `_entrypoint_script` in
+                # ssh-tunnel-client-build.yml). Note that `-R` and
+                # `-L` ports must be authorized on the server, which
+                # means that you must keep
+                # ../../epfl.esb-vm/templates/tunnel_sshd_config in
+                # sync with the changes here:
+                - /entrypoint.sh
+                - >-
+                  ssh_tunnel -M 20000
+                  -R "0.0.0.0:{{ zeebe_ports.quorum  }}:zeebe-quorum-1:{{ zeebe_ports.quorum  }}"
+                  -R "0.0.0.0:{{ zeebe_ports.command }}:zeebe-quorum-1:{{ zeebe_ports.command }}"
+                  -L "0.0.0.0:{{ zeebe_ports.quorum  }}:zeebe:{{ zeebe_ports.quorum  }}"
+                  -L "0.0.0.0:{{ zeebe_ports.command }}:zeebe:{{ zeebe_ports.command }}"
+                  -p {{ esb_ssh_tunnels.reverse.zeebe[0].via }}
+                  {{ esb_ssh_tunnels.username }}@{{ esb_ssh_tunnels.host }}
+                - >-
+                  ssh_tunnel -M 20004
+                  -R "0.0.0.0:{{ zeebe_ports.quorum  }}:zeebe-quorum-2:{{ zeebe_ports.quorum  }}"
+                  -R "0.0.0.0:{{ zeebe_ports.command }}:zeebe-quorum-2:{{ zeebe_ports.command }}"
+                  -R "0.0.0.0:9090:prometheus:9090"
+                  -p {{ esb_ssh_tunnels.reverse.zeebe[1].via }}
+                  {{ esb_ssh_tunnels.username }}@{{ esb_ssh_tunnels.host }}
               env: >-
                 {{ [dict(name="SSH_TUNNEL_DEBUG", value="1")]
                 if ssh_tunnel_debug
