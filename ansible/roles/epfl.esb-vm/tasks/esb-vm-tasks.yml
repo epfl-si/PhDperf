@@ -58,6 +58,7 @@
       tags: kafka
   tags:
     - kafka
+    - kafka-promote
 
 - name: Træfik
   include_role:

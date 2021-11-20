@@ -32,6 +32,16 @@
   tags:
     - zeebe
 
+- name: Kafka (build and test only)
+  when: >-
+    "test" in openshift_namespace
+  include_tasks:
+    file: kafka.yml
+    apply:
+      tags: kafka
+  tags:
+    - kafka
+
 - name: "{{ zeebe_gateway_servicename }} Service"
   tags: zeebe
   openshift:

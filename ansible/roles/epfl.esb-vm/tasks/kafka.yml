@@ -8,30 +8,12 @@
   include_vars: kafka-vars.yml
 
 - name: Pull Kafka-related images
-  community.docker.docker_image:
-    name: "{{ item.qualified }}"
-    source: pull
-  with_items:
-    - "{{ kafka_base_image }}"
-
-- name: "{{ kafka_build_dir }}"
-  ansible.builtin.file:
-    path: "{{ kafka_build_dir }}"
-    state: directory
-
-- name: "{{ kafka_build_dir }}/Dockerfile"
-  ansible.builtin.copy:
-    dest: "{{ kafka_build_dir }}/Dockerfile"
-    content: >-
-      {{ lookup("template", "Dockerfile.kafka") }}
-
-- name: "{{ kafka_image }}"
-  community.docker.docker_image:
-    name: "{{ kafka_image }}"
-    source: build
-    force_source: yes
-    build:
-      path: "{{ kafka_build_dir }}"
+  tags: kafka-promote
+  when: >-
+    "kafka-promote" in ansible_run_tags
+  import_tasks: _docker_login_and_pull.yml
+  vars:
+    image: "{{ kafka_broker.image_name }}"
 
 - name: "{{ kafka_data_dir }}"
   ansible.builtin.file:
@@ -41,26 +23,15 @@
 
 - name: Kafka broker container (no ZooKeeper, no replication)
   community.docker.docker_container:
-    image: "{{ kafka_image }}"
-    name: "{{ kafka_broker_hostname }}"
+    image: "{{ openshift_image_registry }}/{{ phd_assess_build_namespace }}/{{ kafka_broker.image_name }}"
+    name: "{{ kafka_broker.hostname }}"
     networks:
       - name: "{{ esb_docker_network }}"
-    env:
-      KAFKA_BROKER_ID: "1"
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT"
-      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://{{ kafka_broker_hostname }}:29092,PLAINTEXT_HOST://{{ kafka_broker_hostname }}:9092"
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: "0"
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: "1"
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: "1"
-      KAFKA_JMX_PORT: "9101"
-      KAFKA_JMX_HOSTNAME: "localhost"
-      KAFKA_PROCESS_ROLES: "broker,controller"
-      KAFKA_NODE_ID: "1"
-      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@{{ kafka_broker_hostname }}:29093"
-      KAFKA_LISTENERS: "PLAINTEXT://{{ kafka_broker_hostname }}:29092,CONTROLLER://{{ kafka_broker_hostname }}:29093,PLAINTEXT_HOST://{{ kafka_broker_address }}"
-      KAFKA_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
-      KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
-      KAFKA_LOG_DIRS: "/data"
+    env: >-
+      {{ kafka_broker.env
+      | combine(_specific_env) }}
     volumes:
       - "{{ kafka_data_dir }}:/data"
+  vars:
+    _specific_env:
+      KAFKA_LOG_DIRS: "/data"
