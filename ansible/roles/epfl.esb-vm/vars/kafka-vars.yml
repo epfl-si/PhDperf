@@ -2,5 +2,6 @@ kafka_topdir: "{{ toplevel_state_dir }}/kafka"
 kafka_build_dir: "{{ kafka_topdir }}/build"
 kafka_image: epflsi/kafka-kraft-broker
 kafka_broker_hostname: kafka-broker
+kafka_broker_address: "{{ kafka_broker_hostname }}:9092"
 
 kafka_data_dir: "{{ kafka_topdir }}/data"

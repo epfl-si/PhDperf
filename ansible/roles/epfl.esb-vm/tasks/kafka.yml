@@ -61,7 +61,7 @@
       KAFKA_PROCESS_ROLES: "broker,controller"
       KAFKA_NODE_ID: "1"
       KAFKA_CONTROLLER_QUORUM_VOTERS: "1@{{ kafka_broker_hostname }}:29093"
-      KAFKA_LISTENERS: "PLAINTEXT://{{ kafka_broker_hostname }}:29092,CONTROLLER://{{ kafka_broker_hostname }}:29093,PLAINTEXT_HOST://{{ kafka_broker_hostname }}:9092"
+      KAFKA_LISTENERS: "PLAINTEXT://{{ kafka_broker_hostname }}:29092,CONTROLLER://{{ kafka_broker_hostname }}:29093,PLAINTEXT_HOST://{{ kafka_broker_address }}"
       KAFKA_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
       KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
       KAFKA_LOG_DIRS: "/data"
