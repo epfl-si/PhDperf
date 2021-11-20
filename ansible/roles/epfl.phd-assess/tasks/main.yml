@@ -100,7 +100,7 @@
       tags: route
   tags: route
 
-- name: Bpmn tasks
+- name: BPMN tasks
   include_tasks:
     file: "bpmn.yml"
     apply:
