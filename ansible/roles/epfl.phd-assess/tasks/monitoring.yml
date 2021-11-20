@@ -100,12 +100,12 @@
     or
     ( (_prometheus_configmap | default({})) is changed )
     or
-    ( "monitoring.restart" in ansible_run_tags )
+    ( "monitoring-restart" in ansible_run_tags )
     )
   shell:
     cmd: |
       oc delete pod prometheus-0
-  tags: monitoring.restart
+  tags: monitoring-restart
 
 
 - name: "Pull upstream {{ monitoring_node_base_image.qualified }} image into {{ monitoring_node_base_image.mirrored }}"

@@ -90,7 +90,7 @@
   tags:
     - meteor
     - meteor-build
-    - meteor-build.now
+    - meteor-rebuild
     - meteor-promote
 
 - name: Route tasks

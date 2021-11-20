@@ -50,11 +50,11 @@
     - >-
       ( (_phd_assess_meteor_build | default({})) is changed )
       or
-      ( "meteor-build.now" in ansible_run_tags )
+      ( "meteor-rebuild" in ansible_run_tags )
   shell:
     cmd: |
       oc -n "{{ openshift_namespace }}" start-build "{{ phd_assess_meteor_image_name }}"
-  tags: meteor-build.now
+  tags: meteor-rebuild
 
 - name: "Promote images from {{ phd_assess_build_namespace }} to production"
   when:
