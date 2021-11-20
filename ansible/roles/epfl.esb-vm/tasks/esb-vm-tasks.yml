@@ -29,6 +29,13 @@
   community.docker.docker_network:
     name: "{{ esb_docker_network }}"
 
+- name: Administrator comfort features on the VM
+  include_tasks:
+    file: comfort.yml
+    apply:
+      tags: comfort
+  tags: comfort
+
 - name: Set up and run ssh tunnel server
   include_tasks:
     file: ssh-tunnel-server.yml

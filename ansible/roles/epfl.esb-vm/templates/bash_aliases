@@ -1,0 +1,1 @@
+alias kafkacat='docker run  --rm -it --network {{ esb_docker_network }} confluentinc/cp-kafkacat:5.0.0 kafkacat -b {{ kafka_broker_address }}'

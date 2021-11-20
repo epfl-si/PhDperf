@@ -1,0 +1,11 @@
+- tags: always
+  include_vars: "{{ item }}"
+  with_items:
+    - esb-vm-vars.yml
+    - kafka-vars.yml
+
+- name: Set up aliases for root
+  copy:
+    dest: /root/.bash_aliases
+    content: >-
+      {{ lookup("template", "bash_aliases") }}
