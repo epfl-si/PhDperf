@@ -2,7 +2,7 @@
   include_vars: "{{ item }}"
   with_items:
     - common-k8s-vars.yml
-    - zeebe-tunnel-vars.yml
+    - ssh-tunnel-client-vars.yml
 
 - name: "Fetch keying material for ssh tunnel"
   no_log: true
@@ -19,14 +19,14 @@
       done
   register: _ssh_tunnel_client_keys
 
-- name: "{{ zeebe_tunnel_secret_name }} Secret"
+- name: "{{ ssh_tunnel_client_secret_name }} Secret"
   when: _ssh_tunnel_client_keys is not skipped
   openshift:
     state: latest
     apiVersion: v1
     kind: Secret
     metadata:
-      name: "{{ zeebe_tunnel_secret_name }}"
+      name: "{{ ssh_tunnel_client_secret_name }}"
       namespace: "{{ openshift_namespace }}"
     type: Opaque
     data: "{{ _ssh_tunnel_client_keys.stdout | from_yaml | base64_values }}"
@@ -38,7 +38,7 @@
     apiVersion: v1
     kind: DeploymentConfig
     metadata:
-      name: "{{ zeebe_tunnel_dc_name }}"
+      name: "{{ ssh_tunnel_client_dc_name }}"
       namespace: "{{ openshift_namespace }}"
     spec:
       replicas: 1
@@ -46,11 +46,11 @@
       template:
         metadata:
           labels:
-            name: "{{ zeebe_tunnel_dc_name }}"
+            name: "{{ ssh_tunnel_client_dc_name }}"
         spec:
           containers:
             - name: ssh
-              image: '{{ openshift_local_images_base }}/{{ zeebe_tunnel_image_name }}:latest'
+              image: '{{ openshift_local_images_base }}/{{ ssh_tunnel_client_image_name }}:latest'
               env: >-
                 {{ [dict(name="SSH_TUNNEL_DEBUG", value="1")]
                 if ssh_tunnel_debug
@@ -70,7 +70,7 @@
           volumes:
             - name: sshkeys
               secret:
-                secretName: "{{ zeebe_tunnel_secret_name }}"
+                secretName: "{{ ssh_tunnel_client_secret_name }}"
                 defaultMode: 0400
       triggers:
       - type: ConfigChange
@@ -81,7 +81,7 @@
           - ssh
           from:
             kind: ImageStreamTag
-            name: '{{ zeebe_tunnel_image_name }}:latest'
+            name: '{{ ssh_tunnel_client_image_name }}:latest'
             namespace: "{{ openshift_namespace }}"
 
 - name: "zeebe-quorum-0 service"
@@ -104,4 +104,4 @@
           protocol: TCP
           targetPort: "{{ zeebe_ports.command }}"
       selector:
-        deploymentconfig: "{{ zeebe_tunnel_dc_name }}"
+        deploymentconfig: "{{ ssh_tunnel_client_dc_name }}"

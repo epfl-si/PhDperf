@@ -1,8 +1,0 @@
-zeebe_tunnel_secret_name: zeebe-tunnel-keys
-
-zeebe_tunnel_base_image: >-
-  {{ "alpine:3.13" |
-  parse_external_docker_tag(mirrored_base=openshift_local_images_base)
-  }}
-zeebe_tunnel_image_name: zeebe-tunnel
-zeebe_tunnel_dc_name: "ssh-tunnel-{{ esb_ssh_tunnels.host | hostname_short }}"
