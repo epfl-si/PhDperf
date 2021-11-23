@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {CSSProperties} from 'react';
 import {
   BrowserRouter, RouteProps, Route, Switch,
   useParams, useRouteMatch
@@ -21,16 +21,21 @@ const PageRoute: React.FC<RouteProps> = (props) => {
     return Meteor.user();
   }, []);
 
+  const mainPanelBackgroundColor: CSSProperties = Meteor.settings.public.isTest ? { backgroundColor: 'Cornsilk'} : {}
+
   return (
     <Route {...props}>
       <PhDHeader/>
       <PhDBreadcrumbs/>
 
-      <div className="nav-toggle-layout nav-aside-layout">
+      <div className={ 'nav-toggle-layout nav-aside-layout' }>
         {userLoaded && canAccessDashboard() &&
         <AsideMenu/>
         }
-        <div className="container">
+        <div className="container" style={ mainPanelBackgroundColor }>
+          { Meteor.settings.public.isTest &&
+          <div className={'alert alert-info'} role={'alert'}><strong>Testing</strong> You are on the testing environment.</div>
+          }
           {props.children}
         </div>
       </div>

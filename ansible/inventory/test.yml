@@ -6,3 +6,5 @@ all:
     openshift_namespaces:
       hosts:
         phd-assess-test: {}
+      vars:
+        is_test: "true"

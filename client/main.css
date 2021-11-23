@@ -13,6 +13,11 @@ body .breadcrumb-container::before {
   display: none;
 }
 
+/* remove transparency on buttons */
+.btn-secondary {
+  background: white !important;
+}
+
 /* .dropdown-menu is all wrong position-wise. */
 .dropdown-menu-popper {
   min-width: 10rem;

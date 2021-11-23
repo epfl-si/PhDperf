@@ -119,7 +119,7 @@
               - name: 'DEBUG'
                 value: 'phd-assess:*'
               - name: 'METEOR_SETTINGS'
-                value: '{ "public": { "phdAssessRoleAdmin":"PhD-annual-report-admin","phdAssessRoleProgramAssistant":"PhD-annual-report-administrative-assistant" } }'
+                value: '{ "public": {"isTest":{{ is_test }}, "phdAssessRoleAdmin":"PhD-annual-report-admin","phdAssessRoleProgramAssistant":"PhD-annual-report-administrative-assistant" } }'
               - name: "{{ encryption_key_name }}"
                 valueFrom:
                   secretKeyRef:
