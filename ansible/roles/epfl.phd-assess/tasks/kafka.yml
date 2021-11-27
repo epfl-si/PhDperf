@@ -21,6 +21,7 @@
     source:
       dockerfile: |
         FROM {{ kafka_base_image.mirrored }}
+        USER 0
 
         # Adjustements to the stock image for a Kraft (no-Zookeeper) setup
         # With inspiration from https://github.com/confluentinc/cp-all-in-one/blob/master/cp-all-in-one-kraft/update_run.sh
@@ -36,10 +37,12 @@
 
         # Prometheus monitoring, as per https://github.com/prometheus/jmx_exporter
         ADD https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.16.1/jmx_prometheus_javaagent-0.16.1.jar /usr/app/jmx_prometheus_javaagent.jar
-        USER 0
         RUN chmod 755 /usr/app/jmx_prometheus_javaagent.jar
-        USER appuser
+
+        # Prometheus compatibility
         ENV KAFKA_OPTS=-javaagent:/usr/app/jmx_prometheus_javaagent.jar=9000:/dev/null
+
+        USER appuser
     spec:
       resources:
         limits:
