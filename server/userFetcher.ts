@@ -95,10 +95,14 @@ export const updateParticipantsFromSciper = async (variables: PhDInputVariables)
       variables[`${participantName}Email`] = participantInfo.email
 
       // build the name
-      let fullName = []
-      fullName.push(participantInfo.firstnameus || participantInfo.firstname)
-      fullName.push(participantInfo.nameus || participantInfo.name)
-      variables[`${participantName}Name`] = fullName.join(' ')
+      let usageName = []
+      usageName.push(participantInfo.firstnameus || participantInfo.firstname)
+      usageName.push(participantInfo.nameus || participantInfo.name)
+      variables[`${participantName}Name`] = usageName.join(' ')
+
+      // keep the real names information too, may be needed by some step later
+      variables[`${participantName}FirstName`] = participantInfo.firstname || participantInfo.firstnameus
+      variables[`${participantName}LastName`] = participantInfo.name || participantInfo.nameus
     }
   }
 
