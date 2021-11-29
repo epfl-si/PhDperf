@@ -2,6 +2,8 @@
 
 *Unreleased*
 - Meteor 2.5.1
+- Set to variables more info about the names
+- Change alert on success to be unclosable
 
 *1.1.0* (2021-11-18)
 - Set group for permissions from environment variables
