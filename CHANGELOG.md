@@ -1,8 +1,8 @@
 # CHANGELOG
 
-*Unreleased*
+*1.2.0* (2021-11-29)
 - Meteor 2.5.1
-- Set to variables more info about the names
+- Set more names info to variables
 - Change alert on success to be unclosable
 
 *1.1.0* (2021-11-18)
