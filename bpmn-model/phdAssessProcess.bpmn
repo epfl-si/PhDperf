@@ -11,14 +11,14 @@
   <bpmn:process id="phdAssessProcess" name="PhD Assess" isExecutable="true">
     <bpmn:laneSet id="LaneSet_15bmgqu">
       <bpmn:lane id="Lane_1k7ll7j" name="Program Assistant">
-        <bpmn:flowNodeRef>Event_14n2id0</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_PhD_Assess_Start</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_Program_Assistant_Assigns_Participants</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_0etdbm8</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_0vnhjct</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_0jbwxb1</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_0pelgwh</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_05vw4b2</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_1234dlc</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_Build_PDF</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_PhD_Assess_Done</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_Notify_With_PDF_ProgramDirector_And_Office</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_Notify_With_PDF_PhDStudent</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_GED_Deposit</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_Notify_Ask_For_Manual_Deposit</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_0hp9bfx</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1iu457q</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_GED_Deposit_Student_Folder_Unfindable_Error</bpmn:flowNodeRef>
@@ -26,61 +26,61 @@
       </bpmn:lane>
       <bpmn:lane id="Lane_1kybckv" name="Thesis director">
         <bpmn:flowNodeRef>Activity_Thesis_Director_fills_annual_report</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_1xqt2me</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_Notify_Thesis_Director_For_Signing</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_0pq4nc7</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_0fxp2gk</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_is_thesis_co_director</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_1u8sie4</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_Thesis_Director_Check1</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1eaw25w</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_0wwdo6d</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_Notify_Thesis_Director_PhDStudent_Filled</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_0fgciwz</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_0w5d3x0</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_1osgngt</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_Thesis_Director_Check2</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_Thesis_Director_Signs</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1qftu4l</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_unsatisfactory_check</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_Thesis_Director_Collaborative_Review_Signs</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1kh591k</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_1tdv8a8</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_Notify_Thesis_Director_Collaborative_Review_To_Do</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1m9wltd</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_0wb948r" name="PhD Student">
         <bpmn:flowNodeRef>Activity_PHD_Signs</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_00y6ag1</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_0f03q9c</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_Notify_PhDStudent_For_Signing</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1tpd7ku</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1a3uoc9</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_Post_Mentor_Meeting_PHD_Signs</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_0hude63</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_Notify_PhDStudent_PostMeeting_To_Do</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1vk6wu2</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_0biymns</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_Notifiy_PhDStudent_Assignation</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_PHD_fills_annual_report</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1f2dd1w</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_145opmc</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_1e7w1ps" name="Mentor">
         <bpmn:flowNodeRef>Activity_Post_Mentor_Meeting_Mentor_Signs</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_09x6bzq</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_Notify_Mentor_PostMeeting_To_Do</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1vkk1yr</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_1w3ugn8" name="Program Director">
         <bpmn:flowNodeRef>Activity_Program_Director_Signs</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_0pguy2h</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_08kccwb</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_0s9w3zi</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_1686jxu</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_14o47pb</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_Notify_Program_Director_For_Signing_PostMeeting</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_Notify_Program_Director_For_Disagreement</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_Notify_Program_Director_Collaborative_Review_Done</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_0kmegd1" name="Thesis co-director">
-        <bpmn:flowNodeRef>Activity_10mdiut</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_Notify_Thesis_Codirector_For_Signing</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_0crufzf</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_Thesis_Co_Director_Signs</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_0wl0pjp</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_1wdv629</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_Notify_Thesis_Codirector_PhDStudent_Filled</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_Thesis_Co_Director_fills_annual_report</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
-    <bpmn:startEvent id="Event_14n2id0" name="Yearly assessment start&#10;">
+    <bpmn:startEvent id="Event_PhD_Assess_Start" name="Yearly assessment start&#10;">
       <bpmn:outgoing>Flow_0ighe3r</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:serviceTask id="Activity_PHD_Signs" name="PHD Signs">
@@ -102,7 +102,7 @@
       <bpmn:outgoing>Flow_16mxiow</bpmn:outgoing>
       <bpmn:outgoing>Flow_0pxr008</bpmn:outgoing>
     </bpmn:parallelGateway>
-    <bpmn:serviceTask id="Activity_0f03q9c" name="Notify the PhD Student">
+    <bpmn:serviceTask id="Activity_Notify_PhDStudent_For_Signing" name="Notify the PhD Student">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="notification" retries="0" />
         <zeebe:taskHeaders>
@@ -140,7 +140,7 @@
       <bpmn:incoming>Flow_0cjl7qi</bpmn:incoming>
       <bpmn:outgoing>Flow_0lwf2vv</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_0hude63" name="Notify the PhD Student">
+    <bpmn:serviceTask id="Activity_Notify_PhDStudent_PostMeeting_To_Do" name="Notify the PhD Student">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="notification" retries="0" />
         <zeebe:taskHeaders>
@@ -153,7 +153,7 @@
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1qla1vh</bpmn:incoming>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_10mdiut" name="Notify the Thesis co-director">
+    <bpmn:serviceTask id="Activity_Notify_Thesis_Codirector_For_Signing" name="Notify the Thesis co-director">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="notification" retries="0" />
         <zeebe:taskHeaders>
@@ -190,7 +190,7 @@
       <bpmn:outgoing>Flow_054cx96</bpmn:outgoing>
       <bpmn:outgoing>Flow_16matth</bpmn:outgoing>
     </bpmn:parallelGateway>
-    <bpmn:serviceTask id="Activity_0biymns" name="Notify the PhD Student">
+    <bpmn:serviceTask id="Activity_Notifiy_PhDStudent_Assignation" name="Notify the PhD Student">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="notification" retries="0" />
         <zeebe:taskHeaders>
@@ -231,7 +231,7 @@
       <bpmn:incoming>Flow_1crcs3x</bpmn:incoming>
       <bpmn:outgoing>Flow_1q4fi07</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_1xqt2me" name="Notify the Thesis director">
+    <bpmn:serviceTask id="Activity_Notify_Thesis_Director_For_Signing" name="Notify the Thesis director">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="notification" retries="0" />
         <zeebe:ioMapping>
@@ -259,7 +259,7 @@
       <bpmn:outgoing>Flow_0wqd4km</bpmn:outgoing>
       <bpmn:outgoing>Flow_1av2cod</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:exclusiveGateway id="Gateway_1u8sie4" name="is there a Thesis co-director ?" default="Flow_0g6z3sg">
+    <bpmn:exclusiveGateway id="Gateway_Thesis_Director_Check1" name="is there a Thesis co-director ?" default="Flow_0g6z3sg">
       <bpmn:incoming>Flow_16tresg</bpmn:incoming>
       <bpmn:outgoing>Flow_1qnxt97</bpmn:outgoing>
       <bpmn:outgoing>Flow_0g6z3sg</bpmn:outgoing>
@@ -297,7 +297,7 @@
       <bpmn:incoming>Flow_0393j0o</bpmn:incoming>
       <bpmn:outgoing>Flow_1tizgdn</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_09x6bzq" name="Notify the Mentor">
+    <bpmn:serviceTask id="Activity_Notify_Mentor_PostMeeting_To_Do" name="Notify the Mentor">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="notification" retries="0" />
         <zeebe:taskHeaders>
@@ -320,7 +320,7 @@
       <bpmn:incoming>Flow_0lwf2vv</bpmn:incoming>
       <bpmn:outgoing>Flow_0p1halp</bpmn:outgoing>
     </bpmn:parallelGateway>
-    <bpmn:serviceTask id="Activity_0s9w3zi" name="Notify the Program Director">
+    <bpmn:serviceTask id="Activity_Notify_Program_Director_For_Signing_PostMeeting" name="Notify the Program Director">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="notification" retries="0" />
         <zeebe:taskHeaders>
@@ -344,7 +344,7 @@
       <bpmn:outgoing>Flow_02hkb0w</bpmn:outgoing>
       <bpmn:outgoing>Flow_1awtaak</bpmn:outgoing>
     </bpmn:parallelGateway>
-    <bpmn:serviceTask id="Activity_1wdv629" name="Notify the Thesis co-director">
+    <bpmn:serviceTask id="Activity_Notify_Thesis_Codirector_PhDStudent_Filled" name="Notify the Thesis co-director">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="notification" retries="0" />
         <zeebe:taskHeaders>
@@ -357,7 +357,7 @@
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_02hkb0w</bpmn:incoming>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_0wwdo6d" name="Notify the Thesis director">
+    <bpmn:serviceTask id="Activity_Notify_Thesis_Director_PhDStudent_Filled" name="Notify the Thesis director">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="notification" retries="0" />
         <zeebe:ioMapping>
@@ -394,12 +394,12 @@
       <bpmn:incoming>Flow_1f0mux0</bpmn:incoming>
       <bpmn:outgoing>Flow_0yg2ypo</bpmn:outgoing>
     </bpmn:parallelGateway>
-    <bpmn:exclusiveGateway id="Gateway_1osgngt" name="is there a Thesis co-director ?" default="Flow_0r3q628">
+    <bpmn:exclusiveGateway id="Gateway_Thesis_Director_Check2" name="is there a Thesis co-director ?" default="Flow_0r3q628">
       <bpmn:incoming>Flow_1q4fi07</bpmn:incoming>
       <bpmn:outgoing>Flow_1gy2m7j</bpmn:outgoing>
       <bpmn:outgoing>Flow_0r3q628</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="Activity_1686jxu" name="Notify the Program Director">
+    <bpmn:serviceTask id="Activity_Notify_Program_Director_For_Disagreement" name="Notify the Program Director">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="notification" retries="0" />
         <zeebe:taskHeaders>
@@ -457,7 +457,7 @@
       <bpmn:incoming>Flow_0pq7nor</bpmn:incoming>
       <bpmn:outgoing>Flow_1jkk0ln</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="Activity_14o47pb" name="Notify the Program Director">
+    <bpmn:serviceTask id="Activity_Notify_Program_Director_Collaborative_Review_Done" name="Notify the Program Director">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="notification" retries="0" />
         <zeebe:ioMapping>
@@ -490,7 +490,7 @@
       <bpmn:outgoing>Flow_071vbx1</bpmn:outgoing>
       <bpmn:outgoing>Flow_08398id</bpmn:outgoing>
     </bpmn:parallelGateway>
-    <bpmn:serviceTask id="Activity_1tdv8a8" name="Notify the Thesis director">
+    <bpmn:serviceTask id="Activity_Notify_Thesis_Director_Collaborative_Review_To_Do" name="Notify the Thesis director">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="notification" retries="0" />
         <zeebe:ioMapping>
@@ -508,17 +508,17 @@
       <bpmn:incoming>Flow_0r3q628</bpmn:incoming>
       <bpmn:outgoing>Flow_1a31ekj</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="Activity_0etdbm8" name="Build PDF">
+    <bpmn:serviceTask id="Activity_Build_PDF" name="Build PDF">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="phdBuildPDF" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_05koynm</bpmn:incoming>
       <bpmn:outgoing>Flow_0b0vfwv</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:endEvent id="Event_0vnhjct" name="Yearly PhD Assessment done">
+    <bpmn:endEvent id="Event_PhD_Assess_Done" name="Yearly PhD Assessment done">
       <bpmn:incoming>Flow_03a8yu5</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:serviceTask id="Activity_0jbwxb1" name="Notify the Prog Director + Office">
+    <bpmn:serviceTask id="Activity_Notify_With_PDF_ProgramDirector_And_Office" name="Notify the Prog Director + Office">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="notification" retries="0" />
         <zeebe:taskHeaders>
@@ -533,7 +533,7 @@
       <bpmn:incoming>Flow_0bkc875</bpmn:incoming>
       <bpmn:outgoing>Flow_19hd8zh</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_0pelgwh" name="Notify the PhD Student">
+    <bpmn:serviceTask id="Activity_Notify_With_PDF_PhDStudent" name="Notify the PhD Student">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="notification" retries="0" />
         <zeebe:taskHeaders>
@@ -549,14 +549,14 @@
       <bpmn:incoming>Flow_19hd8zh</bpmn:incoming>
       <bpmn:outgoing>Flow_1tpm1z9</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_05vw4b2" name="Deposit PDF on GED">
+    <bpmn:serviceTask id="Activity_GED_Deposit" name="Deposit PDF on GED">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="phdGEDDeposit" retries="0" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0z5b27w</bpmn:incoming>
       <bpmn:outgoing>Flow_1uvq6qs</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_1234dlc" name="Call for a manual deposit">
+    <bpmn:serviceTask id="Activity_Notify_Ask_For_Manual_Deposit" name="Call for a manual deposit">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="notification" retries="0" />
         <zeebe:taskHeaders>
@@ -578,29 +578,29 @@
     </bpmn:parallelGateway>
     <bpmn:sequenceFlow id="Flow_17q96hm" sourceRef="Gateway_0fgciwz" targetRef="Gateway_1eaw25w" />
     <bpmn:sequenceFlow id="Flow_1awtaak" sourceRef="Gateway_0wl0pjp" targetRef="Gateway_0fgciwz" />
-    <bpmn:sequenceFlow id="Flow_0g6z3sg" name="no" sourceRef="Gateway_1u8sie4" targetRef="Gateway_0fgciwz" />
-    <bpmn:sequenceFlow id="Flow_02hkb0w" sourceRef="Gateway_0wl0pjp" targetRef="Activity_1wdv629" />
-    <bpmn:sequenceFlow id="Flow_0y6dlrw" sourceRef="Gateway_0crufzf" targetRef="Activity_10mdiut" />
+    <bpmn:sequenceFlow id="Flow_0g6z3sg" name="no" sourceRef="Gateway_Thesis_Director_Check1" targetRef="Gateway_0fgciwz" />
+    <bpmn:sequenceFlow id="Flow_02hkb0w" sourceRef="Gateway_0wl0pjp" targetRef="Activity_Notify_Thesis_Codirector_PhDStudent_Filled" />
+    <bpmn:sequenceFlow id="Flow_0y6dlrw" sourceRef="Gateway_0crufzf" targetRef="Activity_Notify_Thesis_Codirector_For_Signing" />
     <bpmn:sequenceFlow id="Flow_1owatnd" sourceRef="Activity_Thesis_Director_Signs" targetRef="Gateway_00y6ag1" />
     <bpmn:sequenceFlow id="Flow_16matth" sourceRef="Gateway_1vk6wu2" targetRef="Activity_PHD_fills_annual_report" />
-    <bpmn:sequenceFlow id="Flow_05koynm" sourceRef="Activity_Program_Director_Signs" targetRef="Activity_0etdbm8" />
+    <bpmn:sequenceFlow id="Flow_05koynm" sourceRef="Activity_Program_Director_Signs" targetRef="Activity_Build_PDF" />
     <bpmn:sequenceFlow id="Flow_0p1halp" sourceRef="Gateway_08kccwb" targetRef="Gateway_0pguy2h" />
     <bpmn:sequenceFlow id="Flow_1tizgdn" sourceRef="Activity_Post_Mentor_Meeting_Mentor_Signs" targetRef="Gateway_08kccwb" />
-    <bpmn:sequenceFlow id="Flow_054cx96" sourceRef="Gateway_1vk6wu2" targetRef="Activity_0biymns" />
+    <bpmn:sequenceFlow id="Flow_054cx96" sourceRef="Gateway_1vk6wu2" targetRef="Activity_Notifiy_PhDStudent_Assignation" />
     <bpmn:sequenceFlow id="Flow_052hz68" sourceRef="Gateway_0pq4nc7" targetRef="Gateway_0fxp2gk" />
     <bpmn:sequenceFlow id="Flow_0sla35e" sourceRef="Activity_Thesis_Co_Director_Signs" targetRef="Gateway_0pq4nc7" />
-    <bpmn:sequenceFlow id="Flow_1jkk0ln" name="Yes" sourceRef="Gateway_unsatisfactory_check" targetRef="Activity_14o47pb">
+    <bpmn:sequenceFlow id="Flow_1jkk0ln" name="Yes" sourceRef="Gateway_unsatisfactory_check" targetRef="Activity_Notify_Program_Director_Collaborative_Review_Done">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= programDirectorNotif != ""</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1qla1vh" sourceRef="Gateway_1a3uoc9" targetRef="Activity_0hude63" />
+    <bpmn:sequenceFlow id="Flow_1qla1vh" sourceRef="Gateway_1a3uoc9" targetRef="Activity_Notify_PhDStudent_PostMeeting_To_Do" />
     <bpmn:sequenceFlow id="Flow_1wxgy3z" sourceRef="Gateway_0pguy2h" targetRef="Activity_Program_Director_Signs" />
-    <bpmn:sequenceFlow id="Flow_0pxr008" sourceRef="Gateway_00y6ag1" targetRef="Activity_0f03q9c" />
+    <bpmn:sequenceFlow id="Flow_0pxr008" sourceRef="Gateway_00y6ag1" targetRef="Activity_Notify_PhDStudent_For_Signing" />
     <bpmn:sequenceFlow id="Flow_16mxiow" sourceRef="Gateway_00y6ag1" targetRef="Activity_PHD_Signs" />
-    <bpmn:sequenceFlow id="Flow_12k5unu" sourceRef="Gateway_0fxp2gk" targetRef="Activity_1xqt2me" />
+    <bpmn:sequenceFlow id="Flow_12k5unu" sourceRef="Gateway_0fxp2gk" targetRef="Activity_Notify_Thesis_Director_For_Signing" />
     <bpmn:sequenceFlow id="Flow_0mzj9cs" sourceRef="Gateway_0fxp2gk" targetRef="Activity_Thesis_Director_Signs" />
-    <bpmn:sequenceFlow id="Flow_09aqxdl" sourceRef="Gateway_1vkk1yr" targetRef="Activity_09x6bzq" />
+    <bpmn:sequenceFlow id="Flow_09aqxdl" sourceRef="Gateway_1vkk1yr" targetRef="Activity_Notify_Mentor_PostMeeting_To_Do" />
     <bpmn:sequenceFlow id="Flow_0393j0o" sourceRef="Gateway_1vkk1yr" targetRef="Activity_Post_Mentor_Meeting_Mentor_Signs" />
-    <bpmn:sequenceFlow id="Flow_0bw508m" name="no" sourceRef="Gateway_1f2dd1w" targetRef="Activity_1686jxu">
+    <bpmn:sequenceFlow id="Flow_0bw508m" name="no" sourceRef="Gateway_1f2dd1w" targetRef="Activity_Notify_Program_Director_For_Disagreement">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= notAgree != ""</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0vivg85" sourceRef="Gateway_0crufzf" targetRef="Activity_Thesis_Co_Director_Signs" />
@@ -608,22 +608,22 @@
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=thesisCoDirectorSciper!=""</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0wqd4km" name="no&#10;&#10;" sourceRef="Gateway_is_thesis_co_director" targetRef="Gateway_0pq4nc7" />
-    <bpmn:sequenceFlow id="Flow_00kh14p" sourceRef="Gateway_1eaw25w" targetRef="Activity_0wwdo6d" />
+    <bpmn:sequenceFlow id="Flow_00kh14p" sourceRef="Gateway_1eaw25w" targetRef="Activity_Notify_Thesis_Director_PhDStudent_Filled" />
     <bpmn:sequenceFlow id="Flow_1crcs3x" sourceRef="Gateway_1eaw25w" targetRef="Activity_Thesis_Director_fills_annual_report" />
-    <bpmn:sequenceFlow id="Flow_0ighe3r" sourceRef="Event_14n2id0" targetRef="Activity_Program_Assistant_Assigns_Participants" />
+    <bpmn:sequenceFlow id="Flow_0ighe3r" sourceRef="Event_PhD_Assess_Start" targetRef="Activity_Program_Assistant_Assigns_Participants" />
     <bpmn:sequenceFlow id="Flow_1bi0oxc" sourceRef="Activity_Program_Assistant_Assigns_Participants" targetRef="Gateway_1vk6wu2" />
-    <bpmn:sequenceFlow id="Flow_1q4fi07" sourceRef="Activity_Thesis_Director_fills_annual_report" targetRef="Gateway_1osgngt" />
-    <bpmn:sequenceFlow id="Flow_16tresg" sourceRef="Activity_PHD_fills_annual_report" targetRef="Gateway_1u8sie4" />
+    <bpmn:sequenceFlow id="Flow_1q4fi07" sourceRef="Activity_Thesis_Director_fills_annual_report" targetRef="Gateway_Thesis_Director_Check2" />
+    <bpmn:sequenceFlow id="Flow_16tresg" sourceRef="Activity_PHD_fills_annual_report" targetRef="Gateway_Thesis_Director_Check1" />
     <bpmn:sequenceFlow id="Flow_0lwf2vv" sourceRef="Activity_Post_Mentor_Meeting_PHD_Signs" targetRef="Gateway_08kccwb" />
-    <bpmn:sequenceFlow id="Flow_1qnxt97" name="yes" sourceRef="Gateway_1u8sie4" targetRef="Gateway_0wl0pjp">
+    <bpmn:sequenceFlow id="Flow_1qnxt97" name="yes" sourceRef="Gateway_Thesis_Director_Check1" targetRef="Gateway_0wl0pjp">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=thesisCoDirectorSciper!=""</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_00vwbvq" sourceRef="Gateway_0wl0pjp" targetRef="Activity_Thesis_Co_Director_fills_annual_report" />
-    <bpmn:sequenceFlow id="Flow_19qe9od" sourceRef="Gateway_0pguy2h" targetRef="Activity_0s9w3zi" />
+    <bpmn:sequenceFlow id="Flow_19qe9od" sourceRef="Gateway_0pguy2h" targetRef="Activity_Notify_Program_Director_For_Signing_PostMeeting" />
     <bpmn:sequenceFlow id="Flow_0srycx4" sourceRef="Gateway_1tpd7ku" targetRef="Gateway_1a3uoc9" />
     <bpmn:sequenceFlow id="Flow_0cjl7qi" sourceRef="Gateway_1a3uoc9" targetRef="Activity_Post_Mentor_Meeting_PHD_Signs" />
     <bpmn:sequenceFlow id="Flow_1jx24lg" sourceRef="Gateway_1tpd7ku" targetRef="Gateway_1vkk1yr" />
-    <bpmn:sequenceFlow id="Flow_1gy2m7j" name="yes" sourceRef="Gateway_1osgngt" targetRef="Gateway_0w5d3x0">
+    <bpmn:sequenceFlow id="Flow_1gy2m7j" name="yes" sourceRef="Gateway_Thesis_Director_Check2" targetRef="Gateway_0w5d3x0">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=thesisCoDirectorSciper!=""</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1sd2f0p" sourceRef="Activity_Thesis_Director_Collaborative_Review_Signs" targetRef="Gateway_1qftu4l" />
@@ -633,32 +633,32 @@
     <bpmn:sequenceFlow id="Flow_0genhf5" sourceRef="Gateway_145opmc" targetRef="Gateway_1tpd7ku" />
     <bpmn:sequenceFlow id="Flow_16dwmbj" sourceRef="Gateway_145opmc" targetRef="Gateway_1f2dd1w" />
     <bpmn:sequenceFlow id="Flow_1f0mux0" sourceRef="Activity_Thesis_Co_Director_fills_annual_report" targetRef="Gateway_0w5d3x0" />
-    <bpmn:sequenceFlow id="Flow_0r3q628" name="no" sourceRef="Gateway_1osgngt" targetRef="Gateway_1m9wltd" />
+    <bpmn:sequenceFlow id="Flow_0r3q628" name="no" sourceRef="Gateway_Thesis_Director_Check2" targetRef="Gateway_1m9wltd" />
     <bpmn:sequenceFlow id="Flow_0yg2ypo" sourceRef="Gateway_0w5d3x0" targetRef="Gateway_1m9wltd" />
     <bpmn:sequenceFlow id="Flow_1a31ekj" sourceRef="Gateway_1m9wltd" targetRef="Gateway_1kh591k" />
     <bpmn:sequenceFlow id="Flow_071vbx1" sourceRef="Gateway_1kh591k" targetRef="Activity_Thesis_Director_Collaborative_Review_Signs" />
-    <bpmn:sequenceFlow id="Flow_08398id" sourceRef="Gateway_1kh591k" targetRef="Activity_1tdv8a8" />
-    <bpmn:sequenceFlow id="Flow_0b0vfwv" sourceRef="Activity_0etdbm8" targetRef="Gateway_0hp9bfx" />
-    <bpmn:sequenceFlow id="Flow_03a8yu5" sourceRef="Gateway_1iu457q" targetRef="Event_0vnhjct" />
-    <bpmn:sequenceFlow id="Flow_0bkc875" sourceRef="Gateway_0hp9bfx" targetRef="Activity_0jbwxb1" />
-    <bpmn:sequenceFlow id="Flow_19hd8zh" sourceRef="Activity_0jbwxb1" targetRef="Activity_0pelgwh" />
-    <bpmn:sequenceFlow id="Flow_1tpm1z9" sourceRef="Activity_0pelgwh" targetRef="Gateway_1iu457q" />
-    <bpmn:sequenceFlow id="Flow_0z5b27w" sourceRef="Gateway_0hp9bfx" targetRef="Activity_05vw4b2" />
-    <bpmn:sequenceFlow id="Flow_1no9et7" sourceRef="Event_GED_Deposit_Unreachable_Error" targetRef="Activity_1234dlc" />
-    <bpmn:sequenceFlow id="Flow_0qltexw" sourceRef="Activity_1234dlc" targetRef="Gateway_1iu457q" />
-    <bpmn:sequenceFlow id="Flow_1uvq6qs" sourceRef="Activity_05vw4b2" targetRef="Gateway_1iu457q" />
+    <bpmn:sequenceFlow id="Flow_08398id" sourceRef="Gateway_1kh591k" targetRef="Activity_Notify_Thesis_Director_Collaborative_Review_To_Do" />
+    <bpmn:sequenceFlow id="Flow_0b0vfwv" sourceRef="Activity_Build_PDF" targetRef="Gateway_0hp9bfx" />
+    <bpmn:sequenceFlow id="Flow_03a8yu5" sourceRef="Gateway_1iu457q" targetRef="Event_PhD_Assess_Done" />
+    <bpmn:sequenceFlow id="Flow_0bkc875" sourceRef="Gateway_0hp9bfx" targetRef="Activity_Notify_With_PDF_ProgramDirector_And_Office" />
+    <bpmn:sequenceFlow id="Flow_19hd8zh" sourceRef="Activity_Notify_With_PDF_ProgramDirector_And_Office" targetRef="Activity_Notify_With_PDF_PhDStudent" />
+    <bpmn:sequenceFlow id="Flow_1tpm1z9" sourceRef="Activity_Notify_With_PDF_PhDStudent" targetRef="Gateway_1iu457q" />
+    <bpmn:sequenceFlow id="Flow_0z5b27w" sourceRef="Gateway_0hp9bfx" targetRef="Activity_GED_Deposit" />
+    <bpmn:sequenceFlow id="Flow_1no9et7" sourceRef="Event_GED_Deposit_Unreachable_Error" targetRef="Activity_Notify_Ask_For_Manual_Deposit" />
+    <bpmn:sequenceFlow id="Flow_0qltexw" sourceRef="Activity_Notify_Ask_For_Manual_Deposit" targetRef="Gateway_1iu457q" />
+    <bpmn:sequenceFlow id="Flow_1uvq6qs" sourceRef="Activity_GED_Deposit" targetRef="Gateway_1iu457q" />
     <bpmn:parallelGateway id="Gateway_1iu457q">
       <bpmn:incoming>Flow_1tpm1z9</bpmn:incoming>
       <bpmn:incoming>Flow_0qltexw</bpmn:incoming>
       <bpmn:incoming>Flow_1uvq6qs</bpmn:incoming>
       <bpmn:outgoing>Flow_03a8yu5</bpmn:outgoing>
     </bpmn:parallelGateway>
-    <bpmn:sequenceFlow id="Flow_0ytaj1j" sourceRef="Event_GED_Deposit_Student_Folder_Unfindable_Error" targetRef="Activity_1234dlc" />
-    <bpmn:boundaryEvent id="Event_GED_Deposit_Student_Folder_Unfindable_Error" name="GED Student folder unfindable" attachedToRef="Activity_05vw4b2">
+    <bpmn:sequenceFlow id="Flow_0ytaj1j" sourceRef="Event_GED_Deposit_Student_Folder_Unfindable_Error" targetRef="Activity_Notify_Ask_For_Manual_Deposit" />
+    <bpmn:boundaryEvent id="Event_GED_Deposit_Student_Folder_Unfindable_Error" name="GED Student folder unfindable" attachedToRef="Activity_GED_Deposit">
       <bpmn:outgoing>Flow_0ytaj1j</bpmn:outgoing>
       <bpmn:errorEventDefinition id="ErrorEventDefinition_1slywwf" errorRef="Error_1yas1pq" />
     </bpmn:boundaryEvent>
-    <bpmn:boundaryEvent id="Event_GED_Deposit_Unreachable_Error" name="GED unreachable error" attachedToRef="Activity_05vw4b2">
+    <bpmn:boundaryEvent id="Event_GED_Deposit_Unreachable_Error" name="GED unreachable error" attachedToRef="Activity_GED_Deposit">
       <bpmn:outgoing>Flow_1no9et7</bpmn:outgoing>
       <bpmn:errorEventDefinition id="ErrorEventDefinition_1r65m7t" errorRef="Error_0ysg2s5" />
     </bpmn:boundaryEvent>
@@ -704,6 +704,11 @@
       <bpmndi:BPMNShape id="Lane_1k7ll7j_di" bpmnElement="Lane_1k7ll7j" isHorizontal="true">
         <dc:Bounds x="185" y="80" width="4115" height="410" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0ytaj1j_di" bpmnElement="Flow_0ytaj1j">
+        <di:waypoint x="3670" y="358" />
+        <di:waypoint x="3670" y="400" />
+        <di:waypoint x="3790" y="400" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1uvq6qs_di" bpmnElement="Flow_1uvq6qs">
         <di:waypoint x="3710" y="300" />
         <di:waypoint x="3995" y="300" />
@@ -985,12 +990,7 @@
         <di:waypoint x="753" y="950" />
         <di:waypoint x="793" y="950" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0ytaj1j_di" bpmnElement="Flow_0ytaj1j">
-        <di:waypoint x="3670" y="358" />
-        <di:waypoint x="3670" y="400" />
-        <di:waypoint x="3790" y="400" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Event_1okn0bp_di" bpmnElement="Event_14n2id0">
+      <bpmndi:BPMNShape id="Event_1okn0bp_di" bpmnElement="Event_PhD_Assess_Start">
         <dc:Bounds x="275" y="312" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="252" y="355" width="84" height="40" />
@@ -1002,7 +1002,7 @@
       <bpmndi:BPMNShape id="Gateway_00y6ag1_di" bpmnElement="Gateway_00y6ag1">
         <dc:Bounds x="2193" y="565" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0f03q9c_di" bpmnElement="Activity_0f03q9c">
+      <bpmndi:BPMNShape id="Activity_0f03q9c_di" bpmnElement="Activity_Notify_PhDStudent_For_Signing">
         <dc:Bounds x="2168" y="670" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1tpd7ku_di" bpmnElement="Gateway_1tpd7ku">
@@ -1017,10 +1017,10 @@
       <bpmndi:BPMNShape id="Activity_0w278ns_di" bpmnElement="Activity_Post_Mentor_Meeting_PHD_Signs">
         <dc:Bounds x="2858" y="550" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0hude63_di" bpmnElement="Activity_0hude63">
+      <bpmndi:BPMNShape id="Activity_0hude63_di" bpmnElement="Activity_Notify_PhDStudent_PostMeeting_To_Do">
         <dc:Bounds x="2718" y="670" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_10mdiut_di" bpmnElement="Activity_10mdiut">
+      <bpmndi:BPMNShape id="Activity_10mdiut_di" bpmnElement="Activity_Notify_Thesis_Codirector_For_Signing">
         <dc:Bounds x="1568" y="1295" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0crufzf_di" bpmnElement="Gateway_0crufzf">
@@ -1032,7 +1032,7 @@
       <bpmndi:BPMNShape id="Gateway_1vk6wu2_di" bpmnElement="Gateway_1vk6wu2">
         <dc:Bounds x="493" y="565" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0biymns_di" bpmnElement="Activity_0biymns">
+      <bpmndi:BPMNShape id="Activity_0biymns_di" bpmnElement="Activity_Notifiy_PhDStudent_Assignation">
         <dc:Bounds x="468" y="670" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0bcd10c_di" bpmnElement="Activity_PHD_fills_annual_report">
@@ -1041,7 +1041,7 @@
       <bpmndi:BPMNShape id="Activity_10ceb5k_di" bpmnElement="Activity_Thesis_Director_fills_annual_report">
         <dc:Bounds x="888" y="910" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1xqt2me_di" bpmnElement="Activity_1xqt2me">
+      <bpmndi:BPMNShape id="Activity_1xqt2me_di" bpmnElement="Activity_Notify_Thesis_Director_For_Signing">
         <dc:Bounds x="1948" y="1050" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0pq4nc7_di" bpmnElement="Gateway_0pq4nc7" isMarkerVisible="true">
@@ -1056,7 +1056,7 @@
           <dc:Bounds x="1578" y="888" width="81" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1u8sie4_di" bpmnElement="Gateway_1u8sie4" isMarkerVisible="true">
+      <bpmndi:BPMNShape id="Gateway_1u8sie4_di" bpmnElement="Gateway_Thesis_Director_Check1" isMarkerVisible="true">
         <dc:Bounds x="613" y="925" width="50" height="50" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="522" y="937" width="81" height="27" />
@@ -1071,7 +1071,7 @@
       <bpmndi:BPMNShape id="Activity_0yk30nj_di" bpmnElement="Activity_Post_Mentor_Meeting_Mentor_Signs">
         <dc:Bounds x="2858" y="1580" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_09x6bzq_di" bpmnElement="Activity_09x6bzq">
+      <bpmndi:BPMNShape id="Activity_09x6bzq_di" bpmnElement="Activity_Notify_Mentor_PostMeeting_To_Do">
         <dc:Bounds x="2718" y="1680" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1vkk1yr_di" bpmnElement="Gateway_1vkk1yr">
@@ -1080,7 +1080,7 @@
       <bpmndi:BPMNShape id="Gateway_18i972i_di" bpmnElement="Gateway_08kccwb">
         <dc:Bounds x="3013" y="1405" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0s9w3zi_di" bpmnElement="Activity_0s9w3zi">
+      <bpmndi:BPMNShape id="Activity_0s9w3zi_di" bpmnElement="Activity_Notify_Program_Director_For_Signing_PostMeeting">
         <dc:Bounds x="3218" y="1470" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1eaw25w_di" bpmnElement="Gateway_1eaw25w">
@@ -1089,10 +1089,10 @@
       <bpmndi:BPMNShape id="Gateway_0wl0pjp_di" bpmnElement="Gateway_0wl0pjp">
         <dc:Bounds x="703" y="1205" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1wdv629_di" bpmnElement="Activity_1wdv629">
+      <bpmndi:BPMNShape id="Activity_1wdv629_di" bpmnElement="Activity_Notify_Thesis_Codirector_PhDStudent_Filled">
         <dc:Bounds x="678" y="1295" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0wwdo6d_di" bpmnElement="Activity_0wwdo6d">
+      <bpmndi:BPMNShape id="Activity_0wwdo6d_di" bpmnElement="Activity_Notify_Thesis_Director_PhDStudent_Filled">
         <dc:Bounds x="768" y="1030" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1nl6gt1_di" bpmnElement="Activity_Thesis_Co_Director_fills_annual_report">
@@ -1104,13 +1104,13 @@
       <bpmndi:BPMNShape id="Gateway_0w5d3x0_di" bpmnElement="Gateway_0w5d3x0">
         <dc:Bounds x="1126" y="925" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1osgngt_di" bpmnElement="Gateway_1osgngt" isMarkerVisible="true">
+      <bpmndi:BPMNShape id="Gateway_1osgngt_di" bpmnElement="Gateway_Thesis_Director_Check2" isMarkerVisible="true">
         <dc:Bounds x="1036" y="925" width="50" height="50" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1020" y="989" width="81" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1686jxu_di" bpmnElement="Activity_1686jxu">
+      <bpmndi:BPMNShape id="Activity_1686jxu_di" bpmnElement="Activity_Notify_Program_Director_For_Disagreement">
         <dc:Bounds x="2461" y="1460" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1f2dd1w_di" bpmnElement="Gateway_1f2dd1w" isMarkerVisible="true">
@@ -1137,7 +1137,7 @@
           <dc:Bounds x="1528" y="1048" width="78" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0nvflgj_di" bpmnElement="Activity_14o47pb">
+      <bpmndi:BPMNShape id="Activity_0nvflgj_di" bpmnElement="Activity_Notify_Program_Director_Collaborative_Review_Done">
         <dc:Bounds x="1457" y="1470" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1s43jmr_di" bpmnElement="Activity_Thesis_Director_Collaborative_Review_Signs">
@@ -1146,31 +1146,31 @@
       <bpmndi:BPMNShape id="Gateway_0byrnzh_di" bpmnElement="Gateway_1kh591k">
         <dc:Bounds x="1272" y="925" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1tdv8a8_di" bpmnElement="Activity_1tdv8a8">
+      <bpmndi:BPMNShape id="Activity_1tdv8a8_di" bpmnElement="Activity_Notify_Thesis_Director_Collaborative_Review_To_Do">
         <dc:Bounds x="1247" y="1030" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1m9wltd_di" bpmnElement="Gateway_1m9wltd" isMarkerVisible="true">
         <dc:Bounds x="1202" y="925" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0etdbm8_di" bpmnElement="Activity_0etdbm8">
+      <bpmndi:BPMNShape id="Activity_0etdbm8_di" bpmnElement="Activity_Build_PDF">
         <dc:Bounds x="3348" y="150" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0vnhjct_di" bpmnElement="Event_0vnhjct">
+      <bpmndi:BPMNShape id="Event_0vnhjct_di" bpmnElement="Event_PhD_Assess_Done">
         <dc:Bounds x="4172" y="282" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="4146" y="328" width="88" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0jbwxb1_di" bpmnElement="Activity_0jbwxb1">
+      <bpmndi:BPMNShape id="Activity_0jbwxb1_di" bpmnElement="Activity_Notify_With_PDF_ProgramDirector_And_Office">
         <dc:Bounds x="3610" y="150" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0pelgwh_di" bpmnElement="Activity_0pelgwh">
+      <bpmndi:BPMNShape id="Activity_0pelgwh_di" bpmnElement="Activity_Notify_With_PDF_PhDStudent">
         <dc:Bounds x="3790" y="150" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0vwjqq9_di" bpmnElement="Activity_05vw4b2">
+      <bpmndi:BPMNShape id="Activity_0vwjqq9_di" bpmnElement="Activity_GED_Deposit">
         <dc:Bounds x="3610" y="260" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1234dlc_di" bpmnElement="Activity_1234dlc">
+      <bpmndi:BPMNShape id="Activity_1234dlc_di" bpmnElement="Activity_Notify_Ask_For_Manual_Deposit">
         <dc:Bounds x="3790" y="360" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0e3v8s8_di" bpmnElement="Gateway_0hp9bfx">
@@ -1191,6 +1191,18 @@
       <bpmndi:BPMNShape id="TextAnnotation_0qwyl9d_di" bpmnElement="TextAnnotation_0qwyl9d">
         <dc:Bounds x="1367" y="996" width="100" height="54" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1ogv24m_di" bpmnElement="Event_GED_Deposit_Unreachable_Error">
+        <dc:Bounds x="3612" y="322" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3537" y="356" width="88" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0c3qeol_di" bpmnElement="Event_GED_Deposit_Student_Folder_Unfindable_Error">
+        <dc:Bounds x="3652" y="322" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3679" y="356" width="82" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_033zd9d_di" bpmnElement="Association_033zd9d">
         <di:waypoint x="687" y="624" />
         <di:waypoint x="806" y="710" />
@@ -1207,18 +1219,6 @@
         <di:waypoint x="1408" y="990" />
         <di:waypoint x="1410" y="996" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Event_1ogv24m_di" bpmnElement="Event_GED_Deposit_Unreachable_Error">
-        <dc:Bounds x="3612" y="322" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="3537" y="356" width="88" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0c3qeol_di" bpmnElement="Event_GED_Deposit_Student_Folder_Unfindable_Error">
-        <dc:Bounds x="3652" y="322" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="3679" y="356" width="82" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
