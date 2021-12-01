@@ -5,8 +5,10 @@ OPENSHIFT_BUILD_NAMESPACE := phd-assess-test
 .PHONY: build
 build:
 	docker build -t node-base node-base/
+# Need to go through a Docker network, so as to obtain epfl-sti-react-library
+# out of the on-premise NPM server:
 	docker network inspect phd-assess-meteor-network >/dev/null 2>&1 || \
-      docker network create --driver bridge phd-assess-meteor-network
+           docker network create --driver bridge phd-assess-meteor-network
 	docker build -t phd-assess-meteor --network=phd-assess-meteor-network  .
 
 .PHONY: pull
