@@ -18,16 +18,13 @@ Technically, the application consists on a Meteor server, defined as a [Zeebe](h
   cp /keybase/team/epfl_phdassess.test/env_local .env
   ```
 
-### Start the Zeebe state server
+### Start the support infrastructure
 
-- Download [zeebe-hazelcast-exporter-1.0.0-jar-with-dependencies.jar](https://github.com/camunda-community-hub/zeebe-hazelcast-exporter/releases) into ./docker/zeebe-hazelcast
+The support infrastructure is required for the Meteor app to function (in addition to Meteor's usual, internally-managed requirement of a MongoDB database). It consists of Zeebe (the persistent store for workflow data and metadata), the zeebe-simple-monitor, and PostgreSQL (required by the latter for persistence).
 
-- Download [postgresql-42.2.12.jar](https://jdbc.postgresql.org/download/postgresql-42.2.12.jar) into ./docker/simple-monitor
-
-- Build and start the Zeebe server
-  ```
-  cd docker && docker-compose up
-  ```
+```
+make pull build up logs
+```
 
 ### Start the Web framework
 
@@ -50,3 +47,9 @@ Technically, the application consists on a Meteor server, defined as a [Zeebe](h
   - Assert your VPN is on (needed for tequila authentication)
   - Assert you never use the https protocol while browsing (certainly after redirection from the first tequila authentication)
   - Open http://localhost:3000
+
+### Stop the support infrastructure
+
+```
+make down
+```
