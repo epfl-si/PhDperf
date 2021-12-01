@@ -11,7 +11,9 @@ build:
 
 .PHONY: pull
 pull:
-	docker pull camunda/zeebe:1.2.4
+	@ if ! oc projects >/dev/null 2>&1; then echo 'Please log into OpenShift first with `oc login`'; exit 1; fi
+	oc whoami -t | docker login os-docker-registry.epfl.ch -u toto --password-stdin
+	docker pull os-docker-registry.epfl.ch/phd-assess-test/zeebe-broker-with-exporters
 
 # TODO: we don't want to build locally and push; but currently we have
 # to, for want of enough RAM.
