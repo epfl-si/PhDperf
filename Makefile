@@ -15,6 +15,10 @@ pull:
 	oc whoami -t | docker login os-docker-registry.epfl.ch -u toto --password-stdin
 	docker pull os-docker-registry.epfl.ch/phd-assess-test/zeebe-broker-with-exporters
 
+.PHONY: up
+up:
+	cd docker && docker-compose up -d
+
 # TODO: we don't want to build locally and push; but currently we have
 # to, for want of enough RAM.
 .PHONY: push-meteor
