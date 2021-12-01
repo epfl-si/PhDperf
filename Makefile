@@ -30,6 +30,14 @@ up:
 	@mkdir -p docker/volumes/{simple-monitor-data,zeebe_data} || true
 	cd docker && docker-compose up -d
 
+.PHONY: logs
+logs:
+	cd docker && docker-compose logs -f
+
+.PHONY: down
+down:
+	cd docker && docker-compose down
+
 # TODO: we don't want to build locally and push; but currently we have
 # to, for want of enough RAM.
 .PHONY: push-meteor
