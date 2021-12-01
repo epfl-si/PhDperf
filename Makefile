@@ -27,6 +27,7 @@ pull:
 
 .PHONY: up
 up:
+	@mkdir -p docker/volumes/{simple-monitor-data,zeebe_data} || true
 	cd docker && docker-compose up -d
 
 # TODO: we don't want to build locally and push; but currently we have
