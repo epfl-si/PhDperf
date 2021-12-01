@@ -23,7 +23,7 @@ pull:
 
 .PHONY: up
 up:
-	@mkdir -p docker/volumes/{simple-monitor-data,zeebe_data} || true
+	@mkdir -p docker/volumes/simple-monitor-data docker/volumes/zeebe_data || true
 	cd docker && docker-compose up -d
 
 .PHONY: logs
