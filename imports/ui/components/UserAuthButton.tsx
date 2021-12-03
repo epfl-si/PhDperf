@@ -38,9 +38,9 @@ export function UserAuthButton() {
         Logged in as { user?.tequila?.displayname }
         { user?.isAdmin && ` (admin)` }
         { user?.isAdmin &&
-        <p className={'small'}>
+        <span className={'small'}>
           Version {packageJson.version}
-        </p>
+        </span>
         }
       </p>
     </div>
