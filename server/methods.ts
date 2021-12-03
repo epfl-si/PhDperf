@@ -10,6 +10,8 @@ import {zBClient} from "/server/zeebe_broker_connector";
 import WorkersClient from './zeebe_broker_connector'
 import {updateParticipantsFromSciper} from "/server/userFetcher";
 import {auditLogConsoleOut} from "/server/logging";
+import {DoctoralSchools} from "/imports/api/doctoralSchools";
+import {canAccessDoctoralSchoolEdition} from "/imports/policy/doctoralSchools";
 
 const tasks = TasksCollection<TaskData>()
 const auditLog = auditLogConsoleOut.extend('server/methods')
@@ -132,5 +134,18 @@ Meteor.methods({
 
     auditLog(`Refreshing a process instance ${processInstanceKey} by removing it from Meteor`)
     tasks.remove({processInstanceKey: processInstanceKey})
+  },
+
+  async insertDoctoralSchool(doctoralSchool) {
+    if (!canAccessDoctoralSchoolEdition()) {
+      auditLog(`Unallowed user trying to add a doctoral school`)
+      throw new Meteor.Error(403, 'You are not allowed to add a doctoral school')
+    }
+
+    // validate incoming data
+    DoctoralSchools.schema!.validate(doctoralSchool)
+
+    auditLog(`Inserting a new doctoral school ${JSON.stringify(doctoralSchool)}`)
+    return DoctoralSchools.insert(doctoralSchool)
   },
 })
