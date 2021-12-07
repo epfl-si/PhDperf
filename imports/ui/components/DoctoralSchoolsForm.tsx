@@ -111,11 +111,24 @@ type DoctoralSchoolEditParameter = {
 };
 
 const InlineEdit = ({ doctoralSchool }: DoctoralSchoolEditParameter) => {
+  const [editMode, setEditMode] = useState(false)
   const [acronym, setAcronym] = useState(doctoralSchool.acronym)
   const [label, setLabel] = useState(doctoralSchool.label)
   const [helpUrl, setHelpUrl] = useState(doctoralSchool.helpUrl)
   const [creditsNeeded, setCreditsNeeded] = useState(doctoralSchool.creditsNeeded?.toString())
   const [programDirectorSciper, setProgramDirectorSciper] = useState(doctoralSchool.programDirectorSciper)
+
+  const saveEdit = () => {
+    Meteor.call('updateDoctoralSchool', {
+        _id: doctoralSchool._id,
+        acronym: acronym.trim(),
+        label: label.trim(),
+        helpUrl: helpUrl?.trim(),
+        creditsNeeded: creditsNeeded?.trim() ? Number(creditsNeeded.trim()): undefined,
+        programDirectorSciper: programDirectorSciper?.trim(),
+      } as DoctoralSchool
+    )
+  }
 
   return (
     <>
@@ -124,7 +137,11 @@ const InlineEdit = ({ doctoralSchool }: DoctoralSchoolEditParameter) => {
         <EasyEdit
             value={ acronym }
             type={Types.TEXT}
-            onSave={ (e: React.ChangeEvent<HTMLInputElement>) => setAcronym(e.target.value) }
+            editMode={editMode}
+            onSave={ (e: React.ChangeEvent<HTMLInputElement>) => {
+              setAcronym(e.target.value)
+              saveEdit()
+            }}
             onCancel={() => void 0 }
             saveButtonLabel="Save"
             cancelButtonLabel="Cancel"
@@ -135,7 +152,11 @@ const InlineEdit = ({ doctoralSchool }: DoctoralSchoolEditParameter) => {
         <EasyEdit
             value={ label }
             type={Types.TEXT}
-            onSave={ (e: React.ChangeEvent<HTMLInputElement>) => setLabel(e.target.value) }
+            editMode={editMode}
+            onSave={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setLabel(e.target.value)
+              saveEdit()
+            }}
             onCancel={() => void 0 }
             saveButtonLabel="Save"
             cancelButtonLabel="Cancel"
@@ -146,7 +167,11 @@ const InlineEdit = ({ doctoralSchool }: DoctoralSchoolEditParameter) => {
         <EasyEdit
             value={ helpUrl }
             type={Types.TEXT}
-            onSave={ (e: React.ChangeEvent<HTMLInputElement>) => setHelpUrl(e.target.value) }
+            editMode={editMode}
+            onSave={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setHelpUrl(e.target.value)
+              saveEdit()
+            }}
             onCancel={() => void 0 }
             saveButtonLabel="Save"
             cancelButtonLabel="Cancel"
@@ -158,7 +183,11 @@ const InlineEdit = ({ doctoralSchool }: DoctoralSchoolEditParameter) => {
         <EasyEdit
             value={ creditsNeeded }
             type={Types.TEXT}
-            onSave={ (e: any) => setCreditsNeeded(e.target.value) }
+            editMode={editMode}
+            onSave={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setCreditsNeeded(e.target.value)
+              saveEdit()
+            }}
             onCancel={() => void 0 }
             saveButtonLabel="Save"
             cancelButtonLabel="Cancel"
@@ -170,7 +199,12 @@ const InlineEdit = ({ doctoralSchool }: DoctoralSchoolEditParameter) => {
         <EasyEdit
             value={ programDirectorSciper }
             type={Types.TEXT}
-            onSave={ (e: React.ChangeEvent<HTMLInputElement>) => setProgramDirectorSciper(e.target.value) }
+            editMode={editMode}
+            onSave={(e: React.ChangeEvent<HTMLInputElement>) => {
+              debugger
+              setProgramDirectorSciper(e.target.value)
+              saveEdit()
+            }}
             onCancel={() => void 0 }
             saveButtonLabel="Save"
             cancelButtonLabel="Cancel"
@@ -179,6 +213,11 @@ const InlineEdit = ({ doctoralSchool }: DoctoralSchoolEditParameter) => {
             onValidate={ (value: string) => value != null }
             placeholder={ programDirectorSciper ?? "<Program Director Sciper>"}
         />
+
+        <button onClick={() => {
+            setEditMode(!editMode);
+          }}
+        >Edit</button>
       </div>
     </>
   )

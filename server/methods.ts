@@ -148,4 +148,15 @@ Meteor.methods({
     auditLog(`Inserting a new doctoral school ${JSON.stringify(doctoralSchool)}`)
     return DoctoralSchools.insert(doctoralSchool)
   },
+  async updateDoctoralSchool(doctoralSchool) {
+    if (!canAccessDoctoralSchoolEdition()) {
+      auditLog(`Unallowed user trying to edit a doctoral school`)
+      throw new Meteor.Error(403, 'You are not allowed to add a doctoral school')
+    }
+
+    // validate incoming data
+    DoctoralSchools.schema!.validate(doctoralSchool)
+    auditLog(`Updating a doctoral school ${JSON.stringify(doctoralSchool)}`)
+    return DoctoralSchools.update(doctoralSchool._id, { $set: { doctoralSchool } })
+  },
 })
