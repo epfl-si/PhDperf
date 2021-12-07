@@ -9,7 +9,7 @@ import TaskList from "./components/TaskList"
 import {Task} from "./components/Task"
 import {ZeebeStatus} from "/imports/ui/components/ZeebeStatus"
 import {Toaster} from "react-hot-toast";
-import {DoctoralSchoolsForm} from "/imports/ui/components/DoctoralSchools/form";
+import {DoctoralSchoolsList} from "/imports/ui/components/DoctoralSchools/list";
 import {Dashboard} from "/imports/ui/components/Dashboard";
 import {useTracker} from "meteor/react-meteor-data";
 import {Meteor} from "meteor/meteor";
@@ -52,7 +52,7 @@ export const App = () => {
       <Toaster/>
       <Switch>
           <PageRoute path="/doctoral-schools">
-              <DoctoralSchoolsForm/>
+              <DoctoralSchoolsList/>
           </PageRoute>
         <PageRoute path="/dashboard">
           <Dashboard/>

@@ -8,7 +8,7 @@ import {CreateForm} from './create'
 import {InlineEdit} from './edit'
 
 
-export function DoctoralSchoolsForm() {
+export function DoctoralSchoolsList() {
   const [showAdd, setShowAdd] = useState(false)
 
   const userLoaded = !!useTracker(() => {
