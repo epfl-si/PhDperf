@@ -1,6 +1,6 @@
 // load some default data if there is none
 import { Meteor } from 'meteor/meteor'
-import { DoctoralSchools } from '/imports/api/doctoralSchools'
+import { DoctoralSchools } from '/imports/api/doctoralSchools/schema'
 import debug_ from 'debug'
 
 Meteor.startup(() => {

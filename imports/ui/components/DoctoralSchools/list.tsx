@@ -3,7 +3,7 @@ import {useTracker} from "meteor/react-meteor-data";
 import {Meteor} from "meteor/meteor";
 import {canAccessDoctoralSchoolEdition} from "/imports/policy/doctoralSchools";
 import {Loader} from "@epfl/epfl-sti-react-library";
-import {DoctoralSchool, DoctoralSchools} from "/imports/api/doctoralSchools";
+import {DoctoralSchool, DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 import {CreateForm} from './create'
 import {InlineEdit} from './edit'
 

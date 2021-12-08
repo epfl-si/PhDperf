@@ -1,6 +1,6 @@
 import React, {useState} from "react";
-import {Meteor} from "meteor/meteor";
-import {DoctoralSchool} from "/imports/api/doctoralSchools";
+import {DoctoralSchool} from "/imports/api/doctoralSchools/schema";
+import {updateDoctoralSchool} from "/imports/api/doctoralSchools/methods";
 
 
 type DoctoralSchoolEditParameter = {
@@ -26,14 +26,27 @@ export const InlineEdit = ({ doctoralSchool }: DoctoralSchoolEditParameter) => {
   }
 
   const saveEdit = () => {
-    Meteor.call('updateDoctoralSchool', doctoralSchool._id, {
+    updateDoctoralSchool.call({
+        _id: doctoralSchool._id,
         acronym: acronym.trim(),
         label: label.trim(),
         helpUrl: helpUrl?.trim(),
         creditsNeeded: creditsNeeded?.trim() ? Number(creditsNeeded.trim()): undefined,
         programDirectorSciper: programDirectorSciper?.trim(),
-      } as DoctoralSchool
-    )
+      }, (err: any, res: any) => {
+        if (err) {
+          alert(err);
+        } else {
+          if (res == 1) {
+            // success!
+            alert('Successfully updated')
+          } else {
+            alert('Something went wrong, try again.')
+          }
+
+          setEditing(false)
+        }
+    })
   }
 
   return (
@@ -106,7 +119,7 @@ export const InlineEdit = ({ doctoralSchool }: DoctoralSchoolEditParameter) => {
             />
           </div>
           <div>
-            <button type="button" className={"btn btn-primary"} onClick={() => { saveEdit(); setEditing(false)}}>Save</button>
+            <button type="button" className={"btn btn-primary"} onClick={() => { saveEdit()}}>Save</button>
             <button type="button" className={"btn btn-secondary ml-2"} onClick={() => setEditing(false)}>Cancel</button>
             <button type="button" className={"btn float-right btn-primary"} onClick={() => setEditing(false)}>Delete</button>
           </div>

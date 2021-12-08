@@ -9,9 +9,12 @@ import _ from "lodash";
 import {zBClient} from "/server/zeebe_broker_connector";
 import WorkersClient from './zeebe_broker_connector'
 import {updateParticipantsFromSciper} from "/server/userFetcher";
-import {auditLogConsoleOut} from "/server/logging";
-import {DoctoralSchools} from "/imports/api/doctoralSchools";
+import {DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 import {canAccessDoctoralSchoolEdition} from "/imports/policy/doctoralSchools";
+import {auditLogConsoleOut} from "/imports/lib/logging";
+
+// load methods from shared js
+import '/imports/api/doctoralSchools/methods'
 
 const tasks = TasksCollection<TaskData>()
 const auditLog = auditLogConsoleOut.extend('server/methods')
@@ -144,18 +147,6 @@ Meteor.methods({
 
     auditLog(`Inserting a new doctoral school ${JSON.stringify(doctoralSchool)}`)
     return DoctoralSchools.insert(doctoralSchool, (error, result) => {
-      auditLog(error)
-      auditLog(result)
-    })
-  },
-  async updateDoctoralSchool(_id, doctoralSchool) {
-    if (!canAccessDoctoralSchoolEdition()) {
-      auditLog(`Unallowed user trying to edit a doctoral school`)
-      throw new Meteor.Error(403, 'You are not allowed to add a doctoral school')
-    }
-
-    auditLog(`Updating a doctoral school, _id : ${_id} ${JSON.stringify(doctoralSchool)}`)
-    return DoctoralSchools.update(_id, { $set: { ...doctoralSchool } }, {}, (error, result) => {
       auditLog(error)
       auditLog(result)
     })
