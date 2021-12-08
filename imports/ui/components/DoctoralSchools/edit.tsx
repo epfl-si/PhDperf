@@ -15,9 +15,18 @@ export const InlineEdit = ({ doctoralSchool }: DoctoralSchoolEditParameter) => {
   const [creditsNeeded, setCreditsNeeded] = useState(doctoralSchool.creditsNeeded?.toString())
   const [programDirectorSciper, setProgramDirectorSciper] = useState(doctoralSchool.programDirectorSciper)
 
+  const openEditingMode = () => {
+    // refresh state values and show the inputs
+    setAcronym(doctoralSchool.acronym)
+    setLabel(doctoralSchool.label)
+    setHelpUrl(doctoralSchool.helpUrl)
+    setCreditsNeeded(doctoralSchool.creditsNeeded?.toString())
+    setProgramDirectorSciper(doctoralSchool.programDirectorSciper)
+    setEditing(true)
+  }
+
   const saveEdit = () => {
-    Meteor.call('updateDoctoralSchool', {
-        _id: doctoralSchool._id,
+    Meteor.call('updateDoctoralSchool', doctoralSchool._id, {
         acronym: acronym.trim(),
         label: label.trim(),
         helpUrl: helpUrl?.trim(),
@@ -97,21 +106,21 @@ export const InlineEdit = ({ doctoralSchool }: DoctoralSchoolEditParameter) => {
             />
           </div>
           <div>
-            <button className={"btn btn-primary"} onClick={() => { saveEdit(); setEditing(false)}}>Save</button>
-            <button className={"btn btn-secondary ml-2"} onClick={() => setEditing(false)}>Cancel</button>
-            <button className={"btn float-right btn-primary"} onClick={() => setEditing(false)}>Delete</button>
+            <button type="button" className={"btn btn-primary"} onClick={() => { saveEdit(); setEditing(false)}}>Save</button>
+            <button type="button" className={"btn btn-secondary ml-2"} onClick={() => setEditing(false)}>Cancel</button>
+            <button type="button" className={"btn float-right btn-primary"} onClick={() => setEditing(false)}>Delete</button>
           </div>
         </form>
         }
         {!editing &&
-          <div className={'row'}>
-            <div className={'col-1 font-weight-bold'}>{acronym}</div>
-            <div className={'col-4'}>{label}</div>
-            <div className={'col-3'}>{helpUrl}</div>
-            <div className={'col-1'}>{creditsNeeded}</div>
-            <div className={'col-2'}>{programDirectorSciper}</div>
-            <div className={'col-1'}><button className={"btn btn-secondary"} onClick={() => setEditing(true)}>Edit</button></div>
-          </div>
+        <div className={'row'}>
+          <div className={'col-1 font-weight-bold'}>{doctoralSchool.acronym}</div>
+          <div className={'col-4'}>{doctoralSchool.label}</div>
+          <div className={'col-3'}>{doctoralSchool.helpUrl}</div>
+          <div className={'col-1'}>{doctoralSchool.creditsNeeded}</div>
+          <div className={'col-2'}>{doctoralSchool.programDirectorSciper}</div>
+          <div className={'col-1'}><button className={"btn btn-secondary"} onClick={() => openEditingMode()}>Edit</button></div>
+        </div>
         }
       </div>
     </>

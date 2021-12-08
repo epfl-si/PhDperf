@@ -22,9 +22,9 @@ export function DoctoralSchoolsList() {
     return !handle.ready();
   }, []);
 
-  const doctoralSchoolsData = useTracker(
-    () => DoctoralSchools.find({}).fetch()
-  ) as DoctoralSchool[]
+  const doctoralSchools = useTracker(
+    () => DoctoralSchools.find().fetch()
+  , []) as DoctoralSchool[]
 
   if (!userLoaded) return (<div>Loading user</div>)
   if (userLoaded && !canAccessDoctoralSchoolEdition()) return (<div>Your permission does not allow you to see the dashboard </div>)
@@ -34,7 +34,7 @@ export function DoctoralSchoolsList() {
       {doctoralSchoolsLoading ? (
         <Loader message={'Loading doctoral schools data...'}/>
       ) : (
-        doctoralSchoolsData.length === 0 ? (
+        doctoralSchools.length === 0 ? (
           <>
             {
               !showAdd &&
@@ -57,7 +57,7 @@ export function DoctoralSchoolsList() {
             }
             <div className={'container mt-3'}>
               {
-                doctoralSchoolsData.map((doctoralSchool) =>
+                doctoralSchools.map((doctoralSchool) =>
                   <InlineEdit key={doctoralSchool._id} doctoralSchool={ doctoralSchool } />
                 )
               }
