@@ -18,7 +18,7 @@ Meteor.startup(() => {
     service: 'PhD Annual Report',
     allows: 'categorie=epfl-guests',
     request: ['uniqueid', 'username', 'name', 'firstname', 'displayname', 'personaltitle', 'email', 'group'],
-    fakeLocalServer: Meteor.settings.fake_tequila,  // TODO: remove before prod, can be unwanted behavior
+    fakeLocalServer: Meteor.settings.fake_tequila,
   })
 })
 
