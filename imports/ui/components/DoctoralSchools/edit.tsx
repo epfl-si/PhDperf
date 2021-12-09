@@ -109,7 +109,7 @@ export const InlineEdit = ({ doctoralSchool }: DoctoralSchoolEditParameter) => {
             <label htmlFor={`doctoralSchool-programDirectorSciper-edit-input-${doctoralSchool._id}`}>Program director
               sciper</label>
             <input
-              value={creditsNeeded}
+              value={programDirectorSciper}
               type="text"
               className={'form-control'}
               name="doctoralSchool-programDirectorSciper-edit-input"
