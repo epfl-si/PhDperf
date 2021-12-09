@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import {DoctoralSchool} from "/imports/api/doctoralSchools/schema";
 import {insertDoctoralSchool} from "/imports/api/doctoralSchools/methods"
+import toast from "react-hot-toast"
 
 type CreateParameter = {
   toggleCreateForm: React.Dispatch<React.SetStateAction<boolean>>;
@@ -24,10 +25,10 @@ export const CreateForm = ({toggleCreateForm}: CreateParameter) => {
         programDirectorSciper: programDirectorSciper?.trim(),
       } as DoctoralSchool, (err: any) => {
         if (err) {
-          alert(JSON.stringify(err));
+          toast.error(`Something is wrong. ${err.message}`)
         } else {
           // success!
-          alert('New doctoral created')
+          toast.success('New doctoral created')
           toggleCreateForm(false)
           setAcronym("")
           setLabel("")

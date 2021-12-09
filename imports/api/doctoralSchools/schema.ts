@@ -3,7 +3,7 @@ import SimpleSchema from 'simpl-schema';
 import {Sciper} from "/imports/api/datatypes";
 
 export interface DoctoralSchool {
-    _id: string,
+    _id?: string,
     acronym: string,
     label: string,
     helpUrl?: string,

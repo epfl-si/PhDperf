@@ -43,7 +43,13 @@ export const updateDoctoralSchool = new ValidatedMethod({
     noRetry: true,
   },
 
-  run({_id, ...doctoralSchoolData}: {_id: string, doctoralSchoolData: DoctoralSchool}) {
+  run({ _id,
+        acronym,
+        label,
+        helpUrl,
+        creditsNeeded,
+        programDirectorSciper,
+    }: DoctoralSchool) {
 
     if (!canAccessDoctoralSchoolEdition()) {
         if (Meteor.isServer) {
@@ -60,6 +66,14 @@ export const updateDoctoralSchool = new ValidatedMethod({
         'Cannot find a doctoral schools to update.');
     }
 
-    return DoctoralSchools.update(_id, { $set: { ...doctoralSchoolData } })
+    return DoctoralSchools.update(
+      _id!, {
+        $set: {
+          acronym,
+          label,
+          helpUrl,
+          creditsNeeded,
+          programDirectorSciper,
+        }})
   }
 });

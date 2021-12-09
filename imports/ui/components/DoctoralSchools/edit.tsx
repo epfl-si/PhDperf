@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import {DoctoralSchool} from "/imports/api/doctoralSchools/schema";
 import {updateDoctoralSchool} from "/imports/api/doctoralSchools/methods";
+import toast from "react-hot-toast"
 
 
 type DoctoralSchoolEditParameter = {
@@ -27,24 +28,23 @@ export const InlineEdit = ({ doctoralSchool }: DoctoralSchoolEditParameter) => {
 
   const saveEdit = () => {
     updateDoctoralSchool.call({
-        _id: doctoralSchool._id,
-        acronym: acronym.trim(),
-        label: label.trim(),
-        helpUrl: helpUrl?.trim(),
-        creditsNeeded: creditsNeeded?.trim() ? Number(creditsNeeded.trim()): undefined,
-        programDirectorSciper: programDirectorSciper?.trim(),
+      _id: doctoralSchool._id!,
+      acronym: acronym.trim(),
+      label: label.trim(),
+      helpUrl: helpUrl?.trim(),
+      creditsNeeded: creditsNeeded?.trim() ? Number(creditsNeeded.trim()): undefined,
+      programDirectorSciper: programDirectorSciper?.trim(),
       }, (err: any, res: any) => {
         if (err) {
-          alert(err);
+          toast.error(`${err.message}`);
         } else {
           if (res == 1) {
             // success!
-            alert('Successfully updated')
+            toast.success('Successfully updated')
+            setEditing(false)
           } else {
-            alert('Something went wrong, try again.')
+            toast.error(`Something is wrong. ${err.message}`)
           }
-
-          setEditing(false)
         }
     })
   }
