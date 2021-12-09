@@ -23,7 +23,7 @@ export function DoctoralSchoolsList() {
   }, []);
 
   const doctoralSchools = useTracker(
-    () => DoctoralSchools.find().fetch()
+    () => DoctoralSchools.find({}, { sort: { 'acronym': 1 } }).fetch()
   , []) as DoctoralSchool[]
 
   if (!userLoaded) return (<div>Loading user</div>)
