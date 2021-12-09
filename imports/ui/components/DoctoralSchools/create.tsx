@@ -1,6 +1,6 @@
 import React, {useState} from "react";
-import {Meteor} from "meteor/meteor";
-import {DoctoralSchool} from "/imports/api/doctoralSchools";
+import {DoctoralSchool} from "/imports/api/doctoralSchools/schema";
+import {insertDoctoralSchool} from "/imports/api/doctoralSchools/methods"
 
 type CreateParameter = {
   toggleCreateForm: React.Dispatch<React.SetStateAction<boolean>>;
@@ -16,26 +16,27 @@ export const CreateForm = ({toggleCreateForm}: CreateParameter) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!acronym?.trim() || !label?.trim()) {
-      alert('Please set at least the acronym and the label')
-      return
-    }
-
-    Meteor.call('insertDoctoralSchool', {
+    insertDoctoralSchool.call({
         acronym: acronym.trim(),
         label: label.trim(),
         helpUrl: helpUrl?.trim(),
         creditsNeeded: creditsNeeded?.trim() ? Number(creditsNeeded.trim()): undefined,
         programDirectorSciper: programDirectorSciper?.trim(),
-      } as DoctoralSchool
+      } as DoctoralSchool, (err: any) => {
+        if (err) {
+          alert(JSON.stringify(err));
+        } else {
+          // success!
+          alert('New doctoral created')
+          toggleCreateForm(false)
+          setAcronym("")
+          setLabel("")
+          setHelpUrl("")
+          setCreditsNeeded("")
+          setProgramDirectorSciper("")
+        }
+      }
     )
-
-    toggleCreateForm(false)
-    setAcronym("")
-    setLabel("")
-    setHelpUrl("")
-    setCreditsNeeded("")
-    setProgramDirectorSciper("")
   }
 
   return (

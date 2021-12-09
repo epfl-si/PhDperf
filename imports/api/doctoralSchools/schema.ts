@@ -14,7 +14,7 @@ export interface DoctoralSchool {
 export const DoctoralSchools = new Mongo.Collection('doctoralSchools')
 
 DoctoralSchools.schema = new SimpleSchema({
-    _id: {type: String},
+    _id: {type: String, optional: true},
     acronym: {type: String},
     label: {type: String},
     helpUrl: {type: String, optional: true},
