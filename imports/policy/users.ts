@@ -1,3 +1,4 @@
+import {Meteor} from "meteor/meteor";
 import { User } from '/imports/model/user'
 
 User.transform.addComputedField('groupList', (user) => {
