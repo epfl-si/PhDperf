@@ -25,16 +25,16 @@ export const CreateForm = ({toggleCreateForm}: CreateParameter) => {
         programDirectorSciper: programDirectorSciper?.trim(),
       } as DoctoralSchool, (err: any) => {
         if (err) {
-          toast.error(`Something is wrong. ${err.message}`)
+          toast.error(`${err.message}`)
         } else {
           // success!
           toast.success('New doctoral created')
-          toggleCreateForm(false)
           setAcronym("")
           setLabel("")
           setHelpUrl("")
           setCreditsNeeded("")
           setProgramDirectorSciper("")
+          toggleCreateForm(false)
         }
       }
     )
