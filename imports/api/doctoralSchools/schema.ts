@@ -14,8 +14,8 @@ export interface DoctoralSchool {
 }
 
 export const DoctoralSchools = new Mongo.Collection('doctoralSchools',
-  Meteor.isServer ? { connection : persistentDB } : {})
-
+// @ts-ignore
+  persistentDB && Meteor.isServer ? { _driver : persistentDB } : {})
 
 SimpleSchema.setDefaultMessages({
   messages: {
