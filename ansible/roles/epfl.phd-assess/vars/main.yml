@@ -28,10 +28,14 @@ zeebe_has_high_availability_quorum: >-
 
 phd_assess_meteor_servicename: "phd-assess-meteor"
 phd_assess_meteor_image_tag: "{{openshift_image_registry}}/{{openshift_namespace}}/{{phd_assess_meteor_servicename}}:latest"
+keybase_secrets_folder: >-
+  {{ "epfl_phdassess.test" if ("test" in openshift_namespace)
+    else "epfl_phdassess" }}
 secret_name: "phd-assess.secrets"
 meteor_secret_name: "phd-assess.meteor.secrets"
 encryption_key_name: "PHDASSESS_ENCRYPTION_KEY"
 websrv_password_key_name: "WEBSRV_PASSWORD"
+persistent_mongo_url_key_name: "PERSISTENT_MONGO_URL"
 volume_zeebe_name: "svc0166-{{ app_name }}-zeebe-partition-app"
 
 phd_assess_meteor_image_name: "phd-assess-meteor"

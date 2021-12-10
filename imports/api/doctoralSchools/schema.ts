@@ -1,6 +1,8 @@
-import { Mongo } from "meteor/mongo";
+import {Mongo} from "meteor/mongo";
 import SimpleSchema from 'simpl-schema';
 import {Sciper} from "/imports/api/datatypes";
+import persistentDB from "/imports/db/persistent";
+import {Meteor} from "meteor/meteor";
 
 export interface DoctoralSchool {
   _id?: string,
@@ -11,7 +13,9 @@ export interface DoctoralSchool {
   programDirectorSciper?: Sciper,
 }
 
-export const DoctoralSchools = new Mongo.Collection('doctoralSchools')
+export const DoctoralSchools = new Mongo.Collection('doctoralSchools',
+  Meteor.isServer ? { connection : persistentDB } : {})
+
 
 SimpleSchema.setDefaultMessages({
   messages: {
