@@ -35,6 +35,7 @@
   },
   "exclude": [
     "./.meteor/**",
-    "./packages/**"
+    "./packages/**",
+    "./docker/**"
   ]
 }

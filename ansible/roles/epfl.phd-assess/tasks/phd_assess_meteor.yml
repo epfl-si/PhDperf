@@ -134,6 +134,11 @@
                   secretKeyRef:
                     name: "{{ meteor_secret_name }}"
                     key: "{{ websrv_password_key_name }}"
+              - name: "{{ persistent_mongo_url_key_name }}"
+                valueFrom:
+                  secretKeyRef:
+                    name: "{{ meteor_secret_name }}"
+                    key: "{{ persistent_mongo_url_key_name }}"
               command:
                 - /usr/bin/node
                 - main.js

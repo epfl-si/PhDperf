@@ -3,6 +3,7 @@ import { Mongo } from 'meteor/mongo'
 import {Sciper} from "/imports/api/datatypes";
 import {ICustomHeaders, IInputVariables, Job} from "zeebe-node";
 import {ZeebeParticipantsVariables} from './participants';
+import ephemeralDB from "/imports/db/ephemeral";
 
 export class PhDCustomHeaderShape implements ICustomHeaders {
   groups?: string[]  // manage permission groupwise
@@ -53,5 +54,5 @@ export function TasksCollection<U>(transform ?: (doc: TaskData) => U) {
   return new Mongo.Collection<TaskData, U>(
     collectionName,
     // The collection is *not* persistent server-side; instead, it gets fed from Zeebe
-    Meteor.isServer ? { connection : null, transform } : { transform })
+    Meteor.isServer ? { connection : ephemeralDB, transform } : { transform })
 }

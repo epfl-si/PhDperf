@@ -9,7 +9,10 @@ import _ from "lodash";
 import {zBClient} from "/server/zeebe_broker_connector";
 import WorkersClient from './zeebe_broker_connector'
 import {updateParticipantsFromSciper} from "/server/userFetcher";
-import {auditLogConsoleOut} from "/server/logging";
+import {auditLogConsoleOut} from "/imports/lib/logging";
+
+// load methods from shared js
+import '/imports/api/doctoralSchools/methods'
 
 const tasks = TasksCollection<TaskData>()
 const auditLog = auditLogConsoleOut.extend('server/methods')

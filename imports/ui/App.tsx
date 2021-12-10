@@ -9,6 +9,7 @@ import TaskList from "./components/TaskList"
 import {Task} from "./components/Task"
 import {ZeebeStatus} from "/imports/ui/components/ZeebeStatus"
 import {Toaster} from "react-hot-toast";
+import {DoctoralSchoolsList} from "/imports/ui/components/DoctoralSchools/list";
 import {Dashboard} from "/imports/ui/components/Dashboard";
 import {useTracker} from "meteor/react-meteor-data";
 import {Meteor} from "meteor/meteor";
@@ -50,6 +51,9 @@ export const App = () => {
     <BrowserRouter>
       <Toaster/>
       <Switch>
+          <PageRoute path="/doctoral-schools">
+              <DoctoralSchoolsList/>
+          </PageRoute>
         <PageRoute path="/dashboard">
           <Dashboard/>
         </PageRoute>
