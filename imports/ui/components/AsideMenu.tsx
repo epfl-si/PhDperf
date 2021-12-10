@@ -7,10 +7,10 @@ export const AsideMenu = () => (
       <ul>
         <li>
           <a href="#">
-            Administration
+            Doctoral Schools
           </a>
           <ul>
-            <li className={`/doctoral-schools` === document.location.pathname ? 'active' : undefined }><Link to={`/doctoral-schools`}>Doctoral schools</Link></li>
+            <li className={`/doctoral-schools` === document.location.pathname ? 'active' : undefined }><Link to={`/doctoral-schools`}>Administration</Link></li>
           </ul>
         </li>
         <li>
