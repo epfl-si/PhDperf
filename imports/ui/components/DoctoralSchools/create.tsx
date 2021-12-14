@@ -28,7 +28,7 @@ export const CreateForm = ({toggleCreateForm}: CreateParameter) => {
           toast.error(`${err.message}`)
         } else {
           // success!
-          toast.success('New doctoral created')
+          toast.success('New doctoral school created')
           setAcronym("")
           setLabel("")
           setHelpUrl("")
@@ -66,7 +66,7 @@ export const CreateForm = ({toggleCreateForm}: CreateParameter) => {
         />
       </div>
       <div className="form-group">
-        <label htmlFor="helpUrlInput" className={"field-required"}>Help URL</label>
+        <label htmlFor="helpUrlInput" className={"field-required"}>Link to the annual report documentation</label>
         <input
           id="helpUrlInput"
           className="form-control"

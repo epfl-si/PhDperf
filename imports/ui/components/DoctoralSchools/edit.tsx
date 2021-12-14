@@ -83,14 +83,14 @@ export const InlineEdit = ({ doctoralSchool }: DoctoralSchoolEditParameter) => {
           </div>
           <div className="form-group">
             <label className={"field-required"}
-              htmlFor={`doctoralSchool-helpUrl-edit-input-${doctoralSchool._id}`}>Help URL</label>
+              htmlFor={`doctoralSchool-helpUrl-edit-input-${doctoralSchool._id}`}>Link to the annual report documentation</label>
             <input
               value={helpUrl}
               type="url"
               className={'form-control'}
               name="doctoralSchool-helpUrl-edit-input"
               id={`doctoralSchool-helpUrl-edit-input-${doctoralSchool._id}`}
-              placeholder="Type to here to enter the help URL"
+              placeholder="Type to here to enter the URL"
               onChange={ (e) => setHelpUrl(e.target.value) }
             />
           </div>
