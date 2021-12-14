@@ -30,7 +30,17 @@ export const insertDoctoralSchool = new ValidatedMethod({
       auditLog(`Inserting a new doctoral school ${JSON.stringify(newDoctoralSchool)}`)
     }
 
-    return DoctoralSchools.insert(newDoctoralSchool)
+    try {
+      return DoctoralSchools.insert(newDoctoralSchool)
+    } catch (e: any) {
+      if (e.name === 'BulkWriteError' && e.code === 11000) {
+        throw new Meteor.Error('Create Error',
+          `Duplicate acronym found`);
+      } else {
+        throw new Meteor.Error('Create Error',
+          `${JSON.stringify(e)}`);
+      }
+    }
   }
 });
 
@@ -43,13 +53,7 @@ export const updateDoctoralSchool = new ValidatedMethod({
     noRetry: true,
   },
 
-  run({ _id,
-        acronym,
-        label,
-        helpUrl,
-        creditsNeeded,
-        programDirectorSciper,
-    }: DoctoralSchool) {
+  run({ _id, acronym, label, helpUrl, creditsNeeded, programDirectorSciper }: DoctoralSchool) {
 
     if (!canAccessDoctoralSchoolEdition()) {
         if (Meteor.isServer) {
@@ -65,15 +69,25 @@ export const updateDoctoralSchool = new ValidatedMethod({
       throw new Meteor.Error('DoctoralSchools.methods.update',
         'Cannot find a doctoral schools to update.');
     }
-
-    return DoctoralSchools.update(
-      _id!, {
-        $set: {
-          acronym,
-          label,
-          helpUrl,
-          creditsNeeded,
-          programDirectorSciper,
-        }})
+    try {
+      return DoctoralSchools.update(
+        _id!, {
+          $set: {
+            acronym,
+            label,
+            helpUrl,
+            creditsNeeded,
+            programDirectorSciper,
+          }
+        })
+    } catch (e: any) {
+      if (e.name === 'MongoError' && e.code === 11000) {
+        throw new Meteor.Error('Update Error',
+          `Duplicate acronym found ${JSON.stringify(e.keyValue)}`);
+      } else {
+        throw new Meteor.Error('Create Error',
+          `${JSON.stringify(e)}`);
+      }
+    }
   }
 });
