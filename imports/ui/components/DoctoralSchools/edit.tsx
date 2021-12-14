@@ -121,7 +121,6 @@ export const InlineEdit = ({ doctoralSchool }: DoctoralSchoolEditParameter) => {
           <div>
             <button type="button" className={"btn btn-primary"} onClick={() => { saveEdit()}}>Save</button>
             <button type="button" className={"btn btn-secondary ml-2"} onClick={() => setEditing(false)}>Cancel</button>
-            <button type="button" className={"btn float-right btn-primary"} onClick={() => setEditing(false)}>Delete</button>
           </div>
         </form>
         }
