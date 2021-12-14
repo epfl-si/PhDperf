@@ -3,6 +3,7 @@ import SimpleSchema from 'simpl-schema';
 import {Sciper} from "/imports/api/datatypes";
 import persistentDB from "/imports/db/persistent";
 import {Meteor} from "meteor/meteor";
+import _ from "lodash";
 
 export interface DoctoralSchool {
   _id?: string,
@@ -20,16 +21,26 @@ export const DoctoralSchools = new Mongo.Collection('doctoralSchools',
 SimpleSchema.setDefaultMessages({
   messages: {
     en: {
-      notUnique: "This acronym should not already exists",
+      notUnique: "This acronym already exists",
     },
   },
 });
 
 DoctoralSchools.schema = new SimpleSchema({
   _id: {type: String, optional: true},
-  acronym: {type: String, custom: function() {
-      if (!this.isModifier && DoctoralSchools.findOne({ acronym: this.value})) {
-        return {name: this.key, type: "notUnique", value: this.value}
+  acronym: {
+    type: String, custom: function() {
+      /* check for uniqueness on client */
+      if (Meteor.isClient && this.isSet) {
+        // is the acronym already in ?
+        const doctoralSchools = DoctoralSchools.find({acronym: this.value}).fetch() as DoctoralSchool[]
+        if (this.isSet && this.field('_id')?.value) {
+          // then remove ourself
+          _.remove(doctoralSchools, (ds) => ds._id === this.field('_id').value)
+        }
+        if (doctoralSchools.length) {
+          return {name: this.key, type: "notUnique", value: this.value}
+        }
       }
     }
   },
