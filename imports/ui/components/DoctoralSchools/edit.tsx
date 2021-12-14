@@ -31,8 +31,8 @@ export const InlineEdit = ({ doctoralSchool }: DoctoralSchoolEditParameter) => {
       _id: doctoralSchool._id!,
       acronym: acronym.trim(),
       label: label.trim(),
-      helpUrl: helpUrl?.trim(),
-      creditsNeeded: creditsNeeded?.trim() ? Number(creditsNeeded.trim()): undefined,
+      helpUrl: helpUrl.trim(),
+      creditsNeeded: Number(creditsNeeded.trim()),
       programDirectorSciper: programDirectorSciper?.trim(),
       }, (err: any, res: any) => {
         if (err) {
@@ -82,7 +82,8 @@ export const InlineEdit = ({ doctoralSchool }: DoctoralSchoolEditParameter) => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor={`doctoralSchool-helpUrl-edit-input-${doctoralSchool._id}`}>Help URL</label>
+            <label className={"field-required"}
+              htmlFor={`doctoralSchool-helpUrl-edit-input-${doctoralSchool._id}`}>Help URL</label>
             <input
               value={helpUrl}
               type="url"
@@ -94,7 +95,8 @@ export const InlineEdit = ({ doctoralSchool }: DoctoralSchoolEditParameter) => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor={`doctoralSchool-creditsNeeded-edit-input-${doctoralSchool._id}`}>Credits needed</label>
+            <label className={"field-required"}
+              htmlFor={`doctoralSchool-creditsNeeded-edit-input-${doctoralSchool._id}`}>Credits needed</label>
             <input
               value={creditsNeeded}
               type="url"
@@ -106,7 +108,8 @@ export const InlineEdit = ({ doctoralSchool }: DoctoralSchoolEditParameter) => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor={`doctoralSchool-programDirectorSciper-edit-input-${doctoralSchool._id}`}>Program director
+            <label className={"field-required"}
+              htmlFor={`doctoralSchool-programDirectorSciper-edit-input-${doctoralSchool._id}`}>Program director
               sciper</label>
             <input
               value={programDirectorSciper}

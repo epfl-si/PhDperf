@@ -8,9 +8,9 @@ export interface DoctoralSchool {
   _id?: string,
   acronym: string,
   label: string,
-  helpUrl?: string,
-  creditsNeeded?: number,
-  programDirectorSciper?: Sciper,
+  helpUrl: string,
+  creditsNeeded: number,
+  programDirectorSciper: Sciper,
 }
 
 export const DoctoralSchools = new Mongo.Collection('doctoralSchools',
@@ -31,9 +31,9 @@ DoctoralSchools.schema = new SimpleSchema({
   // @ts-ignore
   acronym: { type: String, unique: true },
   label: { type: String },
-  helpUrl: { type: String, optional: true },
-  creditsNeeded: { type: Number, optional: true },
-  programDirectorSciper: { type: String, optional: true },
+  helpUrl: { type: String },
+  creditsNeeded: { type: Number },
+  programDirectorSciper: { type: String },
 });
 
 DoctoralSchools.attachSchema(DoctoralSchools.schema);

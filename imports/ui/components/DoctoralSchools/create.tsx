@@ -20,8 +20,8 @@ export const CreateForm = ({toggleCreateForm}: CreateParameter) => {
     insertDoctoralSchool.call({
         acronym: acronym.trim(),
         label: label.trim(),
-        helpUrl: helpUrl?.trim(),
-        creditsNeeded: creditsNeeded?.trim() ? Number(creditsNeeded.trim()): undefined,
+        helpUrl: helpUrl.trim(),
+        creditsNeeded: Number(creditsNeeded.trim()),
         programDirectorSciper: programDirectorSciper?.trim(),
       } as DoctoralSchool, (err: any) => {
         if (err) {
@@ -66,7 +66,7 @@ export const CreateForm = ({toggleCreateForm}: CreateParameter) => {
         />
       </div>
       <div className="form-group">
-        <label htmlFor="helpUrlInput">Help URL</label>
+        <label htmlFor="helpUrlInput" className={"field-required"}>Help URL</label>
         <input
           id="helpUrlInput"
           className="form-control"
@@ -77,7 +77,7 @@ export const CreateForm = ({toggleCreateForm}: CreateParameter) => {
         />
       </div>
       <div className="form-group">
-        <label htmlFor="creditsNeededInput">Credits needed</label>
+        <label htmlFor="creditsNeededInput" className={"field-required"}>Credits needed</label>
         <input
           id="creditsNeededInput"
           className="form-control"
@@ -88,7 +88,7 @@ export const CreateForm = ({toggleCreateForm}: CreateParameter) => {
         />
       </div>
       <div className="form-group">
-        <label htmlFor="programDirectorSciperInput">Program Director Sciper</label>
+        <label htmlFor="programDirectorSciperInput" className={"field-required"}>Program Director Sciper</label>
         <input
           id="programDirectorSciperInput"
           className="form-control"
