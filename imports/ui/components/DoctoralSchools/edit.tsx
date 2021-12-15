@@ -66,6 +66,7 @@ export const InlineEdit = ({ doctoralSchool }: DoctoralSchoolEditParameter) => {
               id={`doctoralSchool-acronym-edit-input-${doctoralSchool._id}`}
               placeholder="Type to here to enter the acronym"
               onChange={ (e) => setAcronym(e.target.value) }
+              readOnly={true}
             />
           </div>
           <div className="form-group">
@@ -79,6 +80,7 @@ export const InlineEdit = ({ doctoralSchool }: DoctoralSchoolEditParameter) => {
               id={`doctoralSchool-label-edit-input-${doctoralSchool._id}`}
               placeholder="Type to here to enter the label"
               onChange={ (e) => setLabel(e.target.value) }
+              readOnly={true}
             />
           </div>
           <div className="form-group">
