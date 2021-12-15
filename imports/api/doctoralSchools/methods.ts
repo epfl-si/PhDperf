@@ -25,13 +25,16 @@ export const insertDoctoralSchool = new ValidatedMethod({
       }
       throw new Meteor.Error(403, 'You are not allowed to add a doctoral school')
     }
-    if (Meteor.isServer) {
-      const auditLog = auditLogConsoleOut.extend('server/methods')
-      auditLog(`Inserting a new doctoral school ${JSON.stringify(newDoctoralSchool)}`)
-    }
 
     try {
-      return DoctoralSchools.insert(newDoctoralSchool)
+      const uniqID = DoctoralSchools.insert(newDoctoralSchool)
+
+      if (Meteor.isServer) {
+        const auditLog = auditLogConsoleOut.extend('server/methods')
+        auditLog(`Inserted a new doctoral school ${JSON.stringify(newDoctoralSchool)}`)
+      }
+
+      return uniqID
     } catch (e: any) {
       if (e.name === 'BulkWriteError' && e.code === 11000) {
         throw new Meteor.Error('Create Error',
@@ -70,7 +73,7 @@ export const updateDoctoralSchool = new ValidatedMethod({
         'Cannot find a doctoral schools to update.');
     }
     try {
-      return DoctoralSchools.update(
+      const nbUpdated = DoctoralSchools.update(
         _id!, {
           $set: {
             acronym,
@@ -80,6 +83,13 @@ export const updateDoctoralSchool = new ValidatedMethod({
             programDirectorSciper,
           }
         })
+
+      if (Meteor.isServer) {
+        const auditLog = auditLogConsoleOut.extend('server/methods')
+        auditLog(`Updated the doctoral school id ${_id}`)
+      }
+
+      return nbUpdated
     } catch (e: any) {
       if (e.name === 'MongoError' && e.code === 11000) {
         throw new Meteor.Error('Update Error',
