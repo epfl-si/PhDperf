@@ -25,15 +25,14 @@ SimpleSchema.setDefaultMessages({
   },
 });
 
-
 DoctoralSchools.schema = new SimpleSchema({
   _id: { type: String, optional: true },
   // @ts-ignore
   acronym: { type: String, unique: true },
   label: { type: String },
   helpUrl: { type: String },
-  creditsNeeded: { type: Number },
-  programDirectorSciper: { type: String },
+  creditsNeeded: { type: SimpleSchema.Integer, min:10, max:99 },
+  programDirectorSciper: { type: String, min:6, max:6 },
 });
 
 DoctoralSchools.attachSchema(DoctoralSchools.schema);
