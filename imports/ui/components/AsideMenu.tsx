@@ -3,6 +3,7 @@ import {Link, matchPath, useLocation} from "react-router-dom";
 import React from "react";
 import {canAccessDashboard} from "/imports/policy/tasks";
 import {canEditDoctoralSchools} from "/imports/policy/doctoralSchools";
+import {canImportScipersFromISA} from "/imports/policy/importScipers";
 
 
 export const AsideMenu = () => {
@@ -35,6 +36,10 @@ export const AsideMenu = () => {
               { canAccessDashboard() &&
                 <li className={matchPath("/dashboard", pathname) ? 'active' : undefined}><Link
                   to={`/dashboard`}>Dashboard</Link></li>
+              }
+              { canImportScipersFromISA() &&
+                <li className={matchPath("/batch-importer", pathname) ? 'active' : undefined}><Link
+                  to={`/batch-importer`}>Import from ISA</Link></li>
               }
             </ul>
           </li>
