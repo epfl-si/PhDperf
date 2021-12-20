@@ -2,6 +2,8 @@
 
 interface Person {
   sciper: string
+  fullName: string
+  email: string
 }
 
 interface Thesis {

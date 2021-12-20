@@ -31,6 +31,33 @@ type RowParameters = {
   setChecked: (sciper: string) => void
 }
 
+const PersonDisplay = ({ person }: { person: Person }) => {
+  return (
+    <>{ person.fullName } ({ person.sciper })</>
+  )
+}
+
+const ThesisCoDirectorDisplay = ({ coDirector }: { coDirector: Person | undefined }) => {
+  if (coDirector) {
+    return (
+      <>{ coDirector.fullName } ({ coDirector.sciper })</>
+    )
+  } else {
+    return (
+      <a href={'#'}>Set the Sciper</a>
+    )
+    return (
+      <input type="text"
+             id="sciper"
+             name="sciper"
+             maxLength={6}
+             size={6}
+             pattern={ "[A-Za-z]{1}[0-9]{5}" }
+      />
+    )
+  }
+}
+
 export const Row = ({ doctorat, checked, setChecked }: RowParameters) => {
   const key = doctorat.doctorant.sciper
 
@@ -46,19 +73,11 @@ export const Row = ({ doctorat, checked, setChecked }: RowParameters) => {
           onChange={ () => setChecked(key) }
         />
       </div>
-      <div className="participant col-2 text-black align-self-end font-weight-bold">({ doctorat.doctorant.sciper })</div>
-      <div className="participant col-2 text-black align-self-end">({ doctorat.thesis.directeur.sciper })</div>
+      <div className="participant col-2 text-black align-self-end font-weight-bold"><PersonDisplay person={ doctorat.doctorant } /></div>
+      <div className="participant col-2 text-black align-self-end"><PersonDisplay person={ doctorat.thesis.directeur } /></div>
+      <div className="participant col-2 text-black align-self-end"><ThesisCoDirectorDisplay coDirector={ doctorat.thesis.coDirecteur } /></div>
       <div className="participant col-2 text-black align-self-end">
-        { doctorat.thesis.coDirecteur && <>({ doctorat.thesis.coDirecteur.sciper })</> }
-        { !doctorat.thesis.coDirecteur &&
-        <input type="text" id="sciper"
-               name="sciper"
-               maxLength={ 7 }
-               size={ 7 } />
-        }
-      </div>
-      <div className="participant col-2 text-black align-self-end">
-        { doctorat.thesis.mentor && <>({ doctorat.thesis.mentor.sciper })</> }
+        { doctorat.thesis.mentor && <PersonDisplay person={ doctorat.thesis.mentor } /> }
       </div>
       <div className="participant col-1 text-black align-self-end">{ doctorat.dateImmatriculation }</div>
       <div className="participant col-1 text-black align-self-end">{ doctorat.dateExamCandidature }</div>
