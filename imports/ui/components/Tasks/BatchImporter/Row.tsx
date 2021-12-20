@@ -50,15 +50,15 @@ export const Row = ({ doctorat, checked, setChecked }: RowParameters) => {
       <div className="participant col-2 text-black align-self-end">({ doctorat.thesis.directeur.sciper })</div>
       <div className="participant col-2 text-black align-self-end">
         { doctorat.thesis.coDirecteur && <>({ doctorat.thesis.coDirecteur.sciper })</> }
+        { !doctorat.thesis.coDirecteur &&
+        <input type="text" id="sciper"
+               name="sciper"
+               maxLength={ 7 }
+               size={ 7 } />
+        }
       </div>
       <div className="participant col-2 text-black align-self-end">
         { doctorat.thesis.mentor && <>({ doctorat.thesis.mentor.sciper })</> }
-        { !doctorat.thesis.mentor &&
-          <input type="text" id="sciper"
-                 name="sciper"
-                 maxLength={ 7 }
-                 size={ 7 } />
-        }
       </div>
       <div className="participant col-1 text-black align-self-end">{ doctorat.dateImmatriculation }</div>
       <div className="participant col-1 text-black align-self-end">{ doctorat.dateExamCandidature }</div>
