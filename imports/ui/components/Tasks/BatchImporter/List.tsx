@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import isaReturnExample from './edic.json'
 import StartButton from "/imports/ui/components/Tasks/BatchImporter/StartButton";
 import {HeaderRow, Row} from "/imports/ui/components/Tasks/BatchImporter/Row";
-import {useHistory, useParams, Link} from "react-router-dom";
+import {useNavigate, useParams, Link} from "react-router-dom";
 import {Meteor} from "meteor/meteor";
 import {useTracker} from "meteor/react-meteor-data";
 import {DoctoralSchool, DoctoralSchools} from "/imports/api/doctoralSchools/schema";
@@ -15,13 +15,13 @@ const doctorats = isaReturnExample[0].doctorants as DoctoratInfo[]
 
 export const ImportScipersSchoolSelector = () => {
   const [input, setInput] = useState('')
-  const history = useHistory()
+  const navigate = useNavigate()
 
   return (
     <>
       <form onSubmit={ (e) => {
         e.preventDefault()
-        history.push(`/import-scipers/${ input.toUpperCase() }`)
+        navigate(`/import-scipers/${ input.toUpperCase() }`)
       } }>
         Please enter the doctoral school acronym:&nbsp;
         <input value={input} type={'text'} onChange={ (e) => setInput(e.target.value)}/>
@@ -31,7 +31,7 @@ export const ImportScipersSchoolSelector = () => {
   )
 }
 
-export function BatchImporterForSchool() {
+export function ImportScipersForSchool() {
   const {doctoralSchool} = useParams<{ doctoralSchool: string }>()
   return <ImportScipers doctoralSchool={doctoralSchool}/>
 }
@@ -74,7 +74,7 @@ export function ImportScipers({doctoralSchool}: {doctoralSchool?: string}) {
     () => DoctoralSchools.findOne({ acronym: doctoralSchool }),
     []) as DoctoralSchool
 
-  if (!currentDoctoralSchool) {
+  if (!doctoralSchoolsLoading && !currentDoctoralSchool) {
     return (
       <>
         <div><b>{doctoralSchool}</b> is an unknown doctoral school</div>

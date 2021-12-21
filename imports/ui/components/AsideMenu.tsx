@@ -33,23 +33,17 @@ export const AsideMenu = () => {
             </a>
             <ul>
               <li className={matchPath("/", pathname) ? 'active' : undefined }><Link to={`/`}>List</Link></li>
-<<<<<<< HEAD
-              { canAccessDashboard() &&
-                <li className={matchPath("/dashboard", pathname) ? 'active' : undefined}><Link
-                  to={`/dashboard`}>Dashboard</Link></li>
-              }
-              { canImportScipersFromISA() &&
-                <li className={matchPath("/batch-importer", pathname) ? 'active' : undefined}><Link
-                  to={`/batch-importer`}>Import from ISA</Link></li>
-              }
-=======
-              <li className={matchPath("/dashboard", pathname) ? 'active' : undefined }><Link to={`/dashboard`}>Dashboard</Link></li>
-              <li className={matchPath("/import-scipers", pathname) ? 'active' : undefined }><Link to={`/batch-importer`}>Import scipers</Link></li>
->>>>>>> Set name to import scipers
-            </ul>
-          </li>
+                { canAccessDashboard() &&
+                  <li className={matchPath("/dashboard", pathname) ? 'active' : undefined}><Link
+                    to={`/dashboard`}>Dashboard</Link></li>
+                }
+                { canImportScipersFromISA() &&
+                  <li className={matchPath("/import-scipers", pathname) ? 'active' : undefined }><Link to={`/batch-importer`}>Import scipers</Link></li>
+                }
         </ul>
-      </nav>
-    </aside>
-  )
+      </li>
+    </ul>
+</nav>
+</aside>
+)
 }

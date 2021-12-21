@@ -14,7 +14,10 @@ import {Dashboard} from "/imports/ui/components/Dashboard";
 import {useTracker} from "meteor/react-meteor-data";
 import {Meteor} from "meteor/meteor";
 import {AsideMenu} from "/imports/ui/components/AsideMenu";
-import {ImportScipers, ImportScipersSchoolSelector} from "/imports/ui/components/Tasks/BatchImporter/List";
+import {
+  ImportScipersForSchool,
+  ImportScipersSchoolSelector
+} from "/imports/ui/components/Tasks/BatchImporter/List";
 
 
 export const App = () => {
@@ -42,7 +45,7 @@ export const App = () => {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/tasks/:key" element={<TheTask />} />
             <Route path="/tasks/" element={<Navigate replace to="/" />} />
-            <Route path="/import-scipers/:doctoralSchool" element={<ImportScipers />} />
+            <Route path="/import-scipers/:doctoralSchool" element={<ImportScipersForSchool />} />
             <Route path="/import-scipers/" element={<ImportScipersSchoolSelector/>} />
             <Route path="/" element={<TaskList />} />
           </Routes>
