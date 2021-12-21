@@ -97,7 +97,6 @@ export function ImportScipers({doctoralSchool}: {doctoralSchool?: string}) {
 
       <div className="container import-scipers-selector">
         <HeaderRow selectAll={setAllCheck}/>
-        <hr/>
         { !doctoralSchoolsLoading && doctorats.map((doctorat) =>
           <Row
             key={doctorat.doctorant.sciper}
@@ -107,10 +106,9 @@ export function ImportScipers({doctoralSchool}: {doctoralSchool?: string}) {
           />
         )}
         { !doctoralSchoolsLoading &&
-          <>
-            <hr/>
+          <div className={'mt-3'}>
             <StartButton nbSelected={nbSelected}/>
-          </>
+          </div>
         }
       </div>
     </div>
