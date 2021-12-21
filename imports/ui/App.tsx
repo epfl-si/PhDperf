@@ -14,7 +14,7 @@ import {Dashboard} from "/imports/ui/components/Dashboard";
 import {useTracker} from "meteor/react-meteor-data";
 import {Meteor} from "meteor/meteor";
 import {AsideMenu} from "/imports/ui/components/AsideMenu";
-import {BatchImporter, BatchImporterForSchool} from "/imports/ui/components/Tasks/BatchImporter/List";
+import {ImportScipers, ImportScipersSchoolSelector} from "/imports/ui/components/Tasks/BatchImporter/List";
 
 
 export const App = () => {
@@ -42,8 +42,8 @@ export const App = () => {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/tasks/:key" element={<TheTask />} />
             <Route path="/tasks/" element={<Navigate replace to="/" />} />
-            <Route path="/batch-importer/:doctoralSchool" element={<BatchImporterForSchool />} />
-            <Route path="/batch-importer/" element={<BatchImporter/>} />
+            <Route path="/import-scipers/:doctoralSchool" element={<ImportScipers />} />
+            <Route path="/import-scipers/" element={<ImportScipersSchoolSelector/>} />
             <Route path="/" element={<TaskList />} />
           </Routes>
         </div>
@@ -72,6 +72,6 @@ function PhDBreadcrumbs() {
   matchPath("tasks/*", pathname) && breadcrumbs.push({link: "/", anchor: "Tasks"}) &&  breadcrumbs.push({link: pathname, anchor: "Proceeding"})
   matchPath("/dashboard", pathname) &&breadcrumbs.push({link: "/dashboard", anchor: "Tasks dashboard"})
   matchPath("/doctoral-schools", pathname) && breadcrumbs.push({link: "/doctoral-schools", anchor: "Doctoral schools administration"})
-
+  matchPath("/import-scipers", pathname) && breadcrumbs.push({link: "/import-scipers", anchor: "Import scipers"})
   return <Breadcrumbs items={breadcrumbs}/>
 }

@@ -13,7 +13,7 @@ import {Loader} from "@epfl/epfl-sti-react-library";
 // will be the API call
 const doctorats = isaReturnExample[0].doctorants as DoctoratInfo[]
 
-export const BatchImporterSchoolSelector = () => {
+export const ImportScipersSchoolSelector = () => {
   const [input, setInput] = useState('')
   const history = useHistory()
 
@@ -21,7 +21,7 @@ export const BatchImporterSchoolSelector = () => {
     <>
       <form onSubmit={ (e) => {
         e.preventDefault()
-        history.push(`/batch-import/${ input.toUpperCase() }`)
+        history.push(`/import-scipers/${ input.toUpperCase() }`)
       } }>
         Please enter the doctoral school acronym:&nbsp;
         <input value={input} type={'text'} onChange={ (e) => setInput(e.target.value)}/>
@@ -33,11 +33,11 @@ export const BatchImporterSchoolSelector = () => {
 
 export function BatchImporterForSchool() {
   const {doctoralSchool} = useParams<{ doctoralSchool: string }>()
-  return <BatchImporter doctoralSchool={doctoralSchool}/>
+  return <ImportScipers doctoralSchool={doctoralSchool}/>
 }
 
 
-export function BatchImporter({doctoralSchool}: {doctoralSchool?: string}) {
+export function ImportScipers({doctoralSchool}: {doctoralSchool?: string}) {
   const [checkedState, setCheckedState] = useState(
     // get a { sciper: isSelected } like object
     doctorats.reduce((acc, doctorat) => {
@@ -78,7 +78,7 @@ export function BatchImporter({doctoralSchool}: {doctoralSchool?: string}) {
     return (
       <>
         <div><b>{doctoralSchool}</b> is an unknown doctoral school</div>
-        <Link to={`/batch-import`}>Try a different school acronym</Link>
+        <Link to={`/import-scipers`}>Try a different school acronym</Link>
       </>
     )
   }
@@ -95,7 +95,7 @@ export function BatchImporter({doctoralSchool}: {doctoralSchool?: string}) {
         </>
       }
 
-      <div className="container batch-import-selector">
+      <div className="container import-scipers-selector">
         <HeaderRow selectAll={setAllCheck}/>
         <hr/>
         { !doctoralSchoolsLoading && doctorats.map((doctorat) =>
