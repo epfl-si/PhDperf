@@ -33,7 +33,7 @@
     "react-hot-toast": "^2.0.0",
     "react-popover": "^0.5.10",
     "react-popper": "^2.2.4",
-    "react-router-dom": "^5.2.0",
+    "react-router-dom": "^6.2.1",
     "simpl-schema": "^1.12.0",
     "supports-color": "^9.0.0",
     "timed-memoize": "^2.4.2",

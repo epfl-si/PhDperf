@@ -5,7 +5,7 @@ import {Tasks} from '/imports/api/tasks'
 import {global_Error, Meteor} from 'meteor/meteor'
 import {useTracker} from 'meteor/react-meteor-data'
 import {Button, Loader} from "@epfl/epfl-sti-react-library"
-import {Link, useHistory} from "react-router-dom"
+import {Link, useNavigate} from "react-router-dom"
 import _ from "lodash"
 import {findDisabledFields} from "/imports/lib/formIOUtils";
 import toast from 'react-hot-toast';
@@ -24,7 +24,7 @@ export function Task({workflowKey}: { workflowKey: string }) {
   const task = useTracker(() => Tasks.findByKey(workflowKey), [workflowKey])
   const toastId = `toast-${workflowKey}`
   const [toBeSubmitted, setToBeSubmitted] = useState<boolean | undefined>(true)
-  const history = useHistory()
+  const navigate = useNavigate()
 
   // Remove the current notification
   useEffect(() => {
@@ -46,7 +46,7 @@ export function Task({workflowKey}: { workflowKey: string }) {
               <Errors/>
               <Form form={ JSON.parse(task.customHeaders.formIO) }
                     submission={ {data: task.variables} }
-                    onCustomEvent={ (event: customEvent) => event.type == 'cancelClicked' && history.push('/') }
+                    onCustomEvent={ (event: customEvent) => event.type == 'cancelClicked' && navigate('/') }
                     options={ { hooks: { beforeSubmit: beforeSubmitHook,} } }
               />
             </>)
