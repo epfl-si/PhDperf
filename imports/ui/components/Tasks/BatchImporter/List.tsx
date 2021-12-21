@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import isaReturnExample from './edic.json'
 import StartButton from "/imports/ui/components/Tasks/BatchImporter/StartButton";
 import {HeaderRow, Row} from "/imports/ui/components/Tasks/BatchImporter/Row";
-import {useParams} from "react-router-dom";
+import {useHistory, useParams, Link} from "react-router-dom";
 import {Meteor} from "meteor/meteor";
 import {useTracker} from "meteor/react-meteor-data";
 import {DoctoralSchool, DoctoralSchools} from "/imports/api/doctoralSchools/schema";
@@ -13,10 +13,29 @@ import {Loader} from "@epfl/epfl-sti-react-library";
 // will be the API call
 const doctorats = isaReturnExample[0].doctorants as DoctoratInfo[]
 
+export const BatchImporterSchoolSelector = () => {
+  const [input, setInput] = useState('')
+  const history = useHistory()
+
+  return (
+    <>
+      <form onSubmit={ (e) => {
+        e.preventDefault()
+        history.push(`/batch-import/${ input.toUpperCase() }`)
+      } }>
+        Please enter the doctoral school acronym:&nbsp;
+        <input value={input} type={'text'} onChange={ (e) => setInput(e.target.value)}/>
+        <button type={'submit'}>Get ISA students list</button>
+      </form>
+    </>
+  )
+}
+
 export function BatchImporterForSchool() {
   const {doctoralSchool} = useParams<{ doctoralSchool: string }>()
   return <BatchImporter doctoralSchool={doctoralSchool}/>
 }
+
 
 export function BatchImporter({doctoralSchool}: {doctoralSchool?: string}) {
   const [checkedState, setCheckedState] = useState(
@@ -55,11 +74,12 @@ export function BatchImporter({doctoralSchool}: {doctoralSchool?: string}) {
     () => DoctoralSchools.findOne({ acronym: doctoralSchool }),
     []) as DoctoralSchool
 
-  //const doctoratsFromISA = getDoctoralSchoolImport(doctoralSchool)
-
   if (!currentDoctoralSchool) {
     return (
-      <div>Unknown {doctoralSchool} doctoral school</div>
+      <>
+        <div><b>{doctoralSchool}</b> is an unknown doctoral school</div>
+        <Link to={`/batch-import`}>Try a different school acronym</Link>
+      </>
     )
   }
 
@@ -75,7 +95,7 @@ export function BatchImporter({doctoralSchool}: {doctoralSchool?: string}) {
         </>
       }
 
-      <div className="container batch-importer-selector">
+      <div className="container batch-import-selector">
         <HeaderRow selectAll={setAllCheck}/>
         <hr/>
         { !doctoralSchoolsLoading && doctorats.map((doctorat) =>
