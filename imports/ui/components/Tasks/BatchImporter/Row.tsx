@@ -73,7 +73,7 @@ export const Row = ({ doctorat, checked, setChecked }: RowParameters) => {
   const defaultColClasses = "text-black align-self-end"
 
   return (
-    <div className={'doctorat-row pl-2 mb-0 mt-0 pb-1 pt-2 border-top'}>
+    <div className={'doctorat-row pl-2 mb-2 mt-0 pb-1 pt-2 border-top'}>
       <div className={"row small"} key={key}>
         <div className="col-1 text-black align-self-end">
           <input
