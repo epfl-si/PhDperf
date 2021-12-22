@@ -17,7 +17,7 @@ import {AsideMenu} from "/imports/ui/components/AsideMenu";
 import {
   ImportScipersForSchool,
   ImportScipersSchoolSelector
-} from "/imports/ui/components/Tasks/BatchImporter/List";
+} from "/imports/ui/components/ImportSciper/List";
 
 
 export const App = () => {

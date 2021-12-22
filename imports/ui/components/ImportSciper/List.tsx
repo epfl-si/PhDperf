@@ -1,12 +1,12 @@
 import React, {useState} from "react";
 import isaReturnExample from './edic.json'
-import StartButton from "/imports/ui/components/Tasks/BatchImporter/StartButton";
-import {HeaderRow, Row} from "/imports/ui/components/Tasks/BatchImporter/Row";
+import StartButton from "/imports/ui/components/ImportSciper/StartButton";
+import {HeaderRow, Row} from "/imports/ui/components/ImportSciper/Row";
 import {useNavigate, useParams, Link} from "react-router-dom";
 import {Meteor} from "meteor/meteor";
 import {useTracker} from "meteor/react-meteor-data";
 import {DoctoralSchool, DoctoralSchools} from "/imports/api/doctoralSchools/schema";
-import {DoctoralSchoolInfo} from "/imports/ui/components/Tasks/BatchImporter/DoctoralSchoolInfo";
+import {DoctoralSchoolInfo} from "/imports/ui/components/ImportSciper/DoctoralSchoolInfo";
 import {Loader} from "@epfl/epfl-sti-react-library";
 
 
