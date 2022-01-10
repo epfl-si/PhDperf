@@ -44,9 +44,7 @@ const PersonDisplay = ({ person, boldName = false }: { person: Person, boldName?
 
 const ThesisCoDirectorDisplay = ({ coDirector }: { coDirector: Person | undefined }) => {
   if (coDirector) {
-    return (
-      <>{ coDirector.fullName } ({ coDirector.sciper })</>
-    )
+    return <PersonDisplay person={coDirector} />
   } else {
     return (
       <>
