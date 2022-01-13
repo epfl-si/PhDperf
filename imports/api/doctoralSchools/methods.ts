@@ -3,7 +3,7 @@
 // https://forums.meteor.com/t/typescript-trouble-importing-types-for-meteor-packages-in-vscode/54756
 import {Meteor} from 'meteor/meteor'
 import { ValidatedMethod } from 'meteor/mdg:validated-method'
-import {canAccessDoctoralSchoolEdition} from "/imports/policy/doctoralSchools"
+import {canEditDoctoralSchools} from "/imports/policy/doctoralSchools"
 import {DoctoralSchool, DoctoralSchools} from "/imports/api/doctoralSchools/schema"
 import {auditLogConsoleOut} from "/imports/lib/logging";
 
@@ -18,7 +18,7 @@ export const insertDoctoralSchool = new ValidatedMethod({
   },
 
   run(newDoctoralSchool: DoctoralSchool) {
-    if (!canAccessDoctoralSchoolEdition()) {
+    if (!canEditDoctoralSchools()) {
       if (Meteor.isServer) {
         const auditLog = auditLogConsoleOut.extend('server/methods')
         auditLog(`Unallowed user trying to add a doctoral school`)
@@ -58,7 +58,7 @@ export const updateDoctoralSchool = new ValidatedMethod({
 
   run({ _id, acronym, label, helpUrl, creditsNeeded, programDirectorSciper }: DoctoralSchool) {
 
-    if (!canAccessDoctoralSchoolEdition()) {
+    if (!canEditDoctoralSchools()) {
         if (Meteor.isServer) {
           const auditLog = auditLogConsoleOut.extend('server/methods')
           auditLog(`Unallowed user trying to edit a doctoral school`)

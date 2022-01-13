@@ -1,7 +1,7 @@
 import React, {useState} from "react"
 import {useTracker} from "meteor/react-meteor-data";
 import {Meteor} from "meteor/meteor";
-import {canAccessDoctoralSchoolEdition} from "/imports/policy/doctoralSchools";
+import {canEditDoctoralSchools} from "/imports/policy/doctoralSchools";
 import {Loader} from "@epfl/epfl-sti-react-library";
 import {DoctoralSchool, DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 import {CreateForm} from './create'
@@ -27,7 +27,7 @@ export function DoctoralSchoolsList() {
   , []) as DoctoralSchool[]
 
   if (!userLoaded) return (<div>Loading user</div>)
-  if (userLoaded && !canAccessDoctoralSchoolEdition()) return (<div>Your permission does not allow you to see the dashboard </div>)
+  if (userLoaded && !canEditDoctoralSchools()) return (<div>Your permissions does not allow you to set the doctoral schools.</div>)
 
   return (
     <>
