@@ -13,7 +13,6 @@ import {DoctoralSchoolsList} from "/imports/ui/components/DoctoralSchools/list";
 import {Dashboard} from "/imports/ui/components/Dashboard";
 import {useTracker} from "meteor/react-meteor-data";
 import {Meteor} from "meteor/meteor";
-import {canAccessDashboard} from "/imports/policy/tasks";
 import {AsideMenu} from "/imports/ui/components/AsideMenu";
 
 
@@ -30,7 +29,7 @@ export const App = () => {
       <PhDHeader/>
       <PhDBreadcrumbs/>
       <div className={ 'nav-toggle-layout nav-aside-layout' }>
-        {userLoaded && canAccessDashboard() &&
+        { userLoaded &&
           <AsideMenu/>
         }
         <div className="container" style={ mainPanelBackgroundColor }>
