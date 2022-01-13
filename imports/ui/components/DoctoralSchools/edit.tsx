@@ -132,8 +132,8 @@ export const InlineEdit = ({ doctoralSchool }: DoctoralSchoolEditParameter) => {
         {!editing &&
         <div className={'row'}>
           <div className={'col-1 font-weight-bold'}>{doctoralSchool.acronym}</div>
-          <div className={'col-4'}>{doctoralSchool.label}</div>
-          <div className={'col-3'}>{doctoralSchool.helpUrl}</div>
+          <div className={'col-3 text-break'}>{doctoralSchool.label}</div>
+          <div className={'col-4 text-break'}>{doctoralSchool.helpUrl}</div>
           <div className={'col-1'}>{doctoralSchool.creditsNeeded}</div>
           <div className={'col-2'}>{doctoralSchool.programDirectorSciper}</div>
           <div className={'col-1'}><button className={"btn btn-secondary"} onClick={() => openEditingMode()}>Edit</button></div>
