@@ -38,12 +38,13 @@ export const AsideMenu = () => {
                     to={`/dashboard`}>Dashboard</Link></li>
                 }
                 { canImportScipersFromISA() &&
-                  <li className={matchPath("/import-scipers", pathname) ? 'active' : undefined }><Link to={`/batch-importer`}>Import scipers</Link></li>
+                  <li className={matchPath("/import-scipers", pathname) ? 'active' : undefined }><Link
+                    to={`/import-scipers`}>Import scipers</Link></li>
                 }
+            </ul>
+          </li>
         </ul>
-      </li>
-    </ul>
-</nav>
-</aside>
-)
+    </nav>
+    </aside>
+  )
 }
