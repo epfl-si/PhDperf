@@ -5,7 +5,7 @@ all:
   children:
     openshift_namespaces:
       hosts:
-        phd-assess: {}
+        phd-assess: { is_test: "false" }
     vms:
       hosts:
         itsphdrepor0001:
