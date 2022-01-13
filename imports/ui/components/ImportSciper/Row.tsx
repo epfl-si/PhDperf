@@ -1,4 +1,5 @@
 import React, {useState} from "react"
+import {DoctorantInfo, Person} from "/imports/api/importScipers/isaTypes"
 
 export const HeaderRow = ({ selectAll } : {selectAll: (state: boolean) => void}) => {
   const [state, setState] = useState(false)
@@ -28,7 +29,7 @@ export const HeaderRow = ({ selectAll } : {selectAll: (state: boolean) => void})
 }
 
 type RowParameters = {
-  doctorat: DoctoratInfo,
+  doctorat: DoctorantInfo,
   checked: boolean,
   setChecked: (sciper: string) => void
 }
@@ -58,7 +59,7 @@ const ThesisCoDirectorDisplay = ({ coDirector }: { coDirector: Person | undefine
           />
         </div>
         <div>
-          <a href={'#'}>Set the Sciper</a>
+          <a href={'#'}>Set Sciper</a>
         </div>
       </>
     )
