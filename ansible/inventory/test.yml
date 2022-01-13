@@ -5,6 +5,4 @@ all:
   children:
     openshift_namespaces:
       hosts:
-        phd-assess-test: {}
-      vars:
-        is_test: "true"
+        phd-assess-test: { is_test: "true" }
