@@ -12,9 +12,10 @@ export interface DoctorantInfoSelectable extends DoctorantInfo {
 export interface ImportScipersList {
   _id?: string,
   doctoralSchoolAcronym: string,
-  doctorants?: DoctorantInfo[],
+  doctorants?: DoctorantInfoSelectable[],
   createdAt?: Date,
   createdBy: string,
+  isAllSelected: boolean,
 }
 
 export const ImportScipersList = new Mongo.Collection<ImportScipersList>('importScipersList',
@@ -39,8 +40,8 @@ const ThesisSchema = new SimpleSchema({
 )
 
 const doctorantSchema = new SimpleSchema({
-  doctorant: { type: PersonSchema },
   isSelected: { type: Boolean, defaultValue: false },
+  doctorant: { type: PersonSchema },
   thesis: { type: ThesisSchema },
   dateImmatriculation: { type: String },   //"01.09.2019"
   dateExamCandidature: { type: String },   //"03.08.2020"
@@ -49,10 +50,13 @@ const doctorantSchema = new SimpleSchema({
 ImportScipersList.schema = new SimpleSchema({
   _id: { type: String, optional: true },
   doctoralSchoolAcronym: { type: String },
-  doctorants: {type: Array, optional: true},
-  "doctorants.$": { type: doctorantSchema },
-  createdAt: { type: Date, optional: true, autoValue: () => new Date() },
+  // next one is blackboxed because they come from external API, we provide data "as-is"
+  // and simplschema is annoying with Mongo embedded-arrays updates
+  doctorants: {type: Array, optional: true, blackbox: true },
+  "doctorants.$": { type: doctorantSchema},
+  createdAt: { type: Date, optional: true, autoValue: function () { !this.isSet && new Date() } },
   createdBy: { type: String, optional: true},
-});
+  isAllSelected: { type: Boolean, defaultValue: false },
+})
 
 ImportScipersList.attachSchema(ImportScipersList.schema);

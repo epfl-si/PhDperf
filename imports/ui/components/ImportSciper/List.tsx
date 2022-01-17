@@ -1,7 +1,6 @@
 import {global_Error, Meteor} from "meteor/meteor";
 import React, {useState} from "react";
 import {useTracker} from "meteor/react-meteor-data";
-import { Map } from 'immutable'
 import {useNavigate, useParams, Link} from "react-router-dom";
 import {Loader} from "@epfl/epfl-sti-react-library";
 import {ImportScipersList} from "/imports/api/importScipers/schema";
@@ -9,7 +8,6 @@ import StartButton from '/imports/ui/components/ImportSciper/StartButton';
 import {HeaderRow, Row} from "/imports/ui/components/ImportSciper/Row";
 import {DoctoralSchool, DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 import {DoctoralSchoolInfo} from "/imports/ui/components/ImportSciper/DoctoralSchoolInfo";
-import {DoctorantInfo} from "/imports/api/importScipers/isaTypes";
 
 
 export const ImportScipersSchoolSelector = () => {
@@ -39,7 +37,6 @@ export function ImportScipersForSchool() {
 export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralSchool }) {
   const { ISAScipersForSchool,
     ISAScipersLoading,
-    doctorats
   } = useTracker(() => {
       const subscription = Meteor.subscribe('importScipersList', doctoralSchool.acronym);
       const ISAScipersForSchool = ImportScipersList.findOne(
@@ -47,38 +44,12 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
       ) as ImportScipersList
 
       const ISAScipersLoading: boolean = !subscription.ready()
-      const doctorats = ISAScipersLoading ? [] : ISAScipersForSchool?.doctorants ?? []
 
       return {
         ISAScipersForSchool,
         ISAScipersLoading,
-        doctorats,
       }
     }, [doctoralSchool.acronym])
-
-  const [checkedState, setCheckedState] = useState(
-    // get a { sciper: isSelected } like object
-    doctorats.reduce((acc: Map<any, boolean>, doctorat: DoctorantInfo) => {
-      return acc.set(doctorat.doctorant.sciper, false)
-    }, Map()) as Map<any, boolean>
-  )
-
-  const [nbSelected, setNbSelected] = useState(0)
-
-  const refreshNbSelected = () => {
-    setNbSelected([...checkedState.values()].filter(b => b).length)
-  }
-
-  const setChecked = (sciper: string) => {
-    setCheckedState(checkedState.set(sciper, !checkedState.get(sciper)))
-    refreshNbSelected()
-  }
-
-  const setAllCheck = (state: boolean) => {
-    [...checkedState.keys()].forEach((key) => checkedState.set(key, state))
-    setCheckedState(checkedState)
-    refreshNbSelected()
-  }
 
   if (ISAScipersLoading) {
     return <Loader message={`Loading the ISA data for ${doctoralSchool.acronym}...`}/>
@@ -86,27 +57,33 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
     if (!ISAScipersForSchool) {
       return <div>There is no data to load for the {doctoralSchool.acronym} school</div>
     } else {
+      const nbSelected = ISAScipersForSchool?.doctorants?.filter(doctorant => doctorant.isSelected).length ?? 0
       return (
         <>
           <div>
             <div className={'mb-3'}>
-              <DoctoralSchoolInfo doctoralSchool={doctoralSchool}/>
+              <DoctoralSchoolInfo doctoralSchool={ doctoralSchool }/>
             </div>
+            { ISAScipersForSchool.createdAt &&
+              <div className={'small'}>
+                List fetched from ISA at {ISAScipersForSchool.createdAt.toLocaleString('fr-CH')} <button onClick={ () => void 0 }>Refresh the list</button>
+              </div>
+            }
             <hr />
-            <StartButton nbSelected={nbSelected}/>
+            <StartButton nbSelected={ nbSelected }/>
           </div>
           <div className="container import-scipers-selector">
-            <HeaderRow selectAll={setAllCheck}/>
-            {doctorats && doctorats.map((doctorat) =>
+            <HeaderRow doctoralSchool={ doctoralSchool } isAllSelected={ ISAScipersForSchool.isAllSelected }/>
+            { ISAScipersForSchool.doctorants && ISAScipersForSchool.doctorants.map((doctorantInfo) =>
               <Row
-                key={doctorat.doctorant.sciper}
-                doctorat={doctorat}
-                checked={checkedState.get(doctorat.doctorant.sciper) ?? false}
-                setChecked={setChecked}
+                key={ doctorantInfo.doctorant.sciper }
+                doctoralSchool={ doctoralSchool }
+                doctorant={ doctorantInfo }
+                checked={ doctorantInfo.isSelected }
               />
             )}
             <div className={'mt-3'}>
-              <StartButton nbSelected={nbSelected}/>
+              <StartButton nbSelected={ nbSelected }/>
             </div>
           </div>
         </>
