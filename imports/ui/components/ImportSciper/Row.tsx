@@ -3,12 +3,13 @@ import React, {useState} from "react"
 import {Person} from "/imports/api/importScipers/isaTypes"
 import {DoctoralSchool} from "/imports/api/doctoralSchools/schema";
 import {DoctorantInfoSelectable} from "/imports/api/importScipers/schema";
+import toast from "react-hot-toast";
 
 
 export const HeaderRow = ({doctoralSchool, isAllSelected} : {doctoralSchool: DoctoralSchool, isAllSelected: boolean}) => {
   const [isToggling, setIsToggling] = useState(false)
 
-  const defaultColClasses = "text-black align-self-end"
+  const defaultColClasses = "align-self-end"
 
   const setAllCheck = (state: boolean) => {
     setIsToggling(true)
@@ -56,27 +57,61 @@ const PersonDisplay = ({ person, boldName = false }: { person: Person, boldName?
   )
 }
 
-const ThesisCoDirectorDisplay = ({ coDirector }: { coDirector: Person | undefined }) => {
-  if (coDirector) {
-    return <PersonDisplay person={coDirector} />
-  } else {
-    return (
-      <>
-        <div>
-          <input type="text"
-               id="sciper"
-               name="sciper"
-               maxLength={6}
-               size={6}
-               pattern={ "[A-Za-z]{1}[0-9]{5}" }
-          />
-        </div>
-        <div>
-          <a href={'#'}>Set Sciper</a>
-        </div>
-      </>
+const ThesisCoDirectorDisplay = ({
+                                   doctoralSchool,
+                                   doctorant,
+                                   coDirector,
+                                   isSciperNeeded
+                                 }: { doctoralSchool: DoctoralSchool, doctorant: Person, coDirector: Person | undefined, isSciperNeeded: boolean | undefined }) => {
+  const [isSending, setIsSending] = useState(false)
+  const [newSciper, setNewSciper] = useState('')
+
+  const setCoDirectorNewSciper = () => {
+    if (!newSciper) return
+
+    setIsSending(true)
+
+    Meteor.call('setCoDirectorSciper', doctoralSchool.acronym, doctorant.sciper, newSciper, (error: any) => {
+        if (error) {
+          toast.error(`${error.message}`)
+        } else {
+          toast.success(`Successfully added the new sciper ${newSciper} to ${coDirector?.fullName}`)
+        }
+        setIsSending(false)
+      }
     )
   }
+
+  return (
+    <>
+      { !isSciperNeeded && coDirector && <PersonDisplay person={coDirector as Person} /> }
+      { isSciperNeeded &&
+        <>
+          {coDirector &&
+            <span>{coDirector.fullName}</span>
+          }
+          <div>
+            <input type="text"
+                   className={'is-invalid'}
+                   id="sciper"
+                   name="sciper"
+                   maxLength={6}
+                   size={6}
+                   placeholder={'Gxxxxx'}
+                   pattern={ "/G[0-9]{5}/i" }
+                   title={ 'Please insert a guest sciper only (Gxxxxx)' }
+                   value={ newSciper }
+                   onChange={ (e) => setNewSciper(e.target.value)}
+            />
+            <button onClick={ () => setCoDirectorNewSciper() }>Set</button>
+            { isSending &&
+              <span className="loader" />
+            }
+          </div>
+        </>
+      }
+    </>
+  )
 }
 
 type RowParameters = {
@@ -105,8 +140,8 @@ export const Row = ({ doctorant, doctoralSchool, checked }: RowParameters) => {
 
   return (
     <div className={'doctorat-row pl-2 mb-2 mt-0 pb-1 pt-2 border-top'}>
-      <div className={"row small"} key={key}>
-        <div className="col-1 text-black align-self-end">
+      <div className={"row small align-items-end"} key={key}>
+        <div className="col-1">
           <input
             type="checkbox"
             id={`phd-selected"-${key}`}
@@ -122,7 +157,14 @@ export const Row = ({ doctorant, doctoralSchool, checked }: RowParameters) => {
         </div>
         <div className={ `col-2 ${defaultColClasses}` }><PersonDisplay person={ doctorant.doctorant } boldName={ true } /></div>
         <div className={ `col-2 ${defaultColClasses}` }><PersonDisplay person={ doctorant.thesis.directeur } /></div>
-        <div className={ `col-2 ${defaultColClasses}` }><ThesisCoDirectorDisplay coDirector={ doctorant.thesis.coDirecteur } /></div>
+        <div className={ `col-2 ${defaultColClasses}` }>
+          <ThesisCoDirectorDisplay
+            doctoralSchool={ doctoralSchool }
+            doctorant={ doctorant.doctorant }
+            coDirector={ doctorant.thesis.coDirecteur }
+            isSciperNeeded={doctorant.needCoDirectorData}
+          />
+        </div>
         <div className={ `col-2 ${defaultColClasses}` }>
           { doctorant.thesis.mentor && <PersonDisplay person={ doctorant.thesis.mentor } /> }
         </div>
