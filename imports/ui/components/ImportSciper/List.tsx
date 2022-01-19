@@ -66,7 +66,7 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
             </div>
             { ISAScipersForSchool.createdAt &&
               <div className={'small'}>
-                List fetched from ISA at {ISAScipersForSchool.createdAt.toLocaleString('fr-CH')} <button onClick={ () => void 0 }>Refresh the list</button>
+                List fetched from ISA at {ISAScipersForSchool.createdAt.toLocaleString('fr-CH')}
               </div>
             }
             <hr />

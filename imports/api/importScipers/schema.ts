@@ -7,6 +7,7 @@ import {DoctorantInfo} from "/imports/api/importScipers/isaTypes";
 
 export interface DoctorantInfoSelectable extends DoctorantInfo {
   isSelected: boolean
+  needCoDirectorData?: boolean
 }
 
 export interface ImportScipersList {
@@ -41,6 +42,7 @@ const ThesisSchema = new SimpleSchema({
 
 const doctorantSchema = new SimpleSchema({
   isSelected: { type: Boolean, defaultValue: false },
+  needCoDirectorData: { type: Boolean, optional: true},
   doctorant: { type: PersonSchema },
   thesis: { type: ThesisSchema },
   dateImmatriculation: { type: String },   //"01.09.2019"
