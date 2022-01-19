@@ -57,6 +57,7 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
     if (!ISAScipersForSchool) {
       return <div>There is no data to load for the {doctoralSchool.acronym} school</div>
     } else {
+      const total = ISAScipersForSchool?.doctorants?.length ?? 0
       const nbSelected = ISAScipersForSchool?.doctorants?.filter(doctorant => doctorant.isSelected).length ?? 0
       return (
         <>
@@ -70,7 +71,7 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
               </div>
             }
             <hr />
-            <StartButton nbSelected={ nbSelected }/>
+            <StartButton total={ total } nbSelected={ nbSelected }/>
           </div>
           <div className="container import-scipers-selector">
             <HeaderRow doctoralSchool={ doctoralSchool } isAllSelected={ ISAScipersForSchool.isAllSelected }/>
@@ -83,7 +84,7 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
               />
             )}
             <div className={'mt-3'}>
-              <StartButton nbSelected={ nbSelected }/>
+              <StartButton total={ total } nbSelected={ nbSelected }/>
             </div>
           </div>
         </>
