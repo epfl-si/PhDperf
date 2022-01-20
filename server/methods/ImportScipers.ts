@@ -5,6 +5,7 @@ import {isaResponse} from "/imports/api/importScipers/isaTypes";
 import {canImportScipersFromISA} from "/imports/policy/importScipers";
 import {auditLogConsoleOut} from "/imports/lib/logging";
 import {getUserInfoMemoized} from "/server/userFetcher";
+import _ from "lodash";
 
 
 /*
@@ -106,9 +107,27 @@ Meteor.methods({
       throw new Meteor.Error(403, 'You are not allowed to import scipers')
     }
 
-    ImportScipersList.update({
-      doctoralSchoolAcronym: doctoralSchoolAcronym,
-    }, { $set: { "doctorants.$[].isSelected": checked } } )
+    const query = { doctoralSchoolAcronym: doctoralSchoolAcronym, }
+    const updateDocument = {
+      $set: { "doctorants.$[doctorantInfo].isSelected": checked }
+    }
+    const options = {}
+
+    if (checked) {
+      _.merge(options, {
+        arrayFilters: [{
+          "doctorantInfo.needCoDirectorData": {$ne: true}
+        }]
+      })
+    } else {
+      _.merge(options, {
+        arrayFilters: [{
+          "doctorantInfo.needCoDirectorData": {$in: [null, false]}
+        }]
+      })
+    }
+
+    ImportScipersList.update(query, updateDocument, options)
 
     ImportScipersList.update({
       doctoralSchoolAcronym: doctoralSchoolAcronym,
@@ -130,7 +149,7 @@ Meteor.methods({
     const newCoDirector = await getUserInfoMemoized(coDirectorSciper)
 
     if (!newCoDirector || !newCoDirector.sciper) {
-      throw new Meteor.Error(`Unknown sciper ${coDirectorSciper}`)
+      throw new Meteor.Error('', `Unknown sciper '${coDirectorSciper}'`)
     }
 
     const query = { doctoralSchoolAcronym: doctoralSchoolAcronym, }

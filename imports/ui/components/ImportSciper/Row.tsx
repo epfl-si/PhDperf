@@ -66,20 +66,29 @@ const ThesisCoDirectorDisplay = ({
   const [isSending, setIsSending] = useState(false)
   const [newSciper, setNewSciper] = useState('')
 
-  const setCoDirectorNewSciper = () => {
-    if (!newSciper) return
+  const setCoDirectorNewSciper = (e: any) => {
+    e.preventDefault()
+    e.stopPropagation()
 
-    setIsSending(true)
+    if (!e.target.checkValidity()) {
+      console.log("running report validity")
+      e.target.reportValidity()
+    } else {
+      console.log("running setCoDirectorSciper")
+      if (!newSciper) return
 
-    Meteor.call('setCoDirectorSciper', doctoralSchool.acronym, doctorant.sciper, newSciper, (error: any) => {
-        if (error) {
-          toast.error(`${error.message}`)
-        } else {
-          toast.success(`Successfully added the new sciper ${newSciper} to ${coDirector?.fullName}`)
+      setIsSending(true)
+
+      Meteor.call('setCoDirectorSciper', doctoralSchool.acronym, doctorant.sciper, newSciper, (error: any) => {
+          if (error) {
+            toast.error(`Error: ${error.reason}`)
+          } else {
+            toast.success(`Successfully added the sciper ${newSciper} to ${coDirector?.fullName}`)
+          }
+          setIsSending(false)
         }
-        setIsSending(false)
-      }
-    )
+      )
+    }
   }
 
   return (
@@ -91,19 +100,27 @@ const ThesisCoDirectorDisplay = ({
             <span>{coDirector.fullName}</span>
           }
           <div>
-            <input type="text"
-                   className={'is-invalid'}
-                   id="sciper"
-                   name="sciper"
-                   maxLength={6}
-                   size={6}
-                   placeholder={'Gxxxxx'}
-                   pattern={ "/G[0-9]{5}/i" }
-                   title={ 'Please insert a guest sciper only (Gxxxxx)' }
-                   value={ newSciper }
-                   onChange={ (e) => setNewSciper(e.target.value)}
-            />
-            <button onClick={ () => setCoDirectorNewSciper() }>Set</button>
+            <form role="form" onSubmit={ setCoDirectorNewSciper }>
+              <input type="text"
+                     className={'is-invalid'}
+                     id="sciper"
+                     name="sciper"
+                     maxLength={6}
+                     size={6}
+                     placeholder={'Gxxxxx'}
+                     pattern={ "[G|g][0-9]{5}" }
+                     title={ 'Sciper has to be a guest one. Ex. G12345' }
+                     value={ newSciper }
+                     onChange={ (e) => setNewSciper(e.target.value)}
+              />
+              { !isSending &&
+                <button type="submit">Set</button>
+              }
+
+              { isSending &&
+                <span className="loader" />
+              }
+            </form>
             { isSending &&
               <span className="loader" />
             }
@@ -137,10 +154,11 @@ export const Row = ({ doctorant, doctoralSchool, checked }: RowParameters) => {
   }
 
   const defaultColClasses = "align-self-end"
+  const defaultRowClasses = "row small align-items-end"
 
   return (
     <div className={'doctorat-row pl-2 mb-2 mt-0 pb-1 pt-2 border-top'}>
-      <div className={"row small align-items-end"} key={key}>
+      <div className={ defaultRowClasses } key={key}>
         <div className="col-1">
           <input
             type="checkbox"
@@ -149,10 +167,17 @@ export const Row = ({ doctorant, doctoralSchool, checked }: RowParameters) => {
             value={ key }
             checked={ checked }
             onChange={ () => toggleCheck(key) }
-            disabled={ isToggling }
-          />&nbsp;
+            disabled={ isToggling || doctorant.needCoDirectorData }
+          />
+          &nbsp;
+          { doctorant.needCoDirectorData &&
+            <>
+              &nbsp;
+              <span className={'h4'} title="This doctorant need a guest sciper for his/her CoDirector">⚠</span>
+            </>
+          }
           { isToggling &&
-            <span className="loader" />
+            <>&nbsp;<span className="loader" /></>
           }
         </div>
         <div className={ `col-2 ${defaultColClasses}` }><PersonDisplay person={ doctorant.doctorant } boldName={ true } /></div>
