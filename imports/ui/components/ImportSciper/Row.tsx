@@ -152,7 +152,7 @@ export const Row = ({ doctorant, doctoralSchool, checked }: RowParameters) => {
   }
 
   const defaultColClasses = "align-self-end"
-  const defaultRowClasses = "row small align-items-end"
+  let defaultRowClasses = "row small align-items-end"
 
   return (
     <div className={'doctorat-row pl-2 mb-2 mt-0 pb-1 pt-2 border-top'}>
@@ -171,7 +171,13 @@ export const Row = ({ doctorant, doctoralSchool, checked }: RowParameters) => {
           { doctorant.needCoDirectorData &&
             <>
               &nbsp;
-              <span className={'h4'} title="This doctorant need a guest sciper for his/her CoDirector">⚠</span>
+              <span className={'h4 text-warning'} title="This doctorant need a guest sciper for his/her CoDirector">⚠</span>
+            </>
+          }
+          { doctorant.hasAlreadyStarted &&
+            <>
+              &nbsp;
+              <span className={'h4 text-success'} title="This doctorant has already a running process">⚠</span>
             </>
           }
           { isToggling &&
