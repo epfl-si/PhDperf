@@ -71,10 +71,8 @@ const ThesisCoDirectorDisplay = ({
     e.stopPropagation()
 
     if (!e.target.checkValidity()) {
-      console.log("running report validity")
       e.target.reportValidity()
     } else {
-      console.log("running setCoDirectorSciper")
       if (!newSciper) return
 
       setIsSending(true)
