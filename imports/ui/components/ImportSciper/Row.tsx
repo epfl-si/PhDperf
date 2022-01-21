@@ -152,7 +152,7 @@ export const Row = ({ doctorant, doctoralSchool, checked }: RowParameters) => {
   let defaultRowClasses = "row small align-items-end"
 
   if (doctorant.hasAlreadyStarted) {
-    defaultRowClasses += ' bg-success'
+    defaultRowClasses += ' bg-success  text-white'
   }
 
   return (
@@ -172,7 +172,7 @@ export const Row = ({ doctorant, doctoralSchool, checked }: RowParameters) => {
           { doctorant.needCoDirectorData &&
             <>
               &nbsp;
-              <span className={'h4 text-warning'} title="This doctorant need a guest sciper for his/her CoDirector">⚠</span>
+              <span className={'h4 text-danger'} title="This doctorant need a guest sciper for his/her CoDirector">⚠</span>
             </>
           }
           { doctorant.hasAlreadyStarted &&
