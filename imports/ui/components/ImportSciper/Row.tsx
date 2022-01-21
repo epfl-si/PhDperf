@@ -77,7 +77,7 @@ const ThesisCoDirectorDisplay = ({
 
       setIsSending(true)
 
-      Meteor.call('setCoDirectorSciper', doctoralSchool.acronym, doctorant.sciper, newSciper, (error: any) => {
+      Meteor.call('setCoDirectorSciper', doctoralSchool.acronym, doctorant.sciper, newSciper.toUpperCase(), (error: any) => {
           if (error) {
             toast.error(`Error: ${error.reason}`)
           } else {
@@ -119,9 +119,6 @@ const ThesisCoDirectorDisplay = ({
                 <span className="loader" />
               }
             </form>
-            { isSending &&
-              <span className="loader" />
-            }
           </div>
         </>
       }
@@ -154,6 +151,10 @@ export const Row = ({ doctorant, doctoralSchool, checked }: RowParameters) => {
   const defaultColClasses = "align-self-end"
   let defaultRowClasses = "row small align-items-end"
 
+  if (doctorant.hasAlreadyStarted) {
+    defaultRowClasses += ' bg-success'
+  }
+
   return (
     <div className={'doctorat-row pl-2 mb-2 mt-0 pb-1 pt-2 border-top'}>
       <div className={ defaultRowClasses } key={key}>
@@ -165,7 +166,7 @@ export const Row = ({ doctorant, doctoralSchool, checked }: RowParameters) => {
             value={ key }
             checked={ checked }
             onChange={ () => toggleCheck(key) }
-            disabled={ isToggling || doctorant.needCoDirectorData }
+            disabled={ isToggling || doctorant.needCoDirectorData || doctorant.hasAlreadyStarted }
           />
           &nbsp;
           { doctorant.needCoDirectorData &&
@@ -177,7 +178,7 @@ export const Row = ({ doctorant, doctoralSchool, checked }: RowParameters) => {
           { doctorant.hasAlreadyStarted &&
             <>
               &nbsp;
-              <span className={'h4 text-success'} title="This doctorant has already a running process">⚠</span>
+              <span className={'h4'} title="This doctorant has already a running process">⚠</span>
             </>
           }
           { isToggling &&
