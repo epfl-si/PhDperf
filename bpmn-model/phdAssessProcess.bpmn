@@ -23,6 +23,8 @@
         <bpmn:flowNodeRef>Gateway_1iu457q</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_GED_Deposit_Student_Folder_Unfindable_Error</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_GED_Deposit_Unreachable_Error</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1stz7w5</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1vxeb07</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_1kybckv" name="Thesis director">
         <bpmn:flowNodeRef>Activity_Thesis_Director_fills_annual_report</bpmn:flowNodeRef>
@@ -186,7 +188,7 @@
       <bpmn:outgoing>Flow_0sla35e</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:parallelGateway id="Gateway_1vk6wu2">
-      <bpmn:incoming>Flow_1bi0oxc</bpmn:incoming>
+      <bpmn:incoming>Flow_1lvnxkq</bpmn:incoming>
       <bpmn:outgoing>Flow_054cx96</bpmn:outgoing>
       <bpmn:outgoing>Flow_16matth</bpmn:outgoing>
     </bpmn:parallelGateway>
@@ -431,7 +433,7 @@
           <zeebe:header key="assigneeSciper" value="programAssistantSciper" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0ighe3r</bpmn:incoming>
+      <bpmn:incoming>Flow_1p551fj</bpmn:incoming>
       <bpmn:outgoing>Flow_1bi0oxc</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Activity_Thesis_Director_Signs" name="Thesis director Signs">
@@ -610,8 +612,8 @@
     <bpmn:sequenceFlow id="Flow_0wqd4km" name="no&#10;&#10;" sourceRef="Gateway_is_thesis_co_director" targetRef="Gateway_0pq4nc7" />
     <bpmn:sequenceFlow id="Flow_00kh14p" sourceRef="Gateway_1eaw25w" targetRef="Activity_Notify_Thesis_Director_PhDStudent_Filled" />
     <bpmn:sequenceFlow id="Flow_1crcs3x" sourceRef="Gateway_1eaw25w" targetRef="Activity_Thesis_Director_fills_annual_report" />
-    <bpmn:sequenceFlow id="Flow_0ighe3r" sourceRef="Event_PhD_Assess_Start" targetRef="Activity_Program_Assistant_Assigns_Participants" />
-    <bpmn:sequenceFlow id="Flow_1bi0oxc" sourceRef="Activity_Program_Assistant_Assigns_Participants" targetRef="Gateway_1vk6wu2" />
+    <bpmn:sequenceFlow id="Flow_0ighe3r" sourceRef="Event_PhD_Assess_Start" targetRef="Gateway_1vxeb07" />
+    <bpmn:sequenceFlow id="Flow_1bi0oxc" sourceRef="Activity_Program_Assistant_Assigns_Participants" targetRef="Gateway_1stz7w5" />
     <bpmn:sequenceFlow id="Flow_1q4fi07" sourceRef="Activity_Thesis_Director_fills_annual_report" targetRef="Gateway_Thesis_Director_Check2" />
     <bpmn:sequenceFlow id="Flow_16tresg" sourceRef="Activity_PHD_fills_annual_report" targetRef="Gateway_Thesis_Director_Check1" />
     <bpmn:sequenceFlow id="Flow_0lwf2vv" sourceRef="Activity_Post_Mentor_Meeting_PHD_Signs" targetRef="Gateway_08kccwb" />
@@ -662,6 +664,21 @@
       <bpmn:outgoing>Flow_1no9et7</bpmn:outgoing>
       <bpmn:errorEventDefinition id="ErrorEventDefinition_1r65m7t" errorRef="Error_0ysg2s5" />
     </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_1p551fj" name="no" sourceRef="Gateway_1vxeb07" targetRef="Activity_Program_Assistant_Assigns_Participants" />
+    <bpmn:sequenceFlow id="Flow_1lvnxkq" sourceRef="Gateway_1stz7w5" targetRef="Gateway_1vk6wu2" />
+    <bpmn:exclusiveGateway id="Gateway_1stz7w5">
+      <bpmn:incoming>Flow_1bi0oxc</bpmn:incoming>
+      <bpmn:incoming>Flow_1abdc6g</bpmn:incoming>
+      <bpmn:outgoing>Flow_1lvnxkq</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_1vxeb07" name="Has participant prefilled ?" default="Flow_1p551fj">
+      <bpmn:incoming>Flow_0ighe3r</bpmn:incoming>
+      <bpmn:outgoing>Flow_1p551fj</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1abdc6g</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1abdc6g" name="yes" sourceRef="Gateway_1vxeb07" targetRef="Gateway_1stz7w5">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=phdStudentSciper!=""</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
     <bpmn:textAnnotation id="TextAnnotation_04v2gmm">
       <bpmn:text>Section A, B, C</bpmn:text>
     </bpmn:textAnnotation>
@@ -854,11 +871,11 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1bi0oxc_di" bpmnElement="Flow_1bi0oxc">
         <di:waypoint x="518" y="370" />
-        <di:waypoint x="518" y="565" />
+        <di:waypoint x="518" y="455" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0ighe3r_di" bpmnElement="Flow_0ighe3r">
         <di:waypoint x="311" y="330" />
-        <di:waypoint x="468" y="330" />
+        <di:waypoint x="365" y="330" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1crcs3x_di" bpmnElement="Flow_1crcs3x">
         <di:waypoint x="843" y="950" />
@@ -989,6 +1006,25 @@
       <bpmndi:BPMNEdge id="Flow_17q96hm_di" bpmnElement="Flow_17q96hm">
         <di:waypoint x="753" y="950" />
         <di:waypoint x="793" y="950" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1p551fj_di" bpmnElement="Flow_1p551fj">
+        <di:waypoint x="415" y="330" />
+        <di:waypoint x="468" y="330" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="435" y="312" width="13" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1lvnxkq_di" bpmnElement="Flow_1lvnxkq">
+        <di:waypoint x="518" y="505" />
+        <di:waypoint x="518" y="565" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1abdc6g_di" bpmnElement="Flow_1abdc6g">
+        <di:waypoint x="390" y="355" />
+        <di:waypoint x="390" y="480" />
+        <di:waypoint x="493" y="480" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="396" y="415" width="18" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_1okn0bp_di" bpmnElement="Event_PhD_Assess_Start">
         <dc:Bounds x="275" y="312" width="36" height="36" />
@@ -1190,6 +1226,15 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0qwyl9d_di" bpmnElement="TextAnnotation_0qwyl9d">
         <dc:Bounds x="1367" y="996" width="100" height="54" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1stz7w5_di" bpmnElement="Gateway_1stz7w5" isMarkerVisible="true">
+        <dc:Bounds x="493" y="455" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1vxeb07_di" bpmnElement="Gateway_1vxeb07" isMarkerVisible="true">
+        <dc:Bounds x="365" y="305" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="359" y="276" width="74" height="27" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1ogv24m_di" bpmnElement="Event_GED_Deposit_Unreachable_Error">
         <dc:Bounds x="3612" y="322" width="36" height="36" />
