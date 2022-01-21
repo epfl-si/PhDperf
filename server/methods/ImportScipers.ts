@@ -7,6 +7,10 @@ import {auditLogConsoleOut} from "/imports/lib/logging";
 import {getUserInfoMemoized} from "/server/userFetcher";
 import _ from "lodash";
 import {Tasks} from "/imports/api/tasks";
+import {zBClient} from "/server/zeebe_broker_connector";
+import {encrypt} from "/server/encryption";
+import {canStartProcessInstance} from "/imports/policy/tasks";
+import {DoctoralSchool, DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 
 
 /*
@@ -62,8 +66,7 @@ const setAlreadyStarted = (doctorants: DoctorantInfoSelectable[]) => {
   const alreadyStartedStudentsScipers = _.map(alreadyStartedTasks, 'variables.phdStudentSciper')
 
   for (let [index, doctorant] of doctorants.entries()) {
-    if (alreadyStartedStudentsScipers.includes(doctorant.doctorant.sciper))
-      doctorants[index].hasAlreadyStarted = true
+    doctorants[index].hasAlreadyStarted = alreadyStartedStudentsScipers.includes(doctorant.doctorant.sciper)
   }
 
   return doctorants
@@ -90,14 +93,14 @@ Meteor.methods({
     doctorants =  await enhanceThesisCoDirectors(doctorants)
     doctorants = setAlreadyStarted(doctorants)
 
-    ImportScipersList.upsert({doctoralSchoolAcronym: doctoralSchoolAcronym}, {
-      $set: {
-        doctoralSchoolAcronym: doctoralSchoolAcronym,
-        doctorants: doctorants,
-        createdAt: new Date(),
-        createdBy: Meteor.user()?._id,
-        isAllSelected: false,
-      }
+    ImportScipersList.remove({doctoralSchoolAcronym: doctoralSchoolAcronym})
+
+    ImportScipersList.insert({
+      doctoralSchoolAcronym: doctoralSchoolAcronym,
+      doctorants: doctorants,
+      createdAt: new Date(),
+      createdBy: Meteor.user()?._id ?? '',
+      isAllSelected: false,
     })
   },
 
@@ -200,11 +203,90 @@ Meteor.methods({
     }
 
     ImportScipersList.update(query, updateDocument, options)
-  }
+  },
 
-    /*
-    async startPhDAssess(ImportScipersListId) {
-      // start phd assess for a list, with provided data (selected ones, scipers added, ...)
-    },
-     */
+  async startPhDAssess(doctoralSchoolAcronym: string) {
+    const auditLog = auditLogConsoleOut.extend('server/methods')
+
+    if (!canStartProcessInstance() || !canImportScipersFromISA()) {
+      auditLog(`Unallowed user ${Meteor.user()?._id} is trying to start a workflow. The error has been thrown to user.`)
+      throw new Meteor.Error(403, 'You are not allowed to start a workflow')
+    }
+
+    auditLog(`starting batch imports`)
+
+    if(!zBClient) throw new Meteor.Error(500, `The Zeebe client has not been able to start on the server.`)
+
+    const doctoralSchool = DoctoralSchools.findOne({acronym: doctoralSchoolAcronym}) as DoctoralSchool
+    const programDirector = await getUserInfoMemoized(doctoralSchool.programDirectorSciper)
+
+    // set the loading status
+    const query = { doctoralSchoolAcronym: doctoralSchoolAcronym, }
+    const updateDocument = {
+      $set: { "doctorants.$[doctorantInfo].isBeingImported": true }
+    }
+    const options = {
+      arrayFilters: [{
+        "doctorantInfo.needCoDirectorData": {$ne: true},
+        "doctorantInfo.hasAlreadyStarted": {$ne: true}
+      }]
+    }
+    ImportScipersList.update(query, updateDocument, options)
+
+    const imports = ImportScipersList.findOne({
+      doctoralSchoolAcronym: doctoralSchoolAcronym,
+    }) as ImportScipersList
+
+    const doctorantsToLoad = imports.doctorants?.filter((doctorant) => doctorant.isSelected)
+
+    const ProcessInstanceCreationPromises: any = []
+    doctorantsToLoad?.forEach((doctorant) => {
+      const dataToPush = {
+        doctoralProgramName: encrypt(doctoralSchool.acronym),
+        doctoralProgramEmail: encrypt(doctoralSchool.helpUrl),
+        creditsNeeded: encrypt(doctoralSchool.creditsNeeded.toString()),
+        programDirectorSciper: encrypt(doctoralSchool.programDirectorSciper),
+        programDirectorName: encrypt(programDirector.firstname + ' ' + programDirector.name),
+        programDirectorEmail: encrypt(programDirector.email),
+
+        phdStudentSciper: encrypt(doctorant.doctorant.sciper),
+        phdStudentName: encrypt(doctorant.doctorant.fullName),
+        phdStudentEmail: encrypt(doctorant.doctorant.email),
+
+        mentorSciper: encrypt(doctorant.thesis.mentor.sciper),
+        mentorName: encrypt(doctorant.thesis.mentor.fullName),
+        mentorEmail: encrypt(doctorant.thesis.mentor.email),
+
+        thesisDirectorSciper: encrypt(doctorant.thesis.directeur.sciper),
+        thesisDirectorName: encrypt(doctorant.thesis.directeur.fullName),
+        thesisDirectorEmail: encrypt(doctorant.thesis.directeur.email),
+
+        thesisCoDirectorSciper: encrypt(doctorant.thesis.coDirecteur?.sciper ?? ''),
+        thesisCoDirectorName: encrypt(doctorant.thesis.coDirecteur?.fullName ?? ''),
+        thesisCoDirectorEmail: encrypt(doctorant.thesis.coDirecteur?.email ?? ''),
+
+        programAssistantSciper: encrypt(Meteor.user()!._id),
+        programAssistantName: encrypt(Meteor.user()?.displayname ?? ''),
+        programAssistantEmail: encrypt(Meteor.user()?.tequila.email ?? ''),
+      }
+
+      ProcessInstanceCreationPromises.push(
+        zBClient!.createProcessInstance('phdAssessProcess', _.merge(dataToPush, {
+          created_at: encrypt(new Date().toJSON()),
+          created_by: encrypt(Meteor.userId()!),
+          updated_at: encrypt(new Date().toJSON()),
+        })
+      ))
+    })
+
+    try {
+      await Promise.all(ProcessInstanceCreationPromises)
+
+      ImportScipersList.update({
+        doctoralSchoolAcronym: doctoralSchoolAcronym,
+      }, { $set: { "isAllSelected": false } } )
+    } catch (error) {
+      throw new Meteor.Error(403, 'Some imports have failed to start.')
+    }
+  },
 })

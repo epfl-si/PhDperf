@@ -9,6 +9,7 @@ export interface DoctorantInfoSelectable extends DoctorantInfo {
   isSelected: boolean
   needCoDirectorData?: boolean
   hasAlreadyStarted?: boolean
+  isBeingImported?: boolean
 }
 
 export interface ImportScipersList {
@@ -45,6 +46,7 @@ const doctorantSchema = new SimpleSchema({
   isSelected: { type: Boolean, defaultValue: false },
   needCoDirectorData: { type: Boolean, optional: true},
   hasAlreadyStarted: { type: Boolean, optional: true},
+  isBeingImported: { type: Boolean, optional: true},
   doctorant: { type: PersonSchema },
   thesis: { type: ThesisSchema },
   dateImmatriculation: { type: String },   //"01.09.2019"

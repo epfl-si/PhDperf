@@ -31,7 +31,7 @@ const Tasks_ = TasksCollection<Task>((data) => {
     `workflow version: ${task.processDefinitionVersion}`,
   ].join(", ")
 
-  task.monitorUri = Meteor.user()?.isAdmin && Meteor.settings.public.monitor_address ?
+  task.monitorUri = Meteor.settings.public.monitor_address && Meteor.user()?.isAdmin ?
     `http://${Meteor.settings.public.monitor_address}/views/instances/${task.processInstanceKey}` :
     undefined
 

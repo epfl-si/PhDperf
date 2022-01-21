@@ -6,7 +6,8 @@ import {DoctorantInfoSelectable} from "/imports/api/importScipers/schema";
 import toast from "react-hot-toast";
 
 
-export const HeaderRow = ({doctoralSchool, isAllSelected} : {doctoralSchool: DoctoralSchool, isAllSelected: boolean}) => {
+export const HeaderRow = ({doctoralSchool, isAllSelected, disabled} :
+                            {doctoralSchool: DoctoralSchool, isAllSelected: boolean, disabled: boolean}) => {
   const [isToggling, setIsToggling] = useState(false)
 
   const defaultColClasses = "align-self-end"
@@ -30,7 +31,7 @@ export const HeaderRow = ({doctoralSchool, isAllSelected} : {doctoralSchool: Doc
           id="select-all"
           name="select-all"
           checked={ isAllSelected }
-          disabled={ isToggling }
+          disabled={ isToggling || disabled }
           onChange={ () => { setAllCheck(!isAllSelected); } }
         />
         { isToggling &&
@@ -166,22 +167,20 @@ export const Row = ({ doctorant, doctoralSchool, checked }: RowParameters) => {
             value={ key }
             checked={ checked }
             onChange={ () => toggleCheck(key) }
-            disabled={ isToggling || doctorant.needCoDirectorData || doctorant.hasAlreadyStarted }
+            disabled={ isToggling || doctorant.needCoDirectorData || doctorant.hasAlreadyStarted || doctorant.isBeingImported }
           />
           &nbsp;
-          { doctorant.needCoDirectorData &&
+          { doctorant.needCoDirectorData && !(isToggling || doctorant.isBeingImported || doctorant.hasAlreadyStarted) &&
             <>
-              &nbsp;
-              <span className={'h4 text-danger'} title="This doctorant need a guest sciper for his/her CoDirector">⚠</span>
+              <span className={'h4 text-danger ml-1'} title="This doctorant need a guest sciper for his/her CoDirector">⚠</span>
             </>
           }
-          { doctorant.hasAlreadyStarted &&
+          { doctorant.hasAlreadyStarted && !(isToggling || doctorant.isBeingImported) &&
             <>
-              &nbsp;
-              <span className={'h4'} title="This doctorant has already a running process">⚠</span>
+              <span className={'h6 ml-2'} title="This doctorant has already a running process">🛈</span>
             </>
           }
-          { isToggling &&
+          { (isToggling || doctorant.isBeingImported) &&
             <>&nbsp;<span className="loader" /></>
           }
         </div>
@@ -192,7 +191,7 @@ export const Row = ({ doctorant, doctoralSchool, checked }: RowParameters) => {
             doctoralSchool={ doctoralSchool }
             doctorant={ doctorant.doctorant }
             coDirector={ doctorant.thesis.coDirecteur }
-            isSciperNeeded={doctorant.needCoDirectorData}
+            isSciperNeeded={ doctorant.needCoDirectorData && !doctorant.hasAlreadyStarted }
           />
         </div>
         <div className={ `col-2 ${defaultColClasses}` }>

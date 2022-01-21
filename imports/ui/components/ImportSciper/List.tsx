@@ -8,6 +8,7 @@ import StartButton from '/imports/ui/components/ImportSciper/StartButton';
 import {HeaderRow, Row} from "/imports/ui/components/ImportSciper/Row";
 import {DoctoralSchool, DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 import {DoctoralSchoolInfo} from "/imports/ui/components/ImportSciper/DoctoralSchoolInfo";
+import toast from "react-hot-toast";
 
 
 export const ImportScipersSchoolSelector = () => {
@@ -37,6 +38,7 @@ export function ImportScipersForSchool() {
 export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralSchool }) {
   const { ISAScipersForSchool,
     ISAScipersLoading,
+    isBeingImported,
   } = useTracker(() => {
       const subscription = Meteor.subscribe('importScipersList', doctoralSchool.acronym);
       const ISAScipersForSchool = ImportScipersList.findOne(
@@ -45,11 +47,29 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
 
       const ISAScipersLoading: boolean = !subscription.ready()
 
+      const isBeingImported: boolean = ISAScipersForSchool ? ISAScipersForSchool.doctorants?.some((doctorant) => doctorant.isBeingImported) ?? false : false
+
       return {
         ISAScipersForSchool,
         ISAScipersLoading,
+        isBeingImported
       }
     }, [doctoralSchool.acronym])
+
+  const [importStarted, setImportStarted] = useState(isBeingImported)
+//setImportStarted(!!ISAScipersForSchool.doctorants?.some((doctorant) => doctorant.isBeingImported))
+  const startImport = () => {
+    setImportStarted(true)
+
+    Meteor.call('startPhDAssess', doctoralSchool.acronym, (error: any) => {
+      if (error) {
+        toast.error(error)
+      } else {
+        toast.success("Succesfully started imports.")
+      }
+      setImportStarted(false)
+    })
+  }
 
   if (ISAScipersLoading) {
     return <Loader message={`Loading the ISA data for ${doctoralSchool.acronym}...`}/>
@@ -57,6 +77,7 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
     if (!ISAScipersForSchool) {
       return <div>There is no data to load for the {doctoralSchool.acronym} school</div>
     } else {
+
       const total = ISAScipersForSchool?.doctorants?.length ?? 0
       const nbSelected = ISAScipersForSchool?.doctorants?.filter(doctorant => doctorant.isSelected).length ?? 0
       return (
@@ -71,10 +92,10 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
               </div>
             }
             <hr />
-            <StartButton total={ total } nbSelected={ nbSelected }/>
+            <StartButton total={ total } nbSelected={ nbSelected } isStarted={ importStarted } startFunc={ startImport }/>
           </div>
           <div className="container import-scipers-selector">
-            <HeaderRow doctoralSchool={ doctoralSchool } isAllSelected={ ISAScipersForSchool.isAllSelected }/>
+            <HeaderRow doctoralSchool={ doctoralSchool } isAllSelected={ ISAScipersForSchool.isAllSelected } disabled={ importStarted }/>
             { ISAScipersForSchool.doctorants && ISAScipersForSchool.doctorants.map((doctorantInfo) =>
               <Row
                 key={ doctorantInfo.doctorant.sciper }
@@ -84,7 +105,7 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
               />
             )}
             <div className={'mt-3'}>
-              <StartButton total={ total } nbSelected={ nbSelected }/>
+              <StartButton total={ total } nbSelected={ nbSelected } isStarted={ importStarted } startFunc={ startImport }/>
             </div>
           </div>
         </>

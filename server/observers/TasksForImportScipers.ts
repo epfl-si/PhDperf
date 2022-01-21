@@ -8,7 +8,11 @@ import {TaskData, TasksCollection} from "/imports/model/tasks";
 const getQuery = () => { return {} }
 const getUpdateDocument = (hasAlreadyStarted: boolean) => {
   return {
-    $set: {"doctorants.$[doctorantInfo].hasAlreadyStarted": hasAlreadyStarted}
+    $set: {
+      "doctorants.$[doctorantInfo].hasAlreadyStarted": hasAlreadyStarted,
+      "doctorants.$[doctorantInfo].isBeingImported": false,
+      "doctorants.$[doctorantInfo].isSelected": false,
+    }
   }
 }
 
