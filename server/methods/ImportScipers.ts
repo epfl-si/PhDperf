@@ -89,7 +89,7 @@ Meteor.methods({
 
     // will be the API call
     const isaReturn = isaReturnExample[0] as isaResponse
-    let doctorants =(isaReturn.doctorants.slice(0,4) as DoctorantInfoSelectable[])
+    let doctorants = isaReturn.doctorants as DoctorantInfoSelectable[]
     doctorants =  await enhanceThesisCoDirectors(doctorants)
     doctorants = setAlreadyStarted(doctorants)
 
