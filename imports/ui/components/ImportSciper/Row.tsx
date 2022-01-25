@@ -177,7 +177,7 @@ export const Row = ({ doctorant, doctoralSchool, checked }: RowParameters) => {
           }
           { doctorant.hasAlreadyStarted && !(isToggling || doctorant.isBeingImported) &&
             <>
-              <span className={'h6 ml-2'} title="This doctorant has already a running process">🛈</span>
+              <span className={'h6 ml-2'} title="This doctorant already has an annual report in progress">🛈</span>
             </>
           }
           { (isToggling || doctorant.isBeingImported) &&

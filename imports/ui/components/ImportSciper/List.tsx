@@ -1,8 +1,8 @@
 import {global_Error, Meteor} from "meteor/meteor";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useTracker} from "meteor/react-meteor-data";
 import {useNavigate, useParams, Link} from "react-router-dom";
-import {Loader} from "@epfl/epfl-sti-react-library";
+import {Alert, Loader} from "@epfl/epfl-sti-react-library";
 import {ImportScipersList} from "/imports/api/importScipers/schema";
 import StartButton from '/imports/ui/components/ImportSciper/StartButton';
 import {HeaderRow, Row} from "/imports/ui/components/ImportSciper/Row";
@@ -57,61 +57,75 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
     }, [doctoralSchool.acronym])
 
   const [importStarted, setImportStarted] = useState(isBeingImported)
-//setImportStarted(!!ISAScipersForSchool.doctorants?.some((doctorant) => doctorant.isBeingImported))
+  const [isErronous, setIsErronous] = useState('')
+
+  useEffect(() => {
+    Meteor.apply(
+      "getISAScipers", [ doctoralSchool.acronym ], { wait: true, noRetry: true },
+      (error: global_Error | Meteor.Error | undefined) => {
+        if (error) {
+          "reason" in error ? setIsErronous(error.reason!) : setIsErronous(error.message)
+        }
+      }
+    )
+  }, [doctoralSchool]);
+
   const startImport = () => {
     setImportStarted(true)
 
+    const toastId = toast.loading('Launching import of selected entries...')
+
     Meteor.call('startPhDAssess', doctoralSchool.acronym, (error: any) => {
+      toast.dismiss(toastId)
       if (error) {
         toast.error(error)
+        setIsErronous(error.reason ?? error.message)
       } else {
-        toast.success("Succesfully started imports.")
+        toast.success("Succesfully launched import. Please be patient while entries are getting created...")
       }
       setImportStarted(false)
     })
   }
 
-  if (ISAScipersLoading) {
-    return <Loader message={`Loading the ISA data for ${doctoralSchool.acronym}...`}/>
-  } else {
-    if (!ISAScipersForSchool) {
-      return <div>There is no data to load for the {doctoralSchool.acronym} school</div>
-    } else {
+  if (isErronous) return <Alert alertType={ 'danger' } title={ 'Error' } message={ isErronous } />
 
-      const total = ISAScipersForSchool?.doctorants?.length ?? 0
-      const nbSelected = ISAScipersForSchool?.doctorants?.filter(doctorant => doctorant.isSelected).length ?? 0
-      return (
-        <>
-          <div>
-            <div className={'mb-3'}>
-              <DoctoralSchoolInfo doctoralSchool={ doctoralSchool }/>
-            </div>
-            { ISAScipersForSchool.createdAt &&
-              <div className={'small'}>
-                ISA List fetched at {ISAScipersForSchool.createdAt.toLocaleString('fr-CH')}
-              </div>
-            }
-            <hr />
-            <StartButton total={ total } nbSelected={ nbSelected } isStarted={ importStarted } startFunc={ startImport }/>
+  if (ISAScipersLoading) return <Loader message={`Fetching ISA data for the ${doctoralSchool.acronym} school...`}/>
+
+  if (!ISAScipersForSchool) return <div>ISA has not data for the {doctoralSchool.acronym} school</div>
+
+  const total = ISAScipersForSchool?.doctorants?.length ?? 0
+  const nbSelected = ISAScipersForSchool?.doctorants?.filter(doctorant => doctorant.isSelected).length ?? 0
+
+  return (
+    <>
+      <div>
+        <div className={'mb-3'}>
+          <DoctoralSchoolInfo doctoralSchool={ doctoralSchool }/>
+        </div>
+        { ISAScipersForSchool.createdAt &&
+          <div className={'small'}>
+            ISA List fetched at {ISAScipersForSchool.createdAt.toLocaleString('fr-CH')}
           </div>
-          <div className="container import-scipers-selector">
-            <HeaderRow doctoralSchool={ doctoralSchool } isAllSelected={ ISAScipersForSchool.isAllSelected } disabled={ importStarted }/>
-            { ISAScipersForSchool.doctorants && ISAScipersForSchool.doctorants.map((doctorantInfo) =>
-              <Row
-                key={ doctorantInfo.doctorant.sciper }
-                doctoralSchool={ doctoralSchool }
-                doctorant={ doctorantInfo }
-                checked={ doctorantInfo.isSelected }
-              />
-            )}
-            <div className={'mt-3'}>
-              <StartButton total={ total } nbSelected={ nbSelected } isStarted={ importStarted } startFunc={ startImport }/>
-            </div>
-          </div>
-        </>
-      )
-    }
-  }
+        }
+        <hr />
+        <StartButton total={ total } nbSelected={ nbSelected } isStarted={ importStarted } startFunc={ startImport }/>
+      </div>
+      <div className="container import-scipers-selector">
+        <HeaderRow doctoralSchool={ doctoralSchool } isAllSelected={ ISAScipersForSchool.isAllSelected } disabled={ importStarted }/>
+        { ISAScipersForSchool.doctorants && ISAScipersForSchool.doctorants.map((doctorantInfo) =>
+          <Row
+            key={ doctorantInfo.doctorant.sciper }
+            doctoralSchool={ doctoralSchool }
+            doctorant={ doctorantInfo }
+            checked={ doctorantInfo.isSelected }
+          />
+        )}
+        <div className={'mt-3'}>
+          <StartButton total={ total } nbSelected={ nbSelected } isStarted={ importStarted } startFunc={ startImport }/>
+        </div>
+      </div>
+    </>
+  )
 }
 
 export function ImportSciperLoader({doctoralSchoolAcronym}: {doctoralSchoolAcronym?: string}) {
@@ -126,26 +140,14 @@ export function ImportSciperLoader({doctoralSchoolAcronym}: {doctoralSchoolAcron
     () => DoctoralSchools.findOne({ acronym: doctoralSchoolAcronym }),
     []) as DoctoralSchool
 
-  if (doctoralSchoolsLoading) {
-    return <Loader message={`Loading the ${doctoralSchoolAcronym} doctoral school data...`}/>
-  } else {
-    if (!currentDoctoralSchool) {
-      return (
-        <>
-          <div><b>{doctoralSchoolAcronym}</b> is an unknown doctoral school</div>
-          <Link to={`/import-scipers`}>Try a different school acronym</Link>
-        </>
-      )
-    } else {
-      Meteor.apply(
-        "getISAScipers", [ currentDoctoralSchool.acronym ], { wait: true, noRetry: true },
-        (error: global_Error | Meteor.Error | undefined) => {
-          if (error) {
-            return <div>Error: ${error.message}</div>
-          }
-        }
-      )
-      return <ImportSciperList doctoralSchool={ currentDoctoralSchool } />
-    }
-  }
+  if (doctoralSchoolsLoading) return <Loader message={`Loading the ${doctoralSchoolAcronym} doctoral school data...`}/>
+
+  if (!currentDoctoralSchool) return (
+    <>
+      <div><b>{doctoralSchoolAcronym}</b> is an unknown doctoral school</div>
+      <Link to={`/import-scipers`}>Try a different school acronym</Link>
+    </>
+  )
+
+  return <ImportSciperList doctoralSchool={ currentDoctoralSchool } />
 }

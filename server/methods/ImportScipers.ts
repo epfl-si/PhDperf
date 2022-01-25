@@ -1,5 +1,5 @@
 import {Meteor} from "meteor/meteor";
-import isaReturnExample from "../../imports/ui/components/ImportSciper/edic.json";
+
 import {DoctorantInfoSelectable, ImportScipersList} from "/imports/api/importScipers/schema";
 import {isaResponse} from "/imports/api/importScipers/isaTypes";
 import {canImportScipersFromISA} from "/imports/policy/importScipers";
@@ -11,7 +11,13 @@ import {zBClient} from "/server/zeebe_broker_connector";
 import {encrypt} from "/server/encryption";
 import {canStartProcessInstance} from "/imports/policy/tasks";
 import {DoctoralSchool, DoctoralSchools} from "/imports/api/doctoralSchools/schema";
+import {fetchTimeout} from "/imports/lib/fetchTimeout";
+import AbortController from "abort-controller";
 
+import path from 'path'
+import isaReturnExample from "../../imports/ui/components/ImportSciper/edic.json";
+
+const debug = require('debug')('server/ImportScipers')
 
 /*
  * Thesis co directors can have
@@ -72,6 +78,22 @@ const setAlreadyStarted = (doctorants: DoctorantInfoSelectable[]) => {
   return doctorants
 }
 
+const fetchISA = async (doctoralSchoolAcronym: string) => {
+  if (!process.env.ISA_IMPORT_API_URL) throw new Meteor.Error('Configuration error',
+    'The app has not been configured for imports. Please contact the admin.')
+
+  const ISAServerUrl = new URL(process.env.ISA_IMPORT_API_URL)
+  ISAServerUrl.pathname = path.join(ISAServerUrl.pathname, doctoralSchoolAcronym)
+
+  const controller = new AbortController()
+
+  debug(`Fetching ISA data for ${doctoralSchoolAcronym} from ${ISAServerUrl}...`)
+  const response = await fetchTimeout(ISAServerUrl.toString(), 4000, controller.signal)
+
+  debug(`response from ISA for ${doctoralSchoolAcronym} : ${JSON.stringify(response.body)}`)
+  return response.json()
+}
+
 Meteor.methods({
 
   async getISAScipers(doctoralSchoolAcronym) {
@@ -82,26 +104,36 @@ Meteor.methods({
       throw new Meteor.Error(403, 'You are not allowed to import scipers')
     }
 
-    if (doctoralSchoolAcronym !== 'EDIC') {
-      throw new Meteor.Error('importScipersList.methods.fetch.NotReady',
-        'We are not doing anything different than the EDIC')
-    }
-
-    // will be the API call
-    const isaReturn = isaReturnExample[0] as isaResponse
-    let doctorants = isaReturn.doctorants as DoctorantInfoSelectable[]
-    doctorants =  await enhanceThesisCoDirectors(doctorants)
-    doctorants = setAlreadyStarted(doctorants)
-
     ImportScipersList.remove({doctoralSchoolAcronym: doctoralSchoolAcronym})
 
-    ImportScipersList.insert({
-      doctoralSchoolAcronym: doctoralSchoolAcronym,
-      doctorants: doctorants,
-      createdAt: new Date(),
-      createdBy: Meteor.user()?._id ?? '',
-      isAllSelected: false,
-    })
+    let isaReturn = null as isaResponse | null
+
+    try {
+      try {
+        isaReturn = (await fetchISA(doctoralSchoolAcronym))[0]
+        if (!isaReturn) throw new Error()
+      } catch (e) {
+        // Load local data if API fetch failed, throw in local data
+        // TODO: REMOVE THIS
+        isaReturn = isaReturnExample[0] as isaResponse
+      }
+
+      let doctorants = isaReturn!.doctorants as DoctorantInfoSelectable[]
+      doctorants =  await enhanceThesisCoDirectors(doctorants)
+      doctorants = setAlreadyStarted(doctorants)
+
+
+      ImportScipersList.insert({
+        doctoralSchoolAcronym: doctoralSchoolAcronym,
+        doctorants: doctorants,
+        createdAt: new Date(),
+        createdBy: Meteor.user()?._id ?? '',
+        isAllSelected: false,
+      })
+    } catch (e: any) {
+      throw new Meteor.Error('ISA fetching',
+        `Unable to fetch ISA data. ${e.message ?? ''}`)
+    }
   },
 
   async toggleDoctorantCheck(doctoralSchoolAcronym, sciper, checked: boolean) {
@@ -286,7 +318,16 @@ Meteor.methods({
         doctoralSchoolAcronym: doctoralSchoolAcronym,
       }, { $set: { "isAllSelected": false } } )
     } catch (error) {
-      throw new Meteor.Error(403, 'Some imports have failed to start.')
+      // throw new Meteor.Error(403, 'Some imports have failed to start.')
+      throw error
+    } finally {
+      // set the loading status
+      const query = { doctoralSchoolAcronym: doctoralSchoolAcronym, }
+      const updateDocument = {
+        $set: { "doctorants.$[].isBeingImported": false }
+      }
+      const options = {}
+      ImportScipersList.update(query, updateDocument, options)
     }
   },
 })
