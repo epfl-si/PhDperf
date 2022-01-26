@@ -167,17 +167,22 @@ export const Row = ({ doctorant, doctoralSchool, checked }: RowParameters) => {
             value={ key }
             checked={ checked }
             onChange={ () => toggleCheck(key) }
-            disabled={ isToggling || doctorant.needCoDirectorData || doctorant.hasAlreadyStarted || doctorant.isBeingImported }
+            disabled={ isToggling || doctorant.needCoDirectorData || !doctorant.thesis?.mentor || doctorant.hasAlreadyStarted || doctorant.isBeingImported }
           />
           &nbsp;
           { doctorant.needCoDirectorData && !(isToggling || doctorant.isBeingImported || doctorant.hasAlreadyStarted) &&
             <>
-              <span className={'h4 text-danger ml-1'} title="This doctorant need a guest sciper for his/her CoDirector">⚠</span>
+              <span className={'h4 text-danger ml-1'} title="CoDirector is missing. Please fill the sciper input.">⚠</span>
+            </>
+          }
+          { !doctorant.thesis?.mentor && !(isToggling || doctorant.isBeingImported || doctorant.hasAlreadyStarted) &&
+            <>
+              <span className={'h4 text-danger ml-1'} title="Mentor sciper is missing. Please enter the information in EDOC portal in ISA and re-import the list.">⚠</span>
             </>
           }
           { doctorant.hasAlreadyStarted && !(isToggling || doctorant.isBeingImported) &&
             <>
-              <span className={'h6 ml-2'} title="This doctorant already has an annual report in progress">🛈</span>
+              <span className={'h6 ml-2'} title="This student already has an annual report in progress">🛈</span>
             </>
           }
           { (isToggling || doctorant.isBeingImported) &&

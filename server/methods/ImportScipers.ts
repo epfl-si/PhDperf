@@ -173,28 +173,27 @@ Meteor.methods({
       throw new Meteor.Error(403, 'You are not allowed to import scipers')
     }
 
-    const query = { doctoralSchoolAcronym: doctoralSchoolAcronym, }
-    const updateDocument = {
-      $set: { "doctorants.$[doctorantInfo].isSelected": checked }
-    }
-    const options = {}
-
     if (checked) {
-      _.merge(options, {
+      const query = { doctoralSchoolAcronym: doctoralSchoolAcronym, }
+      const updateDocument = {
+        $set: { "doctorants.$[doctorantInfo].isSelected": checked }
+      }
+      const options = {
         arrayFilters: [{
           "doctorantInfo.needCoDirectorData": {$ne: true},
+          "doctorantInfo.thesis.mentor": {$ne: null},
           "doctorantInfo.hasAlreadyStarted": {$ne: true}
         }]
-      })
+      }
+      ImportScipersList.update(query, updateDocument, options)
     } else {
-      _.merge(options, {
-        arrayFilters: [{
-          "doctorantInfo.needCoDirectorData": {$in: [null, false]}
-        }]
-      })
+      const query = { doctoralSchoolAcronym: doctoralSchoolAcronym, }
+      const updateDocument = {
+        $set: { "doctorants.$[].isSelected": checked }
+      }
+      const options = {}
+      ImportScipersList.update(query, updateDocument, options)
     }
-
-    ImportScipersList.update(query, updateDocument, options)
 
     ImportScipersList.update({
       doctoralSchoolAcronym: doctoralSchoolAcronym,
