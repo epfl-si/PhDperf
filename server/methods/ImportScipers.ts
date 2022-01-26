@@ -109,7 +109,12 @@ Meteor.methods({
     let isaReturn = null as isaResponse | null
 
     try {
-      isaReturn = (await fetchISA(doctoralSchoolAcronym))[0]
+
+      if (process.env.ISA_LOCAL_DATA && process.env.ISA_LOCAL_DATA === 'true') {
+        isaReturn = require("../fixtures/sampleISAData.json")[0]
+      } else {
+        isaReturn = (await fetchISA(doctoralSchoolAcronym))[0]
+      }
 
       let doctorants = isaReturn!.doctorants as DoctorantInfoSelectable[]
       doctorants =  await enhanceThesisCoDirectors(doctorants)

@@ -1,0 +1,211 @@
+[
+  {
+    "academicSession": {
+      "cursus": {
+        "name": {
+          "fr": "EDIC"
+        }
+      },
+      "model": {
+        "code": "EDOC",
+        "name": {
+          "fr": "Doctorat EDOC"
+        }
+      },
+      "acad": null,
+      "peda": null,
+      "section": {
+        "name": {
+          "fr": "Informatique et communications (edoc)",
+          "en": "Computer and Communication Sciences (edoc)"
+        },
+        "code": {
+          "fr": "EDIC"
+        }
+      },
+      "term": null,
+      "startDate": null,
+      "endDate": null
+    },
+    "doctorants": [
+      {
+        "doctorant": {
+          "sciper": "111111",
+          "fullName": "Clark Hume",
+          "lastName": "Clark",
+          "firstName": "Hume",
+          "email": "clark.hume@no.com"
+        },
+        "academicSession": {
+          "cursus": {
+            "name": {
+              "fr": "EDIC"
+            }
+          },
+          "model": {
+            "code": "EDOC",
+            "name": {
+              "fr": "Doctorat EDOC"
+            }
+          },
+          "acad": null,
+          "peda": null,
+          "section": {
+            "name": {
+              "fr": "Informatique et communications (edoc)",
+              "en": "Computer and Communication Sciences (edoc)"
+            },
+            "code": {
+              "fr": "EDIC"
+            }
+          },
+          "term": null,
+          "startDate": null,
+          "endDate": null
+        },
+        "startDate": "2019-09-05",
+        "endDate": null,
+        "thesis": {
+          "number": "11111",
+          "mentor": {
+            "lastName": "Mcculloch",
+            "firstName": "Eryn",
+            "sciper": "11112",
+            "link": {
+              "rel": "related",
+              "mime": "application/json",
+              "href": "services/teachers/11111"
+            },
+            "fullName": "Eryn Mcculloch",
+            "email": "eryn.mMcculloch@no.com"
+          },
+          "dateOralExam": null,
+          "directeur": {
+            "lastName": "Mccarthy",
+            "firstName": "Alyssia",
+            "sciper": "111112",
+            "link": {
+              "rel": "related",
+              "mime": "application/json",
+              "href": "services/teachers/111112"
+            },
+            "fullName": "Alyssia Mccarthy",
+            "email": "alyssia.mccarthy@no.com"
+          },
+          "coDirecteur": {
+            "lastName": "Penn",
+            "firstName": "Akshay",
+            "sciper": "111113",
+            "link": {
+              "rel": "related",
+              "mime": "application/json",
+              "href": "services/teachers/111113"
+            },
+            "fullName": "Akshay Penn",
+            "email": "akshay.penn@no.com"
+          },
+          "domain": null,
+          "dateAdmThese": "12.11.2020",
+          "title": {
+            "fr": "Analysis of Networking"
+          }
+        },
+        "dateImmatriculation": "01.09.2019",
+        "dateExmatriculation": null,
+        "dateExamCandidature": "03.08.2020",
+        "date2emeExamCandidature": null,
+        "examenCandidatureReussi": "Oui",
+        "noCreditsAcqquired": 10
+      },
+      {
+        "doctorant": {
+          "sciper": "411111",
+          "fullName": "Charmaine Perrault",
+          "lastName": "Perrault",
+          "firstName": "Charmaine",
+          "email": "charmaine.perrault@no.com"
+        },
+        "academicSession": {
+          "cursus": {
+            "name": {
+              "fr": "EDIC"
+            }
+          },
+          "model": {
+            "code": "EDOC",
+            "name": {
+              "fr": "Doctorat EDOC"
+            }
+          },
+          "acad": null,
+          "peda": null,
+          "section": {
+            "name": {
+              "fr": "Informatique et communications (edoc)",
+              "en": "Computer and Communication Sciences (edoc)"
+            },
+            "code": {
+              "fr": "EDIC"
+            }
+          },
+          "term": null,
+          "startDate": null,
+          "endDate": null
+        },
+        "startDate": "2019-02-05",
+        "endDate": null,
+        "thesis": {
+          "number": "41111",
+          "mentor": {
+            "lastName": "Mcculloch",
+            "firstName": "Eryn",
+            "sciper": "51112",
+            "link": {
+              "rel": "related",
+              "mime": "application/json",
+              "href": "services/teachers/51111"
+            },
+            "fullName": "Bernard Mainville",
+            "email": "bernard.mainville@no.com"
+          },
+          "dateOralExam": null,
+          "directeur": {
+            "lastName": "Normand",
+            "firstName": "Caron",
+            "sciper": "611111",
+            "link": {
+              "rel": "related",
+              "mime": "application/json",
+              "href": "services/teachers/611111"
+            },
+            "fullName": "Caron Normand",
+            "email": "caron.normand@no.com"
+          },
+          "coDirecteur": {
+            "lastName": "Beaudry",
+            "firstName": "Henriette",
+            "sciper": "711111",
+            "link": {
+              "rel": "related",
+              "mime": "application/json",
+              "href": "services/teachers/711111"
+            },
+            "fullName": "Henriette Beaudry",
+            "email": ""
+          },
+          "domain": null,
+          "dateAdmThese": "12.11.2020",
+          "title": {
+            "fr": "Analysis of Networking"
+          }
+        },
+        "dateImmatriculation": "01.09.2019",
+        "dateExmatriculation": null,
+        "dateExamCandidature": "03.08.2020",
+        "date2emeExamCandidature": null,
+        "examenCandidatureReussi": "Oui",
+        "noCreditsAcqquired": 10
+      }
+    ]
+  }
+]

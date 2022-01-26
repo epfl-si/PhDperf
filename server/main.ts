@@ -1,5 +1,5 @@
 import {Meteor} from 'meteor/meteor'
-import './fixtures'
+import './fixtures/doctoralSchools'
 import './methods'
 import './publish'
 import WorkersClient from './zeebe_broker_connector'
