@@ -12,7 +12,7 @@ import toast from "react-hot-toast";
 
 
 export const ImportScipersSchoolSelector = () => {
-  const [input, setInput] = useState('EDIC')
+  const [input, setInput] = useState('')
   const navigate = useNavigate()
 
   return (
