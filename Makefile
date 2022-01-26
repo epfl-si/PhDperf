@@ -39,7 +39,7 @@ down:
 # for want of enough RAM).
 .PHONY: build-meteor
 build-meteor:
-	docker build -t node-base node-base/
+	docker build -t node-base docker/node-base/
 # Need to go through a Docker network, so as to obtain epfl-sti-react-library
 # out of the on-premise NPM server:
 	docker network inspect phd-assess-meteor-network >/dev/null 2>&1 || \

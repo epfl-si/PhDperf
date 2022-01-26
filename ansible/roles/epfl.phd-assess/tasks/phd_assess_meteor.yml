@@ -20,7 +20,7 @@
     from: "{{ phd_assess_ubuntu_base_image.mirrored }}"
     git:
       repository: "https://github.com/epfl-si/PhDAssess"
-      path: node-base
+      path: docker/node-base
     spec:
       resources:
         limits:
