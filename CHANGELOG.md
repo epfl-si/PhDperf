@@ -1,5 +1,11 @@
 # CHANGELOG
 
+*1.3.0* (2022-01-26)
+- Meteor 2.5.3
+- Add the student info for a task in the task list
+- Add the ISA importer
+- Add doctoral schools data
+
 *1.2.0* (2021-11-29)
 - Meteor 2.5.1
 - Set more names info to variables
