@@ -10,7 +10,11 @@ only a [Zeebe worker](https://stage.docs.zeebe.io/basics/job-workers.html) with 
 **A:** Because it has hardcoded references to a specific Zeebe workflow (aka [Diagram](https://stage.docs.zeebe.io/basics/workflows.html)),
 the one that manages the PhD assess workflow.
 
-**Q: Is that a revolution in the Zeebe landscape ?**
+**Q: Diagrams look powerful ! What language is being use for bpmn conditions ?**
+
+**A:** Take a look at https://camunda.github.io/feel-scala/docs/reference/what-is-feel/
+
+**Q: Is the task-workflow a revolution in the Zeebe landscape ?**
 
 **A:** Not really, somehow they did the same as [an example](https://github.com/camunda-community-hub/zeebe-simple-tasklist)
 
