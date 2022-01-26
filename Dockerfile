@@ -1,4 +1,4 @@
-FROM docker-registry.default.svc:5000/phd-assess/node-base:latest
+FROM docker-registry.default.svc:5000/phd-assess-test/node-base:latest
 
 # not recommended by the Meteor guide, but still works:
 RUN curl https://install.meteor.com/ | sh
@@ -15,7 +15,7 @@ RUN meteor npm i && meteor npm run postinstall
 RUN meteor build --allow-superuser /usr --directory
 RUN cd /usr/bundle/programs/server && npm install
 
-FROM docker-registry.default.svc:5000/phd-assess/node-base:latest
+FROM docker-registry.default.svc:5000/phd-assess-test/node-base:latest
 
 COPY --from=0 /usr/bundle /usr/bundle/
 WORKDIR /usr/bundle
