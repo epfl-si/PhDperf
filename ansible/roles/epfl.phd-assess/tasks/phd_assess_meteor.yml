@@ -124,6 +124,8 @@
                 value: 'phd-assess:*'
               - name: 'METEOR_SETTINGS'
                 value: '{ "public": {"isTest":{{ is_test }}, "phdAssessRoleAdmin":"PhD-annual-report-admin","phdAssessRoleProgramAssistant":"PhD-annual-report-administrative-assistant" } }'
+              - name: 'ISA_IMPORT_API_URL'
+                value: 'http://isa.epfl.ch/services/v1/doctorants/current/programme'
               - name: "{{ encryption_key_name }}"
                 valueFrom:
                   secretKeyRef:
