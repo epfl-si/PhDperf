@@ -25,16 +25,17 @@ function Task({task}: TaskProps) {
     <div className={'border-top p-2'}>
       <details>
         <summary className={'d-flex align-items-center'}>
-          <span className={'mr-auto small'}>
+          <span className={'mr-auto'}>
+            <div className={'mr-2'}>{ task.variables.phdStudentName } {task.variables.phdStudentSciper ? `( ${task.variables.phdStudentSciper} )` : '' }</div>
           {task.created_at &&
-            <span className={'mr-2'}>Created {task.created_at.toLocaleString('fr-CH')}</span>
+            <span className={'mr-2 small'}>Created {task.created_at.toLocaleString('fr-CH')}</span>
           }
           {task.updated_at &&
-            <span>Updated {task.updated_at.toLocaleString('fr-CH')}</span>
+            <span className={'small'}>Updated {task.updated_at.toLocaleString('fr-CH')}</span>
           }
           {task.created_by &&
           task.created_by !== Meteor.user()?._id &&
-            <span className={'ml-2'}>By {task.variables.created_by}</span>
+            <span className={'ml-2 small'}>By {task.variables.created_by}</span>
           }
           </span>
           <span className={'small'}>
