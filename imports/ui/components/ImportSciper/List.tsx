@@ -89,7 +89,7 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
 
   if (isErronous) return <Alert alertType={ 'danger' } title={ 'Error' } message={ isErronous } />
 
-  if (ISAScipersLoading) return <Loader message={`Fetching ISA data for the ${doctoralSchool.acronym} school...`}/>
+  if (ISAScipersLoading) return <Loader message={`Fetching ISA for the list of ${doctoralSchool.acronym} PhD students...`}/>
 
   if (!ISAScipersForSchool) return <div>ISA has not data for the {doctoralSchool.acronym} school</div>
 
