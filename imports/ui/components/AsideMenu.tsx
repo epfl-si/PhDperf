@@ -3,6 +3,7 @@ import {Link, matchPath, useLocation} from "react-router-dom";
 import React from "react";
 import {canAccessDashboard} from "/imports/policy/tasks";
 import {canEditDoctoralSchools} from "/imports/policy/doctoralSchools";
+import {canImportScipersFromISA} from "/imports/policy/importScipers";
 
 
 export const AsideMenu = () => {
@@ -32,14 +33,18 @@ export const AsideMenu = () => {
             </a>
             <ul>
               <li className={matchPath("/", pathname) ? 'active' : undefined }><Link to={`/`}>List</Link></li>
-              { canAccessDashboard() &&
-                <li className={matchPath("/dashboard", pathname) ? 'active' : undefined}><Link
-                  to={`/dashboard`}>Dashboard</Link></li>
-              }
+                { canAccessDashboard() &&
+                  <li className={matchPath("/dashboard", pathname) ? 'active' : undefined}><Link
+                    to={`/dashboard`}>Dashboard</Link></li>
+                }
+                { canImportScipersFromISA() &&
+                  <li className={matchPath("/import-scipers", pathname) ? 'active' : undefined }><Link
+                    to={`/import-scipers`}>Import scipers</Link></li>
+                }
             </ul>
           </li>
         </ul>
-      </nav>
+    </nav>
     </aside>
   )
 }

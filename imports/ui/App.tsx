@@ -9,11 +9,15 @@ import TaskList from "./components/TaskList"
 import {Task} from "./components/Task"
 import {ZeebeStatus} from "/imports/ui/components/ZeebeStatus"
 import {Toaster} from "react-hot-toast";
-import {DoctoralSchoolsList} from "/imports/ui/components/DoctoralSchools/list";
+import {DoctoralSchoolsList} from "/imports/ui/components/DoctoralSchools/List";
 import {Dashboard} from "/imports/ui/components/Dashboard";
 import {useTracker} from "meteor/react-meteor-data";
 import {Meteor} from "meteor/meteor";
 import {AsideMenu} from "/imports/ui/components/AsideMenu";
+import {
+  ImportScipersForSchool,
+  ImportScipersSchoolSelector
+} from "/imports/ui/components/ImportSciper/List";
 
 
 export const App = () => {
@@ -25,7 +29,16 @@ export const App = () => {
 
   return (
     <BrowserRouter>
-      <Toaster/>
+      <Toaster
+        toastOptions={{
+          // Define default options
+          duration: 5000,
+          // Default options for specific types
+          success: {
+            duration: 4000,
+          },
+        }}
+      />
       <PhDHeader/>
       <PhDBreadcrumbs/>
       <div className={ 'nav-toggle-layout nav-aside-layout' }>
@@ -41,6 +54,8 @@ export const App = () => {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/tasks/:key" element={<TheTask />} />
             <Route path="/tasks/" element={<Navigate replace to="/" />} />
+            <Route path="/import-scipers/:doctoralSchool" element={<ImportScipersForSchool />} />
+            <Route path="/import-scipers/" element={<ImportScipersSchoolSelector/>} />
             <Route path="/" element={<TaskList />} />
           </Routes>
         </div>
@@ -48,7 +63,7 @@ export const App = () => {
       <ZeebeStatus/>
       <FooterLight/>
     </BrowserRouter>
-  );
+  )
 }
 
 function TheTask() {
@@ -69,6 +84,6 @@ function PhDBreadcrumbs() {
   matchPath("tasks/*", pathname) && breadcrumbs.push({link: "/", anchor: "Tasks"}) &&  breadcrumbs.push({link: pathname, anchor: "Proceeding"})
   matchPath("/dashboard", pathname) &&breadcrumbs.push({link: "/dashboard", anchor: "Tasks dashboard"})
   matchPath("/doctoral-schools", pathname) && breadcrumbs.push({link: "/doctoral-schools", anchor: "Doctoral schools administration"})
-
+  matchPath("/import-scipers", pathname) && breadcrumbs.push({link: "/import-scipers", anchor: "Import scipers"})
   return <Breadcrumbs items={breadcrumbs}/>
 }

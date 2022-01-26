@@ -13,6 +13,7 @@ import {auditLogConsoleOut} from "/imports/lib/logging";
 
 // load methods from shared js
 import '/imports/api/doctoralSchools/methods'
+import '/server/methods/ImportScipers'
 
 const tasks = TasksCollection<TaskData>()
 const auditLog = auditLogConsoleOut.extend('server/methods')

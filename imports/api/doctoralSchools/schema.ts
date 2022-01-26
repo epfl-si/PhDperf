@@ -13,7 +13,7 @@ export interface DoctoralSchool {
   programDirectorSciper: Sciper,
 }
 
-export const DoctoralSchools = new Mongo.Collection('doctoralSchools',
+export const DoctoralSchools = new Mongo.Collection<DoctoralSchool>('doctoralSchools',
 // @ts-ignore
   persistentDB && Meteor.isServer ? { _driver : persistentDB } : {})
 

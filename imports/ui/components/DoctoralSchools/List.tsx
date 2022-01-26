@@ -4,8 +4,8 @@ import {Meteor} from "meteor/meteor";
 import {canEditDoctoralSchools} from "/imports/policy/doctoralSchools";
 import {Loader} from "@epfl/epfl-sti-react-library";
 import {DoctoralSchool, DoctoralSchools} from "/imports/api/doctoralSchools/schema";
-import {CreateForm} from './create'
-import {InlineEdit} from './edit'
+import {CreateForm} from './Create'
+import {InlineEdit} from './Edit'
 
 
 export function DoctoralSchoolsList() {
