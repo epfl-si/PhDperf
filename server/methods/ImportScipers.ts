@@ -15,7 +15,7 @@ import {fetchTimeout} from "/imports/lib/fetchTimeout";
 import AbortController from "abort-controller";
 
 import path from 'path'
-import isaReturnExample from "../../imports/ui/components/ImportSciper/edic.json";
+
 
 const debug = require('debug')('server/ImportScipers')
 
@@ -109,19 +109,11 @@ Meteor.methods({
     let isaReturn = null as isaResponse | null
 
     try {
-      try {
-        isaReturn = (await fetchISA(doctoralSchoolAcronym))[0]
-        if (!isaReturn) throw new Error()
-      } catch (e) {
-        // Load local data if API fetch failed, throw in local data
-        // TODO: REMOVE THIS
-        isaReturn = isaReturnExample[0] as isaResponse
-      }
+      isaReturn = (await fetchISA(doctoralSchoolAcronym))[0]
 
       let doctorants = isaReturn!.doctorants as DoctorantInfoSelectable[]
       doctorants =  await enhanceThesisCoDirectors(doctorants)
       doctorants = setAlreadyStarted(doctorants)
-
 
       ImportScipersList.insert({
         doctoralSchoolAcronym: doctoralSchoolAcronym,
