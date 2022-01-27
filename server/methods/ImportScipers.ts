@@ -294,7 +294,7 @@ Meteor.methods({
         thesisCoDirectorEmail: encrypt(doctorant.thesis.coDirecteur?.email ?? ''),
 
         programAssistantSciper: encrypt(Meteor.user()!._id),
-        programAssistantName: encrypt(Meteor.user()?.displayname ?? ''),
+        programAssistantName: encrypt(Meteor.user()?.tequila?.displayname ?? ''),
         programAssistantEmail: encrypt(Meteor.user()?.tequila.email ?? ''),
       }
 
