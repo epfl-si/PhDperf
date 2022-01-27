@@ -172,12 +172,12 @@ export const Row = ({ doctorant, doctoralSchool, checked }: RowParameters) => {
           &nbsp;
           { doctorant.needCoDirectorData && !(isToggling || doctorant.isBeingImported || doctorant.hasAlreadyStarted) &&
             <>
-              <span className={'h4 text-danger ml-1'} title="CoDirector is missing. Please fill the sciper input.">⚠</span>
+              <span className={'h4 text-danger ml-1'} title="Co-director sciper is missing. Please enter the guest sciper account">⚠</span>
             </>
           }
           { !doctorant.thesis?.mentor && !(isToggling || doctorant.isBeingImported || doctorant.hasAlreadyStarted) &&
             <>
-              <span className={'h4 text-danger ml-1'} title="Mentor sciper is missing. Please enter the information in EDOC portal in ISA and re-import the list.">⚠</span>
+              <span className={'h4 text-danger ml-1'} title="Mentor sciper is missing. Please enter the information in EDOC portal in ISA and re-import the list">⚠</span>
             </>
           }
           { doctorant.hasAlreadyStarted && !(isToggling || doctorant.isBeingImported) &&
