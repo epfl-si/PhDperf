@@ -78,7 +78,7 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
     Meteor.call('startPhDAssess', doctoralSchool.acronym, (error: any) => {
       toast.dismiss(toastId)
       if (error) {
-        toast.error(error)
+        toast.error(error.reason ?? error.message)
         setIsErronous(error.reason ?? error.message)
       } else {
         toast.success("Succesfully launched import. Please be patient while entries are getting created...")

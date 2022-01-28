@@ -314,8 +314,7 @@ Meteor.methods({
         doctoralSchoolAcronym: doctoralSchoolAcronym,
       }, { $set: { "isAllSelected": false } } )
     } catch (error) {
-      // throw new Meteor.Error(403, 'Some imports have failed to start.')
-      throw error
+      throw new Meteor.Error('Zeebe error', 'Unable to start imports. Please contact 1234@epfl.ch.')
     } finally {
       // set the loading status
       const query = { doctoralSchoolAcronym: doctoralSchoolAcronym, }
