@@ -18,6 +18,9 @@ import {
   ImportScipersForSchool,
   ImportScipersSchoolSelector
 } from "/imports/ui/components/ImportSciper/List";
+import {canImportScipersFromISA} from "/imports/policy/importScipers";
+import {canEditDoctoralSchools} from "/imports/policy/doctoralSchools";
+import {canAccessDashboard} from "/imports/policy/tasks";
 
 
 export const App = () => {
@@ -50,12 +53,20 @@ export const App = () => {
             <div className={'alert alert-info'} role={'alert'}><strong>Testing</strong> You are on the testing environment.</div>
           }
           <Routes>
-            <Route path="/doctoral-schools" element={<DoctoralSchoolsList />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            { canEditDoctoralSchools() &&
+              <Route path="/doctoral-schools" element={<DoctoralSchoolsList/>}/>
+            }
+            { canAccessDashboard() &&
+              <Route path="/dashboard" element={<Dashboard/>}/>
+            }
             <Route path="/tasks/:key" element={<TheTask />} />
             <Route path="/tasks/" element={<Navigate replace to="/" />} />
-            <Route path="/import-scipers/:doctoralSchool" element={<ImportScipersForSchool />} />
-            <Route path="/import-scipers/" element={<ImportScipersSchoolSelector/>} />
+            { canImportScipersFromISA() &&
+            <>
+              <Route path="/import-scipers/:doctoralSchool" element={<ImportScipersForSchool/>}/>
+              <Route path="/import-scipers/" element={<ImportScipersSchoolSelector/>} />
+            </>
+            }
             <Route path="/" element={<TaskList />} />
           </Routes>
         </div>
