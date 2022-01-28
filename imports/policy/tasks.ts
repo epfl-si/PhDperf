@@ -49,7 +49,7 @@ export const get_user_permitted_tasks = () => {
 }
 
 export const canAccessDashboard = () : boolean => {
-  return (Meteor.user()!.isProgramAssistant || Meteor.user()!.isAdmin)
+  return !!(Meteor.user()?.isProgramAssistant || Meteor.user()?.isAdmin)
 }
 
 // Define which tasks can be seen from the dashboard
