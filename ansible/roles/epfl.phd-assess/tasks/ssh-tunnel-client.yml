@@ -81,7 +81,7 @@
                 else [] }}
               resources:
                 limits:
-                  cpu: '1'
+                  cpu: '100m'
                   memory: "50M"
               ports:
                 - name: zeebe-raft

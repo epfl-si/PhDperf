@@ -4,5 +4,5 @@ k8s_frugal_strategy:
   # said deploy container to schedule.
   resources:
     limits:
-      cpu: '1'
+      cpu: '100m'
       memory: 100M

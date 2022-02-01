@@ -32,7 +32,7 @@
               image: "{{ phd_assess_mongo_image.mirrored }}"
               resources:
                 limits:
-                  cpu: '1'
+                  cpu: '100m'
                   memory: 200M
               volumeMounts:
                 - name: data-db

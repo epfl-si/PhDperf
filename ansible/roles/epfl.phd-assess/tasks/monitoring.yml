@@ -80,7 +80,7 @@
                 - --storage.tsdb.path=/prometheus
               resources:
                 limits:
-                  cpu: '1'
+                  cpu: '100m'
                   memory: 100M
           volumes:
             - name: storage
@@ -130,7 +130,7 @@
     spec:
       resources:
         limits:
-          cpu: '1'
+          cpu: '100m'
           memory: 100M
 
 - name: "Promote disk-usage-exporter image from {{ phd_assess_build_namespace }} to production"
@@ -181,7 +181,7 @@
                   value: /usr/local/zeebe/data;/usr/local/zeebe/data/raft-partition/partitions/1/snapshots
               resources:
                 limits:
-                  cpu: '1'
+                  cpu: '100m'
                   memory: 100M
               ports:
                 - name: metrics

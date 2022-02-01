@@ -57,7 +57,7 @@
                 | to_k8s_env }}
               resources:
                 limits:
-                  cpu: '1'
+                  cpu: '100m'
                   memory: >-
                     {{ "500M" if "test" in openshift_namespace
                     else "1G" }}
