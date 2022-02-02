@@ -1,5 +1,10 @@
 # CHANGELOG
 
+*1.3.2* (2022-02-02)
+- Meteor 2.5.6
+- Automatically add dates from ISA when importing tasks (dateOfCandidacyExam, dateOfEnrolment)
+- Add program director name to doctoral school details
+
 *1.3.1* (2022-01-28)
 - Remove default proposition for doctoral school selection
 - Fix using wrong field when getting the current user display name
