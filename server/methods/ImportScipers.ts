@@ -13,7 +13,7 @@ import {canStartProcessInstance} from "/imports/policy/tasks";
 import {DoctoralSchool, DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 import {fetchTimeout} from "/imports/lib/fetchTimeout";
 import AbortController from "abort-controller";
-
+import dateFormat from "dateformat"
 import path from 'path'
 
 
@@ -267,6 +267,21 @@ Meteor.methods({
 
     const doctorantsToLoad = imports.doctorants?.filter((doctorant) => doctorant.isSelected)
 
+    const ISADateToFormIO = (ISADate?: string) => {
+      try {
+        const split = ISADate?.split('.') ?? ''
+
+        if (split.length === 3) {
+          const isoDate = new Date(Number(split[2]), Number(split[1]) - 1, Number(split[0]))
+          return dateFormat(isoDate, "yyyy-mm-dd")
+        } else {
+          return ''
+        }
+      } catch (e) {
+        return ''
+      }
+    }
+
     const ProcessInstanceCreationPromises: any = []
     doctorantsToLoad?.forEach((doctorant) => {
       const dataToPush = {
@@ -276,6 +291,9 @@ Meteor.methods({
         programDirectorSciper: encrypt(doctoralSchool.programDirectorSciper),
         programDirectorName: encrypt(programDirector.firstname + ' ' + programDirector.name),
         programDirectorEmail: encrypt(programDirector.email),
+
+        dateOfCandidacyExam: encrypt(ISADateToFormIO(doctorant.dateExamCandidature)),
+        dateOfEnrolment: encrypt(ISADateToFormIO(doctorant.dateImmatriculation)),
 
         phdStudentSciper: encrypt(doctorant.doctorant.sciper),
         phdStudentName: encrypt(doctorant.doctorant.fullName),
