@@ -11,6 +11,7 @@ export interface DoctoralSchool {
   helpUrl: string,
   creditsNeeded: number,
   programDirectorSciper: Sciper,
+  programDirectorName?: string
 }
 
 export const DoctoralSchools = new Mongo.Collection<DoctoralSchool>('doctoralSchools',
@@ -33,6 +34,7 @@ DoctoralSchools.schema = new SimpleSchema({
   helpUrl: { type: String },
   creditsNeeded: { type: SimpleSchema.Integer, min:10, max:99 },
   programDirectorSciper: { type: String, min:6, max:6 },
+  programDirectorName: { type: String, optional: true},
 });
 
 DoctoralSchools.attachSchema(DoctoralSchools.schema);

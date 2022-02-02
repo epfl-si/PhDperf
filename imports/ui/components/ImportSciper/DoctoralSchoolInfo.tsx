@@ -1,12 +1,31 @@
-import React from "react"
-import {DoctoralSchool} from "/imports/api/doctoralSchools/schema";
+import React, {useEffect, useState} from "react"
+import {DoctoralSchool, DoctoralSchools} from "/imports/api/doctoralSchools/schema";
+import {useTracker} from "meteor/react-meteor-data";
+import {Meteor} from "meteor/meteor";
 
 export const DoctoralSchoolInfo = ({doctoralSchool}: {doctoralSchool: DoctoralSchool }) => {
+  const currentDoctoralSchool = useTracker(
+    () => DoctoralSchools.findOne({ acronym: doctoralSchool.acronym }),
+    [doctoralSchool]) as DoctoralSchool
+
+  const [isFetchingProgramSciperName, setIsFetchingProgramSciperName] = useState(false)
+
+  useEffect(() => {
+    setIsFetchingProgramSciperName(true)
+    Meteor.apply(
+      "refreshDoctoralSchoolsProgramNameFromSciper",
+      [ doctoralSchool.acronym ],
+      { wait: false, noRetry: false },
+      () => setIsFetchingProgramSciperName(false)
+    )
+  }, [doctoralSchool]);
+
   return (
-    <p>Doctoral program: { doctoralSchool.acronym }<br/>
-      Program director: { doctoralSchool.programDirectorSciper }<br/>
-      Credits needed for this program: { doctoralSchool.creditsNeeded}<br/>
-      Annual report documentation : <a href={ doctoralSchool.helpUrl } target={'_blank'}>{ doctoralSchool.helpUrl}</a>
+    <p>Doctoral program: { currentDoctoralSchool.acronym }<br/>
+      Program director: { currentDoctoralSchool.programDirectorName ? <>{ currentDoctoralSchool.programDirectorName } ({currentDoctoralSchool.programDirectorSciper})</> : <>`${currentDoctoralSchool.programDirectorSciper}`</> }
+      { isFetchingProgramSciperName ? <span className={"loader"} /> : <></> }<br/>
+      Credits needed for this program: { currentDoctoralSchool.creditsNeeded}<br/>
+      Annual report documentation : <a href={ currentDoctoralSchool.helpUrl } target={'_blank'}>{ currentDoctoralSchool.helpUrl}</a>
     </p>
   )
 }
