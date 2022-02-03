@@ -39,23 +39,23 @@ const enhanceThesisCoDirectors = async (doctorants: DoctorantInfoSelectable[]) =
   }
 
   for (let [index, doctorant] of doctorants.entries()) {
-    try {
-      if (doctorant.thesis?.coDirecteur) {
-        if ("sciper" in doctorant.thesis.coDirecteur && doctorant.thesis.coDirecteur?.sciper) {
-          // case 1 : a sciper but no email
-          if (!("email" in doctorant.thesis.coDirecteur) ||
-          // case 2 : // email is not the one we have in our db
-            !(await verifyEmailFromSciper(doctorant.thesis.coDirecteur.email, doctorant.thesis.coDirecteur.sciper))) {
+    if (doctorant.thesis?.coDirecteur) {
+      if ("sciper" in doctorant.thesis.coDirecteur && doctorant.thesis.coDirecteur.sciper) {
+        if ("email" in doctorant.thesis.coDirecteur && doctorant.thesis.coDirecteur.email) {
+          // case : email is not the one we have in our db
+          try {
+            doctorants[index].needCoDirectorData = !(await verifyEmailFromSciper(doctorant.thesis.coDirecteur.email, doctorant.thesis.coDirecteur.sciper))
+          } catch (e) {
+            // case :  the api for getting the email from sciper is out of service
             doctorants[index].needCoDirectorData = true
           }
+        } else {
+          // case : a sciper but no email
+          doctorants[index].needCoDirectorData = true
         }
       }
-    } catch (error) {
-      console.log('error'+ error);
     }
   }
-
-  return doctorants
 }
 
 const setAlreadyStarted = (doctorants: DoctorantInfoSelectable[]) => {
@@ -74,8 +74,6 @@ const setAlreadyStarted = (doctorants: DoctorantInfoSelectable[]) => {
   for (let [index, doctorant] of doctorants.entries()) {
     doctorants[index].hasAlreadyStarted = alreadyStartedStudentsScipers.includes(doctorant.doctorant.sciper)
   }
-
-  return doctorants
 }
 
 const fetchISA = async (doctoralSchoolAcronym: string) => {
@@ -116,9 +114,9 @@ Meteor.methods({
         isaReturn = (await fetchISA(doctoralSchoolAcronym))[0]
       }
 
-      let doctorants = isaReturn!.doctorants as DoctorantInfoSelectable[]
-      doctorants =  await enhanceThesisCoDirectors(doctorants)
-      doctorants = setAlreadyStarted(doctorants)
+      let doctorants = _.cloneDeep((isaReturn!.doctorants as DoctorantInfoSelectable[]))
+      await enhanceThesisCoDirectors(doctorants)
+      setAlreadyStarted(doctorants)
 
       ImportScipersList.insert({
         doctoralSchoolAcronym: doctoralSchoolAcronym,
