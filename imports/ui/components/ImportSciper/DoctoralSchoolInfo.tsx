@@ -22,8 +22,8 @@ export const DoctoralSchoolInfo = ({doctoralSchool}: {doctoralSchool: DoctoralSc
 
   return (
     <p>Doctoral program: { currentDoctoralSchool.acronym }<br/>
-      Program director: { currentDoctoralSchool.programDirectorName ? <>{ currentDoctoralSchool.programDirectorName } ({currentDoctoralSchool.programDirectorSciper})</> : <>`${currentDoctoralSchool.programDirectorSciper}`</> }
-      { isFetchingProgramSciperName ? <span className={"loader"} /> : <></> }<br/>
+      Program director: { currentDoctoralSchool.programDirectorName ? <>{ currentDoctoralSchool.programDirectorName } ({currentDoctoralSchool.programDirectorSciper})</> : <>{currentDoctoralSchool.programDirectorSciper}</> }
+      { isFetchingProgramSciperName ? <>&nbsp;<span className={"loader"} /></> : <></> }<br/>
       Credits needed for this program: { currentDoctoralSchool.creditsNeeded}<br/>
       Annual report documentation : <a href={ currentDoctoralSchool.helpUrl } target={'_blank'}>{ currentDoctoralSchool.helpUrl}</a>
     </p>
