@@ -1,5 +1,8 @@
 # CHANGELOG
 
+*1.3.3* (2022-02-04)
+- Fix the thesis co director sciper behaving wrongly when importing list
+
 *1.3.2* (2022-02-02)
 - Meteor 2.5.6
 - Automatically add dates from ISA when importing tasks (dateOfCandidacyExam, dateOfEnrolment)
