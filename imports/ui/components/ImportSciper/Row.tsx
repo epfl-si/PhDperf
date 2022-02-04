@@ -49,11 +49,13 @@ export const HeaderRow = ({doctoralSchool, isAllSelected, disabled} :
   )
 }
 
-const PersonDisplay = ({ person, boldName = false }: { person: Person, boldName?: boolean }) => {
+const PersonDisplay = ({ person, boldName = false, showSciper = true }: { person: Person, boldName?: boolean, showSciper?: boolean }) => {
   return (
     <div>
       <div className={boldName ? 'font-weight-bold' : ''}>{ person.fullName }</div>
-      <div>{ person.sciper }</div>
+      { showSciper &&
+        <div>{person.sciper}</div>
+      }
     </div>
   )
 }
@@ -62,8 +64,9 @@ const ThesisCoDirectorDisplay = ({
                                    doctoralSchool,
                                    doctorant,
                                    coDirector,
-                                   isSciperNeeded
-                                 }: { doctoralSchool: DoctoralSchool, doctorant: Person, coDirector: Person | undefined, isSciperNeeded: boolean | undefined }) => {
+                                   isSciperNeeded,
+                                   showSciper
+                                 }: { doctoralSchool: DoctoralSchool, doctorant: Person, coDirector?: Person, isSciperNeeded?: boolean, showSciper?: boolean }) => {
   const [isSending, setIsSending] = useState(false)
   const [newSciper, setNewSciper] = useState('')
 
@@ -91,37 +94,33 @@ const ThesisCoDirectorDisplay = ({
   }
 
   return (
-    <>
-      { !isSciperNeeded && coDirector && <PersonDisplay person={coDirector as Person} /> }
-      { isSciperNeeded &&
-        <>
-          {coDirector &&
-            <span>{coDirector.fullName}</span>
-          }
-          <div>
-            <form role="form" onSubmit={ setCoDirectorNewSciper }>
-              <input type="text"
-                     className={'is-invalid'}
-                     id="sciper"
-                     name="sciper"
-                     maxLength={6}
-                     size={6}
-                     placeholder={'Gxxxxx'}
-                     pattern={ "[G|g][0-9]{5}" }
-                     title={ 'Sciper has to be a guest one. Ex. G12345' }
-                     value={ newSciper }
-                     onChange={ (e) => setNewSciper(e.target.value)}
-              />
-              { !isSending &&
-                <button type="submit">Set</button>
-              }
+    <>{coDirector &&
+        <PersonDisplay person={coDirector} showSciper={!isSciperNeeded && showSciper} />
+      }
+      { coDirector && isSciperNeeded &&
+        <div>
+          <form role="form" onSubmit={ setCoDirectorNewSciper }>
+            <input type="text"
+                   className={'is-invalid'}
+                   id="sciper"
+                   name="sciper"
+                   maxLength={6}
+                   size={6}
+                   placeholder={'Gxxxxx'}
+                   pattern={ "[G|g][0-9]{5}" }
+                   title={ 'Sciper has to be a guest one. Ex. G12345' }
+                   value={ newSciper }
+                   onChange={ (e) => setNewSciper(e.target.value)}
+            />
+            { !isSending &&
+              <button type="submit">Set</button>
+            }
 
-              { isSending &&
-                <span className="loader" />
-              }
-            </form>
-          </div>
-        </>
+            { isSending &&
+              <span className="loader" />
+            }
+          </form>
+        </div>
       }
     </>
   )
@@ -197,6 +196,7 @@ export const Row = ({ doctorant, doctoralSchool, checked }: RowParameters) => {
             doctorant={ doctorant.doctorant }
             coDirector={ doctorant.thesis.coDirecteur }
             isSciperNeeded={ doctorant.needCoDirectorData && !doctorant.hasAlreadyStarted }
+            showSciper={ !doctorant.needCoDirectorData || !doctorant.hasAlreadyStarted }
           />
         </div>
         <div className={ `col-2 ${defaultColClasses}` }>
