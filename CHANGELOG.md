@@ -1,5 +1,8 @@
 # CHANGELOG
 
+*1.3.4* (2022-02-08)
+- Second fix for the thesis co director behaving wrongly when importing list
+
 *1.3.3* (2022-02-04)
 - Fix the thesis co director sciper behaving wrongly when importing list
 
