@@ -17,7 +17,10 @@
     metadata:
       name: "node-base"
       namespace: "{{ phd_assess_build_namespace }}"
-    from: "{{ phd_assess_ubuntu_base_image.mirrored }}"
+    from:
+      kind: ImageStreamTag
+      name: "ubuntu:focal"
+      namespace: "{{ phd_assess_build_namespace }}"
     git:
       repository: "https://github.com/epfl-si/PhDAssess"
       path: docker/node-base
@@ -33,7 +36,10 @@
     metadata:
       name: "{{ phd_assess_meteor_image_name }}"
       namespace: "{{ phd_assess_build_namespace }}"
-    from: "{{ openshift_local_images_base }}/node-base"
+    from:
+      kind: ImageStreamTag
+      name: "node-base:latest"
+      namespace: "{{ phd_assess_build_namespace }}"
     git:
       repository: "https://github.com/epfl-si/PhDAssess"
     spec:
