@@ -34,15 +34,17 @@ export function UserAuthButton() {
     <Popper relativeTo={buttonRef.current} options={popperOptions} visible={visible}
             onClickElsewhere={() => setVisibility(false)}>
     <div className="dropdown-menu-popper mt-3">
-      <p className={'mx-3 my-3'}>
-        Logged in as { user?.tequila?.displayname }
-        { user?.isAdmin && ` (admin)` }
+      <div className={'mx-3 my-3'}>
+        <div>
+          Logged in as { user?.tequila?.displayname }
+          { user?.isAdmin && ` (admin)` }
+        </div>
         { user?.isAdmin &&
         <div className={'small'}>
           Version {packageJson.version}
         </div>
         }
-      </p>
+      </div>
     </div>
     </Popper>
   </>
