@@ -1,10 +1,10 @@
 # CHANGELOG
 
 *1.3.5* (2022-02-09)
--  Add info about non-persistent guests data at the top of the import sciper list
+- Add info about non-persistent guests data at the top of the import sciper list
 
 *1.3.4* (2022-02-08)
-- Second fix for the thesis co director behaving wrongly when importing list
+- Fix again for the thesis co director behaving wrongly when importing list
 
 *1.3.3* (2022-02-04)
 - Fix the thesis co director sciper behaving wrongly when importing list
