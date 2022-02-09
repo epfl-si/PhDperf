@@ -107,6 +107,11 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
             ISA List fetched at {ISAScipersForSchool.createdAt.toLocaleString('fr-CH')}
           </div>
         }
+        <div className={'alert alert-info mt-1'} role={'alert'}>
+          Please note that as long as you have not clicked on the button "Start PhD assessment",
+          all the information you have added manually in the boxes (such as Gxxxxx) will not be saved if
+          you leave or reload the page.
+        </div>
         <hr />
         <StartButton total={ total } nbSelected={ nbSelected } isStarted={ importStarted } startFunc={ startImport }/>
       </div>
