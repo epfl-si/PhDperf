@@ -2,7 +2,7 @@ import {global_Error, Meteor} from "meteor/meteor"
 import React from "react"
 import _ from "lodash"
 import {useTracker} from 'meteor/react-meteor-data'
-import {Task, Tasks} from '/imports/api/tasks'
+import {Task, Tasks} from "/imports/model/tasks";
 import {WorkflowStarter} from './workflowStarter'
 import {Button, Loader} from "@epfl/epfl-sti-react-library"
 import {Link} from "react-router-dom"
@@ -14,11 +14,8 @@ import {
 import {toastClosable} from "/imports/ui/components/Toasters";
 import {ErrorIcon} from "react-hot-toast/src/components/error";
 
-type TaskProps = {
-  task: Task
-}
 
-function Task({task}: TaskProps) {
+function TaskRow({ task }: { task: Task }) {
   const toastId = `toast-${task.key}`
 
   return (
@@ -162,7 +159,7 @@ export default function TaskList() {
                 <h3 className={'mt-5'}>{taskGrouper}</h3>
                 {
                   groupByTasks[taskGrouper].map((task: Task) =>
-                    <Task key={task._id} task={task}/>
+                    <TaskRow key={task._id} task={task}/>
                   )
                 }
               </div>

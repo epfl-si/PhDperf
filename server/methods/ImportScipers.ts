@@ -6,7 +6,7 @@ import {canImportScipersFromISA} from "/imports/policy/importScipers";
 import {auditLogConsoleOut} from "/imports/lib/logging";
 import {getUserInfoMemoized} from "/server/userFetcher";
 import _ from "lodash";
-import {Tasks} from "/imports/api/tasks";
+import {Tasks} from "/imports/model/tasks";
 import {zBClient} from "/server/zeebe_broker_connector";
 import {encrypt} from "/server/encryption";
 import {canStartProcessInstance} from "/imports/policy/tasks";
@@ -317,7 +317,7 @@ Meteor.methods({
       ProcessInstanceCreationPromises.push(
         zBClient!.createProcessInstance('phdAssessProcess', _.merge(dataToPush, {
           created_at: encrypt(new Date().toJSON()),
-          created_by: encrypt(Meteor.userId()!),
+          created_by: encrypt(Meteor.user()!._id),
           updated_at: encrypt(new Date().toJSON()),
         })
       ))

@@ -1,58 +1,73 @@
 import { Meteor } from 'meteor/meteor'
 import { Mongo } from 'meteor/mongo'
 import {Sciper} from "/imports/api/datatypes";
-import {ICustomHeaders, IInputVariables, Job} from "zeebe-node";
-import {ZeebeParticipantsVariables} from './participants';
+import {ParticipantList, participantsFromZeebe} from './participants';
 import ephemeralDB from "/imports/db/ephemeral";
+import _ from 'lodash';
+import {PhDCustomHeaderShape, PhDInputVariables, TaskI} from "/imports/model/tasksTypes";
 
-export class PhDCustomHeaderShape implements ICustomHeaders {
-  groups?: string[]  // manage permission groupwise
-  title?: string  // title shown for this task
-  formIO?: string  // the formIO JSON
-  [key: string]: any  // the others var
-}
 
-// Log what happens on every steps
-export interface FormioActivityLog {
-  timezone?: string;
-  offset?: number;
-  origin?: string;
-  referrer?: string;
-  browserName?: string;
-  userAgent?: string;
-  pathName?: string;
-  onLine?: boolean;
-}
+export class Task implements TaskI {
+  declare _id?: string
+  declare variables: PhDInputVariables
+  declare processInstanceKey: string
+  declare processDefinitionVersion: number
+  declare assigneeSciper?: Sciper
+  declare activityLogs?: string
+  declare key: string;
+  declare type: string;
+  declare workflowInstanceKey: string;
+  declare bpmnProcessId: string;
+  declare workflowDefinitionVersion: number;
+  declare workflowKey: string;
+  declare processKey: string;
+  declare elementId: string;
+  declare elementInstanceKey: string;
+  declare customHeaders: Readonly<PhDCustomHeaderShape>;
+  declare worker: string;
+  declare retries: number;
+  declare deadline: string;
 
-// This are the bpmn variables we could find for every steps and
-// we will need through the code.
-// Why a class instead an interface here ? To be able to read the
-// keys later in the process. See https://stackoverflow.com/a/59806829
-export interface PhDInputVariables extends ZeebeParticipantsVariables, IInputVariables {
-  assigneeSciper?: Sciper
+  participants: ParticipantList
   created_by?: Sciper
-  created_at?: string  // JSON date
-  updated_at?: string  // JSON date
-  activityLogs?: string
-  //[key: string]: any  // the others var
+  created_at?: Date
+  updated_at?: Date
+  detail: any
+  monitorUri?: string  // not for prod
+
+  constructor(doc: any) {
+    _.extend(this, doc);
+    this.participants = participantsFromZeebe(this.variables)
+    this.created_by = this.variables?.created_by
+    this.created_at = this.variables.created_at ? new Date(this.variables?.created_at) : undefined
+    this.updated_at = this.variables.updated_at ? new Date(this.variables?.updated_at) : undefined
+
+    this.detail = [
+      `Job key: ${this._id}`,
+      `Process instance key: ${this.processInstanceKey}`,
+      `workflow version: ${this.processDefinitionVersion}`,
+    ].join(", ")
+
+    this.monitorUri = Meteor.settings.public.monitor_address && Meteor.user()?.isAdmin ?
+      `http://${Meteor.settings.public.monitor_address}/views/instances/${this.processInstanceKey}` :
+      undefined
+  }
 }
 
-// Model the task on what we await from zeebe
-export interface Task<WorkerInputVariables = PhDInputVariables, CustomHeaderShape = PhDCustomHeaderShape> extends Job<WorkerInputVariables, CustomHeaderShape> {
+class TasksCollection extends Mongo.Collection<Task> {
+  insert(doc: Task, callback?: Function) {
+    if (Meteor.isServer) {
+      return super.insert(doc, callback)
+    } else {
+      return super.insert(doc as Task, callback)
+    }
+  }
 }
 
-export type TaskData = Task & {
-  _id: string
-}
-
-// Due to restrictions in the Meteor model, this function can only be
-// called once per locus (i.e. once in the client and once in the
-// server).
-export function TasksCollection<U>(transform ?: (doc: TaskData) => U) {
-  const collectionName = 'tasks'
-
-  return new Mongo.Collection<TaskData, U>(
-    collectionName,
-    // The collection is *not* persistent server-side; instead, it gets fed from Zeebe
-    Meteor.isServer ? { connection : ephemeralDB, transform } : { transform })
-}
+export const Tasks = new TasksCollection('tasks',
+  {
+    // @ts-ignore
+    _driver : ephemeralDB,
+    transform: (doc: Task) => new Task(doc),
+  }
+)

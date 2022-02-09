@@ -1,5 +1,5 @@
 import {Meteor} from "meteor/meteor";
-import {Tasks} from "/imports/api/tasks";
+import {Tasks} from "/imports/model/tasks";
 import {findFieldKeysToSubmit} from "/imports/lib/formIOUtils"
 import _ from "lodash";
 import { Mongo } from 'meteor/mongo';

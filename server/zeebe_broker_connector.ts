@@ -1,4 +1,3 @@
-import {Mongo} from 'meteor/mongo'
 import {Meteor} from 'meteor/meteor'
 import {ZeebeSpreadingClient} from "/imports/api/zeebeStatus"
 import {decrypt} from "/server/encryption"
@@ -10,11 +9,10 @@ import {
   JobCompletionInterface
 } from "zeebe-node"
 import {
-  PhDCustomHeaderShape,
-  PhDInputVariables,
-  TaskData,
-  TasksCollection
+  Task,
+  Tasks
 } from "/imports/model/tasks"
+import {PhDCustomHeaderShape, PhDInputVariables} from "/imports/model/tasksTypes";
 
 const debug = debug_('phd-assess:zeebe-connector')
 
@@ -28,10 +26,9 @@ interface OutputVariables {
 interface PhDZeebeJob<WorkerInputVariables = PhDInputVariables, CustomHeaderShape = PhDCustomHeaderShape, WorkerOutputVariables = IOutputVariables> extends Job<WorkerInputVariables, CustomHeaderShape>, JobCompletionInterface<WorkerOutputVariables> {
 }
 
-const tasks = TasksCollection<TaskData>()
 export let zBClient: ZeebeSpreadingClient | null = null
 
-function zeebeJobToTask(job: PhDZeebeJob): TaskData {
+function zeebeJobToTask(job: PhDZeebeJob): Task {
   // decrypt the variables before saving into memory (keep the typed values too)
   // Typescript hack with the "any" : make it writable by bypassing typescript. Well know it's bad,
   // but still, better than rebuilding the whole Zeebe interfaces to get it writeable
@@ -59,11 +56,12 @@ function zeebeJobToTask(job: PhDZeebeJob): TaskData {
     debug(`Can't decrypt one or more key: ${JSON.stringify(undecryptableVariablesKey)}`)
     throw cantDecryptError
   }
+  // we are ok to make it to a task now
+  const task = job as unknown as Task
+  task._id = job.key
+  task.variables = decryptedVariables
 
-  return Object.assign(job, {
-    _id: job.key,
-    variables: decryptedVariables,
-  })
+  return task
 }
 
 export default {
@@ -88,10 +86,10 @@ export default {
           ) => {
             let task_id: string | undefined;
 
-            if (!tasks.findOne({ _id: job.key } )) {  // Let's add this unknown task
+            if (!Tasks.findOne({ _id: job.key } )) {  // Let's add this unknown task
               try {
                 let newTask = zeebeJobToTask(job)
-                task_id = tasks.insert(newTask)
+                task_id = Tasks.insert(newTask)
                 debug(`Received a new job from Zeebe ${ task_id }`)
               } catch (error) {
                 // unable to create the task or a variable is failing to be decrypted => no good at all
@@ -106,10 +104,6 @@ export default {
           })
     })
     debug(`Zeebe worker "${taskType}" created`);
-  },
-
-  find(query: any): Mongo.Cursor<TaskData> {
-    return tasks.find(query)
   },
 
   async success(key: string, workerResult: OutputVariables) {

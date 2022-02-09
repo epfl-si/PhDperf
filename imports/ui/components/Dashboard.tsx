@@ -1,6 +1,6 @@
 import {useTracker} from "meteor/react-meteor-data"
 import {Meteor} from "meteor/meteor"
-import {Task, Tasks} from "/imports/api/tasks"
+import {Task, Tasks} from "/imports/model/tasks";
 import _ from "lodash"
 import React from "react"
 import {Loader} from "@epfl/epfl-sti-react-library";

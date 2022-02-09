@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import {Errors, Form} from '@formio/react'
 import {customEvent} from '/imports/ui/model/formIo'
-import {Tasks} from '/imports/api/tasks'
+import {Tasks} from "/imports/model/tasks";
 import {global_Error, Meteor} from 'meteor/meteor'
 import {useTracker} from 'meteor/react-meteor-data'
 import {Button, Loader} from "@epfl/epfl-sti-react-library"
@@ -21,7 +21,7 @@ export function Task({workflowKey}: { workflowKey: string }) {
     return !handle.ready();
   }, [workflowKey]);
 
-  const task = useTracker(() => Tasks.findByKey(workflowKey), [workflowKey])
+  const task = useTracker(() => Tasks.findOne({ _id:workflowKey }), [workflowKey])
   const toastId = `toast-${workflowKey}`
   const [toBeSubmitted, setToBeSubmitted] = useState<boolean | undefined>(true)
   const navigate = useNavigate()

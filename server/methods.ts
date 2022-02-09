@@ -1,6 +1,7 @@
 import {Meteor} from "meteor/meteor";
 import {encrypt} from "/server/encryption";
-import {FormioActivityLog, TaskData, TasksCollection} from "/imports/model/tasks";
+import {Tasks} from "/imports/model/tasks";
+import {FormioActivityLog} from "/imports/model/tasksTypes";
 import {
   filterUnsubmittableVars, canSubmit, canDeleteProcessInstance,
   canStartProcessInstance, canRefreshProcessInstance
@@ -16,7 +17,6 @@ import '/imports/api/doctoralSchools/methods'
 import '/server/methods/ImportScipers'
 import '/server/methods/DoctoralSchools'
 
-const tasks = TasksCollection<TaskData>()
 const auditLog = auditLogConsoleOut.extend('server/methods')
 
 
@@ -37,7 +37,7 @@ Meteor.methods({
     try {
       const createProcessInstanceResponse = await Promise.resolve(zBClient.createProcessInstance(diagramProcessId, {
         created_at: encrypt(new Date().toJSON()),
-        created_by: encrypt(Meteor.userId()!),
+        created_by: encrypt(Meteor.user()!._id),
         updated_at: encrypt(new Date().toJSON()),
         assigneeSciper: encrypt(Meteor.user()!._id),
       }))
@@ -55,7 +55,7 @@ Meteor.methods({
       throw new Meteor.Error(403, 'You are not allowed to submit this task')
     }
 
-    const task:TaskData | undefined = tasks.findOne({ _id: key } )
+    const task = Tasks.findOne({ _id: key } )
 
     if (task) {
       formData = filterUnsubmittableVars(
@@ -100,8 +100,8 @@ Meteor.methods({
       }
       formData.activityLogs = encrypt(JSON.stringify(activitiesLog))
 
-      await WorkersClient.success(task._id, formData)
-      tasks.remove({_id: task._id})
+      await WorkersClient.success(task._id!, formData)
+      Tasks.remove({_id: task._id})
       auditLog(`Successfully submitted form for task id ${task._id}.`)
     } else {
       auditLog("Error the task being submitted can not be found. Task id : ${task._id}. The error has been thrown to user.")
@@ -120,11 +120,11 @@ Meteor.methods({
     try {
       await zBClient.cancelProcessInstance(processInstanceKey)
       // delete in db too
-      tasks.remove({processInstanceKey: processInstanceKey})
+      Tasks.remove({processInstanceKey: processInstanceKey})
       auditLog(`Sucessfully deleted a process instance ${processInstanceKey}`)
     } catch (error) {
       auditLog(`Error: Unable to cancel the process instance ${processInstanceKey}. ${error}`)
-      tasks.remove({processInstanceKey: processInstanceKey})
+      Tasks.remove({processInstanceKey: processInstanceKey})
       throw new Meteor.Error(500, `Unable to cancel the task. ${error}. Deleting locally anyway`)
     }
   },
@@ -136,6 +136,6 @@ Meteor.methods({
     }
 
     auditLog(`Refreshing a process instance ${processInstanceKey} by removing it from Meteor`)
-    tasks.remove({processInstanceKey: processInstanceKey})
+    Tasks.remove({processInstanceKey: processInstanceKey})
   },
 })

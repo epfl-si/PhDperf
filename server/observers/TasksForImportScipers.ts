@@ -1,5 +1,5 @@
 import {ImportScipersList} from "/imports/api/importScipers/schema";
-import {TaskData, TasksCollection} from "/imports/model/tasks";
+import {Tasks} from "/imports/model/tasks";
 
 
 /*
@@ -25,8 +25,7 @@ const getOptions = (doctorantSciper: string) => {
 }
 
 export const observeTasksForImportScipers = () => {
-  const tasks = TasksCollection<TaskData>()
-  tasks.find({}).observe({
+  Tasks.find({}).observe({
     added: (task) => {
       if (task.variables?.phdStudentSciper) {
         ImportScipersList.update(getQuery(), getUpdateDocument(true), getOptions(task.variables.phdStudentSciper))
@@ -46,4 +45,4 @@ export const observeTasksForImportScipers = () => {
       }
     }
   })
-   }
+}
