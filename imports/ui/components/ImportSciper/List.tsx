@@ -43,7 +43,7 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
       const subscription = Meteor.subscribe('importScipersList', doctoralSchool.acronym);
       const ISAScipersForSchool = ImportScipersList.findOne(
         { doctoralSchoolAcronym: doctoralSchool.acronym }
-      ) as ImportScipersList
+      )
 
       const ISAScipersLoading: boolean = !subscription.ready()
 
@@ -143,7 +143,7 @@ export function ImportSciperLoader({doctoralSchoolAcronym}: {doctoralSchoolAcron
 
   const currentDoctoralSchool = useTracker(
     () => DoctoralSchools.findOne({ acronym: doctoralSchoolAcronym }),
-    []) as DoctoralSchool
+    [])
 
   if (doctoralSchoolsLoading) return <Loader message={`Loading the ${doctoralSchoolAcronym} doctoral school data...`}/>
 

@@ -6,7 +6,7 @@ import {Meteor} from "meteor/meteor";
 export const DoctoralSchoolInfo = ({doctoralSchool}: {doctoralSchool: DoctoralSchool }) => {
   const currentDoctoralSchool = useTracker(
     () => DoctoralSchools.findOne({ acronym: doctoralSchool.acronym }),
-    [doctoralSchool]) as DoctoralSchool
+    [doctoralSchool])
 
   const [isFetchingProgramSciperName, setIsFetchingProgramSciperName] = useState(false)
 
@@ -20,12 +20,16 @@ export const DoctoralSchoolInfo = ({doctoralSchool}: {doctoralSchool: DoctoralSc
     )
   }, [doctoralSchool]);
 
-  return (
-    <p>Doctoral program: { currentDoctoralSchool.acronym }<br/>
-      Program director: { currentDoctoralSchool.programDirectorName ? <>{ currentDoctoralSchool.programDirectorName } ({currentDoctoralSchool.programDirectorSciper})</> : <>{currentDoctoralSchool.programDirectorSciper}</> }
-      { isFetchingProgramSciperName ? <>&nbsp;<span className={"loader"} /></> : <></> }<br/>
-      Credits needed for this program: { currentDoctoralSchool.creditsNeeded}<br/>
-      Annual report documentation : <a href={ currentDoctoralSchool.helpUrl } target={'_blank'}>{ currentDoctoralSchool.helpUrl}</a>
-    </p>
-  )
+  return (<>
+    {currentDoctoralSchool && (
+      <p>Doctoral program: {currentDoctoralSchool.acronym}<br/>
+        Program
+        director: {currentDoctoralSchool.programDirectorName ? <>{currentDoctoralSchool.programDirectorName} ({currentDoctoralSchool.programDirectorSciper})</> : <>{currentDoctoralSchool.programDirectorSciper}</>}
+        {isFetchingProgramSciperName ? <>&nbsp;<span className={"loader"}/></> : <></>}<br/>
+        Credits needed for this program: {currentDoctoralSchool.creditsNeeded}<br/>
+        Annual report documentation : <a href={currentDoctoralSchool.helpUrl}
+                                         target={'_blank'}>{currentDoctoralSchool.helpUrl}</a>
+      </p>
+    )}
+  </>)
 }

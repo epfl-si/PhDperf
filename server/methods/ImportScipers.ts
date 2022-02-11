@@ -10,7 +10,7 @@ import {Tasks} from "/imports/model/tasks";
 import {zBClient} from "/server/zeebe_broker_connector";
 import {encrypt} from "/server/encryption";
 import {canStartProcessInstance} from "/imports/policy/tasks";
-import {DoctoralSchool, DoctoralSchools} from "/imports/api/doctoralSchools/schema";
+import {DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 import {fetchTimeout} from "/imports/lib/fetchTimeout";
 import AbortController from "abort-controller";
 import dateFormat from "dateformat"
@@ -244,7 +244,9 @@ Meteor.methods({
 
     if(!zBClient) throw new Meteor.Error(500, `The Zeebe client has not been able to start on the server.`)
 
-    const doctoralSchool = DoctoralSchools.findOne({acronym: doctoralSchoolAcronym}) as DoctoralSchool
+    const doctoralSchool = DoctoralSchools.findOne({acronym: doctoralSchoolAcronym})
+
+    if (!doctoralSchool) throw new Meteor.Error(500, `The doctoral school does not exist anymore`)
     const programDirector = await getUserInfoMemoized(doctoralSchool.programDirectorSciper)
 
     // set the loading status
@@ -262,9 +264,9 @@ Meteor.methods({
 
     const imports = ImportScipersList.findOne({
       doctoralSchoolAcronym: doctoralSchoolAcronym,
-    }) as ImportScipersList
+    })
 
-    const doctorantsToLoad = imports.doctorants?.filter((doctorant) => doctorant.isSelected)
+    const doctorantsToLoad = imports!.doctorants?.filter((doctorant) => doctorant.isSelected)
 
     const ISADateToFormIO = (ISADate?: string) => {
       try {

@@ -3,7 +3,7 @@ import {useTracker} from "meteor/react-meteor-data";
 import {Meteor} from "meteor/meteor";
 import {canEditDoctoralSchools} from "/imports/policy/doctoralSchools";
 import {Loader} from "@epfl/epfl-sti-react-library";
-import {DoctoralSchool, DoctoralSchools} from "/imports/api/doctoralSchools/schema";
+import {DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 import {CreateForm} from './Create'
 import {InlineEdit} from './Edit'
 
@@ -24,7 +24,7 @@ export function DoctoralSchoolsList() {
 
   const doctoralSchools = useTracker(
     () => DoctoralSchools.find({}, { sort: { 'acronym': 1 } }).fetch()
-  , []) as DoctoralSchool[]
+  , [])
 
   if (!userLoaded) return (<div>Loading user</div>)
   if (userLoaded && !canEditDoctoralSchools()) return (<div>Your permissions does not allow you to set the doctoral schools.</div>)

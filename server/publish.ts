@@ -35,7 +35,7 @@ Meteor.publish('importScipersList', function(doctoralSchoolAcronym: string) {
                                               doctorantSciper: string) => {
       refreshAlreadyStartedImportScipersList(doctoralSchoolAcronym, hasAlreadyStarted, doctorantSciper)
 
-      const currentImport = ImportScipersList.findOne({ _id: doctoralSchoolAcronym }) as ImportScipersList
+      const currentImport = ImportScipersList.findOne({ _id: doctoralSchoolAcronym })
 
       const activatedDoctorants = currentImport?.doctorants ? currentImport.doctorants.map((doctorant) => {
         return doctorant.doctorant.sciper === doctorantSciper ?

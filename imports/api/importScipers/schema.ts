@@ -21,10 +21,16 @@ export interface ImportScipersList {
   isAllSelected: boolean,
 }
 
-export const ImportScipersList = new Mongo.Collection<ImportScipersList>('importScipersList',
+class ImportScipersListCollection extends Mongo.Collection<ImportScipersList> {
+}
+
+export const ImportScipersList = new ImportScipersListCollection('importScipersList',
 // @ts-ignore
   ephemeralDB && Meteor.isServer ? { _driver : ephemeralDB } : {})
 
+/*
+ * Schema definitions
+ */
 const PersonSchema = new SimpleSchema({
   sciper: { type: String },
   fullName: { type: String },

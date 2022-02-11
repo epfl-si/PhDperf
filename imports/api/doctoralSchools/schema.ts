@@ -4,6 +4,7 @@ import {Sciper} from "/imports/api/datatypes";
 import persistentDB from "/imports/db/persistent";
 import {Meteor} from "meteor/meteor";
 
+
 export interface DoctoralSchool {
   _id?: string,
   acronym: string,
@@ -14,7 +15,10 @@ export interface DoctoralSchool {
   programDirectorName?: string
 }
 
-export const DoctoralSchools = new Mongo.Collection<DoctoralSchool>('doctoralSchools',
+class DoctoralSchoolsCollection extends Mongo.Collection<DoctoralSchool> {
+}
+
+export const DoctoralSchools = new DoctoralSchoolsCollection('doctoralSchools',
 // @ts-ignore
   persistentDB && Meteor.isServer ? { _driver : persistentDB } : {})
 
