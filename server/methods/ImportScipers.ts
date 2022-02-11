@@ -119,6 +119,7 @@ Meteor.methods({
       setAlreadyStarted(doctorants)
 
       ImportScipersList.insert({
+        _id: doctoralSchoolAcronym,  // import for the ImportScipers hooks
         doctoralSchoolAcronym: doctoralSchoolAcronym,
         doctorants: doctorants,
         createdAt: new Date(),

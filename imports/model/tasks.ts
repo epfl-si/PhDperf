@@ -56,13 +56,6 @@ export class Task implements TaskI {
 }
 
 class TasksCollection extends Mongo.Collection<Task> {
-  insert(doc: Task, callback?: Function) {
-    if (Meteor.isServer) {
-      return super.insert(doc, callback)
-    } else {
-      return super.insert(doc as Task, callback)
-    }
-  }
 }
 
 export const Tasks = new TasksCollection('tasks',
