@@ -33,7 +33,6 @@ export class Task implements TaskI {
   created_at?: Date
   updated_at?: Date
   detail: any
-  monitorUri?: string  // not for prod
 
   constructor(doc: any) {
     _.extend(this, doc);
@@ -47,8 +46,10 @@ export class Task implements TaskI {
       `Process instance key: ${this.processInstanceKey}`,
       `workflow version: ${this.processDefinitionVersion}`,
     ].join(", ")
+  }
 
-    this.monitorUri = Meteor.settings.public.monitor_address && Meteor.user()?.isAdmin ?
+  get monitorUri(): string | undefined {
+    return Meteor.settings.public.monitor_address && Meteor.user()?.isAdmin ?
       `http://${Meteor.settings.public.monitor_address}/views/instances/${this.processInstanceKey}` :
       undefined
   }
