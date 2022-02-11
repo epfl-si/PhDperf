@@ -19,11 +19,11 @@ export const AsideMenu = () => {
           { canEditDoctoralSchools() &&
             <li>
               <a href="#">
-                Doctoral Schools
+                Doctoral Programs
               </a>
               <ul>
-                <li className={matchPath("/doctoral-schools", pathname) ? 'active' : undefined}><Link
-                  to={`/doctoral-schools`}>Administration</Link></li>
+                <li className={matchPath("/doctoral-programs", pathname) ? 'active' : undefined}><Link
+                  to={`/doctoral-programs`}>Administration</Link></li>
               </ul>
             </li>
           }

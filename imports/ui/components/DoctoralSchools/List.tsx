@@ -39,7 +39,7 @@ export function DoctoralSchoolsList() {
             {
               !showAdd &&
               <button className="btn btn-secondary" onClick={ () => setShowAdd(showAdd => !showAdd) }>
-                <i className="fa fa-plus"/>&nbsp;&nbsp;Add a new doctoral school
+                <i className="fa fa-plus"/>&nbsp;&nbsp;Add a new doctoral program
               </button>
             }
             <div>There is currently no doctoralSchoolsData</div>
@@ -48,7 +48,7 @@ export function DoctoralSchoolsList() {
             {
               !showAdd &&
               <button className="btn btn-secondary" onClick={ () => setShowAdd(showAdd => !showAdd) }>
-                <i className="fa fa-plus"/>&nbsp;&nbsp;Add a new doctoral school
+                <i className="fa fa-plus"/>&nbsp;&nbsp;Add a new doctoral program
               </button>
             }
             {

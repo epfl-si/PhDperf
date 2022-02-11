@@ -41,7 +41,7 @@ export const CreateForm = ({toggleCreateForm}: CreateParameter) => {
   }
 
   return (
-    <form className="doctoral-schools-form" onSubmit={handleSubmit}>
+    <form className="doctoral-programs-form" onSubmit={handleSubmit}>
       <div className="form-group">
 
         <label htmlFor="acronymInput" className={"field-required"}>Acronym</label>

@@ -21,7 +21,7 @@ export const ImportScipersSchoolSelector = () => {
         e.preventDefault()
         navigate(`/import-scipers/${ input.toUpperCase() }`)
       } }>
-        Please enter the doctoral school acronym:&nbsp;
+        Please enter the doctoral program acronym:&nbsp;
         <input value={input} type={'text'} onChange={ (e) => setInput(e.target.value)}/>
         <button type={'submit'}>Get ISA students list</button>
       </form>
@@ -145,11 +145,11 @@ export function ImportSciperLoader({doctoralSchoolAcronym}: {doctoralSchoolAcron
     () => DoctoralSchools.findOne({ acronym: doctoralSchoolAcronym }),
     [])
 
-  if (doctoralSchoolsLoading) return <Loader message={`Loading the ${doctoralSchoolAcronym} doctoral school data...`}/>
+  if (doctoralSchoolsLoading) return <Loader message={`Loading the ${doctoralSchoolAcronym} doctoral program data...`}/>
 
   if (!currentDoctoralSchool) return (
     <>
-      <div><b>{doctoralSchoolAcronym}</b> is an unknown doctoral school</div>
+      <div><b>{doctoralSchoolAcronym}</b> is an unknown doctoral program</div>
       <Link to={`/import-scipers`}>Try a different school acronym</Link>
     </>
   )

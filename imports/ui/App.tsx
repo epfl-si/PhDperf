@@ -54,7 +54,7 @@ export const App = () => {
           }
           <Routes>
             { canEditDoctoralSchools() &&
-              <Route path="/doctoral-schools" element={<DoctoralSchoolsList/>}/>
+              <Route path="/doctoral-programs" element={<DoctoralSchoolsList/>}/>
             }
             { canAccessDashboard() &&
               <Route path="/dashboard" element={<Dashboard/>}/>
@@ -94,7 +94,7 @@ function PhDBreadcrumbs() {
   matchPath("/", pathname) && breadcrumbs.push({link: "/", anchor: "Tasks list"})
   matchPath("tasks/*", pathname) && breadcrumbs.push({link: "/", anchor: "Tasks"}) &&  breadcrumbs.push({link: pathname, anchor: "Proceeding"})
   matchPath("/dashboard", pathname) &&breadcrumbs.push({link: "/dashboard", anchor: "Tasks dashboard"})
-  matchPath("/doctoral-schools", pathname) && breadcrumbs.push({link: "/doctoral-schools", anchor: "Doctoral schools administration"})
+  matchPath("/doctoral-programs", pathname) && breadcrumbs.push({link: "/doctoral-programs", anchor: "Doctoral programs administration"})
   matchPath("/import-scipers", pathname) && breadcrumbs.push({link: "/import-scipers", anchor: "Import scipers"})
   return <Breadcrumbs items={breadcrumbs}/>
 }
