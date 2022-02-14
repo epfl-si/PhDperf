@@ -9,6 +9,7 @@ import {HeaderRow, Row} from "/imports/ui/components/ImportSciper/Row";
 import {DoctoralSchool, DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 import {DoctoralSchoolInfo} from "/imports/ui/components/ImportSciper/DoctoralSchoolInfo";
 import toast from "react-hot-toast";
+import _ from "lodash";
 
 
 export const ImportScipersSchoolSelector = () => {
@@ -117,7 +118,8 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
       </div>
       <div className="container import-scipers-selector">
         <HeaderRow doctoralSchool={ doctoralSchool } isAllSelected={ ISAScipersForSchool.isAllSelected } disabled={ importStarted }/>
-        { ISAScipersForSchool.doctorants && ISAScipersForSchool.doctorants.map((doctorantInfo) =>
+        { ISAScipersForSchool.doctorants &&
+          _.sortBy(ISAScipersForSchool.doctorants, 'doctorant.lastName').map((doctorantInfo) =>
           <Row
             key={ doctorantInfo.doctorant.sciper }
             doctoralSchool={ doctoralSchool }

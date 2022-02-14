@@ -34,6 +34,8 @@ export const ImportScipersList = new ImportScipersListCollection('importScipersL
 const PersonSchema = new SimpleSchema({
   sciper: { type: String },
   fullName: { type: String },
+  firstName: { type: String },
+  lastName: { type: String },
   email: { type: String },
   },
   { requiredByDefault: false },
