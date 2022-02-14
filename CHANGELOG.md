@@ -1,5 +1,8 @@
 # CHANGELOG
 
+*1.3.8* (2022-02-14)
+- Order by student's last name for ISA lists
+
 *1.3.7* (2022-02-14)
 - Meteor 2.6.0
 
