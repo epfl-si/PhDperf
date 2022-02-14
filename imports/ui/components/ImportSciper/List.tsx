@@ -59,6 +59,7 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
 
   const [importStarted, setImportStarted] = useState(isBeingImported)
   const [isErronous, setIsErronous] = useState('')
+  const navigate = useNavigate()
 
   useEffect(() => {
     Meteor.apply(
@@ -88,7 +89,7 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
     })
   }
 
-  if (isErronous) return <Alert alertType={ 'danger' } title={ 'Error' } message={ isErronous } />
+  if (isErronous) return <Alert alertType={ 'danger' } title={ 'Error' } message={ isErronous } onCloseClick={ () => navigate(`/import-scipers/`) } />
 
   if (ISAScipersLoading) return <Loader message={`Fetching ISA for the list of ${doctoralSchool.acronym} PhD students...`}/>
 
