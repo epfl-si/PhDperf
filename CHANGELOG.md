@@ -1,5 +1,8 @@
 # CHANGELOG
 
+*1.3.7* (2022-02-14)
+- Meteor 2.6.0
+
 *1.3.6* (2022-02-11)
 - Change label, from doctoral schools to doctoral programs
 - Fix the ISA list, the elements were not updated when a new task have been added 
