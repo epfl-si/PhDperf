@@ -5,6 +5,7 @@
 
 *1.3.7* (2022-02-14)
 - Meteor 2.6.0
+- BPMN: add text after 1st year
 
 *1.3.6* (2022-02-11)
 - Change label, from doctoral schools to doctoral programs
