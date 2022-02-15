@@ -147,7 +147,7 @@
         <zeebe:taskDefinition type="notification" retries="0" />
         <zeebe:taskHeaders>
           <zeebe:header key="subject" value="Annual Report: meeting mentor-doctoral student" />
-          <zeebe:header key="message" value="&#60;p&#62;Dear {{ phdStudentName }},&#60;/p&#62;  &#60;p&#62;I thank you for confirming that the annual meeting with your mentor has taken place by connecting via the link: &#60;a href=&#34;https://phd-annual-report.epfl.ch&#34;&#62;https://phd-annual-report.epfl.ch&#60;/a&#62;&#60;/p&#62;  &#60;p&#62;Please note that your mentor does not have access to the content of your annual report. If you wish to share some of the content (via screen sharing), this is possible at this stage as long as you have not checked the confirmation box and submitted.&#60;/p&#62;  &#60;p&#62;Yours faithfully,&#60;/p&#62;  &#60;p&#62; {{ programDirectorName }} &#60;br&#62; {{ doctoralProgramName  }} doctoral program Director&#60;/p&#62;" />
+          <zeebe:header key="message" value="&#60;p&#62;Dear {{ phdStudentName }},&#60;/p&#62;  &#60;p&#62;I thank you for confirming that the annual meeting with your mentor has taken place by connecting via the link: &#60;a href=&#34;https://phd-annual-report.epfl.ch&#34;&#62;https://phd-annual-report.epfl.ch&#60;/a&#62;&#60;/p&#62;  &#60;p&#62;Yours faithfully,&#60;/p&#62;  &#60;p&#62; {{ programDirectorName }} &#60;br&#62; {{ doctoralProgramName  }} doctoral program Director&#60;/p&#62;" />
         </zeebe:taskHeaders>
         <zeebe:ioMapping>
           <zeebe:input source="= phdStudentEmail" target="to" />
