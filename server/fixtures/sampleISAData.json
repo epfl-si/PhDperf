@@ -32,8 +32,8 @@
         "doctorant": {
           "sciper": "111111",
           "fullName": "Clark Hume",
-          "lastName": "Clark",
-          "firstName": "Hume",
+          "lastName": "Hume",
+          "firstName": "Clark",
           "email": "clark.hume@no.com"
         },
         "academicSession": {
@@ -208,7 +208,7 @@
       },
       {
         "doctorant": {
-          "sciper": "411111",
+          "sciper": "311111",
           "fullName": "Elma Gerald",
           "lastName": "Gerald",
           "firstName": "Elma",

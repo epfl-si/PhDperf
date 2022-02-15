@@ -1,8 +1,15 @@
 # CHANGELOG
 
+*1.3.8* (2022-02-14)
+- Order by student's last name for ISA lists
+
+*1.3.7* (2022-02-14)
+- Meteor 2.6.0
+- BPMN: add text after 1st year
+
 *1.3.6* (2022-02-11)
 - Change label, from doctoral schools to doctoral programs
-- Fix the ISA list, the elements were not updated when a new task have been added 
+- Fix the ISA list, the elements were not updated when a new task has been added 
 - Rework the Task model, behind the scene
 
 *1.3.5* (2022-02-09)
