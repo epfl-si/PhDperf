@@ -4,4 +4,5 @@
 - import_tasks: _zeebe-k8s-broker.yml
   vars:
     data_volume:
-      emptyDir: {}
+      persistentVolumeClaim:
+        claimName: "{{ volume_zeebe_name }}"

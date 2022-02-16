@@ -23,10 +23,10 @@
   tags:
     - zeebe
 
-- name: Zeebe test setup (single node, no persistence)
+- name: Zeebe test setup (single node, a disposable volume)
   when: not zeebe_has_high_availability_quorum
   include_tasks:
-    file: zeebe-nonpersistent.yml
+    file: zeebe-disposablevolume.yml
     apply:
         tags: zeebe
   tags:
