@@ -120,7 +120,7 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
       <div className="container import-scipers-selector">
         <HeaderRow doctoralSchool={ doctoralSchool } isAllSelected={ ISAScipersForSchool.isAllSelected } disabled={ importStarted }/>
         { ISAScipersForSchool.doctorants &&
-          _.sortBy(ISAScipersForSchool.doctorants, 'doctorant.lastName').map((doctorantInfo) =>
+          _.sortBy(ISAScipersForSchool.doctorants, (d) => d.dateExamCandidature?.split('.')[1]).map((doctorantInfo) =>
           <Row
             key={ doctorantInfo.doctorant.sciper }
             doctoralSchool={ doctoralSchool }
