@@ -1,5 +1,6 @@
 import {Sciper} from "/imports/api/datatypes";
-import {PhDInputVariables} from "/imports/model/tasks";
+import {PhDInputVariables} from "/imports/model/tasksTypes";
+
 
 type ZeebeParticipantsVariablesBase = {
   programAssistantSciper: Sciper
@@ -82,16 +83,4 @@ export const participantsFromZeebe = (variables: PhDInputVariables): Participant
   }
 
   return participants
-}
-
-export const getAssignee = (sciper: string | undefined, participants: ParticipantList | undefined) => {
-  if (sciper && participants) {
-    for (let participantID of ParticipantIDs) {
-      if (participantID in participants) {
-        if (participants[participantID]?.sciper && participants[participantID]?.sciper === sciper) {
-          return participants[participantID]
-        }
-      }
-    }
-  }
 }

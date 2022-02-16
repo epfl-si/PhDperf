@@ -121,7 +121,7 @@ function TaskRow({ task }: { task: Task }) {
                 key={`${task._id}-${role}`}
                 role={role}
                 info={info}
-                isAssignee={task.variables.assigneeSciper === info?.sciper}
+                isAssignee={task.assigneeScipers?.includes(info?.sciper)}
               />
             )
             }
