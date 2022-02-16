@@ -1,5 +1,9 @@
 # CHANGELOG
 
+*1.3.9* (2022-02-16)
+- Manage the fact we can have mutliple users in assigneSciper
+- Sort import scipers list element by exam candidature
+
 *1.3.8* (2022-02-14)
 - Order by student's last name for ISA lists
 
