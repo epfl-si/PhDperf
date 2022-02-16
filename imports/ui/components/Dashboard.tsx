@@ -5,7 +5,7 @@ import _ from "lodash"
 import React from "react"
 import {Loader} from "@epfl/epfl-sti-react-library";
 import {canAccessDashboard} from "/imports/policy/tasks";
-import {getAssignee} from "/imports/model/participants";
+import {ParticipantDetail} from "/imports/model/participants";
 
 
 /*
@@ -77,11 +77,21 @@ const StepNotDone = () => <div className="participant border col m-1 p-2 text-wh
 
 const StepDone = () => <div className="participant border col m-1 p-2 bg-success text-white"/>
 
-const StepPending = ({task}: {task: Task}) =>
-  <div className="participant border col m-1 p-2 bg-awaiting text-white"
-   data-toggle="tooltip"
-   data-html="true"
-   title={ `${getAssignee(task!.variables.assigneeSciper, task!.participants)?.name} (${task!.variables.assigneeSciper}), Last updated :${task!.updated_at!.toLocaleString('fr-CH')}` } />
+const StepPending = ({task}: {task: Task}) => {
+  const assignees: ParticipantDetail[] | undefined = task.assigneeScipers && Object.values(task.participants).filter((participant: ParticipantDetail) => task.assigneeScipers!.includes(participant.sciper))
+
+  let assigneesTitle = ""
+  assignees?.map((assignee: ParticipantDetail) => assigneesTitle = `${ assigneesTitle } ${assignee.name} (${assignee.sciper})`)
+  assigneesTitle = assigneesTitle ? `${assigneesTitle}, ` : ``
+  assigneesTitle = `${assigneesTitle}Last updated :${task!.updated_at!.toLocaleString('fr-CH')}`
+
+  return (
+    <div className="participant border col m-1 p-2 bg-awaiting text-white"
+     data-toggle="tooltip"
+     data-html="true"
+     title={ assigneesTitle } />
+  )
+}
 
 const DrawProgress = ({tasks}: DrawProgressProps) => {
 

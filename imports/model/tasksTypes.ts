@@ -26,7 +26,7 @@ export interface FormioActivityLog {
 // Why a class instead an interface here ? To be able to read the
 // keys later in the process. See https://stackoverflow.com/a/59806829
 export interface PhDInputVariables extends ZeebeParticipantsVariables, IInputVariables {
-  assigneeSciper?: Sciper
+  assigneeSciper?: Sciper | Sciper[]
   created_by?: Sciper
   created_at?: string  // JSON date
   updated_at?: string  // JSON date

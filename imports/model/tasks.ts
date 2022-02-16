@@ -12,7 +12,6 @@ export class Task implements TaskI {
   declare variables: PhDInputVariables
   declare processInstanceKey: string
   declare processDefinitionVersion: number
-  declare assigneeSciper?: Sciper
   declare activityLogs?: string
   declare key: string;
   declare type: string;
@@ -28,6 +27,7 @@ export class Task implements TaskI {
   declare retries: number;
   declare deadline: string;
 
+  assigneeScipers?: Sciper[]
   participants: ParticipantList
   created_by?: Sciper
   created_at?: Date
@@ -36,6 +36,17 @@ export class Task implements TaskI {
 
   constructor(doc: any) {
     _.extend(this, doc);
+
+    // historically, assignees can come from multiple ways: as string or as array, from variables.assigneeSciper
+    // Transform all into an array, named assigneeScipers
+    if (this.variables.assigneeSciper) {
+      if (Array.isArray(this.variables.assigneeSciper)) {
+        this.assigneeScipers = this.variables.assigneeSciper
+      } else {
+        this.assigneeScipers = [this.variables.assigneeSciper]
+      }
+    }
+
     this.participants = participantsFromZeebe(this.variables)
     this.created_by = this.variables?.created_by
     this.created_at = this.variables.created_at ? new Date(this.variables?.created_at) : undefined
