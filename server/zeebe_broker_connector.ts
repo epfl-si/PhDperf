@@ -37,7 +37,9 @@ function zeebeJobToTask(job: PhDZeebeJob): Task {
 
   Object.keys(job.variables).map((key) => {
     try {
-      if (Array.isArray(job.variables[key])) {
+      if (job.variables[key] == null) {  // null is a "defined" valid json entry
+        decryptedVariables[key] = null
+      } else if (Array.isArray(job.variables[key])) {
         decryptedVariables[key] = job.variables[key].reduce((acc: string[], item: string) => {
             acc.push(decrypt(item))
             return acc
