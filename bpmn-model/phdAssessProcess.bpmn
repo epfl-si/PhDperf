@@ -410,6 +410,7 @@
         <zeebe:taskHeaders>
           <zeebe:header key="subject" value="Annual report of doctoral student {{ phdStudentName }} (sciper {{ phdStudentSciper }}): content is not unanimously approved " />
           <zeebe:header key="message" value="&#60;p&#62;Dear {{ doctoralProgramName }} doctoral program Director,&#60;/p&#62;  &#60;p&#62;Regarding the annual report of the doctoral student {{ phdStudentName }}, sciper {{ phdStudentSciper }}, at least one of the people involved in the thesis work does not approve the content: &#60;/p&#62;  &#60;p&#62;{{ agreeThesisCoDirector }}&#60;br&#62; {{ thesisCoDirectorComment }}&#60;br&#62; {{ agreeThesisDirector }}&#60;br&#62; {{ thesisDirectorComment }}&#60;br&#62; {{ agreePhd }}&#60;br&#62; {{ phdComment }}&#60;/p&#62;  &#60;p&#62;A meeting with you, the doctoral student, and the thesis director (and the co-Director if applicable) should be held, in order to seek appropriate measures to resolve possible problems and conflicts.&#60;/p&#62;  &#60;p&#62;Thank you for the follow-up and best regards,&#60;/p&#62;  &#60;p&#62;The Doctoral School&#60;/p&#62;" />
+          <zeebe:header key="pdfName" value="PROVISIONAL_phd_annual_report_notapproved" />
         </zeebe:taskHeaders>
         <zeebe:ioMapping>
           <zeebe:input source="= programDirectorEmail" target="to" />
@@ -472,6 +473,7 @@
         <zeebe:taskHeaders>
           <zeebe:header key="subject" value="Annual report of doctoral student {{ phdStudentName }} (sciper {{ phdStudentSciper }}): general appraisal of the progress unsatisfactory" />
           <zeebe:header key="message" value="&#60;p&#62;Dear {{ doctoralProgramName }} doctoral program Director,&#60;/p&#62;  &#60;p&#62;Regarding the annual report of the doctoral student {{ phdStudentName }}, sciper {{ phdStudentSciper }}, the general appraisal of the progress was judged to be unsatisfactory.  &#60;p&#62;A meeting between you, the doctoral student, and the thesis director (and the co-Director if applicable) must take place, in order to set goals and appropriate deadlines for the completion.&#60;/p&#62;  &#60;p&#62;Thank you for the follow-up and best regards,&#60;/p&#62;  &#60;p&#62;The Doctoral School&#60;/p&#62;" />
+          <zeebe:header key="pdfName" value="PROVISIONAL_phd_annual_report_unsatisfactory" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_08rxq4y</bpmn:incoming>
@@ -516,6 +518,7 @@
         <zeebe:taskHeaders>
           <zeebe:header key="subject" value="Annual report of {{ phdStudentName }} (sciper {{ phdStudentSciper }}): PDF copy" />
           <zeebe:header key="message" value="&#60;p&#62;Dear {{ doctoralProgramName }} doctoral program Director,&#60;/p&#62;  &#60;p&#62;Thank you for having checked the annual report.&#60;/p&#62;  &#60;p&#62;You will find attached a PDF copy of this report for your records. A copy is also saved on IS-Academia, in the GED file of the doctoral student {{ phdStudentName }}, sciper {{ phdStudentSciper }} (please note that the information is not stored in the online form).&#60;/p&#62;  &#60;p&#62;Yours faithfully,&#60;/p&#62;  &#60;p&#62;The Doctoral School&#60;/p&#62;" />
+          <zeebe:header key="pdfName" value="phd_annual_report" />
         </zeebe:taskHeaders>
         <zeebe:ioMapping>
           <zeebe:input source="= programDirectorEmail" target="to" />
@@ -531,11 +534,13 @@
         <zeebe:taskHeaders>
           <zeebe:header key="subject" value="Annual report of {{ phdStudentName }} (sciper {{ phdStudentSciper }}): PDF copy" />
           <zeebe:header key="message" value="&#60;p&#62;Dear {{ phdStudentName }},&#60;/p&#62;  &#60;p&#62;Thank you for finalizing the annual report.&#60;/p&#62;  &#60;p&#62;You will find attached a PDF copy of this report for your records. Please note that the information is not stored in the online form.&#60;/p&#62;  &#60;p&#62;Yours faithfully,&#60;/p&#62;  &#60;p&#62; {{ programDirectorName }} &#60;br&#62; {{ doctoralProgramName }} doctoral program Director&#60;/p&#62;" />
+          <zeebe:header key="pdfName" value="phd_annual_report" />
         </zeebe:taskHeaders>
         <zeebe:ioMapping>
           <zeebe:input source="= phdStudentEmail" target="to" />
           <zeebe:input source="= if (thesisCoDirectorSciper!=&#34;&#34;) then [thesisDirectorEmail, thesisCoDirectorEmail] else thesisDirectorEmail" target="cc" />
           <zeebe:input source="= mentorEmail" target="bcc" />
+          <zeebe:input source="= source" target="InputVariable_2kghfcd" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_19hd8zh</bpmn:incoming>
@@ -554,6 +559,7 @@
         <zeebe:taskHeaders>
           <zeebe:header key="subject" value="Annual report of {{ phdStudentName }} (sciper {{ phdStudentSciper }}): Error, automatic archiving of the PDF document in the GED failed" />
           <zeebe:header key="message" value="&#60;p&#62;Dear {{ programAssistantName }},&#60;/p&#62;  &#60;p&#62;The &#60;a href=&#34;https://phd-annual-report.epfl.ch&#34;&#62;phd-annual-report.epfl.ch&#60;/a&#62; application was unable to save the annual report (PDF document) of {{ phdStudentName }} ({{ phdStudentSciper }}) in the GED (&#60;a href=&#34;https://ged-etu.epfl.ch&#34;&#62;https://ged-etu.epfl.ch&#60;/a&#62;). There may be several reasons for this (e.g., a missing folder, an unrecognized name, ...).&#60;/p&#62; &#60;p&#62;Therefore, we kindly ask you to manually upload the annual report (PDF document) in the “crayon” of the doctoral student, in IS-Academia.&#60;/p&#62; &#60;p&#62;Thank you for the follow-up and best regards,&#60;/p&#62; &#60;p&#62;The Doctoral School&#60;/p&#62;" />
+          <zeebe:header key="pdfName" value="phd_annual_report" />
         </zeebe:taskHeaders>
         <zeebe:ioMapping>
           <zeebe:input source="= programAssistantEmail" target="to" />
@@ -593,7 +599,7 @@
         <zeebe:taskHeaders>
           <zeebe:header key="subject" value="Annual report of {{ phdStudentName }} (sciper {{ phdStudentSciper }}): collaborative review" />
           <zeebe:header key="message" value="&#60;p&#62;Dear thesis director,&#60;/p&#62;  &#60;p&#62;Regarding the annual report of your doctoral student {{ phdStudentName }}, sciper {{ phdStudentSciper }}, now that everyone has completed the progress assessment, we thank you for organizing the meeting with your doctoral student (and the co-Director if applicable) to review the information, discuss goals achieved and planned, and evaluate overall progress.&#60;/p&#62;   &#60;p&#62;During this meeting, you, as thesis director, will be able to access the content to be edited and completed by logging in via the following link: &#60;a href=&#34;https://phd-annual-report.epfl.ch&#34;&#62;https://phd-annual-report.epfl.ch&#60;/a&#62;&#60;/p&#62;  &#60;p&#62;On the {{ doctoralProgramName }} doctoral program&#39;s webpage, you will find all the useful information for completing the annual report via the tool: &#60;a href=&#34;{{ docLinkAnnualReport }}&#34;&#62;{{ docLinkAnnualReport }}&#60;/a&#62;&#60;/p&#62;  &#60;p&#62;Should you have any questions, please contact the &#60;a href=&#34;mailto:{{ doctoralProgramEmail }}&#34;&#62;doctoral program’s administrative office&#60;/a&#62;.&#60;/p&#62;  &#60;p&#62;Yours faithfully,&#60;/p&#62;  &#60;p&#62; {{ programDirectorName }} &#60;br&#62; {{ doctoralProgramName }} doctoral program Director&#60;/p&#62;" />
-          <zeebe:header key="pdfName" value="PROVISIONAL_phd_annual_report_collaborativereview_" />
+          <zeebe:header key="pdfName" value="PROVISIONAL_phd_annual_report_collaborativereview" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0xa0id0</bpmn:incoming>
