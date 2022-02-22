@@ -287,7 +287,8 @@ Meteor.methods({
     doctorantsToLoad?.forEach((doctorant) => {
       const dataToPush = {
         doctoralProgramName: encrypt(doctoralSchool.acronym),
-        doctoralProgramEmail: encrypt(doctoralSchool.helpUrl),
+        doctoralProgramEmail: encrypt(`${doctoralSchool.acronym}@epfl.ch`),
+        docLinkAnnualReport: encrypt(doctoralSchool.helpUrl),
         creditsNeeded: encrypt(doctoralSchool.creditsNeeded.toString()),
         programDirectorSciper: encrypt(doctoralSchool.programDirectorSciper),
         programDirectorName: encrypt(programDirector.firstname + ' ' + programDirector.name),
