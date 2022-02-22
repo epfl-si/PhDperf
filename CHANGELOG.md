@@ -2,10 +2,10 @@
 
 *1.3.10* (2022-02-22)
 - Fix using url into Email and missing docLink when importing sciper
-- Sort import scipers list element by exam candidature
+- Fix decrypting null values
 
 *1.3.9* (2022-02-16)
-- Manage the fact we can have mutliple users in assigneSciper
+- Manage the fact we can have multiple users in assigneeSciper
 - Sort import scipers list element by exam candidature
 
 *1.3.8* (2022-02-14)
