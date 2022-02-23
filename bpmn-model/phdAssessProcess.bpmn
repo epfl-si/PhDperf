@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" id="Definitions_0o87biy" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.11.1">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" id="Definitions_0o87biy" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
   <bpmn:collaboration id="Collaboration_13he9tk">
     <bpmn:participant id="Participant_0f1vwfj" name="PhD Assess" processRef="phdAssessProcess" />
   </bpmn:collaboration>
@@ -592,7 +592,7 @@
     <bpmn:serviceTask id="Activity_PHD_fills_annual_report" name="PhD fills the annual report">
       <bpmn:extensionElements>
         <zeebe:taskHeaders>
-          <zeebe:header key="formIO" value="{   &#34;_id&#34;: &#34;6094ea003614a90bb3112cc5&#34;,   &#34;type&#34;: &#34;form&#34;,   &#34;tags&#34;: [],   &#34;owner&#34;: &#34;605a091e390b9fa6e626d355&#34;,   &#34;revisions&#34;: &#34;&#34;,   &#34;_vid&#34;: 0,   &#34;title&#34;: &#34;Annual Progress Report&#34;,   &#34;display&#34;: &#34;form&#34;,   &#34;access&#34;: [     {       &#34;roles&#34;: [         &#34;605a093a1964dcf6c669c8dd&#34;,         &#34;605a093a1964dc7db769c8de&#34;,         &#34;605a093a1964dcd89969c8df&#34;       ],       &#34;type&#34;: &#34;read_all&#34;     }   ],   &#34;submissionAccess&#34;: [],   &#34;controller&#34;: &#34;&#34;,   &#34;properties&#34;: {},   &#34;settings&#34;: {},   &#34;name&#34;: &#34;annualProgressReport&#34;,   &#34;path&#34;: &#34;annualprogressreport&#34;,   &#34;project&#34;: &#34;605a093a1964dca89369c8dc&#34;,   &#34;created&#34;: &#34;2021-05-07T07:19:28.829Z&#34;,   &#34;modified&#34;: &#34;2021-05-11T15:57:35.231Z&#34;,   &#34;machineName&#34;: &#34;mcvvtebnveuvysz:annualProgressReport&#34;,   &#34;components&#34;: [     {       &#34;title&#34;: &#34;&#60;b&#62;Annual Report&#60;/b&#62;&#34;,       &#34;collapsible&#34;: false,       &#34;key&#34;: &#34;panel1&#34;,       &#34;type&#34;: &#34;panel&#34;,       &#34;label&#34;: &#34;Panel&#34;,       &#34;input&#34;: false,       &#34;tableView&#34;: false,       &#34;components&#34;: [         {           &#34;label&#34;: &#34;Doctoral Program:&#34;,           &#34;disabled&#34;: true,           &#34;tableView&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;doctoralProgramName&#34;,           &#34;type&#34;: &#34;textfield&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;Date of enrolment:&#34;,           &#34;widget&#34;: {             &#34;type&#34;: &#34;calendar&#34;,             &#34;altInput&#34;: true,             &#34;allowInput&#34;: true,             &#34;clickOpens&#34;: true,             &#34;enableDate&#34;: true,             &#34;enableTime&#34;: false,             &#34;mode&#34;: &#34;single&#34;,             &#34;noCalendar&#34;: false,             &#34;format&#34;: &#34;dd.MM.yyyy&#34;,             &#34;dateFormat&#34;: &#34;yyyy-MM-dd&#34;,             &#34;useLocaleSettings&#34;: false,             &#34;hourIncrement&#34;: 1,             &#34;minuteIncrement&#34;: 5,             &#34;time_24hr&#34;: false,             &#34;saveAs&#34;: &#34;text&#34;,             &#34;locale&#34;: &#34;en&#34;,             &#34;displayInTimezone&#34;: &#34;viewer&#34;           },           &#34;tableView&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true,             &#34;custom&#34;: &#34;valid=true;\nvar m = moment();\nvar p = moment(input);\nif (m &#60; p) valid=false;&#34;           },           &#34;errors&#34;: {             &#34;custom&#34;: &#34;date must not be in the future&#34;           },           &#34;key&#34;: &#34;dateOfEnrolment&#34;,           &#34;type&#34;: &#34;textfield&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;Annual report of&#34;,           &#34;optionsLabelPosition&#34;: &#34;right&#34;,           &#34;inline&#34;: false,           &#34;tableView&#34;: false,           &#34;values&#34;: [             {               &#34;label&#34;: &#34;1st year (tick only if candidacy exam not yet passed)&#34;,               &#34;value&#34;: &#34;1st year&#34;,               &#34;shortcut&#34;: &#34;&#34;             },             {               &#34;label&#34;: &#34;2nd year&#34;,               &#34;value&#34;: &#34;2nd year&#34;,               &#34;shortcut&#34;: &#34;&#34;             },             {               &#34;label&#34;: &#34;3rd year &#34;,               &#34;value&#34;: &#34;3rd year&#34;,               &#34;shortcut&#34;: &#34;&#34;             },             {               &#34;label&#34;: &#34;4th year&#34;,               &#34;value&#34;: &#34;4th year&#34;,               &#34;shortcut&#34;: &#34;&#34;             },             {               &#34;label&#34;: &#34;5th year&#34;,               &#34;value&#34;: &#34;5th year&#34;,               &#34;shortcut&#34;: &#34;&#34;             },             {               &#34;label&#34;: &#34;6th year&#34;,               &#34;value&#34;: &#34;6th year&#34;,               &#34;shortcut&#34;: &#34;&#34;             }           ],           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;year&#34;,           &#34;type&#34;: &#34;radio&#34;,           &#34;input&#34;: true,           &#34;defaultValue&#34;: &#34;1st year&#34;         }       ]     },     {       &#34;title&#34;: &#34;&#60;b&#62;Basic information&#60;/b&#62;&#34;,       &#34;collapsible&#34;: false,       &#34;key&#34;: &#34;panel&#34;,       &#34;type&#34;: &#34;panel&#34;,       &#34;label&#34;: &#34;Section A: Basic information New title&#34;,       &#34;input&#34;: false,       &#34;tableView&#34;: false,       &#34;components&#34;: [         {           &#34;label&#34;: &#34;Name of candidate:&#34;,           &#34;disabled&#34;: true,           &#34;tableView&#34;: true,           &#34;customDefaultValue&#34;: &#34;value = Meteor.user().tequila.displayname;&#34;,           &#34;key&#34;: &#34;phdStudentName&#34;,           &#34;type&#34;: &#34;textfield&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;Tentative thesis title:&#34;,           &#34;tableView&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;tentativeThesisTitle&#34;,           &#34;type&#34;: &#34;textfield&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;Thesis director:&#34;,           &#34;disabled&#34;: true,           &#34;tableView&#34;: true,           &#34;key&#34;: &#34;thesisDirectorName&#34;,           &#34;type&#34;: &#34;textfield&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;Thesis co-director:&#34;,           &#34;disabled&#34;: true,           &#34;tableView&#34;: true,           &#34;key&#34;: &#34;thesisCoDirectorName&#34;,           &#34;type&#34;: &#34;textfield&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;Date of candidacy exam:&#34;,           &#34;widget&#34;: {             &#34;type&#34;: &#34;calendar&#34;,             &#34;altInput&#34;: true,             &#34;allowInput&#34;: true,             &#34;clickOpens&#34;: true,             &#34;enableDate&#34;: true,             &#34;enableTime&#34;: false,             &#34;mode&#34;: &#34;single&#34;,             &#34;noCalendar&#34;: false,             &#34;format&#34;: &#34;dd.MM.yyyy&#34;,             &#34;dateFormat&#34;: &#34;yyyy-MM-dd&#34;,             &#34;useLocaleSettings&#34;: false,             &#34;hourIncrement&#34;: 1,             &#34;minuteIncrement&#34;: 5,             &#34;time_24hr&#34;: false,             &#34;saveAs&#34;: &#34;text&#34;,             &#34;locale&#34;: &#34;en&#34;,             &#34;displayInTimezone&#34;: &#34;viewer&#34;           },           &#34;tableView&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;dateOfCandidacyExam&#34;,           &#34;type&#34;: &#34;textfield&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;TA duties: Activities done: &#34;,           &#34;placeholder&#34;: &#34;Estimated hours and/or courses completed, supervision of projet ...&#34;,           &#34;autoExpand&#34;: false,           &#34;tableView&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;taDutiesHoursAndOrCoursesCompleted&#34;,           &#34;type&#34;: &#34;textarea&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;Credits needed for this program:&#34;,           &#34;inputMask&#34;: &#34;99&#34;,           &#34;disabled&#34;: true,           &#34;tableView&#34;: true,           &#34;persistent&#34;: false,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;creditsNeeded&#34;,           &#34;type&#34;: &#34;textfield&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;Total credits obtained:&#34;,           &#34;mask&#34;: false,           &#34;tableView&#34;: true,           &#34;delimiter&#34;: false,           &#34;requireDecimal&#34;: false,           &#34;inputFormat&#34;: &#34;plain&#34;,           &#34;truncateMultipleSpaces&#34;: false,           &#34;calculateServer&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;totalCreditsObtained&#34;,           &#34;type&#34;: &#34;number&#34;,           &#34;inputType&#34;: &#34;number&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;Total credits planned:&#34;,           &#34;mask&#34;: false,           &#34;tableView&#34;: true,           &#34;delimiter&#34;: false,           &#34;requireDecimal&#34;: false,           &#34;inputFormat&#34;: &#34;plain&#34;,           &#34;truncateMultipleSpaces&#34;: false,           &#34;calculateServer&#34;: true,           &#34;key&#34;: &#34;totalCreditsPlanned&#34;,           &#34;type&#34;: &#34;number&#34;,           &#34;inputType&#34;: &#34;number&#34;,           &#34;input&#34;: true         }       ]     },     {       &#34;title&#34;: &#34;&#60;b&#62;Research progress&#60;/b&#62;&#34;,       &#34;collapsible&#34;: false,       &#34;key&#34;: &#34;sectionBResearchProgress1&#34;,       &#34;conditional&#34;: {         &#34;show&#34;: false,         &#34;when&#34;: &#34;year&#34;,         &#34;eq&#34;: &#34;1st year&#34;       },       &#34;type&#34;: &#34;panel&#34;,       &#34;label&#34;: &#34;Section B: Research progress&#34;,       &#34;input&#34;: false,       &#34;tableView&#34;: false,       &#34;components&#34;: [         {           &#34;label&#34;: &#34;HTML&#34;,           &#34;attrs&#34;: [             {               &#34;attr&#34;: &#34;&#34;,               &#34;value&#34;: &#34;&#34;             }           ],           &#34;content&#34;: &#34;To be completed first by the doctoral student and then discussed with the thesis director (and co-director if applicable) during the Annual Report meeting. Future objectives are meant to provide guidance in the project and should thus be as realistic as possible. Achieved and planned objectives should be discussed and agreed upon by the doctoral student and thesis director by approving the Annual Report.&#34;,           &#34;refreshOnChange&#34;: false,           &#34;key&#34;: &#34;html&#34;,           &#34;type&#34;: &#34;htmlelement&#34;,           &#34;input&#34;: false,           &#34;tableView&#34;: false         },         {           &#34;label&#34;: &#34;1. What are the overall goals of the thesis? &#34;,           &#34;autoExpand&#34;: false,           &#34;tableView&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;goalsOfTheThesis&#34;,           &#34;type&#34;: &#34;textarea&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;2. Research progress during the past year&#34;,           &#34;placeholder&#34;: &#34;(i.e. describe which objectives are completed and elaborate if any difficulties have been encountered since the last annual report)&#34;,           &#34;autoExpand&#34;: false,           &#34;tableView&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;researchProgressDuringThePastYear&#34;,           &#34;type&#34;: &#34;textarea&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;3. Have the objectives changed in the past year? If so, why and how? &#34;,           &#34;autoExpand&#34;: false,           &#34;tableView&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;haveTheObjectivesChangedInThePastYearIfSoWhyAndHow&#34;,           &#34;type&#34;: &#34;textarea&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;4. Research objectives for the next year&#34;,           &#34;autoExpand&#34;: false,           &#34;tableView&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;researchObjectivesForTheNextYear&#34;,           &#34;type&#34;: &#34;textarea&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;5. Timeline of the planned work for the next year&#34;,           &#34;autoExpand&#34;: false,           &#34;tableView&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;timelineOfThePlannedWorkForTheNextYear&#34;,           &#34;type&#34;: &#34;textarea&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;6. Scientific output&#34;,           &#34;placeholder&#34;: &#34;(Journal and conference papers, patents, software, etc. published, submitted or in preparation)&#34;,           &#34;autoExpand&#34;: false,           &#34;tableView&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;scientificOutput&#34;,           &#34;type&#34;: &#34;textarea&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;7. Educational activities&#34;,           &#34;placeholder&#34;: &#34;(Mention oral or poster presentations, outreach and any specific training)&#34;,           &#34;autoExpand&#34;: false,           &#34;tableView&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;educationalActivities&#34;,           &#34;type&#34;: &#34;textarea&#34;,           &#34;input&#34;: true         }       ]     },     {       &#34;title&#34;: &#34;&#60;b&#62;Progress assessment&#60;/b&#62;&#34;,       &#34;collapsible&#34;: false,       &#34;key&#34;: &#34;sectionCProgressAssessment1&#34;,       &#34;type&#34;: &#34;panel&#34;,       &#34;label&#34;: &#34;Section C: Progress assessment&#34;,       &#34;input&#34;: false,       &#34;tableView&#34;: false,       &#34;components&#34;: [         {           &#34;label&#34;: &#34;HTML&#34;,           &#34;attrs&#34;: [             {               &#34;attr&#34;: &#34;&#34;,               &#34;value&#34;: &#34;&#34;             }           ],           &#34;content&#34;: &#34;&#60;p&#62;To be completed independently by the doctoral student and thesis director (and co-director if applicable), then discussed and approved by both during the Annual Report meeting. Progress evaluation is not confidential. During completion you have access only to your comments. At the time of the collaborative review all comments will be visible. &#38;nbsp;&#60;/p&#62;\n&#60;p&#62;Aims on the doctoral student side:&#60;/p&#62;\n&#60;ul&#62;\n&#60;li&#62;to assess how the doctoral student views their own progress and skills&#60;/li&#62;\n&#60;/ul&#62;\n&#60;ul&#62;\n&#60;li&#62;to identify and communicate to the thesis director in what areas the doctoral student seeks more input or help&#60;/li&#62;\n&#60;/ul&#62;\n&#60;p&#62;Aims on the thesis director (and co-director if applicable) side:&#60;/p&#62;\n&#60;ul&#62;\n&#60;li&#62;to ensure that your doctoral student knows how they are performing overall according to you &#60;/li&#62;\n&#60;/ul&#62;\n&#60;ul&#62;\n&#60;li&#62;to communicate what you think strengths and weaknesses are towards completing a PhD&#60;/li&#62;\n&#60;/ul&#62;\n&#60;ul&#62;\n&#60;li&#62;to communicate what you think needs to be improved&#60;/li&#62;\n&#60;/ul&#62;\n&#60;ul&#62;\n&#60;li&#62;to ensure that career issues are discussed at least once per year&#38;nbsp;&#60;/li&#62;\n&#60;/ul&#62;\n&#60;p&#62;Please use the comments box to briefly assess the progress and further elaborate any specific issues.&#60;/p&#62;&#34;,           &#34;refreshOnChange&#34;: false,           &#34;key&#34;: &#34;html1&#34;,           &#34;type&#34;: &#34;htmlelement&#34;,           &#34;input&#34;: false,           &#34;tableView&#34;: false         },         {           &#34;label&#34;: &#34;HTML&#34;,           &#34;attrs&#34;: [             {               &#34;attr&#34;: &#34;&#34;,               &#34;value&#34;: &#34;&#34;             }           ],           &#34;content&#34;: &#34;&#60;h4&#62;&#60;b&#62;Discussion topics&#60;/b&#62;&#60;/h4&#62;\n&#60;p&#62;1. Student&#38;rsquo;s engagement in the project:&#60;br&#62;\n&#60;i&#62;satisfaction, motivation, commitment, initiative, independence, ...&#60;/i&#62;&#60;/p&#62;&#34;,           &#34;refreshOnChange&#34;: false,           &#34;key&#34;: &#34;html2&#34;,           &#34;type&#34;: &#34;htmlelement&#34;,           &#34;input&#34;: false,           &#34;tableView&#34;: false         },         {           &#34;label&#34;: &#34;Comment&#34;,           &#34;autoExpand&#34;: false,           &#34;tableView&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;phdComment1&#34;,           &#34;type&#34;: &#34;textarea&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;HTML&#34;,           &#34;attrs&#34;: [             {               &#34;attr&#34;: &#34;&#34;,               &#34;value&#34;: &#34;&#34;             }           ],           &#34;content&#34;: &#34;&#60;p&#62;2. Thesis director’s (and co-director if applicable) supervision:&#60;br&#62;\n&#60;i&#62;availability, coaching, support, resources, training and conferences, ...&#60;/i&#62;&#60;/p&#62;&#34;,           &#34;refreshOnChange&#34;: false,           &#34;key&#34;: &#34;html3&#34;,           &#34;type&#34;: &#34;htmlelement&#34;,           &#34;input&#34;: false,           &#34;tableView&#34;: false         },         {           &#34;label&#34;: &#34;Comment&#34;,           &#34;autoExpand&#34;: false,           &#34;tableView&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;phdComment2&#34;,           &#34;type&#34;: &#34;textarea&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;HTML&#34;,           &#34;attrs&#34;: [             {               &#34;attr&#34;: &#34;&#34;,               &#34;value&#34;: &#34;&#34;             }           ],           &#34;content&#34;: &#34;&#60;p&#62;3. Project’s progress:&#60;br&#62;\n&#60;i&#62;quality of results, critical thinking, vision, timeline, organization, planning, ...&#60;/i&#62;&#60;/p&#62;&#34;,           &#34;refreshOnChange&#34;: false,           &#34;key&#34;: &#34;html4&#34;,           &#34;type&#34;: &#34;htmlelement&#34;,           &#34;input&#34;: false,           &#34;tableView&#34;: false         },         {           &#34;label&#34;: &#34;Comment&#34;,           &#34;autoExpand&#34;: false,           &#34;tableView&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;phdComment3&#34;,           &#34;type&#34;: &#34;textarea&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;HTML&#34;,           &#34;attrs&#34;: [             {               &#34;attr&#34;: &#34;&#34;,               &#34;value&#34;: &#34;&#34;             }           ],           &#34;content&#34;: &#34;&#60;p&#62;4. Student’s scientific and career development:&#60;br&#62;\n&#60;i&#62;training, acquired skills (writing, presenting), teaching load, conferences and networking, after-PhD planning, ...&#60;/i&#62;&#60;/p&#62;&#34;,           &#34;refreshOnChange&#34;: false,           &#34;key&#34;: &#34;html5&#34;,           &#34;type&#34;: &#34;htmlelement&#34;,           &#34;input&#34;: false,           &#34;tableView&#34;: false         },         {           &#34;label&#34;: &#34;Comment&#34;,           &#34;autoExpand&#34;: false,           &#34;tableView&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;phdComment4&#34;,           &#34;type&#34;: &#34;textarea&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;HTML&#34;,           &#34;attrs&#34;: [             {               &#34;attr&#34;: &#34;&#34;,               &#34;value&#34;: &#34;&#34;             }           ],           &#34;content&#34;: &#34;&#60;p&#62;5. Laboratory situation:&#60;br&#62;\n&#60;i&#62;support from colleagues and own collegiality, open communication and atmosphere, balance in collaborative projects, resource availability, ….&#60;/i&#62;&#60;/p&#62;&#34;,           &#34;refreshOnChange&#34;: false,           &#34;key&#34;: &#34;html6&#34;,           &#34;type&#34;: &#34;htmlelement&#34;,           &#34;input&#34;: false,           &#34;tableView&#34;: false         },         {           &#34;label&#34;: &#34;Comment&#34;,           &#34;autoExpand&#34;: false,           &#34;tableView&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;phdComment5&#34;,           &#34;type&#34;: &#34;textarea&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;HTML&#34;,           &#34;attrs&#34;: [             {               &#34;attr&#34;: &#34;&#34;,               &#34;value&#34;: &#34;&#34;             }           ],           &#34;content&#34;: &#34;&#60;p&#62;6. Any other specific points:&#60;br&#62;&#34;,           &#34;refreshOnChange&#34;: false,           &#34;key&#34;: &#34;html7&#34;,           &#34;type&#34;: &#34;htmlelement&#34;,           &#34;input&#34;: false,           &#34;tableView&#34;: false         },         {           &#34;label&#34;: &#34;Comment&#34;,           &#34;autoExpand&#34;: false,           &#34;tableView&#34;: true,           &#34;key&#34;: &#34;phdComment6&#34;,           &#34;type&#34;: &#34;textarea&#34;,           &#34;input&#34;: true         }       ]     },     {       &#34;label&#34;: &#34;Section C: Progress assessment&#34;,       &#34;refreshOnChange&#34;: false,       &#34;key&#34;: &#34;sectionCProgressAssessment&#34;,       &#34;type&#34;: &#34;content&#34;,       &#34;input&#34;: false,       &#34;tableView&#34;: false     },     {       &#34;label&#34;: &#34;Section B: Research progress&#34;,       &#34;refreshOnChange&#34;: false,       &#34;key&#34;: &#34;sectionBResearchProgress&#34;,       &#34;type&#34;: &#34;content&#34;,       &#34;input&#34;: false,       &#34;tableView&#34;: false     },     {       &#34;type&#34;: &#34;button&#34;,       &#34;label&#34;: &#34;Submit&#34;,       &#34;key&#34;: &#34;submit&#34;,       &#34;disableOnInvalid&#34;: true,       &#34;input&#34;: true,       &#34;tableView&#34;: false     },     {       &#34;label&#34;: &#34;Cancel&#34;,       &#34;action&#34;: &#34;event&#34;,       &#34;showValidations&#34;: false,       &#34;theme&#34;: &#34;secondary&#34;,       &#34;tableView&#34;: false,       &#34;key&#34;: &#34;cancel&#34;,       &#34;type&#34;: &#34;button&#34;,       &#34;input&#34;: true,       &#34;event&#34;: &#34;cancelClicked&#34;     }   ] }" />
+          <zeebe:header key="formIO" value="{   &#34;_id&#34;: &#34;6094ea003614a90bb3112cc5&#34;,   &#34;type&#34;: &#34;form&#34;,   &#34;tags&#34;: [],   &#34;owner&#34;: &#34;605a091e390b9fa6e626d355&#34;,   &#34;revisions&#34;: &#34;&#34;,   &#34;_vid&#34;: 0,   &#34;title&#34;: &#34;Annual Progress Report&#34;,   &#34;display&#34;: &#34;form&#34;,   &#34;access&#34;: [     {       &#34;roles&#34;: [         &#34;605a093a1964dcf6c669c8dd&#34;,         &#34;605a093a1964dc7db769c8de&#34;,         &#34;605a093a1964dcd89969c8df&#34;       ],       &#34;type&#34;: &#34;read_all&#34;     }   ],   &#34;submissionAccess&#34;: [],   &#34;controller&#34;: &#34;&#34;,   &#34;properties&#34;: {},   &#34;settings&#34;: {},   &#34;name&#34;: &#34;annualProgressReport&#34;,   &#34;path&#34;: &#34;annualprogressreport&#34;,   &#34;project&#34;: &#34;605a093a1964dca89369c8dc&#34;,   &#34;created&#34;: &#34;2021-05-07T07:19:28.829Z&#34;,   &#34;modified&#34;: &#34;2021-05-11T15:57:35.231Z&#34;,   &#34;machineName&#34;: &#34;mcvvtebnveuvysz:annualProgressReport&#34;,   &#34;components&#34;: [     {       &#34;title&#34;: &#34;&#60;b&#62;Annual Report&#60;/b&#62;&#34;,       &#34;collapsible&#34;: false,       &#34;key&#34;: &#34;panel1&#34;,       &#34;type&#34;: &#34;panel&#34;,       &#34;label&#34;: &#34;Panel&#34;,       &#34;input&#34;: false,       &#34;tableView&#34;: false,       &#34;components&#34;: [         {           &#34;label&#34;: &#34;Doctoral Program:&#34;,           &#34;disabled&#34;: true,           &#34;tableView&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;doctoralProgramName&#34;,           &#34;type&#34;: &#34;textfield&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;Date of enrolment:&#34;,           &#34;widget&#34;: {             &#34;type&#34;: &#34;calendar&#34;,             &#34;altInput&#34;: true,             &#34;allowInput&#34;: true,             &#34;clickOpens&#34;: true,             &#34;enableDate&#34;: true,             &#34;enableTime&#34;: false,             &#34;mode&#34;: &#34;single&#34;,             &#34;noCalendar&#34;: false,             &#34;format&#34;: &#34;dd.MM.yyyy&#34;,             &#34;dateFormat&#34;: &#34;yyyy-MM-dd&#34;,             &#34;useLocaleSettings&#34;: false,             &#34;hourIncrement&#34;: 1,             &#34;minuteIncrement&#34;: 5,             &#34;time_24hr&#34;: false,             &#34;saveAs&#34;: &#34;text&#34;,             &#34;locale&#34;: &#34;en&#34;,             &#34;displayInTimezone&#34;: &#34;viewer&#34;           },           &#34;tableView&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true,             &#34;custom&#34;: &#34;valid=true;\nvar m = moment();\nvar p = moment(input);\nif (m &#60; p) valid=false;&#34;           },           &#34;errors&#34;: {             &#34;custom&#34;: &#34;date must not be in the future&#34;           },           &#34;key&#34;: &#34;dateOfEnrolment&#34;,           &#34;type&#34;: &#34;textfield&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;Annual report of&#34;,           &#34;optionsLabelPosition&#34;: &#34;right&#34;,           &#34;inline&#34;: false,           &#34;tableView&#34;: false,           &#34;values&#34;: [             {               &#34;label&#34;: &#34;1st year (tick only if candidacy exam not yet passed)&#34;,               &#34;value&#34;: &#34;1st year&#34;,               &#34;shortcut&#34;: &#34;&#34;             },             {               &#34;label&#34;: &#34;2nd year&#34;,               &#34;value&#34;: &#34;2nd year&#34;,               &#34;shortcut&#34;: &#34;&#34;             },             {               &#34;label&#34;: &#34;3rd year &#34;,               &#34;value&#34;: &#34;3rd year&#34;,               &#34;shortcut&#34;: &#34;&#34;             },             {               &#34;label&#34;: &#34;4th year&#34;,               &#34;value&#34;: &#34;4th year&#34;,               &#34;shortcut&#34;: &#34;&#34;             },             {               &#34;label&#34;: &#34;5th year&#34;,               &#34;value&#34;: &#34;5th year&#34;,               &#34;shortcut&#34;: &#34;&#34;             },             {               &#34;label&#34;: &#34;6th year&#34;,               &#34;value&#34;: &#34;6th year&#34;,               &#34;shortcut&#34;: &#34;&#34;             }           ],           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;year&#34;,           &#34;type&#34;: &#34;radio&#34;,           &#34;input&#34;: true         }       ]     },     {       &#34;title&#34;: &#34;&#60;b&#62;Basic information&#60;/b&#62;&#34;,       &#34;collapsible&#34;: false,       &#34;key&#34;: &#34;panel&#34;,       &#34;type&#34;: &#34;panel&#34;,       &#34;label&#34;: &#34;Section A: Basic information New title&#34;,       &#34;input&#34;: false,       &#34;tableView&#34;: false,       &#34;components&#34;: [         {           &#34;label&#34;: &#34;Name of candidate:&#34;,           &#34;disabled&#34;: true,           &#34;tableView&#34;: true,           &#34;customDefaultValue&#34;: &#34;value = Meteor.user().tequila.displayname;&#34;,           &#34;key&#34;: &#34;phdStudentName&#34;,           &#34;type&#34;: &#34;textfield&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;Tentative thesis title:&#34;,           &#34;tableView&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;tentativeThesisTitle&#34;,           &#34;type&#34;: &#34;textfield&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;Thesis director:&#34;,           &#34;disabled&#34;: true,           &#34;tableView&#34;: true,           &#34;key&#34;: &#34;thesisDirectorName&#34;,           &#34;type&#34;: &#34;textfield&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;Thesis co-director:&#34;,           &#34;disabled&#34;: true,           &#34;tableView&#34;: true,           &#34;key&#34;: &#34;thesisCoDirectorName&#34;,           &#34;type&#34;: &#34;textfield&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;Date of candidacy exam:&#34;,           &#34;widget&#34;: {             &#34;type&#34;: &#34;calendar&#34;,             &#34;altInput&#34;: true,             &#34;allowInput&#34;: true,             &#34;clickOpens&#34;: true,             &#34;enableDate&#34;: true,             &#34;enableTime&#34;: false,             &#34;mode&#34;: &#34;single&#34;,             &#34;noCalendar&#34;: false,             &#34;format&#34;: &#34;dd.MM.yyyy&#34;,             &#34;dateFormat&#34;: &#34;yyyy-MM-dd&#34;,             &#34;useLocaleSettings&#34;: false,             &#34;hourIncrement&#34;: 1,             &#34;minuteIncrement&#34;: 5,             &#34;time_24hr&#34;: false,             &#34;saveAs&#34;: &#34;text&#34;,             &#34;locale&#34;: &#34;en&#34;,             &#34;displayInTimezone&#34;: &#34;viewer&#34;           },           &#34;tableView&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;dateOfCandidacyExam&#34;,           &#34;type&#34;: &#34;textfield&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;TA duties: Activities done: &#34;,           &#34;placeholder&#34;: &#34;Estimated hours and/or courses completed, supervision of projet ...&#34;,           &#34;autoExpand&#34;: false,           &#34;tableView&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;taDutiesHoursAndOrCoursesCompleted&#34;,           &#34;type&#34;: &#34;textarea&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;Credits needed for this program:&#34;,           &#34;inputMask&#34;: &#34;99&#34;,           &#34;disabled&#34;: true,           &#34;tableView&#34;: true,           &#34;persistent&#34;: false,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;creditsNeeded&#34;,           &#34;type&#34;: &#34;textfield&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;Total credits obtained:&#34;,           &#34;mask&#34;: false,           &#34;tableView&#34;: true,           &#34;delimiter&#34;: false,           &#34;requireDecimal&#34;: false,           &#34;inputFormat&#34;: &#34;plain&#34;,           &#34;truncateMultipleSpaces&#34;: false,           &#34;calculateServer&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;totalCreditsObtained&#34;,           &#34;type&#34;: &#34;number&#34;,           &#34;inputType&#34;: &#34;number&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;Total credits planned:&#34;,           &#34;mask&#34;: false,           &#34;tableView&#34;: true,           &#34;delimiter&#34;: false,           &#34;requireDecimal&#34;: false,           &#34;inputFormat&#34;: &#34;plain&#34;,           &#34;truncateMultipleSpaces&#34;: false,           &#34;calculateServer&#34;: true,           &#34;key&#34;: &#34;totalCreditsPlanned&#34;,           &#34;type&#34;: &#34;number&#34;,           &#34;inputType&#34;: &#34;number&#34;,           &#34;input&#34;: true         }       ]     },     {       &#34;title&#34;: &#34;&#60;b&#62;Research progress&#60;/b&#62;&#34;,       &#34;collapsible&#34;: false,       &#34;key&#34;: &#34;sectionBResearchProgress1&#34;,       &#34;conditional&#34;: {         &#34;show&#34;: false,         &#34;when&#34;: &#34;year&#34;,         &#34;eq&#34;: &#34;1st year&#34;       },       &#34;type&#34;: &#34;panel&#34;,       &#34;label&#34;: &#34;Section B: Research progress&#34;,       &#34;input&#34;: false,       &#34;tableView&#34;: false,       &#34;components&#34;: [         {           &#34;label&#34;: &#34;HTML&#34;,           &#34;attrs&#34;: [             {               &#34;attr&#34;: &#34;&#34;,               &#34;value&#34;: &#34;&#34;             }           ],           &#34;content&#34;: &#34;To be completed first by the doctoral student and then discussed with the thesis director (and co-director if applicable) during the Annual Report meeting. Future objectives are meant to provide guidance in the project and should thus be as realistic as possible. Achieved and planned objectives should be discussed and agreed upon by the doctoral student and thesis director by approving the Annual Report.&#34;,           &#34;refreshOnChange&#34;: false,           &#34;key&#34;: &#34;html&#34;,           &#34;type&#34;: &#34;htmlelement&#34;,           &#34;input&#34;: false,           &#34;tableView&#34;: false         },         {           &#34;label&#34;: &#34;1. What are the overall goals of the thesis? &#34;,           &#34;autoExpand&#34;: false,           &#34;tableView&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;goalsOfTheThesis&#34;,           &#34;type&#34;: &#34;textarea&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;2. Research progress during the past year&#34;,           &#34;placeholder&#34;: &#34;(i.e. describe which objectives are completed and elaborate if any difficulties have been encountered since the last annual report)&#34;,           &#34;autoExpand&#34;: false,           &#34;tableView&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;researchProgressDuringThePastYear&#34;,           &#34;type&#34;: &#34;textarea&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;3. Have the objectives changed in the past year? If so, why and how? &#34;,           &#34;autoExpand&#34;: false,           &#34;tableView&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;haveTheObjectivesChangedInThePastYearIfSoWhyAndHow&#34;,           &#34;type&#34;: &#34;textarea&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;4. Research objectives for the next year&#34;,           &#34;autoExpand&#34;: false,           &#34;tableView&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;researchObjectivesForTheNextYear&#34;,           &#34;type&#34;: &#34;textarea&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;5. Timeline of the planned work for the next year&#34;,           &#34;autoExpand&#34;: false,           &#34;tableView&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;timelineOfThePlannedWorkForTheNextYear&#34;,           &#34;type&#34;: &#34;textarea&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;6. Scientific output&#34;,           &#34;placeholder&#34;: &#34;(Journal and conference papers, patents, software, etc. published, submitted or in preparation)&#34;,           &#34;autoExpand&#34;: false,           &#34;tableView&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;scientificOutput&#34;,           &#34;type&#34;: &#34;textarea&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;7. Educational activities&#34;,           &#34;placeholder&#34;: &#34;(Mention oral or poster presentations, outreach and any specific training)&#34;,           &#34;autoExpand&#34;: false,           &#34;tableView&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;educationalActivities&#34;,           &#34;type&#34;: &#34;textarea&#34;,           &#34;input&#34;: true         }       ]     },     {       &#34;title&#34;: &#34;&#60;b&#62;Progress assessment&#60;/b&#62;&#34;,       &#34;collapsible&#34;: false,       &#34;key&#34;: &#34;sectionCProgressAssessment1&#34;,       &#34;type&#34;: &#34;panel&#34;,       &#34;label&#34;: &#34;Section C: Progress assessment&#34;,       &#34;input&#34;: false,       &#34;tableView&#34;: false,       &#34;components&#34;: [         {           &#34;label&#34;: &#34;HTML&#34;,           &#34;attrs&#34;: [             {               &#34;attr&#34;: &#34;&#34;,               &#34;value&#34;: &#34;&#34;             }           ],           &#34;content&#34;: &#34;&#60;p&#62;To be completed independently by the doctoral student and thesis director (and co-director if applicable), then discussed and approved by both during the Annual Report meeting. Progress evaluation is not confidential. During completion you have access only to your comments. At the time of the collaborative review all comments will be visible. &#38;nbsp;&#60;/p&#62;\n&#60;p&#62;Aims on the doctoral student side:&#60;/p&#62;\n&#60;ul&#62;\n&#60;li&#62;to assess how the doctoral student views their own progress and skills&#60;/li&#62;\n&#60;/ul&#62;\n&#60;ul&#62;\n&#60;li&#62;to identify and communicate to the thesis director in what areas the doctoral student seeks more input or help&#60;/li&#62;\n&#60;/ul&#62;\n&#60;p&#62;Aims on the thesis director (and co-director if applicable) side:&#60;/p&#62;\n&#60;ul&#62;\n&#60;li&#62;to ensure that your doctoral student knows how they are performing overall according to you &#60;/li&#62;\n&#60;/ul&#62;\n&#60;ul&#62;\n&#60;li&#62;to communicate what you think strengths and weaknesses are towards completing a PhD&#60;/li&#62;\n&#60;/ul&#62;\n&#60;ul&#62;\n&#60;li&#62;to communicate what you think needs to be improved&#60;/li&#62;\n&#60;/ul&#62;\n&#60;ul&#62;\n&#60;li&#62;to ensure that career issues are discussed at least once per year&#38;nbsp;&#60;/li&#62;\n&#60;/ul&#62;\n&#60;p&#62;Please use the comments box to briefly assess the progress and further elaborate any specific issues.&#60;/p&#62;&#34;,           &#34;refreshOnChange&#34;: false,           &#34;key&#34;: &#34;html1&#34;,           &#34;type&#34;: &#34;htmlelement&#34;,           &#34;input&#34;: false,           &#34;tableView&#34;: false         },         {           &#34;label&#34;: &#34;HTML&#34;,           &#34;attrs&#34;: [             {               &#34;attr&#34;: &#34;&#34;,               &#34;value&#34;: &#34;&#34;             }           ],           &#34;content&#34;: &#34;&#60;h4&#62;&#60;b&#62;Discussion topics&#60;/b&#62;&#60;/h4&#62;\n&#60;p&#62;1. Student&#38;rsquo;s engagement in the project:&#60;br&#62;\n&#60;i&#62;satisfaction, motivation, commitment, initiative, independence, ...&#60;/i&#62;&#60;/p&#62;&#34;,           &#34;refreshOnChange&#34;: false,           &#34;key&#34;: &#34;html2&#34;,           &#34;type&#34;: &#34;htmlelement&#34;,           &#34;input&#34;: false,           &#34;tableView&#34;: false         },         {           &#34;label&#34;: &#34;Comment&#34;,           &#34;autoExpand&#34;: false,           &#34;tableView&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;phdComment1&#34;,           &#34;type&#34;: &#34;textarea&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;HTML&#34;,           &#34;attrs&#34;: [             {               &#34;attr&#34;: &#34;&#34;,               &#34;value&#34;: &#34;&#34;             }           ],           &#34;content&#34;: &#34;&#60;p&#62;2. Thesis director’s (and co-director if applicable) supervision:&#60;br&#62;\n&#60;i&#62;availability, coaching, support, resources, training and conferences, ...&#60;/i&#62;&#60;/p&#62;&#34;,           &#34;refreshOnChange&#34;: false,           &#34;key&#34;: &#34;html3&#34;,           &#34;type&#34;: &#34;htmlelement&#34;,           &#34;input&#34;: false,           &#34;tableView&#34;: false         },         {           &#34;label&#34;: &#34;Comment&#34;,           &#34;autoExpand&#34;: false,           &#34;tableView&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;phdComment2&#34;,           &#34;type&#34;: &#34;textarea&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;HTML&#34;,           &#34;attrs&#34;: [             {               &#34;attr&#34;: &#34;&#34;,               &#34;value&#34;: &#34;&#34;             }           ],           &#34;content&#34;: &#34;&#60;p&#62;3. Project’s progress:&#60;br&#62;\n&#60;i&#62;quality of results, critical thinking, vision, timeline, organization, planning, ...&#60;/i&#62;&#60;/p&#62;&#34;,           &#34;refreshOnChange&#34;: false,           &#34;key&#34;: &#34;html4&#34;,           &#34;type&#34;: &#34;htmlelement&#34;,           &#34;input&#34;: false,           &#34;tableView&#34;: false         },         {           &#34;label&#34;: &#34;Comment&#34;,           &#34;autoExpand&#34;: false,           &#34;tableView&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;phdComment3&#34;,           &#34;type&#34;: &#34;textarea&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;HTML&#34;,           &#34;attrs&#34;: [             {               &#34;attr&#34;: &#34;&#34;,               &#34;value&#34;: &#34;&#34;             }           ],           &#34;content&#34;: &#34;&#60;p&#62;4. Student’s scientific and career development:&#60;br&#62;\n&#60;i&#62;training, acquired skills (writing, presenting), teaching load, conferences and networking, after-PhD planning, ...&#60;/i&#62;&#60;/p&#62;&#34;,           &#34;refreshOnChange&#34;: false,           &#34;key&#34;: &#34;html5&#34;,           &#34;type&#34;: &#34;htmlelement&#34;,           &#34;input&#34;: false,           &#34;tableView&#34;: false         },         {           &#34;label&#34;: &#34;Comment&#34;,           &#34;autoExpand&#34;: false,           &#34;tableView&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;phdComment4&#34;,           &#34;type&#34;: &#34;textarea&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;HTML&#34;,           &#34;attrs&#34;: [             {               &#34;attr&#34;: &#34;&#34;,               &#34;value&#34;: &#34;&#34;             }           ],           &#34;content&#34;: &#34;&#60;p&#62;5. Laboratory situation:&#60;br&#62;\n&#60;i&#62;support from colleagues and own collegiality, open communication and atmosphere, balance in collaborative projects, resource availability, ….&#60;/i&#62;&#60;/p&#62;&#34;,           &#34;refreshOnChange&#34;: false,           &#34;key&#34;: &#34;html6&#34;,           &#34;type&#34;: &#34;htmlelement&#34;,           &#34;input&#34;: false,           &#34;tableView&#34;: false         },         {           &#34;label&#34;: &#34;Comment&#34;,           &#34;autoExpand&#34;: false,           &#34;tableView&#34;: true,           &#34;validate&#34;: {             &#34;required&#34;: true           },           &#34;key&#34;: &#34;phdComment5&#34;,           &#34;type&#34;: &#34;textarea&#34;,           &#34;input&#34;: true         },         {           &#34;label&#34;: &#34;HTML&#34;,           &#34;attrs&#34;: [             {               &#34;attr&#34;: &#34;&#34;,               &#34;value&#34;: &#34;&#34;             }           ],           &#34;content&#34;: &#34;&#60;p&#62;6. Any other specific points:&#60;br&#62;&#34;,           &#34;refreshOnChange&#34;: false,           &#34;key&#34;: &#34;html7&#34;,           &#34;type&#34;: &#34;htmlelement&#34;,           &#34;input&#34;: false,           &#34;tableView&#34;: false         },         {           &#34;label&#34;: &#34;Comment&#34;,           &#34;autoExpand&#34;: false,           &#34;tableView&#34;: true,           &#34;key&#34;: &#34;phdComment6&#34;,           &#34;type&#34;: &#34;textarea&#34;,           &#34;input&#34;: true         }       ]     },     {       &#34;label&#34;: &#34;Section C: Progress assessment&#34;,       &#34;refreshOnChange&#34;: false,       &#34;key&#34;: &#34;sectionCProgressAssessment&#34;,       &#34;type&#34;: &#34;content&#34;,       &#34;input&#34;: false,       &#34;tableView&#34;: false     },     {       &#34;label&#34;: &#34;Section B: Research progress&#34;,       &#34;refreshOnChange&#34;: false,       &#34;key&#34;: &#34;sectionBResearchProgress&#34;,       &#34;type&#34;: &#34;content&#34;,       &#34;input&#34;: false,       &#34;tableView&#34;: false     },     {       &#34;type&#34;: &#34;button&#34;,       &#34;label&#34;: &#34;Submit&#34;,       &#34;key&#34;: &#34;submit&#34;,       &#34;disableOnInvalid&#34;: true,       &#34;input&#34;: true,       &#34;tableView&#34;: false     },     {       &#34;label&#34;: &#34;Cancel&#34;,       &#34;action&#34;: &#34;event&#34;,       &#34;showValidations&#34;: false,       &#34;theme&#34;: &#34;secondary&#34;,       &#34;tableView&#34;: false,       &#34;key&#34;: &#34;cancel&#34;,       &#34;type&#34;: &#34;button&#34;,       &#34;input&#34;: true,       &#34;event&#34;: &#34;cancelClicked&#34;     }   ] }" />
           <zeebe:header key="title" value="Annual report to be completed" />
         </zeebe:taskHeaders>
         <zeebe:taskDefinition type="phdAssessFillForm" retries="0" />
@@ -769,18 +769,6 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_1k7ll7j_di" bpmnElement="Lane_1k7ll7j" isHorizontal="true">
         <dc:Bounds x="172" y="85" width="4115" height="410" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_04v2gmm_di" bpmnElement="TextAnnotation_04v2gmm">
-        <dc:Bounds x="765" y="715" width="100" height="30" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_0vy5jzl_di" bpmnElement="TextAnnotation_0vy5jzl">
-        <dc:Bounds x="935" y="1025" width="100" height="30" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_0j1km92_di" bpmnElement="TextAnnotation_0j1km92">
-        <dc:Bounds x="945" y="1305" width="100" height="30" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_0qwyl9d_di" bpmnElement="TextAnnotation_0qwyl9d">
-        <dc:Bounds x="1354" y="1001" width="100" height="54" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1abdc6g_di" bpmnElement="Flow_1abdc6g">
         <di:waypoint x="377" y="360" />
@@ -1099,194 +1087,17 @@
         <di:waypoint x="2498" y="1440" />
         <di:waypoint x="2498" y="1465" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Event_1okn0bp_di" bpmnElement="Event_PhD_Assess_Start">
-        <dc:Bounds x="262" y="317" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="239" y="360" width="84" height="40" />
-        </bpmndi:BPMNLabel>
+      <bpmndi:BPMNShape id="Activity_09hr2up_di" bpmnElement="Activity_09hr2up">
+        <dc:Bounds x="2448" y="1360" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_078nd42_di" bpmnElement="Activity_PHD_Signs">
-        <dc:Bounds x="2295" y="555" width="100" height="80" />
+      <bpmndi:BPMNShape id="Activity_153g1f0_di" bpmnElement="Activity_153g1f0">
+        <dc:Bounds x="1444" y="1370" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_00y6ag1_di" bpmnElement="Gateway_00y6ag1">
-        <dc:Bounds x="2180" y="570" width="50" height="50" />
+      <bpmndi:BPMNShape id="Activity_0yid7oj_di" bpmnElement="Activity_0yid7oj">
+        <dc:Bounds x="1234" y="1000" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0f03q9c_di" bpmnElement="Activity_Notify_PhDStudent_For_Signing">
-        <dc:Bounds x="2155" y="675" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1tpd7ku_di" bpmnElement="Gateway_1tpd7ku">
-        <dc:Bounds x="2620" y="570" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="2605" y="540" width="82" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1a3uoc9_di" bpmnElement="Gateway_1a3uoc9">
-        <dc:Bounds x="2730" y="570" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0w278ns_di" bpmnElement="Activity_Post_Mentor_Meeting_PHD_Signs">
-        <dc:Bounds x="2845" y="555" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0hude63_di" bpmnElement="Activity_Notify_PhDStudent_PostMeeting_To_Do">
-        <dc:Bounds x="2705" y="675" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_10mdiut_di" bpmnElement="Activity_Notify_Thesis_Codirector_For_Signing">
-        <dc:Bounds x="1555" y="1300" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0crufzf_di" bpmnElement="Gateway_0crufzf">
-        <dc:Bounds x="1580" y="1220" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_09ymy6t_di" bpmnElement="Activity_Thesis_Co_Director_Signs">
-        <dc:Bounds x="1695" y="1205" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1vk6wu2_di" bpmnElement="Gateway_1vk6wu2">
-        <dc:Bounds x="480" y="570" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0biymns_di" bpmnElement="Activity_Notifiy_PhDStudent_Assignation">
-        <dc:Bounds x="455" y="675" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0bcd10c_di" bpmnElement="Activity_PHD_fills_annual_report">
-        <dc:Bounds x="575" y="555" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_10ceb5k_di" bpmnElement="Activity_Thesis_Director_fills_annual_report">
-        <dc:Bounds x="875" y="915" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1xqt2me_di" bpmnElement="Activity_Notify_Thesis_Director_For_Signing">
-        <dc:Bounds x="1935" y="1055" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0pq4nc7_di" bpmnElement="Gateway_0pq4nc7" isMarkerVisible="true">
-        <dc:Bounds x="1820" y="930" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0fxp2gk_di" bpmnElement="Gateway_0fxp2gk">
-        <dc:Bounds x="1960" y="930" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0imp0g7_di" bpmnElement="Gateway_is_thesis_co_director" isMarkerVisible="true">
-        <dc:Bounds x="1580" y="930" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1565" y="893" width="81" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1u8sie4_di" bpmnElement="Gateway_Thesis_Director_Check1" isMarkerVisible="true">
-        <dc:Bounds x="600" y="930" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="509" y="942" width="81" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1mwo40u_di" bpmnElement="Activity_Program_Director_Signs">
-        <dc:Bounds x="3335" y="1395" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0pguy2h_di" bpmnElement="Gateway_0pguy2h">
-        <dc:Bounds x="3230" y="1410" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0yk30nj_di" bpmnElement="Activity_Post_Mentor_Meeting_Mentor_Signs">
-        <dc:Bounds x="2845" y="1585" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_09x6bzq_di" bpmnElement="Activity_Notify_Mentor_PostMeeting_To_Do">
-        <dc:Bounds x="2705" y="1685" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1vkk1yr_di" bpmnElement="Gateway_1vkk1yr">
-        <dc:Bounds x="2730" y="1600" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_18i972i_di" bpmnElement="Gateway_08kccwb">
-        <dc:Bounds x="3000" y="1410" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0s9w3zi_di" bpmnElement="Activity_Notify_Program_Director_For_Signing_PostMeeting">
-        <dc:Bounds x="3205" y="1475" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1eaw25w_di" bpmnElement="Gateway_1eaw25w">
-        <dc:Bounds x="780" y="930" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0wl0pjp_di" bpmnElement="Gateway_0wl0pjp">
-        <dc:Bounds x="690" y="1210" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1wdv629_di" bpmnElement="Activity_Notify_Thesis_Codirector_PhDStudent_Filled">
-        <dc:Bounds x="665" y="1300" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0wwdo6d_di" bpmnElement="Activity_Notify_Thesis_Director_PhDStudent_Filled">
-        <dc:Bounds x="755" y="1035" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1nl6gt1_di" bpmnElement="Activity_Thesis_Co_Director_fills_annual_report">
-        <dc:Bounds x="875" y="1195" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0fgciwz_di" bpmnElement="Gateway_0fgciwz" isMarkerVisible="true">
-        <dc:Bounds x="690" y="930" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0w5d3x0_di" bpmnElement="Gateway_0w5d3x0">
-        <dc:Bounds x="1113" y="930" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1osgngt_di" bpmnElement="Gateway_Thesis_Director_Check2" isMarkerVisible="true">
-        <dc:Bounds x="1023" y="930" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1007" y="994" width="81" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1686jxu_di" bpmnElement="Activity_Notify_Program_Director_For_Disagreement">
-        <dc:Bounds x="2448" y="1465" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1f2dd1w_di" bpmnElement="Gateway_1f2dd1w" isMarkerVisible="true">
-        <dc:Bounds x="2473" y="690" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="2425" y="708" width="38" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_145opmc_di" bpmnElement="Gateway_145opmc">
-        <dc:Bounds x="2473" y="570" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0a9n280_di" bpmnElement="Activity_Program_Assistant_Assigns_Participants">
-        <dc:Bounds x="455" y="295" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0jduupp_di" bpmnElement="Activity_Thesis_Director_Signs">
-        <dc:Bounds x="2078" y="915" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1qftu4l_di" bpmnElement="Gateway_1qftu4l">
-        <dc:Bounds x="1469" y="930" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_00hc0r3_di" bpmnElement="Gateway_unsatisfactory_check" isMarkerVisible="true">
-        <dc:Bounds x="1469" y="1050" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1515" y="1053" width="78" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0nvflgj_di" bpmnElement="Activity_Notify_Program_Director_Collaborative_Review_Done">
-        <dc:Bounds x="1444" y="1475" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1s43jmr_di" bpmnElement="Activity_Thesis_Director_Collaborative_Review_Signs">
-        <dc:Bounds x="1334" y="915" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0byrnzh_di" bpmnElement="Gateway_1kh591k">
-        <dc:Bounds x="1259" y="930" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1m9wltd_di" bpmnElement="Gateway_1m9wltd" isMarkerVisible="true">
-        <dc:Bounds x="1189" y="930" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0etdbm8_di" bpmnElement="Activity_Build_PDF">
-        <dc:Bounds x="3335" y="155" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0vnhjct_di" bpmnElement="Event_PhD_Assess_Done">
-        <dc:Bounds x="4159" y="287" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="4133" y="333" width="88" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0jbwxb1_di" bpmnElement="Activity_Notify_With_PDF_ProgramDirector_And_Office">
-        <dc:Bounds x="3597" y="155" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0pelgwh_di" bpmnElement="Activity_Notify_With_PDF_PhDStudent">
-        <dc:Bounds x="3777" y="155" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0vwjqq9_di" bpmnElement="Activity_GED_Deposit">
-        <dc:Bounds x="3597" y="265" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1234dlc_di" bpmnElement="Activity_Notify_Ask_For_Manual_Deposit">
-        <dc:Bounds x="3777" y="365" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0e3v8s8_di" bpmnElement="Gateway_0hp9bfx">
-        <dc:Bounds x="3482" y="170" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0gs5ip4_di" bpmnElement="Gateway_1iu457q">
-        <dc:Bounds x="3982" y="280" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1stz7w5_di" bpmnElement="Gateway_1stz7w5" isMarkerVisible="true">
-        <dc:Bounds x="480" y="460" width="50" height="50" />
+      <bpmndi:BPMNShape id="Activity_1tdv8a8_di" bpmnElement="Activity_Notify_Thesis_Director_Collaborative_Review_To_Do">
+        <dc:Bounds x="1234" y="1100" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1vxeb07_di" bpmnElement="Gateway_1vxeb07" isMarkerVisible="true">
         <dc:Bounds x="352" y="310" width="50" height="50" />
@@ -1294,34 +1105,207 @@
           <dc:Bounds x="346" y="281" width="74" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1tdv8a8_di" bpmnElement="Activity_Notify_Thesis_Director_Collaborative_Review_To_Do">
-        <dc:Bounds x="1234" y="1100" width="100" height="80" />
+      <bpmndi:BPMNShape id="Gateway_1stz7w5_di" bpmnElement="Gateway_1stz7w5" isMarkerVisible="true">
+        <dc:Bounds x="480" y="460" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0yid7oj_di" bpmnElement="Activity_0yid7oj">
-        <dc:Bounds x="1234" y="1000" width="100" height="80" />
+      <bpmndi:BPMNShape id="Gateway_0gs5ip4_di" bpmnElement="Gateway_1iu457q">
+        <dc:Bounds x="3982" y="280" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_153g1f0_di" bpmnElement="Activity_153g1f0">
-        <dc:Bounds x="1444" y="1370" width="100" height="80" />
+      <bpmndi:BPMNShape id="Gateway_0e3v8s8_di" bpmnElement="Gateway_0hp9bfx">
+        <dc:Bounds x="3482" y="170" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_09hr2up_di" bpmnElement="Activity_09hr2up">
-        <dc:Bounds x="2448" y="1360" width="100" height="80" />
+      <bpmndi:BPMNShape id="Activity_1234dlc_di" bpmnElement="Activity_Notify_Ask_For_Manual_Deposit">
+        <dc:Bounds x="3777" y="365" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_033zd9d_di" bpmnElement="Association_033zd9d">
-        <di:waypoint x="674" y="629" />
-        <di:waypoint x="793" y="715" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_03p4xdz_di" bpmnElement="Association_03p4xdz">
-        <di:waypoint x="953" y="995" />
-        <di:waypoint x="975" y="1025" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_10enfvy_di" bpmnElement="Association_10enfvy">
-        <di:waypoint x="958" y="1275" />
-        <di:waypoint x="983" y="1305" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0x6dd06_di" bpmnElement="Association_0x6dd06">
-        <di:waypoint x="1395" y="995" />
-        <di:waypoint x="1397" y="1001" />
-      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_0vwjqq9_di" bpmnElement="Activity_GED_Deposit">
+        <dc:Bounds x="3597" y="265" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0pelgwh_di" bpmnElement="Activity_Notify_With_PDF_PhDStudent">
+        <dc:Bounds x="3777" y="155" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0jbwxb1_di" bpmnElement="Activity_Notify_With_PDF_ProgramDirector_And_Office">
+        <dc:Bounds x="3597" y="155" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0vnhjct_di" bpmnElement="Event_PhD_Assess_Done">
+        <dc:Bounds x="4159" y="287" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="4133" y="333" width="88" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0etdbm8_di" bpmnElement="Activity_Build_PDF">
+        <dc:Bounds x="3335" y="155" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1m9wltd_di" bpmnElement="Gateway_1m9wltd" isMarkerVisible="true">
+        <dc:Bounds x="1189" y="930" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0byrnzh_di" bpmnElement="Gateway_1kh591k">
+        <dc:Bounds x="1259" y="930" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1s43jmr_di" bpmnElement="Activity_Thesis_Director_Collaborative_Review_Signs">
+        <dc:Bounds x="1334" y="915" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0nvflgj_di" bpmnElement="Activity_Notify_Program_Director_Collaborative_Review_Done">
+        <dc:Bounds x="1444" y="1475" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_00hc0r3_di" bpmnElement="Gateway_unsatisfactory_check" isMarkerVisible="true">
+        <dc:Bounds x="1469" y="1050" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1515" y="1053" width="78" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1qftu4l_di" bpmnElement="Gateway_1qftu4l">
+        <dc:Bounds x="1469" y="930" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0jduupp_di" bpmnElement="Activity_Thesis_Director_Signs">
+        <dc:Bounds x="2078" y="915" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0a9n280_di" bpmnElement="Activity_Program_Assistant_Assigns_Participants">
+        <dc:Bounds x="455" y="295" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_145opmc_di" bpmnElement="Gateway_145opmc">
+        <dc:Bounds x="2473" y="570" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1f2dd1w_di" bpmnElement="Gateway_1f2dd1w" isMarkerVisible="true">
+        <dc:Bounds x="2473" y="690" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2425" y="708" width="38" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1686jxu_di" bpmnElement="Activity_Notify_Program_Director_For_Disagreement">
+        <dc:Bounds x="2448" y="1465" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1osgngt_di" bpmnElement="Gateway_Thesis_Director_Check2" isMarkerVisible="true">
+        <dc:Bounds x="1023" y="930" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1007" y="994" width="81" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0w5d3x0_di" bpmnElement="Gateway_0w5d3x0">
+        <dc:Bounds x="1113" y="930" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0fgciwz_di" bpmnElement="Gateway_0fgciwz" isMarkerVisible="true">
+        <dc:Bounds x="690" y="930" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1nl6gt1_di" bpmnElement="Activity_Thesis_Co_Director_fills_annual_report">
+        <dc:Bounds x="875" y="1195" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0wwdo6d_di" bpmnElement="Activity_Notify_Thesis_Director_PhDStudent_Filled">
+        <dc:Bounds x="755" y="1035" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1wdv629_di" bpmnElement="Activity_Notify_Thesis_Codirector_PhDStudent_Filled">
+        <dc:Bounds x="665" y="1300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0wl0pjp_di" bpmnElement="Gateway_0wl0pjp">
+        <dc:Bounds x="690" y="1210" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1eaw25w_di" bpmnElement="Gateway_1eaw25w">
+        <dc:Bounds x="780" y="930" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0s9w3zi_di" bpmnElement="Activity_Notify_Program_Director_For_Signing_PostMeeting">
+        <dc:Bounds x="3205" y="1475" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_18i972i_di" bpmnElement="Gateway_08kccwb">
+        <dc:Bounds x="3000" y="1410" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1vkk1yr_di" bpmnElement="Gateway_1vkk1yr">
+        <dc:Bounds x="2730" y="1600" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_09x6bzq_di" bpmnElement="Activity_Notify_Mentor_PostMeeting_To_Do">
+        <dc:Bounds x="2705" y="1685" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0yk30nj_di" bpmnElement="Activity_Post_Mentor_Meeting_Mentor_Signs">
+        <dc:Bounds x="2845" y="1585" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0pguy2h_di" bpmnElement="Gateway_0pguy2h">
+        <dc:Bounds x="3230" y="1410" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1mwo40u_di" bpmnElement="Activity_Program_Director_Signs">
+        <dc:Bounds x="3335" y="1395" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1u8sie4_di" bpmnElement="Gateway_Thesis_Director_Check1" isMarkerVisible="true">
+        <dc:Bounds x="600" y="930" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="509" y="942" width="81" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0imp0g7_di" bpmnElement="Gateway_is_thesis_co_director" isMarkerVisible="true">
+        <dc:Bounds x="1580" y="930" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1565" y="893" width="81" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0fxp2gk_di" bpmnElement="Gateway_0fxp2gk">
+        <dc:Bounds x="1960" y="930" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0pq4nc7_di" bpmnElement="Gateway_0pq4nc7" isMarkerVisible="true">
+        <dc:Bounds x="1820" y="930" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1xqt2me_di" bpmnElement="Activity_Notify_Thesis_Director_For_Signing">
+        <dc:Bounds x="1935" y="1055" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_10ceb5k_di" bpmnElement="Activity_Thesis_Director_fills_annual_report">
+        <dc:Bounds x="875" y="915" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0bcd10c_di" bpmnElement="Activity_PHD_fills_annual_report">
+        <dc:Bounds x="575" y="555" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0biymns_di" bpmnElement="Activity_Notifiy_PhDStudent_Assignation">
+        <dc:Bounds x="455" y="675" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1vk6wu2_di" bpmnElement="Gateway_1vk6wu2">
+        <dc:Bounds x="480" y="570" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_09ymy6t_di" bpmnElement="Activity_Thesis_Co_Director_Signs">
+        <dc:Bounds x="1695" y="1205" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0crufzf_di" bpmnElement="Gateway_0crufzf">
+        <dc:Bounds x="1580" y="1220" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_10mdiut_di" bpmnElement="Activity_Notify_Thesis_Codirector_For_Signing">
+        <dc:Bounds x="1555" y="1300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0hude63_di" bpmnElement="Activity_Notify_PhDStudent_PostMeeting_To_Do">
+        <dc:Bounds x="2705" y="675" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0w278ns_di" bpmnElement="Activity_Post_Mentor_Meeting_PHD_Signs">
+        <dc:Bounds x="2845" y="555" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1a3uoc9_di" bpmnElement="Gateway_1a3uoc9">
+        <dc:Bounds x="2730" y="570" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1tpd7ku_di" bpmnElement="Gateway_1tpd7ku">
+        <dc:Bounds x="2620" y="570" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2605" y="540" width="82" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0f03q9c_di" bpmnElement="Activity_Notify_PhDStudent_For_Signing">
+        <dc:Bounds x="2155" y="675" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_00y6ag1_di" bpmnElement="Gateway_00y6ag1">
+        <dc:Bounds x="2180" y="570" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_078nd42_di" bpmnElement="Activity_PHD_Signs">
+        <dc:Bounds x="2295" y="555" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1okn0bp_di" bpmnElement="Event_PhD_Assess_Start">
+        <dc:Bounds x="262" y="317" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="239" y="360" width="84" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0qwyl9d_di" bpmnElement="TextAnnotation_0qwyl9d">
+        <dc:Bounds x="1354" y="1001" width="100" height="54" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0j1km92_di" bpmnElement="TextAnnotation_0j1km92">
+        <dc:Bounds x="945" y="1305" width="100" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0vy5jzl_di" bpmnElement="TextAnnotation_0vy5jzl">
+        <dc:Bounds x="935" y="1025" width="100" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_04v2gmm_di" bpmnElement="TextAnnotation_04v2gmm">
+        <dc:Bounds x="765" y="715" width="100" height="30" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1ogv24m_di" bpmnElement="Event_GED_Deposit_Unreachable_Error">
         <dc:Bounds x="3599" y="327" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -1334,6 +1318,22 @@
           <dc:Bounds x="3666" y="361" width="82" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0x6dd06_di" bpmnElement="Association_0x6dd06">
+        <di:waypoint x="1395" y="995" />
+        <di:waypoint x="1397" y="1001" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_10enfvy_di" bpmnElement="Association_10enfvy">
+        <di:waypoint x="958" y="1275" />
+        <di:waypoint x="983" y="1305" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_03p4xdz_di" bpmnElement="Association_03p4xdz">
+        <di:waypoint x="953" y="995" />
+        <di:waypoint x="975" y="1025" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_033zd9d_di" bpmnElement="Association_033zd9d">
+        <di:waypoint x="674" y="629" />
+        <di:waypoint x="793" y="715" />
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
