@@ -1,5 +1,8 @@
 # CHANGELOG
 
+*1.3.11* (2022-02-23)
+-  Fix missing assigneeSciper when creating a task manually
+
 *1.3.10* (2022-02-22)
 - Fix using url into Email and missing docLink when importing sciper
 - Fix decrypting null values
