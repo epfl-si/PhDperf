@@ -57,6 +57,10 @@
           port: "{{ zeebe_ports.api }}"
           protocol: TCP
           targetPort: "{{ zeebe_ports.api }}"
+        - name: "zeebe-hazelcast"
+          port: "{{ zeebe_ports.hazelcast }}"
+          protocol: TCP
+          targetPort: "{{ zeebe_ports.hazelcast }}"
        selector:
          for-service: "{{ zeebe_gateway_servicename }}"
 
@@ -128,3 +132,14 @@
     apply:
       tags:
         - monitoring
+
+- name: Simple Monitor
+  tags:
+    - simple-monitor
+    - simple-monitor-update
+    - simple-monitor-promote
+  include_tasks:
+    file: "simple-monitor.yml"
+    apply:
+      tags:
+        - simple-monitor

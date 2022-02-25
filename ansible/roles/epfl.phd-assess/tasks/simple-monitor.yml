@@ -1,0 +1,122 @@
+- tags: always
+  include_vars: "{{ item }}"
+  with_items:
+    - common-k8s-vars.yml
+
+- name: "Build simple-monitor image locally"
+  when: openshift_namespace == phd_assess_build_namespace
+  local_action:
+    module: command
+    _raw_params: "make build-simple-monitor"
+    chdir: "{{ playbook_dir }}/../"
+  register: simple_monitor_build_register
+  tags: simple-monitor-update
+- debug: var=simple_monitor_build_register.stdout
+
+- name: "Push simple-monitor into Openshift"
+  when: openshift_namespace == phd_assess_build_namespace
+  local_action:
+    module: command
+    _raw_params: "make push-simple-monitor"
+    chdir: "{{ playbook_dir }}/../"
+  register: simple_monitor_push_register
+  tags: simple-monitor-update
+- debug: var=simple_monitor_push_register.stdout
+
+- name: "Promote simple monitor image from {{ phd_assess_build_namespace }} to production"
+  when:
+    - >-
+      openshift_namespace != phd_assess_build_namespace
+    - >-
+      "simple-monitor-promote" in ansible_run_tags
+  tags: simple-monitor-promote
+  include_tasks:
+    file: _promote_image.yml
+    apply:
+      tags:
+        - simple-monitor
+        - simple-monitor-promote
+  vars:
+    promote_image_name: "{{ simple-monitor }}"
+    promote_image_tag: "latest"
+    promote_from_namespace: "{{ phd_assess_build_namespace }}"
+
+- name: phd-assess-simple-monitor Deployment Config
+  openshift:
+    state: latest
+    apiVersion: apps.openshift.io/v1
+    kind: DeploymentConfig
+    metadata:
+      name: phd-assess-simple-monitor
+      namespace: "{{openshift_namespace}}"
+    spec:
+      replicas: 1
+      selector:
+        deployment-config.name: phd-assess-simple-monitor
+      strategy: "{{ k8s_frugal_strategy }}"
+      template:
+        metadata:
+          creationTimestamp: null
+          labels:
+            deployment-config.name: phd-assess-simple-monitor
+        spec:
+          containers:
+            - name: phd-assess-simple-monitor
+              image: '{{ openshift_local_images_base }}/simple-monitor:latest'
+              volumeMounts:
+                - name: simple-monitor-h2-file
+                  mountPath: /h2-db
+              env:
+              - name: 'zeebe.client.broker.gateway-address'
+                value: '{{ zeebe_gateway_servicename }}:{{ zeebe_ports.api }}'
+              - name: 'zeebe.client.worker.hazelcast.connection'
+                value: '{{ zeebe_gateway_servicename }}:{{ zeebe_ports.hazelcast }}'
+              - name: 'white-label.custom.title'
+                value: 'PhD Asssess Monitor'
+              - name: 'spring.datasource.url'
+                value: 'jdbc:h2:file:/h2-db/simple-monitor;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE;'
+              - name: 'spring.datasource.initialization-mode'
+                value: 'never'
+              - name: 'spring.jpa.hibernate.ddl-auto'
+                value: 'update'
+              resources:
+                limits:
+                  cpu: '250m'
+                  memory: 850M
+              ports:
+                - name: "frontend"
+                  port: 80
+                  protocol: TCP
+                  containerPort: 8082
+          volumes:
+            - name: simple-monitor-h2-file
+              persistentVolumeClaim:
+                claimName: "{{ volume_zeebe_name }}"
+      triggers:
+      - type: ImageChange
+        imageChangeParams:
+          automatic: true
+          containerNames:
+          - phd-assess-simple-monitor
+          from:
+            kind: ImageStreamTag
+            name: 'simple-monitor:latest'
+            namespace: "{{openshift_namespace}}"
+
+- name: phd-assess-simple-monitor Service
+  openshift:
+    state: latest
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: "simple-monitor"
+      namespace: "{{openshift_namespace}}"
+    spec:
+      type: ClusterIP
+      ports:
+        - name: "frontend"
+          port: 80
+          protocol: TCP
+          targetPort: 8082
+      selector:
+        deployment-config.name: phd-assess-simple-monitor
