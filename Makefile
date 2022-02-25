@@ -10,7 +10,7 @@ build: build-simple-monitor
 
 .PHONY: build-simple-monitor
 build-simple-monitor: docker/simple-monitor/postgresql-42.2.12.jar
-	docker build -t epfl-idevfsd/simple-monitor docker/simple-monitor
+	docker build docker/simple-monitor -t phd-assess/simple-monitor
 
 docker/simple-monitor/postgresql-42.2.12.jar:
 	wget -O $@ https://jdbc.postgresql.org/download/postgresql-42.2.12.jar
