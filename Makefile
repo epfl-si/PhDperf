@@ -10,10 +10,18 @@ build: build-simple-monitor
 
 .PHONY: build-simple-monitor
 build-simple-monitor: docker/simple-monitor/postgresql-42.2.12.jar
-	docker build -t epfl-idevfsd/simple-monitor docker/simple-monitor
+	docker build docker/simple-monitor -t phd-assess/simple-monitor
 
 docker/simple-monitor/postgresql-42.2.12.jar:
 	wget -O $@ https://jdbc.postgresql.org/download/postgresql-42.2.12.jar
+
+.PHONY: push-simple-monitor
+push-simple-monitor:
+	oc whoami -t | docker login os-docker-registry.epfl.ch -u toto --password-stdin
+	docker tag phd-assess/simple-monitor os-docker-registry.epfl.ch/phd-assess-test/simple-monitor:2.3.0
+	docker tag phd-assess/simple-monitor os-docker-registry.epfl.ch/phd-assess-test/simple-monitor:latest
+	docker push os-docker-registry.epfl.ch/phd-assess-test/simple-monitor:2.3.0
+	docker push os-docker-registry.epfl.ch/phd-assess-test/simple-monitor:latest
 
 .PHONY: pull
 pull:
