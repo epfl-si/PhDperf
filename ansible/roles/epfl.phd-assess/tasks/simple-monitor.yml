@@ -85,7 +85,7 @@
                   memory: 850M
               ports:
                 - name: "frontend"
-                  port: 80
+                  port: 8082
                   protocol: TCP
                   containerPort: 8082
           volumes:
@@ -115,7 +115,7 @@
       type: ClusterIP
       ports:
         - name: "frontend"
-          port: 80
+          port: 8082
           protocol: TCP
           targetPort: 8082
       selector:

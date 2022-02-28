@@ -27,32 +27,3 @@
           name: "{{ phd_assess_meteor_servicename }}"
           weight: 100
         wildcardPolicy: None
-
-- name: phd-assess simple monitor route
-  openshift:
-    state: latest
-    resource: Route
-    name: "{{ route_name }}-simple-monitor"
-    namespace: "{{ openshift_namespace }}"
-    content: |
-      apiVersion: route.openshift.io/v1
-      kind: Route
-      metadata:
-        name: "{{ route_name }}-simple-monitor"
-        namespace: "{{ openshift_namespace }}"
-        labels:
-          app: "simple-monitor"
-          team: idev-fsd
-        annotations:
-          authors: idev-fsd
-      spec:
-        host: "simple-monitor.128.178.222.83.nip.io"
-        port:
-          targetPort: "frontend"
-        tls:
-          termination: edge
-        to:
-          kind: Service
-          name: "simple-monitor"
-          weight: 100
-        wildcardPolicy: None
