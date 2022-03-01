@@ -313,17 +313,17 @@ Meteor.methods({
 
     try {
       await Promise.all(ProcessInstanceCreationPromises)
-
-      ImportScipersList.update({
-        doctoralSchoolAcronym: doctoralSchoolAcronym,
-      }, { $set: { "isAllSelected": false } } )
     } catch (error) {
       throw new Meteor.Error('Zeebe error', 'Unable to start imports. Please contact 1234@epfl.ch.')
     } finally {
       // set the loading status
       const query = { doctoralSchoolAcronym: doctoralSchoolAcronym, }
       const updateDocument = {
-        $set: { "doctorants.$[].isBeingImported": false }
+        $set: {
+          "isAllSelected": false,
+          "doctorants.$[].isBeingImported": false,
+          "doctorants.$[].isSelected": false
+        }
       }
       const options = {}
       ImportScipersList.update(query, updateDocument, options)
