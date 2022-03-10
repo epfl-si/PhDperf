@@ -1,7 +1,10 @@
 # CHANGELOG
 
+*1.3.12* (2022-03-10)
+- Fix the GRPC limit on messages
+
 *1.3.11* (2022-02-23)
--  Fix missing assigneeSciper when creating a task manually
+- Fix missing assigneeSciper when creating a task manually
 
 *1.3.10* (2022-02-22)
 - Fix using url into Email and missing docLink when importing sciper
