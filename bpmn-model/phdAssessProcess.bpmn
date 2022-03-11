@@ -209,6 +209,7 @@
         <zeebe:ioMapping>
           <zeebe:input source="= thesisDirectorEmail" target="to" />
           <zeebe:input source="= if (thesisCoDirectorSciper!=&#34;&#34;) then [phdStudentEmail, thesisCoDirectorEmail] else phdStudentEmail" target="cc" />
+          <zeebe:output source="= &#34;&#34;" target="PDF" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
           <zeebe:header key="subject" value="Annual report of {{ phdStudentName }} (sciper {{ phdStudentSciper }}): collaborative review" />
@@ -335,6 +336,7 @@
         <zeebe:ioMapping>
           <zeebe:input source="= programDirectorEmail" target="to" />
           <zeebe:input source="= doctoralProgramEmail" target="cc" />
+          <zeebe:output source="= &#34;&#34;" target="PDF" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
           <zeebe:header key="subject" value="Annual report of doctoral student {{ phdStudentName }} (sciper {{ phdStudentSciper }}): general appraisal of the progress unsatisfactory" />
@@ -399,6 +401,7 @@
         <zeebe:ioMapping>
           <zeebe:input source="= programDirectorEmail" target="to" />
           <zeebe:input source="= doctoralProgramEmail" target="cc" />
+          <zeebe:output source="= &#34;&#34;" target="PDF" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1tkcpjx</bpmn:incoming>
