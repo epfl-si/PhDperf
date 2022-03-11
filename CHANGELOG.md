@@ -1,5 +1,9 @@
 # CHANGELOG
 
+*1.3.13* (2022-03-11)
+- Fix zeebe status being cumulative, getting out of control
+- Fix BPMN being able to send the wrong PDF at some notifier steps
+
 *1.3.12* (2022-03-10)
 - Fix the GRPC limit on messages
 
