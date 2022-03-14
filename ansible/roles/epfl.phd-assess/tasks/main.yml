@@ -142,4 +142,5 @@
     file: "simple-monitor.yml"
     apply:
       tags:
+        - never
         - simple-monitor
