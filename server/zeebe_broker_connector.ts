@@ -47,7 +47,7 @@ function zeebeJobToTask(job: PhDZeebeJob): Task {
       } else {
         decryptedVariables[key] = decrypt(job.variables[key])
       }
-    } catch (error: SyntaxError | any) {
+    } catch (error) {
       undecryptableVariablesKey.push(key)
     }
   })
