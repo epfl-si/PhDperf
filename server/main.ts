@@ -3,6 +3,7 @@ import './fixtures/doctoralSchools'
 import './methods'
 import './publish'
 import WorkersClient from './zeebe_broker_connector'
+import { PrometheusSource } from '/server/prometheus'
 import Tequila from 'meteor/epfl:accounts-tequila'
 import findUp from 'find-up'
 import '/imports/policy'
@@ -21,4 +22,5 @@ Meteor.startup(() => {
     request: ['uniqueid', 'username', 'name', 'firstname', 'displayname', 'personaltitle', 'email', 'group'],
     fakeLocalServer: Meteor.settings.fake_tequila,
   })
+  PrometheusSource.start()
 })
