@@ -17,6 +17,7 @@ Technically, the application consists on a Meteor server, defined as a [Zeebe](h
   ```
   cp /keybase/team/epfl_phdassess.test/env_local .env
   ```
+- (Optional) Edit `settings.json` to put your own identity into the fake Tequila server.
 
 ### Start the support infrastructure
 
