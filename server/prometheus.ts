@@ -47,7 +47,7 @@ const zeebeMetrics = {
   })
 }
 
-function measureFacet(metrics: typeof zeebeMetrics) {
+function measureFacet<T extends string>(metrics: {[key: string] : prom.Counter<T> }) {
   return Object.fromEntries(Object.entries(metrics).map(
     ([key, value]) => [key, { inc: value.inc.bind(value) }]))
 }
