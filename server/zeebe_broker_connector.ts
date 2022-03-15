@@ -1,5 +1,6 @@
 import {Meteor} from 'meteor/meteor'
 import {ZeebeSpreadingClient} from "/imports/api/zeebeStatus"
+import {Metrics} from '/server/prometheus.ts'
 import {decrypt} from "/server/encryption"
 import debug_ from 'debug'
 import {
@@ -93,10 +94,12 @@ export default {
                 let newTask = zeebeJobToTask(job)
                 task_id = Tasks.insert(newTask)
                 debug(`Received a new job from Zeebe ${ task_id }`)
+                Metrics.zeebe.received.inc()
               } catch (error) {
                 // unable to create the task or a variable is failing to be decrypted => no good at all
                 // we can't do better than alerting the logs
                 debug(`Received a undecryptable job (${job.key}) from Zeebe. Sending a task fail to the broker. Task process id : ${job.processInstanceKey}. ${error}.`)
+                Metrics.zeebe.errors.inc()
                 // raise it as a zeebe critical error
                 return job.fail( `Unable to decrypt some values, failing the job. ${error}.`, 0)
               }
@@ -121,5 +124,6 @@ export default {
       variables: workerResult,
     })
     debug(`Worker ${key} sent complete and successful status to Zeebe`)
+    Metrics.zeebe.successes.inc();
   }
 }

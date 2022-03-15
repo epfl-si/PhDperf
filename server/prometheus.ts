@@ -9,11 +9,11 @@ const Registry = prom.Registry
 const register = new Registry()
 prom.collectDefaultMetrics({ register })
 
-export class PrometheusSource {
+export const PrometheusSource = {
  /**
   * Serve the /metrics URL on the main Meteor port, from the prom-client node.js library.
   */
-  static start() {
+  start() {
     WebApp.connectHandlers.use('/metrics', async (_req, res) => {
       const metrics = await register.metrics();
       const length = Buffer.byteLength(metrics, 'utf8');
@@ -24,4 +24,34 @@ export class PrometheusSource {
       res.end(metrics);
     });  
   }
+}
+
+function newCounter(opts: ConstructorParameters<typeof prom.Counter>[0]) {
+  const counter = new prom.Counter(opts)
+  register.registerMetric(counter)
+  return counter
+}
+
+const zeebeMetrics = {
+  received: newCounter({
+    name: 'phdassess_zeebe_broker_connector_received',
+    help: 'Number of times the Zeebe broker connector received a task from Zeebe'
+  }),
+  errors: newCounter({
+    name: 'phdassess_zeebe_broker_connector_errors',
+    help: 'Number of times the Zeebe broker connector found an error for any reason (incl. decryption failed)'
+  }),
+  successes: newCounter({
+    name: 'phdassess_zeebe_broker_connector_successes',
+    help: 'Number of times the Zeebe broker connector sent a Success outcome for a Zeebe workflow instance'
+  })
+}
+
+function measureFacet(metrics: typeof zeebeMetrics) {
+  return Object.fromEntries(Object.entries(metrics).map(
+    ([key, value]) => [key, { inc: value.inc.bind(value) }]))
+}
+
+export const Metrics = {
+  zeebe: measureFacet(zeebeMetrics)
 }
