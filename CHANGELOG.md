@@ -1,8 +1,5 @@
 # CHANGELOG
 
-*1.4.1* (2022-03-15)
-- Set job timeout to 15 minutes, releasing the pressure on Zeebe
-
 *1.4.0* (2022-03-14)
 - Update to Zeebe Node 2.4.0
 

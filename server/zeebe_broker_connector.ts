@@ -79,7 +79,7 @@ export default {
       taskType: taskType,
       maxJobsToActivate: 500,
       // Set timeout, the same as we will ask yourself if the job is still up
-      timeout: Duration.minutes.of(15),
+      timeout: Duration.seconds.of(20),
       // load every job into the in-memory server db
       taskHandler:
       // therefore, Fiber'd
