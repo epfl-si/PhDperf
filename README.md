@@ -34,7 +34,7 @@ make pull build up logs
     ```
   - Start the server
     ```
-    meteor run
+    meteor run --settings settings.json
     ```
 
 ### Deploy the workflow
