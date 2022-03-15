@@ -4,7 +4,7 @@ import './methods'
 import './publish'
 import WorkersClient from './zeebe_broker_connector'
 import { PrometheusSource } from '/server/prometheus'
-import Tequila from 'meteor/epfl:accounts-tequila'
+import Tequila, { defaultOptions } from 'meteor/epfl:accounts-tequila'
 import findUp from 'find-up'
 import '/imports/policy'
 
@@ -21,6 +21,7 @@ Meteor.startup(() => {
     allows: 'categorie=epfl-guests',
     request: ['uniqueid', 'username', 'name', 'firstname', 'displayname', 'personaltitle', 'email', 'group'],
     fakeLocalServer: Meteor.settings.fake_tequila,
+    bypass: defaultOptions.bypass.concat("/metrics")
   })
   PrometheusSource.start()
 })
