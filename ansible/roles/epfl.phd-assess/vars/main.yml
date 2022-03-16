@@ -38,6 +38,6 @@ websrv_password_key_name: "WEBSRV_PASSWORD"
 persistent_mongo_url_key_name: "MONGO_PERSISTENT_URL"
 volume_zeebe_name: >-
   {{ "svc1394-svc0166-phd-assess-test-zeebe-partition-app-app" if ("test" in openshift_namespace)
-    else "svc0166-{{ app_name }}-zeebe-partition-app" }}
+    else "svc0166-" + app_name + "-zeebe-partition-app" }}
 
 phd_assess_meteor_image_name: "phd-assess-meteor"
