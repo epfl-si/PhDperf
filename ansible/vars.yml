@@ -72,7 +72,7 @@ zeebe_broker_common_env:
   ZEEBE_BROKER_THREADS_IOTHREADCOUNT: '1'
   ZEEBE_BROKER_EXPORTERS_HAZELCAST_CLASSNAME: io.zeebe.hazelcast.exporter.HazelcastExporter
   ZEEBE_BROKER_EXPORTERS_HAZELCAST_JARPATH: lib/zeebe-hazelcast-exporter.jar
-  ZEEBE_BROKER_EXPORTERS_HAZELCAST_PORT: '{{ zeebe_ports.hazelcast }}'
+  ZEEBE_BROKER_EXPORTERS_HAZELCAST_PORT: '{{ zeebe_ports.hazelcast | string }}'
 
 zeebe_broker_common_high_availability_env:
   ZEEBE_BROKER_CLUSTER_CLUSTERNAME: epfl
