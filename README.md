@@ -13,10 +13,11 @@ Technically, the application consists on a Meteor server, defined as a [Zeebe](h
 - Have docker & docker-compose
 - [Have meteor](https://www.meteor.com/developers/install)
 - Assert you have access to Keybase credentials, available in /keybase/team/epfl_phdassess.test/
-- Copy the `.env` file from Keybase:
+- Read the .env.sample and create a copy as `.env`:
   ```
-  cp /keybase/team/epfl_phdassess.test/env_local .env
+  cp .env.sample .env
   ```
+- Edit the `.env` to suit your needs
 - (Optional) Edit `settings.json` to put your own identity into the fake Tequila server.
 
 ### Start the support infrastructure
