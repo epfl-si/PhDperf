@@ -71,9 +71,7 @@ export default {
   start() {
     const taskType = 'phdAssessFillForm'
 
-    zBClient = new ZeebeSpreadingClient({
-      pollInterval: Duration.seconds.of(5)
-    })
+    zBClient = new ZeebeSpreadingClient()
 
     debug(`creating Zeebe worker of type "${taskType}"...`);
     zBClient.createWorker({

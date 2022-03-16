@@ -16,7 +16,7 @@ zeebeStatusCollection.upsert({ type: 'worker' }, { $set : { status: 'disconnecte
 
 // Initial values
 export class ZeebeSpreadingClient extends ZBClient {
-  constructor(options: ZBClientOptions) {
+  constructor(options?: ZBClientOptions) {
     zeebeStatusCollection.upsert({ type: 'client' }, { $set: { status: 'starting' }})
     super(options);
 
