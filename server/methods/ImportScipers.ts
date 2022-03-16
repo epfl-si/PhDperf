@@ -235,7 +235,7 @@ Meteor.methods({
     const auditLog = auditLogConsoleOut.extend('server/methods')
 
     if (!canStartProcessInstance() || !canImportScipersFromISA()) {
-      auditLog(`Unallowed user ${Meteor.user()?._id} is trying to start a workflow. The error has been thrown to user.`)
+      auditLog(`Unallowed user ${Meteor.user()?._id} is trying to start a workflow.`)
       throw new Meteor.Error(403, 'You are not allowed to start a workflow')
     }
 

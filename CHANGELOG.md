@@ -1,5 +1,8 @@
 # CHANGELOG
 
+*1.4.0* (2022-03-14)
+- Update to Zeebe Node 2.4.0
+
 *1.3.13* (2022-03-11)
 - Fix zeebe status being cumulative, getting out of control
 - Fix BPMN being able to send the wrong PDF at some notifier steps

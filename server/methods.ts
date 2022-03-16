@@ -24,7 +24,7 @@ Meteor.methods({
 
   async startWorkflow() {  // aka start a new instance in Zeebe terms
     if (!canStartProcessInstance()) {
-      auditLog(`Unallowed user ${Meteor.user()?._id} is trying to start a workflow. The error has been thrown to user.`)
+      auditLog(`Unallowed user ${Meteor.user()?._id} is trying to start a workflow.`)
       throw new Meteor.Error(403, 'You are not allowed to start a workflow')
     }
 
@@ -44,7 +44,7 @@ Meteor.methods({
       auditLog(`created new instance ${diagramProcessId}, response: ${JSON.stringify(createProcessInstanceResponse)}`)
       return createProcessInstanceResponse?.processKey
     } catch (e) {
-      auditLog(`Error creating a new workflow. The error has been thrown to user.`)
+      auditLog(`Error: Unable to create a new workflow instance. ${e}`)
       throw new Meteor.Error(500, `Unable to start a new workflow. Please contact the admin to verify the server. ${e}`)
     }
   },
@@ -69,7 +69,7 @@ Meteor.methods({
       )
 
       if (formData.length == 0) {
-        auditLog(`Error because a form as insufficient data. The error has been thrown to user.`)
+        auditLog(`Error: the form being submitted by ${Meteor.user()?._id} as insufficient data.`)
         throw new Meteor.Error(400, 'There is not enough valid data to validate this form. Canceling.')
       }
 
@@ -80,10 +80,10 @@ Meteor.methods({
         if (e.name == 'AbortError') {
           // Look like the fetching of user info has got a timeout,
           // make it bad only if we don't have already some data, or ignore it
-          auditLog(`Time out Error in fetching scipers. The error has been thrown to user.`)
+          auditLog(`Error: Timeout while fetching scipers.`)
           if (!task.variables.phdStudentEmail) throw new Meteor.Error(422,'Unable to get users information, aborting. Please contact the administrator or try again later.')
         } else {
-          auditLog(`Error in parsing a participant ${e}. The error has been thrown to user.`)
+          auditLog(`Error: parsing a participant ${e} has failed. Aborting.`)
           throw new Meteor.Error(422, `There is a problem with a participant: ${e}`)
         }
       }
@@ -104,7 +104,7 @@ Meteor.methods({
       Tasks.remove({_id: task._id})
       auditLog(`Successfully submitted form for task id ${task._id}.`)
     } else {
-      auditLog("Error the task being submitted can not be found. Task id : ${task._id}. The error has been thrown to user.")
+      auditLog(`Error: the task that is being submitted can not be found. Task key requested: ${key}.`)
       throw new Meteor.Error(404, 'Unknown task', 'Check the task exist by refreshing your browser')
     }
   },
@@ -131,7 +131,7 @@ Meteor.methods({
 
   async refreshProcessInstance(processInstanceKey) {
     if (!canRefreshProcessInstance()) {
-      auditLog(`Unallowed user to refresh the process instance key ${processInstanceKey}. The error has been thrown to user.`)
+      auditLog(`Unallowed user ${Meteor.user()?._id} is trying to refresh the process instance key ${processInstanceKey}.`)
       throw new Meteor.Error(403, 'You are not allowed to refresh a process instance')
     }
 
