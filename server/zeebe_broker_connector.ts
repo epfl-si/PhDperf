@@ -88,13 +88,14 @@ export default {
           (job: PhDZeebeJob,
           ) => {
             let task_id: string | undefined;
+            Metrics.zeebe.received.inc()
 
             if (!Tasks.findOne({ _id: job.key } )) {  // Let's add this unknown task
               try {
                 let newTask = zeebeJobToTask(job)
                 task_id = Tasks.insert(newTask)
                 debug(`Received a new job from Zeebe ${ task_id }`)
-                Metrics.zeebe.received.inc()
+                Metrics.zeebe.inserted.inc()
               } catch (error) {
                 // unable to create the task or a variable is failing to be decrypted => no good at all
                 // we can't do better than alerting the logs
@@ -103,6 +104,8 @@ export default {
                 // raise it as a zeebe critical error
                 return job.fail( `Unable to decrypt some values, failing the job. ${error}.`, 0)
               }
+            } else {
+              Metrics.zeebe.alreadyIn.inc()
             }
 
             return job.forward()  // tell Zeebe that result may come later, and free ourself for an another work
