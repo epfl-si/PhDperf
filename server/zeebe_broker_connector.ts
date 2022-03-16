@@ -76,9 +76,9 @@ export default {
     debug(`creating Zeebe worker of type "${taskType}"...`);
     zBClient.createWorker({
       taskType: taskType,
-      maxJobsToActivate: process.env.zeebeWorkerMaxJobsToActivate ?? 500,
+      maxJobsToActivate: process.env.ZEEBE_WORKER_MAX_JOBS_TO_ACTIVATE ?? 500,
       // Set timeout, the same as we will ask yourself if the job is still up
-      timeout: process.env.zeebeWorkertimeout ?? Duration.seconds.of(20),
+      timeout: process.env.ZEEBE_WORKER_TIMEOUT ?? Duration.seconds.of(20),
       // load every job into the in-memory server db
       taskHandler:
       // therefore, Fiber'd
