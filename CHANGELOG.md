@@ -1,5 +1,8 @@
 # CHANGELOG
 
+*1.5.0* (2022-03-16)
+- Add prometheus
+
 *1.4.0* (2022-03-14)
 - Update to Zeebe Node 2.4.0
 
