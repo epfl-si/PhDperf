@@ -1,6 +1,6 @@
 import {Meteor} from 'meteor/meteor'
 import {ZeebeSpreadingClient} from "/imports/api/zeebeStatus"
-import {Metrics} from '/server/prometheus.ts'
+import {Metrics} from '/server/prometheus'
 import {decrypt} from "/server/encryption"
 import debug_ from 'debug'
 import {
