@@ -136,14 +136,17 @@ if (Meteor.isServer) {
             const isAdmin = user.isAdmin
 
             debug(`Disclosing %s to ${userId}`,
-                  isAdmin ? "everyone's names" : "his/her own name")
+                  isAdmin ? "all users' personal data" : "their own personal data")
             return new MapCursor(
                 Meteor.users.find(isAdmin ? {} : {_id: userId}),
                 (changes: any, id: string) => {
                     if (id === userId) {
                         changes.isAdmin = isAdmin
+                        return changes
+                    } else {
+                        const disclosed = _.pick(changes, ['_id', 'tequila'])
+                        return disclosed
                     }
-                    return changes
                 },
                 MeteorUsersCollectionName)
         })
