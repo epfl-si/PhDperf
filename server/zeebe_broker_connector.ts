@@ -93,8 +93,8 @@ function persistJob (job: PhDZeebeJob, to_collection: typeof Tasks) : PersistOut
       $inc: { _zeebe__seenCount: 1 },
       $set: {
         _zeebe__lastSeen: new Date(),
-        ... zeebeJobToTask(job)
-      }
+      },
+      $setOnInsert: zeebeJobToTask(job)
     })
 
   if (insertedId !== undefined) {
