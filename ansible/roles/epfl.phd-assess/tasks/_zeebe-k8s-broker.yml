@@ -52,9 +52,7 @@
               resources:
                 limits:
                   cpu: '250m'
-                  memory: >-
-                    {{ "850M" if "test" in openshift_namespace
-                    else "1G" }}
+                  memory: "1G"
               ports:
                 - name: metrics
                   containerPort: 9600
