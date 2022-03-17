@@ -30,6 +30,9 @@
         limits:
           cpu: '100m'
           memory: 100M
+    strategy:
+      dockerStrategy:
+        forcePull: true
   register: _openshift_image_zeebe_broker
 
 - name: "Rebuild custom Zeebe Broker image now"
