@@ -14,8 +14,8 @@
       persistentVolumeClaim:
         claimName: "{{ volume_zeebe_name }}"
     peers:
-      - "zeebe-quorum-2:{{ zeebe_ports.api }}"
-      - "zeebe-quorum-0:{{ zeebe_ports.api }}"
+      - "zeebe-quorum-2:{{ zeebe_ports.quorum }}"
+      - "zeebe-quorum-0:{{ zeebe_ports.quorum }}"
 
 - import_tasks: _zeebe-k8s-broker.yml
   vars:
@@ -23,17 +23,29 @@
     data_volume:
       emptyDir: {}
     peers:
-      - "zeebe-quorum-1:{{ zeebe_ports.api }}"
-      - "zeebe-quorum-0:{{ zeebe_ports.api }}"
+      - "zeebe-quorum-1:{{ zeebe_ports.quorum }}"
+      - "zeebe-quorum-0:{{ zeebe_ports.quorum }}"
 
-- name: >-
-    {{ esb_ssh_tunnels.reverse.zeebe | map(attribute="name") | join(" and ") }} Services
+# Node 0 is on Kubernetes only for the test namespace
+# (in prod, it lives on the VM for persistence diversity)
+- import_tasks: _zeebe-k8s-broker.yml
+  when: >-
+    "test" in openshift_namespace
+  vars:
+    node_id: 0
+    data_volume:
+      emptyDir: {}
+    peers:
+      - "zeebe-quorum-2:{{ zeebe_ports.quorum }}"
+      - "zeebe-quorum-1:{{ zeebe_ports.quorum }}"
+
+- name: Quorum Services
   openshift:
     state: latest
     apiVersion: v1
     kind: Service
     metadata:
-      name: "{{ item.name }}"
+      name: "{{ item }}"
       namespace: "{{ openshift_namespace }}"
     spec:
       type: ClusterIP
@@ -47,5 +59,12 @@
           protocol: TCP
           targetPort: "{{ zeebe_ports.command }}"
       selector:
-        zeebe-quorum-member: "{{ item.name }}"
-  with_items: "{{ esb_ssh_tunnels.reverse.zeebe }}"
+        zeebe-quorum-member: "{{ item }}"
+  with_items: "{{ _zeebe_quorum_services }}"
+  vars:
+    _zeebe_quorum_services: >-
+      {{
+      ["zeebe-quorum-0", "zeebe-quorum-1", "zeebe-quorum-2"]
+      if "test" in openshift_namespace
+      else esb_ssh_tunnels.reverse.zeebe | map(attribute="name")
+      }}

@@ -18,7 +18,6 @@
 ## - peers
 ##
 ##   A list of host:port addresses to use to talk to the other quorum members.
-##   If `peers` is not set, run a single-instance cluster
 ##
 ## - env
 ##
@@ -36,23 +35,18 @@
     spec:
       replicas: 1
       selector:
-         matchLabels: >-
-           {{ _ha_labels if _has_ha
-           else _match_labels_single_node }}
+         matchLabels:
+           zeebe-quorum-member: "{{ _quorum_name }}"
       template:
         metadata:
-          labels: >-
-            {{ _common_labels
-            | combine(_ha_labels if _has_ha else {})
-            }}
+          labels: "{{ _labels }}"
         spec:
           containers:
             - name: zeebe-broker
               image: "{{ openshift_local_images_base }}/zeebe-broker-with-exporters:latest"
               env: >-
-                {{ zeebe_broker_common_env
-                | combine(zeebe_broker_common_high_availability_env if _has_ha else {})
-                | combine(_ha_env if _has_ha else {})
+                {{ zeebe_broker_env
+                | combine(_ha_env)
                 | combine(env | default({}))
                 | to_k8s_env }}
               resources:
@@ -73,19 +67,14 @@
             - >-
               {{ _volume_name | combine(data_volume) }}
   vars:
-    # Note that HA-specific vars still get expanded even when useless
-    # (i.e. in a single-node situation); therefore, they must plan for
-    # variables to be missing.
-    _has_ha: "{{ peers is defined }}"
     _name: >-
-      {{ "zeebe-broker-" + (node_id | string) if _has_ha else "zeebe-broker" }}
+      {{ "zeebe-broker-" + (node_id | string) }}
     _quorum_name: "zeebe-quorum-{{ node_id | default('_') }}"
     _volume_name:
       name: zeebe-data
-    _common_labels:
+    _labels:
       for-service: "{{ zeebe_gateway_servicename }}"
       for-prometheus-job: zeebe
-    _ha_labels:
       zeebe-quorum-member: "{{ _quorum_name }}"
     _match_labels_single_node:
       for-service: "{{ zeebe_gateway_servicename }}"

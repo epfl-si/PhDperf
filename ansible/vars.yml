@@ -60,7 +60,7 @@ kafka_broker:
     KAFKA_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
     KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
 
-zeebe_broker_common_env:
+zeebe_broker_env:
   PORT: '{{ zeebe_ports.api | string }}'
   ZEEBE_BROKER_NETWORK_MONITORINGAPI_HOST: '0.0.0.0'
   # https://docs.camunda.io/docs/self-managed/zeebe-deployment/operations/setting-up-a-cluster/
@@ -73,8 +73,6 @@ zeebe_broker_common_env:
   ZEEBE_BROKER_EXPORTERS_HAZELCAST_CLASSNAME: io.zeebe.hazelcast.exporter.HazelcastExporter
   ZEEBE_BROKER_EXPORTERS_HAZELCAST_JARPATH: lib/zeebe-hazelcast-exporter.jar
   ZEEBE_BROKER_EXPORTERS_HAZELCAST_PORT: '{{ zeebe_ports.hazelcast | string }}'
-
-zeebe_broker_common_high_availability_env:
   ZEEBE_BROKER_CLUSTER_CLUSTERNAME: epfl
   ZEEBE_BROKER_CLUSTER_CLUSTERSIZE: "3"
   ZEEBE_BROKER_CLUSTER_REPLICATIONFACTOR: "3"

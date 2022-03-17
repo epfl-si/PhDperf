@@ -15,18 +15,8 @@
     - zeebe-promote
 
 - name: Zeebe 3-way production quorum (Kubernetes side)
-  when: zeebe_has_high_availability_quorum
   include_tasks:
     file: zeebe-high-availability.yml
-    apply:
-        tags: zeebe
-  tags:
-    - zeebe
-
-- name: Zeebe test setup (single node, a disposable volume)
-  when: not zeebe_has_high_availability_quorum
-  include_tasks:
-    file: zeebe-disposablevolume.yml
     apply:
         tags: zeebe
   tags:
@@ -76,7 +66,8 @@
     - ssh-promote
 
 - name: "Zeebe tunnel to {{ esb_ssh_tunnels.host }}"
-  when: zeebe_has_high_availability_quorum
+  when: >-
+    "test" not in openshift_namespace
   include_tasks:
     file: ssh-tunnel-client.yml
     apply:
