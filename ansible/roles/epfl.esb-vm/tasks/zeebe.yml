@@ -12,8 +12,7 @@
     networks:
       - name: "{{ esb_docker_network }}"
     env: >-
-      {{ zeebe_broker_common_env
-      | combine(zeebe_broker_common_high_availability_env)
+      {{ zeebe_broker_env
       | combine(_specific_env)
       }}
       # https://docs.camunda.io/docs/self-managed/zeebe-deployment/operations/setting-up-a-cluster/
