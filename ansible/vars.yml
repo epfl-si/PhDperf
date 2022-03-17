@@ -62,6 +62,7 @@ kafka_broker:
 
 zeebe_broker_env:
   PORT: '{{ zeebe_ports.api | string }}'
+  JAVA_OPTS: '-Xmx512m'
   ZEEBE_BROKER_NETWORK_MONITORINGAPI_HOST: '0.0.0.0'
   # https://docs.camunda.io/docs/self-managed/zeebe-deployment/operations/setting-up-a-cluster/
   ZEEBE_LOG_LEVEL: info
