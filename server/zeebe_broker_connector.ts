@@ -87,14 +87,22 @@ enum PersistOutcome {
  * @returns `PersistOutcome.ALREADY_KNOWN` if we already had this job in store
  */
 function persistJob (job: PhDZeebeJob, to_collection: typeof Tasks) : PersistOutcome {
-  if (Tasks.findOne({ _id: job.key } )) {
+  const { insertedId } = to_collection.upsert(
+    job.key,
+    {
+      $inc: { _zeebe__seenCount: 1 },
+      $set: {
+        _zeebe__lastSeen: new Date(),
+        ... zeebeJobToTask(job)
+      }
+    })
+
+  if (insertedId !== undefined) {
+    debug(`Received a new job from Zeebe ${ insertedId }`)
+    return PersistOutcome.NEW
+  } else {
     return PersistOutcome.ALREADY_KNOWN
   }
-  // Let's add this unknown task
-  let newTask = zeebeJobToTask(job)
-  const task_id = to_collection.insert(newTask)
-  debug(`persistJob: new ID ${ task_id }`)
-  return PersistOutcome.NEW
 }
 
 export default {
