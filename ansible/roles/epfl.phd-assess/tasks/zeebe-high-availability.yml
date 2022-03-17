@@ -14,8 +14,8 @@
       persistentVolumeClaim:
         claimName: "{{ volume_zeebe_name }}"
     peers:
-      - "zeebe-quorum-2:{{ zeebe_ports.api }}"
-      - "zeebe-quorum-0:{{ zeebe_ports.api }}"
+      - "zeebe-quorum-2:{{ zeebe_ports.quorum }}"
+      - "zeebe-quorum-0:{{ zeebe_ports.quorum }}"
 
 - import_tasks: _zeebe-k8s-broker.yml
   vars:
@@ -23,8 +23,8 @@
     data_volume:
       emptyDir: {}
     peers:
-      - "zeebe-quorum-1:{{ zeebe_ports.api }}"
-      - "zeebe-quorum-0:{{ zeebe_ports.api }}"
+      - "zeebe-quorum-1:{{ zeebe_ports.quorum }}"
+      - "zeebe-quorum-0:{{ zeebe_ports.quorum }}"
 
 # Node 0 is on Kubernetes only for the test namespace
 # (in prod, it lives on the VM for persistence diversity)
@@ -36,8 +36,8 @@
     data_volume:
       emptyDir: {}
     peers:
-      - "zeebe-quorum-2:{{ zeebe_ports.api }}"
-      - "zeebe-quorum-1:{{ zeebe_ports.api }}"
+      - "zeebe-quorum-2:{{ zeebe_ports.quorum }}"
+      - "zeebe-quorum-1:{{ zeebe_ports.quorum }}"
 
 - name: Quorum Services
   openshift:
