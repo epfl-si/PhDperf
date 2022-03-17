@@ -67,6 +67,44 @@ function zeebeJobToTask(job: PhDZeebeJob): Task {
   return task
 }
 
+enum PersistOutcome {
+  NEW = 1,
+  ALREADY_KNOWN = 2
+}
+
+/**
+ * Save `job` into `to_collection`.
+ *
+ * 💡 A return value of `PersistOutcome.ALREADY_KNOWN` occurs quite a
+ * lot, since Zeebe's entire architecture basically believes that all
+ * jobs should be performed promptly, whereas we are asking humans to
+ * fill out forms.
+ *
+ * This is a Fiber'd function i.e. it may perform async work
+ * “transparently” (without using async / await)
+ *
+ * @returns `PersistOutcome.NEW` if we see this job for the very first time
+ * @returns `PersistOutcome.ALREADY_KNOWN` if we already had this job in store
+ */
+function persistJob (job: PhDZeebeJob, to_collection: typeof Tasks) : PersistOutcome {
+  const { insertedId } = to_collection.upsert(
+    job.key,
+    {
+      $inc: { _zeebe__seenCount: 1 },
+      $set: {
+        _zeebe__lastSeen: new Date(),
+      },
+      $setOnInsert: zeebeJobToTask(job)
+    })
+
+  if (insertedId !== undefined) {
+    debug(`Received a new job from Zeebe ${ insertedId }`)
+    return PersistOutcome.NEW
+  } else {
+    return PersistOutcome.ALREADY_KNOWN
+  }
+}
+
 export default {
   start() {
     const taskType = 'phdAssessFillForm'
@@ -81,32 +119,26 @@ export default {
       timeout: process.env.ZEEBE_WORKER_TIMEOUT ?? Duration.seconds.of(20),
       // load every job into the in-memory server db
       taskHandler:
-      // therefore, Fiber'd
-        Meteor.bindEnvironment(
+        Meteor.bindEnvironment(      // therefore, Fiber'd
           (job: PhDZeebeJob,
           ) => {
-            let task_id: string | undefined;
             Metrics.zeebe.received.inc()
 
-            if (!Tasks.findOne({ _id: job.key } )) {  // Let's add this unknown task
-              try {
-                let newTask = zeebeJobToTask(job)
-                task_id = Tasks.insert(newTask)
-                debug(`Received a new job from Zeebe ${ task_id }`)
+            try {
+              const outcome = persistJob(job, Tasks)
+              if (outcome === PersistOutcome.NEW) {
                 Metrics.zeebe.inserted.inc()
-              } catch (error) {
+              }
+              // tell Zeebe that we'll think about it, and free ourselves to receive more work
+              return job.forward()
+            } catch (error) {
                 // unable to create the task or a variable is failing to be decrypted => no good at all
                 // we can't do better than alerting the logs
-                debug(`Received a undecryptable job (${job.key}) from Zeebe. Sending a task fail to the broker. Task process id : ${job.processInstanceKey}. ${error}.`)
+                debug(`Unable to decrypt or persist Zeebe job (${job.key}). Sending a task fail to the broker. Task process id : ${job.processInstanceKey}. ${error}.`)
                 Metrics.zeebe.errors.inc()
-                // raise it as a zeebe critical error
-                return job.fail( `Unable to decrypt some values, failing the job. ${error}.`, 0)
-              }
-            } else {
-              Metrics.zeebe.alreadyIn.inc()
-            }
-
-            return job.forward()  // tell Zeebe that result may come later, and free ourself for an another work
+                // raise the issue to Zeebe
+                return job.fail( `Unable to decrypt some values or to mirror to Mongo, failing the job. ${error}.`, 0)
+          }
           })
     })
     debug(`Zeebe worker "${taskType}" created`);
