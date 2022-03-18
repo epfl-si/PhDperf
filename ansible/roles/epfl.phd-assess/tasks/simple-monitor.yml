@@ -72,7 +72,7 @@
               - name: 'zeebe.client.worker.hazelcast.connection'
                 value: '{{ zeebe_gateway_servicename }}:{{ zeebe_ports.hazelcast }}'
               - name: 'white-label.custom.title'
-                value: 'PhD Asssess Monitor'
+                value: 'PhD Assess Monitor'
               - name: 'spring.datasource.url'
                 value: 'jdbc:h2:file:/h2-db/simple-monitor;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE;'
               - name: 'spring.datasource.initialization-mode'
