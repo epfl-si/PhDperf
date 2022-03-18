@@ -77,16 +77,19 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
 
     const toastId = toast.loading('Launching import of selected entries...')
 
-    Meteor.call('startPhDAssess', doctoralSchool.acronym, (error: any) => {
-      toast.dismiss(toastId)
-      if (error) {
-        toast.error(error.reason ?? error.message)
-        setIsErronous(error.reason ?? error.message)
-      } else {
-        toast.success("Succesfully launched import. Please be patient while entries are getting created...")
+    Meteor.apply(
+      "startPhDAssess", [ doctoralSchool.acronym ], { wait: true, noRetry: true },
+      (error: any | global_Error | Meteor.Error | undefined) => {
+        toast.dismiss(toastId)
+        if (error) {
+          toast.error(error.reason ?? error.message)
+          setIsErronous(error.reason ?? error.message)
+        } else {
+          toast.success("Succesfully launched import. Please be patient while entries are getting created...")
+        }
+        setImportStarted(false)
       }
-      setImportStarted(false)
-    })
+    )
   }
 
   if (isErronous) return <Alert alertType={ 'danger' } title={ 'Error' } message={ isErronous } onCloseClick={ () => navigate(`/import-scipers/`) } />
