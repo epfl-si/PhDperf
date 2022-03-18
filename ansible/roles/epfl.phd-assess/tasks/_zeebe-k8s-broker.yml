@@ -52,7 +52,7 @@
               resources:
                 limits:
                   cpu: '250m'
-                  memory: "1G"
+                  memory: "1.5G"
               ports:
                 - name: metrics
                   containerPort: 9600
