@@ -60,6 +60,9 @@ kafka_broker:
     KAFKA_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
     KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
 
+_zeebe_log_level: >-
+  {{ "debug" if is_test else "info" }}
+
 zeebe_broker_env:
   PORT: '{{ zeebe_ports.api | string }}'
   JAVA_OPTS: '-Xmx1024m'
@@ -77,3 +80,5 @@ zeebe_broker_env:
   ZEEBE_BROKER_CLUSTER_CLUSTERNAME: epfl
   ZEEBE_BROKER_CLUSTER_CLUSTERSIZE: "3"
   ZEEBE_BROKER_CLUSTER_REPLICATIONFACTOR: "3"
+  ZEEBE_LOG_LEVEL: "{{ _zeebe_log_level }}"
+  ATOMIX_LOG_LEVEL: "{{ _zeebe_log_level }}"
