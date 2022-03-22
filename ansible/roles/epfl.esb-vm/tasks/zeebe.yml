@@ -30,3 +30,9 @@
     _reverse_tunnel_zeebe_endpoints:
       - "{{ esb_ssh_tunnels.reverse.zeebe[0].name }}:{{ zeebe_ports.quorum }}"
       - "{{ esb_ssh_tunnels.reverse.zeebe[1].name }}:{{ zeebe_ports.quorum }}"
+  # Use either `--skip-tags zeebe-ha` or `--skip-tags zeebe-ha-0` to
+  # *not* restart the Zeebe instance on the VM.
+  # See this tag under ../../epfl.phd-assess/ for more information:
+  tags:
+    - zeebe-ha
+    - zeebe-ha-0

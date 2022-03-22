@@ -25,6 +25,7 @@
     peers:
       - "zeebe-quorum-1:{{ zeebe_ports.quorum }}"
       - "zeebe-quorum-0:{{ zeebe_ports.quorum }}"
+  # Use `--skip-tags zeebe-ha` to only restart broker #1:
   tags: zeebe-ha
 
 # Node 0 is on Kubernetes only for the test namespace
@@ -39,7 +40,10 @@
     peers:
       - "zeebe-quorum-2:{{ zeebe_ports.quorum }}"
       - "zeebe-quorum-1:{{ zeebe_ports.quorum }}"
-  tags: zeebe-ha
+  tags:
+    - zeebe-ha
+    # Use `--skip-tags zeebe-ha` to only restart broker #1 and #2:
+    - zeebe-ha-0
 
 - name: Quorum Services
   openshift:
