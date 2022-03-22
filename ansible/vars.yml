@@ -68,7 +68,6 @@ zeebe_broker_env:
   JAVA_OPTS: '-Xmx1024m'
   ZEEBE_BROKER_NETWORK_MONITORINGAPI_HOST: '0.0.0.0'
   # https://docs.camunda.io/docs/self-managed/zeebe-deployment/operations/setting-up-a-cluster/
-  ZEEBE_LOG_LEVEL: info
   ZEEBE_LOG_APPENDER: Stackdriver
   ZEEBE_BROKER_BACKPRESSURE_ALGORITHM: fixed
   ZEEBE_BROKER_BACKPRESSURE_FIXEDLIMIT_LIMIT: '300'
