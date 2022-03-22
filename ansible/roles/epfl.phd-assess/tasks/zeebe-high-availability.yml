@@ -25,6 +25,7 @@
     peers:
       - "zeebe-quorum-1:{{ zeebe_ports.quorum }}"
       - "zeebe-quorum-0:{{ zeebe_ports.quorum }}"
+  tags: zeebe-ha
 
 # Node 0 is on Kubernetes only for the test namespace
 # (in prod, it lives on the VM for persistence diversity)
@@ -38,6 +39,7 @@
     peers:
       - "zeebe-quorum-2:{{ zeebe_ports.quorum }}"
       - "zeebe-quorum-1:{{ zeebe_ports.quorum }}"
+  tags: zeebe-ha
 
 - name: Quorum Services
   openshift:
