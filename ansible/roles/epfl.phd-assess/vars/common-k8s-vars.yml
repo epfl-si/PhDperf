@@ -6,3 +6,11 @@ k8s_frugal_strategy:
     limits:
       cpu: '100m'
       memory: 100M
+
+k8s_perl_build_strategy:
+  # This reservation is enough to build Perl-based images (including
+  # the one that rebuilds RocksDB)
+  resources:
+    limits:
+      cpu: '100m'
+      memory: 400M

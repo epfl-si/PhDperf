@@ -200,3 +200,100 @@
             kind: ImageStreamTag
             name: 'disk-usage-exporter:latest'
             namespace: "{{openshift_namespace}}"
+
+
+- name: "Pull upstream {{ phd_assess_ubuntu_base_image.qualified }} image into {{ phd_assess_ubuntu_base_image.mirrored }}"
+  openshift_imagestream:
+    metadata:
+      name: "{{ phd_assess_ubuntu_base_image.shortname }}"
+      namespace: "{{ openshift_namespace }}"
+    from: "{{ phd_assess_ubuntu_base_image.qualified }}"
+    tag: "{{ phd_assess_ubuntu_base_image.tag }}"
+  tags: zeebe
+
+- name: "Build Perl tools image"
+  openshift_imagestream:
+    metadata:
+      name: zeebe-tools
+      namespace: "{{ openshift_namespace }}"
+    from: "{{ phd_assess_ubuntu_base_image.mirrored }}"
+    git:
+      repository: "https://github.com/epfl-si/PhDAssess"
+      path: docker/zeebe-tools
+    spec: "{{ k8s_perl_build_strategy }}"
+
+- name: "Build Perl observability image"
+  openshift_imagestream:
+    metadata:
+      name: zeebe-observability
+      namespace: "{{ openshift_namespace }}"
+    from: "{{ openshift_image_registry }}/{{ openshift_namespace }}/zeebe-tools:latest"
+    git:
+      repository: "https://github.com/epfl-si/PhDAssess"
+      path: docker/zeebe-observability
+    spec: "{{ k8s_perl_build_strategy }}"
+
+- name: "zeebe-observability DeploymentConfig"
+  openshift:
+    apiVersion: apps.openshift.io/v1
+    kind: DeploymentConfig
+    metadata:
+      name: zeebe-observability
+      namespace: "{{ openshift_namespace }}"
+    spec:
+      replicas: 1
+      strategy: "{{ k8s_frugal_strategy }}"
+      selector:
+        app: zeebe-observability
+      template:
+        metadata:
+          labels:
+            app: zeebe-observability
+        spec:
+          containers:
+            - name: zeebe-observability
+              image: "{{ openshift_local_images_base }}/zeebe-observability"
+              volumeMounts:
+                - name: zeebe-data
+                  mountPath: /usr/local/zeebe/data
+                  readOnly: true
+              resources:
+                limits:
+                  cpu: '100m'
+                  memory: 100M
+              ports:
+                - name: http
+                  containerPort: 5000   # Default Plackup port
+          volumes:
+            - name: zeebe-data
+              persistentVolumeClaim:
+                claimName: "{{ volume_zeebe_name }}"
+                readOnly: true
+      triggers:
+      - type: ImageChange
+        imageChangeParams:
+          automatic: true
+          containerNames:
+          - zeebe-observability
+          from:
+            kind: ImageStreamTag
+            name: 'zeebe-observability:latest'
+            namespace: "{{openshift_namespace}}"
+
+
+- name: zeebe-observability Service
+  openshift:
+    state: latest
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: zeebe-observability
+      namespace: "{{ openshift_namespace }}"
+      labels:
+        app: zeebe-observability
+    spec:
+      ports:
+        - name: prometheus
+          port: 9090
+      selector:
+        app: zeebe-observability
