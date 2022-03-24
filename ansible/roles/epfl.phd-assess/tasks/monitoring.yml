@@ -293,7 +293,7 @@
         app: zeebe-observability
     spec:
       ports:
-        - name: prometheus
-          port: 9090
+        - name: http
+          port: 5000
       selector:
         app: zeebe-observability
