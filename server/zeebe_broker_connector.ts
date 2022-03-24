@@ -13,6 +13,7 @@ import {
   Task,
   Tasks
 } from "/imports/model/tasks"
+import { TaskObservables } from '/imports/model/observability'
 import {PhDCustomHeaderShape, PhDInputVariables} from "/imports/model/tasksTypes";
 
 const debug = debug_('phd-assess:zeebe-connector')
@@ -90,19 +91,29 @@ function persistJob (job: PhDZeebeJob, to_collection: typeof Tasks) : PersistOut
   const { insertedId } = to_collection.upsert(
     job.key,
     {
-      $inc: { _zeebe__seenCount: 1 },
-      $set: {
-        _zeebe__lastSeen: new Date(),
-      },
       $setOnInsert: zeebeJobToTask(job)
     })
 
+  let status : PersistOutcome
   if (insertedId !== undefined) {
     debug(`Received a new job from Zeebe ${ insertedId }`)
-    return PersistOutcome.NEW
+    status = PersistOutcome.NEW
   } else {
-    return PersistOutcome.ALREADY_KNOWN
+    status = PersistOutcome.ALREADY_KNOWN
   }
+
+  try {
+    TaskObservables.upsert(
+      job.key,
+      {
+        $inc: { seenCount: 1 },
+        $set: { lastSeen: new Date() },
+      })
+  } catch (e){
+    console.error("Unable to insert event into `tasks_journal` collection", e)
+  }
+
+  return status
 }
 
 export default {
