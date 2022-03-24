@@ -145,8 +145,6 @@ export default {
   },
 
   async success(key: string, workerResult: OutputVariables) {
-    debug(`Sending success to worker ${key} with result ${JSON.stringify(workerResult)}`)
-
     if (zBClient == null) {
       throw new Meteor.Error("zeebe disconnected",
         `The task ${key} can not be closed if zeebe is not connected.`);
