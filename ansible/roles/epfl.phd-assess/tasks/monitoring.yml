@@ -227,7 +227,7 @@
     metadata:
       name: zeebe-observability
       namespace: "{{ openshift_namespace }}"
-    from: "{{ openshift_image_registry }}/{{ openshift_namespace }}/zeebe-tools:latest"
+    from: "{{ openshift_image_registry_inside }}/{{ openshift_namespace }}/zeebe-tools:latest"
     git:
       repository: "https://github.com/epfl-si/PhDAssess"
       path: docker/zeebe-observability

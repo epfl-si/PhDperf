@@ -1,6 +1,7 @@
 # Variables common to multiple roles (a.k.a. “rendezvous” vars) go here.
 
 openshift_image_registry: "os-docker-registry.epfl.ch"
+openshift_image_registry_inside: "docker-registry.default.svc:5000"
 phd_assess_build_namespace: phd-assess-test
 
 toplevel_state_dir: /srv/esb
