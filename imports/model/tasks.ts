@@ -2,7 +2,6 @@ import { Meteor } from 'meteor/meteor'
 import { Mongo } from 'meteor/mongo'
 import {Sciper} from "/imports/api/datatypes";
 import {ParticipantList, participantsFromZeebe} from './participants';
-import ephemeralDB from "/imports/db/ephemeral";
 import _ from 'lodash';
 import {PhDCustomHeaderShape, PhDInputVariables, TaskI} from "/imports/model/tasksTypes";
 
@@ -71,8 +70,6 @@ class TasksCollection extends Mongo.Collection<Task> {
 
 export const Tasks = new TasksCollection('tasks',
   {
-    // @ts-ignore
-    _driver : ephemeralDB,
     transform: (doc: Task) => new Task(doc),
   }
 )

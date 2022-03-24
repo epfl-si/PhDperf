@@ -1,7 +1,5 @@
 import {Mongo} from "meteor/mongo";
 import SimpleSchema from 'simpl-schema';
-import {Meteor} from "meteor/meteor";
-import ephemeralDB from "/imports/db/ephemeral";
 import {DoctorantInfo} from "/imports/api/importScipers/isaTypes";
 
 
@@ -24,9 +22,7 @@ export interface ImportScipersList {
 class ImportScipersListCollection extends Mongo.Collection<ImportScipersList> {
 }
 
-export const ImportScipersList = new ImportScipersListCollection('importScipersList',
-// @ts-ignore
-  ephemeralDB && Meteor.isServer ? { _driver : ephemeralDB } : {})
+export const ImportScipersList = new ImportScipersListCollection('importScipersList')
 
 /*
  * Schema definitions
