@@ -232,6 +232,13 @@
       repository: "https://github.com/epfl-si/PhDAssess"
       path: docker/zeebe-observability
     spec: "{{ k8s_perl_build_strategy }}"
+    triggers:
+    - type: ImageChange
+      imageChange:
+        from:
+          kind: ImageStreamTag
+          name: zeebe-tools:latest
+          namespace: "{{ openshift_namespace }}"
 
 - name: "zeebe-observability DeploymentConfig"
   openshift:
