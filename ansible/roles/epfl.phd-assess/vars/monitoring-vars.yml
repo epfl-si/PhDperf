@@ -1,11 +1,5 @@
 ##### Monitoring-related variables #####
 
-# Unfortunately, we cannot afford any permanent pods in the test
-# namespace due to insufficient headroom between the 3Gb required
-# for the costliest build, and the 4Gb quota:
-monitoring_enabled_in_namespace: |
-  {{ "test" not in openshift_namespace }}
-
 # TODO: this will soon become a responsibility of the VM.
 monitoring_prometheus_external_hostname: prometheus-phdassess.epfl.ch
 

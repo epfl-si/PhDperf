@@ -6,7 +6,6 @@
 
 
 - name: Prometheus service
-  when: monitoring_enabled_in_namespace |bool
   tags: monitoring.prometheus
   openshift:
     state: latest
@@ -26,7 +25,6 @@
 
 
 - name: Prometheus ConfigMap (configuration and sync scripts)
-  when: monitoring_enabled_in_namespace |bool
   openshift:
     state: latest
     apiVersion: v1
@@ -41,7 +39,6 @@
 
 
 - name: Prometheus StatefulSet
-  when: monitoring_enabled_in_namespace |bool
   tags: monitoring.prometheus
   vars:
   openshift:
@@ -94,14 +91,11 @@
 
 - name: Restart Prometheus
   when: >-
-    monitoring_enabled_in_namespace
-    and (
     ( (_prometheus_statefulset | default({})) is changed )
     or
     ( (_prometheus_configmap | default({})) is changed )
     or
     ( "monitoring-restart" in ansible_run_tags )
-    )
   shell:
     cmd: |
       oc delete pod prometheus-0
@@ -152,7 +146,6 @@
     promote_from_namespace: "{{ phd_assess_build_namespace }}"
 
 - name: "disk-usage-exporter DeploymentConfig"
-  when: monitoring_enabled_in_namespace |bool
   openshift:
     state: latest
     apiVersion: apps.openshift.io/v1
