@@ -12,3 +12,9 @@ k8s_perl_build_resources:
   limits:
     cpu: '100m'
     memory: 400M
+
+k8s_java_resources:
+  # This reservation is enough to run `zdb process list` on the observability pod
+  limits:
+    cpu: '100m'
+    memory: 400M

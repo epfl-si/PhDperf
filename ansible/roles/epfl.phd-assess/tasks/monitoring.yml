@@ -268,10 +268,7 @@
                 - name: zeebe-data
                   mountPath: /usr/local/zeebe/data
                   readOnly: true
-              resources:
-                limits:
-                  cpu: '100m'
-                  memory: 100M
+              resources: "{{ k8s_java_resources }}"
               ports:
                 - name: http
                   containerPort: 5000   # Default Plackup port
