@@ -53,7 +53,8 @@
       replicas: 1
       selector:
         deployment-config.name: phd-assess-simple-monitor
-      strategy: "{{ k8s_frugal_strategy }}"
+      strategy:
+        resources: "{{ k8s_frugal_resources }}"
       template:
         metadata:
           creationTimestamp: null

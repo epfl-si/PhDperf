@@ -1,16 +1,14 @@
-k8s_frugal_strategy:
+k8s_frugal_resources:
   # This reservation is enough for OpenShift's deploy container do its
   # job. In namespaces with a quota, stipulating this is required for
   # said deploy container to schedule.
-  resources:
-    limits:
-      cpu: '100m'
-      memory: 100M
+  limits:
+    cpu: '100m'
+    memory: 100M
 
-k8s_perl_build_strategy:
+k8s_perl_build_resources:
   # This reservation is enough to build Perl-based images (including
   # the one that rebuilds RocksDB)
-  resources:
-    limits:
-      cpu: '100m'
-      memory: 400M
+  limits:
+    cpu: '100m'
+    memory: 400M

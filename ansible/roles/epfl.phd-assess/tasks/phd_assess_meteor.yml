@@ -99,7 +99,8 @@
       replicas: 1
       selector:
         deployment-config.name: phd-assess-meteor
-      strategy: "{{ k8s_frugal_strategy }}"
+      strategy:
+        resources: "{{ k8s_frugal_resources }}"
       template:
         metadata:
           creationTimestamp: null

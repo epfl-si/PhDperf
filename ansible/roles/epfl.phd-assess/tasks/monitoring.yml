@@ -162,7 +162,8 @@
       namespace: "{{ openshift_namespace }}"
     spec:
       replicas: 1
-      strategy: "{{ k8s_frugal_strategy }}"
+      strategy:
+        resources: "{{ k8s_frugal_resources }}"
       selector:
         deployment-config.name: disk-usage-exporter
       template:
@@ -220,7 +221,8 @@
     git:
       repository: "https://github.com/epfl-si/PhDAssess"
       path: docker/zeebe-tools
-    spec: "{{ k8s_perl_build_strategy }}"
+    spec:
+      resources: "{{ k8s_perl_build_resources }}"
 
 - name: "Build Perl observability image"
   openshift_imagestream:
@@ -231,7 +233,8 @@
     git:
       repository: "https://github.com/epfl-si/PhDAssess"
       path: docker/zeebe-observability
-    spec: "{{ k8s_perl_build_strategy }}"
+    spec:
+      resources: "{{ k8s_perl_build_resources }}"
     triggers:
     - type: ImageChange
       imageChange:
@@ -249,7 +252,8 @@
       namespace: "{{ openshift_namespace }}"
     spec:
       replicas: 1
-      strategy: "{{ k8s_frugal_strategy }}"
+      strategy:
+        resources: "{{ k8s_frugal_resources }}"
       selector:
         app: zeebe-observability
       template:
