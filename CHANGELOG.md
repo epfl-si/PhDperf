@@ -1,5 +1,9 @@
 # CHANGELOG
 
+*1.6.0* (2022-04-07)
+- Fix participants not being updated after a form submission
+- Update to Meteor 2.7.1
+
 *1.5.0* (2022-03-16)
 - Add prometheus
 
