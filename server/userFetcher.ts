@@ -1,7 +1,7 @@
 import { Headers } from 'meteor/fetch'
 import AbortController from 'abort-controller'
 import memoize from 'timed-memoize'
-import {PhDInputVariables} from "/imports/model/tasks";
+import {PhDInputVariables} from "/imports/model/tasksTypes";
 import {ParticipantIDs} from "/imports/model/participants";
 import {fetchTimeout} from "/imports/lib/fetchTimeout";
 
@@ -80,31 +80,57 @@ export const getUserInfoMemoized = memoize(getUserInfo, {timeout: 86400000, hot:
 
 /*
  * Transform outputting Meteor Participants into Zeebe Variables
- * We read all the variables, and set the info for all the vars ending with 'Sciper'
+ * Return only participant's variables that need an update
  */
-export const updateParticipantsFromSciper = async (variables: PhDInputVariables) => {
+export const getParticipantsToUpdateFromSciper = async (variables: PhDInputVariables) => {
+
+  let updatedParticipants: any = {}
+
   for (const participantName of ParticipantIDs) {
-    const sciper = variables[`${participantName}Sciper`]
-    if (sciper) {
-      const participantInfo = await getUserInfoMemoized(sciper)
 
-      // assert all data are here, or raise a problem
-      if (!(participantInfo.name && participantInfo.email)) {
-        throw `The ${participantName} (${participantInfo.sciper}) is missing a name or an email from the API`;
+    const vSciper = variables[`${participantName}Sciper`]
+    const vEmail = variables[`${participantName}Email`]
+    const vUsageName = variables[`${participantName}Name`]
+    const vFirstName = variables[`${participantName}FirstName`]
+    const vLastName = variables[`${participantName}LastName`]
+
+    if (vSciper) {  // we are going to check if participant exists, firstly
+      const participantInfo = await getUserInfoMemoized(vSciper!)
+
+      // assert all data are here, or ignore this participant
+      if (!participantInfo || !(participantInfo.name && participantInfo.email)) {
+        continue
       }
-      variables[`${participantName}Email`] = participantInfo.email
 
-      // build the name
-      let usageName = []
+      if (!vEmail || participantInfo.email !== vEmail) {
+        updatedParticipants[`${participantName}Email`] = participantInfo.email
+      }
+
+      // usageName has to be built
+      const usageName = []
       usageName.push(participantInfo.firstnameus || participantInfo.firstname)
       usageName.push(participantInfo.nameus || participantInfo.name)
-      variables[`${participantName}Name`] = usageName.join(' ')
+      const fullName = usageName.join(' ')
 
-      // keep the real names information too, may be needed by some step later
-      variables[`${participantName}FirstName`] = participantInfo.firstname || participantInfo.firstnameus
-      variables[`${participantName}LastName`] = participantInfo.name || participantInfo.nameus
+      if (!vUsageName || fullName !== vUsageName) {
+        updatedParticipants[`${participantName}Name`] = fullName
+      }
+
+      // keep the real names information too for the student, may be needed by some step later (like in GED folder's name)
+      if (participantName === "phdStudent") {
+        const firstName = participantInfo.firstname || participantInfo.firstnameus
+        const lastName = participantInfo.name || participantInfo.nameus
+
+        if (!vFirstName || firstName !== vFirstName) {
+          updatedParticipants[`${participantName}FirstName`] = firstName
+        }
+
+        if (!vLastName || lastName !== vLastName) {
+          updatedParticipants[`${participantName}LastName`] = lastName
+        }
+      }
     }
   }
 
-  return variables
+  return updatedParticipants
 }

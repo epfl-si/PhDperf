@@ -9,7 +9,7 @@ import {
 import _ from "lodash";
 import {zBClient} from "/server/zeebe_broker_connector";
 import WorkersClient from './zeebe_broker_connector'
-import {updateParticipantsFromSciper} from "/server/userFetcher";
+import {getParticipantsToUpdateFromSciper} from "/server/userFetcher";
 import {auditLogConsoleOut} from "/imports/lib/logging";
 
 // load methods from shared js
@@ -75,7 +75,8 @@ Meteor.methods({
 
       // update Users info, based on sciper, if possible. Block only if we don't have any data on the PhD
       try {
-        formData = await updateParticipantsFromSciper(formData)
+        const participantsToUpdate = await getParticipantsToUpdateFromSciper(task.variables)
+        formData = {...formData, ...participantsToUpdate}
       } catch (e: any) {
         if (e.name == 'AbortError') {
           // Look like the fetching of user info has got a timeout,
