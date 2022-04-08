@@ -77,7 +77,7 @@ function TaskRow({ task }: { task: Task }) {
                   label={'Refresh'}
                   onClickFn={(event: React.FormEvent<HTMLButtonElement>) => {
                     event.preventDefault();
-                    if (window.confirm('Remove the process instance so it is refreshed?')) {
+                    if (window.confirm('Remove the process instance so it is refreshed after max 2 minutes ?')) {
                       Meteor.apply(
                         // @ts-ignore, because doc is saying noRetry exists
                         "refreshProcessInstance", [task.processInstanceKey], { wait: true, noRetry: true },
