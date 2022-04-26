@@ -3,6 +3,7 @@
 declare module 'meteor/epfl:accounts-tequila' {
     namespace Tequila {
         function start(options?: any): void
+        const defaultOptions: any
     }
     export default Tequila
 }
