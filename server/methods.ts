@@ -75,7 +75,15 @@ Meteor.methods({
 
       // update Users info, based on sciper, if possible. Block only if we don't have any data on the PhD
       try {
-        const participantsToUpdate = await getParticipantsToUpdateFromSciper(task.variables)
+        let participantsToUpdate: any
+        if (!task.variables.phdStudentSciper) {
+          // look like a first step if we dont have the phdStudentSciper in task.variables.
+          // let's fetch with formData then
+          participantsToUpdate = await getParticipantsToUpdateFromSciper(formData)
+        } else {
+          participantsToUpdate = await getParticipantsToUpdateFromSciper(task.variables)
+        }
+
         formData = {...formData, ...participantsToUpdate}
       } catch (e: any) {
         if (e.name == 'AbortError') {

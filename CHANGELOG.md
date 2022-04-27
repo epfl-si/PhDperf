@@ -1,5 +1,8 @@
 # CHANGELOG
 
+*1.7.1* (2022-04-27)
+- Fix participants not being updated when doing a manual start
+
 *1.7.0* (2022-04-26)
 - Update to accounts-tequila 0.6.0, as needed for Tequila 2.1
 - Add PhD Student dashboard
