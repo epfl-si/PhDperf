@@ -20,7 +20,6 @@ import {
 } from "/imports/ui/components/ImportSciper/List";
 import {canImportScipersFromISA} from "/imports/policy/importScipers";
 import {canEditDoctoralSchools} from "/imports/policy/doctoralSchools";
-import {canAccessDashboard} from "/imports/policy/tasks";
 
 
 export const App = () => {
@@ -56,10 +55,8 @@ export const App = () => {
             { canEditDoctoralSchools() &&
               <Route path="/doctoral-programs" element={<DoctoralSchoolsList/>}/>
             }
-            { canAccessDashboard() &&
-              <Route path="/dashboard" element={<Dashboard/>}/>
-            }
-            <Route path="/tasks/:key" element={<TheTask />} />
+            <Route path="/dashboard" element={<Dashboard/>}/>
+            <Route path="/tasks/:key" element={<TheTask/>} />
             <Route path="/tasks/" element={<Navigate replace to="/" />} />
             { canImportScipersFromISA() &&
             <>
@@ -93,7 +90,7 @@ function PhDBreadcrumbs() {
 
   matchPath("/", pathname) && breadcrumbs.push({link: "/", anchor: "Tasks list"})
   matchPath("tasks/*", pathname) && breadcrumbs.push({link: "/", anchor: "Tasks"}) &&  breadcrumbs.push({link: pathname, anchor: "Proceeding"})
-  matchPath("/dashboard", pathname) &&breadcrumbs.push({link: "/dashboard", anchor: "Tasks dashboard"})
+  matchPath("/dashboard", pathname) && breadcrumbs.push({link: "/dashboard", anchor: "Tasks dashboard"})
   matchPath("/doctoral-programs", pathname) && breadcrumbs.push({link: "/doctoral-programs", anchor: "Doctoral programs administration"})
   matchPath("/import-scipers", pathname) && breadcrumbs.push({link: "/import-scipers", anchor: "Import scipers"})
   return <Breadcrumbs items={breadcrumbs}/>

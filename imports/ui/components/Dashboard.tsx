@@ -4,7 +4,6 @@ import {Task, Tasks} from "/imports/model/tasks";
 import _ from "lodash"
 import React from "react"
 import {Loader} from "@epfl/epfl-sti-react-library";
-import {canAccessDashboard} from "/imports/policy/tasks";
 import {ParticipantDetail} from "/imports/model/participants";
 
 
@@ -163,7 +162,6 @@ export function Dashboard() {
   const groupByWorkflowInstanceTasks = _.groupBy(allTasks, 'workflowInstanceKey')
 
   if (!userLoaded) return (<div>Loading user</div>)
-  if (userLoaded && !canAccessDashboard()) return (<div>Your permission does not allow you to see the dashboard </div>)
 
   return (
     <>
