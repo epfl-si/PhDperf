@@ -1,5 +1,9 @@
 # CHANGELOG
 
+*1.7.0* (2022-04-26)
+- Update to accounts-tequila 0.6.0, as needed for Tequila 2.1
+- Add PhD Student dashboard
+
 *1.6.0* (2022-04-07)
 - Fix participants not being updated after a form submission
 - Update to Meteor 2.7.1

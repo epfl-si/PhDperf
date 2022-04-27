@@ -48,10 +48,6 @@ export const get_user_permitted_tasks = () => {
   return Tasks.find(taskQuery, { 'fields': taskFields })
 }
 
-export const canAccessDashboard = () : boolean => {
-  return !!(Meteor.user()?.isProgramAssistant || Meteor.user()?.isAdmin)
-}
-
 // Define which tasks can be seen from the dashboard
 export const get_user_permitted_tasks_dashboard = () => {
   let taskQuery
@@ -66,7 +62,7 @@ export const get_user_permitted_tasks_dashboard = () => {
   if (Meteor.user()?.isAdmin) {
     // query all the tasks
     taskQuery = {}
-  } else {
+  } else if (Meteor.user()?.isProgramAssistant) {
     const groups = Meteor.user()?.groupList
 
     if (groups && groups.length > 0) {
@@ -79,6 +75,8 @@ export const get_user_permitted_tasks_dashboard = () => {
     } else {
       taskQuery = { "variables.programAssistantSciper": Meteor.user()?._id }
     }
+  } else {
+    taskQuery = { "variables.phdStudentSciper": Meteor.user()?._id }
   }
 
   if (canSeeMentorInfos()) {
