@@ -197,6 +197,7 @@
 
 
 - name: "Pull upstream {{ phd_assess_ubuntu_base_image.qualified }} image into {{ phd_assess_ubuntu_base_image.mirrored }}"
+  when: openshift_namespace == phd_assess_build_namespace
   openshift_imagestream:
     metadata:
       name: "{{ phd_assess_ubuntu_base_image.shortname }}"
@@ -206,6 +207,7 @@
   tags: zeebe
 
 - name: "Build Perl tools image"
+  when: openshift_namespace == phd_assess_build_namespace
   openshift_imagestream:
     metadata:
       name: zeebe-tools
@@ -218,6 +220,7 @@
       resources: "{{ k8s_perl_build_resources }}"
 
 - name: "Build Perl observability image"
+  when: openshift_namespace == phd_assess_build_namespace
   openshift_imagestream:
     metadata:
       name: zeebe-observability
