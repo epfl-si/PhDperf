@@ -1,5 +1,8 @@
 # CHANGELOG
 
+*1.7.2* (2022-05-05)
+- Fix task going into failing when Mongo is not accessible
+
 *1.7.1* (2022-04-27)
 - Fix participants not being updated when doing a manual start
 
@@ -44,7 +47,7 @@
 
 *1.3.6* (2022-02-11)
 - Change label, from doctoral schools to doctoral programs
-- Fix the ISA list, the elements were not updated when a new task has been added 
+- Fix the ISA list, the elements were not updated when a new task has been added
 - Rework the Task model, behind the scene
 
 *1.3.5* (2022-02-09)

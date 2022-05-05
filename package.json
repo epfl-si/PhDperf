@@ -1,6 +1,6 @@
 {
   "name": "phd-assess",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "private": true,
   "scripts": {
     "start": "meteor --settings settings.json",
@@ -11,7 +11,7 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
-    "@babel/runtime": "^7.17.9",
+    "@babel/runtime": "^7.16.0",
     "@epfl/epfl-sti-react-library": "^2.4.0",
     "@formio/react": "^5.0.0-rc.3",
     "@fortawesome/fontawesome-svg-core": "^1.2.35",
@@ -26,7 +26,7 @@
     "find-up": "^5.0.0",
     "formiojs": "^4.13.0-rc.19",
     "lodash": "^4.17.21",
-    "meteor-node-stubs": "^1.2.1",
+    "meteor-node-stubs": "^1.1.0",
     "plotly.js": "^2.6.1",
     "prom-client": "^14.0.1",
     "react": "^17.0.1",

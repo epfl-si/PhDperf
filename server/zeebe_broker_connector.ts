@@ -1,4 +1,5 @@
 import {Meteor} from 'meteor/meteor'
+import {MongoInternals} from "meteor/mongo"
 import {ZeebeSpreadingClient} from "/imports/api/zeebeStatus"
 import {Metrics} from '/server/prometheus'
 import {decrypt} from "/server/encryption"
@@ -143,13 +144,20 @@ export default {
               // tell Zeebe that we'll think about it, and free ourselves to receive more work
               return job.forward()
             } catch (error) {
+              if (error instanceof MongoInternals.NpmModules.mongodb.module.MongoNetworkError ||
+                  error instanceof MongoInternals.NpmModules.mongodb.module.MongoTimeoutError
+              ) {
+                // retry later, Mongo may not disponible at that time
+                return job.fail(`Unable to reach Mongo at the moment, setting the task for a retry later`)
+              } else {
                 // unable to create the task or a variable is failing to be decrypted => no good at all
                 // we can't do better than alerting the logs
                 debug(`Unable to decrypt or persist Zeebe job (${job.key}). Sending a task fail to the broker. Task process id : ${job.processInstanceKey}. ${error}.`)
                 Metrics.zeebe.errors.inc()
                 // raise the issue to Zeebe
-                return job.fail( `Unable to decrypt some values or to mirror to Mongo, failing the job. ${error}.`, 0)
-          }
+                return job.fail(`Unable to decrypt some values or to mirror to Mongo, failing the job. ${error}.`, 0)
+              }
+            }
           })
     })
     debug(`Zeebe worker "${taskType}" created`);
