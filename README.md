@@ -63,7 +63,7 @@ make down
 Whenever Zeebe sends work to Meteor, the `tasks_journal` collection gets updated. To retrieve the latest status thereof:
 
 ```
-oc -n phd-assess exec -i services/mongo -- mongo --quiet meteor --eval "printjson(db.tasks_journal.find().sort({lastSeen:1}).toArray());" | grep -v '"msg"' | grep -v 'ISODate' | jq .
+oc -n phd-assess exec -i services/mongo -- mongo --quiet meteor --eval "printjson(db.tasks_journal.find().sort({lastSeen:1}).toArray());" | grep -v '"msg"' | sed -e 's/ISODate(\(".*"\))/\1/' | jq .
 ```
 
 ## Build and run a custom Zeebe with additional debugging
