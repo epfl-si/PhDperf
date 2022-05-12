@@ -147,8 +147,8 @@ export default {
               if (error instanceof MongoInternals.NpmModules.mongodb.module.MongoNetworkError ||
                   error instanceof MongoInternals.NpmModules.mongodb.module.MongoTimeoutError
               ) {
-                // retry later, Mongo may not disponible at that time
-                return job.fail(`Unable to reach Mongo at the moment, setting the task for a retry later`)
+                // retry later, Mongo may not be available at that time
+                return job.forward()
               } else {
                 // unable to create the task or a variable is failing to be decrypted => no good at all
                 // we can't do better than alerting the logs
