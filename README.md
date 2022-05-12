@@ -55,3 +55,22 @@ make pull build up logs
 ```
 make down
 ```
+
+# Advanced Tasks
+
+## Build and run a custom Zeebe with additional debugging
+
+```
+git clone git@github.com:epfl-si/zeebe.git
+cd zeebe
+git checkout bug/discarded-vars-in-CompleteJob  # Or something
+git pull --rebase origin stable/1.3
+mvn install -DskipTests -DskipChecks
+docker build -t os-docker-registry.epfl.ch/phd-assess-test/zeebe:1.3.9-SNAPSHOT --build-arg DISTBALL=dist/target/camunda-cloud-zeebe-1.3.9-SNAPSHOT.tar.gz
+
+oc login
+docker login os-docker-registry.epfl.ch -u whatever-doesnt-matter -p "$(oc whoami -t)"
+docker push os-docker-registry.epfl.ch/phd-assess-test/zeebe:1.3.9-SNAPSHOT
+
+phdsible -e zeebe_debug_build=1 -t zeebe
+```
