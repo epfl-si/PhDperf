@@ -58,6 +58,14 @@ make down
 
 # Advanced Tasks
 
+## Observe latest MongoDB activity
+
+Whenever Zeebe sends work to Meteor, the `tasks_journal` collection gets updated. To retrieve the latest status thereof:
+
+```
+oc -n phd-assess exec -i services/mongo -- mongo --quiet meteor --eval "printjson(db.tasks_journal.find().sort({lastSeen:1}).toArray());" | grep -v '"msg"' | grep -v 'ISODate' | jq .
+```
+
 ## Build and run a custom Zeebe with additional debugging
 
 ```
