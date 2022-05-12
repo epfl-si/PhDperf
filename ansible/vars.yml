@@ -1,5 +1,8 @@
 # Variables common to multiple roles (a.k.a. “rendezvous” vars) go here.
 
+# Use a debug build of Zeebe (see roles/epfl.phd-assess/vars/build-vars.yml):
+zeebe_debug_build: true
+
 openshift_image_registry: "os-docker-registry.epfl.ch"
 openshift_image_registry_inside: "docker-registry.default.svc:5000"
 phd_assess_build_namespace: phd-assess-test
