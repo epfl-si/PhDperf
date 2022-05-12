@@ -128,9 +128,9 @@
               - name: 'ISA_IMPORT_API_URL'
                 value: 'http://isa.epfl.ch/services/v1/doctorants/current/programme'
               - name: 'ZEEBE_WORKER_TIMEOUT'
-                value: '120000'
+                value: '300000'
               - name: 'ZEEBE_WORKER_MAX_JOBS_TO_ACTIVATE'
-                value: '10'
+                value: '100'
               - name: "{{ encryption_key_name }}"
                 valueFrom:
                   secretKeyRef:
