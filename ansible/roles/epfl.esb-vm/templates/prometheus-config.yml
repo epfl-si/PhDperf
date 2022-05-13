@@ -21,6 +21,7 @@ scrape_configs:
       - targets: ['zeebe:9600']
         labels:
           instance: 'zeebe-broker-0'
+          app_instance: prod
   - job_name: 'traefik'
     static_configs:
       - targets: ['traefik:8080']
@@ -44,3 +45,12 @@ scrape_configs:
     static_configs:
       - targets:
         - 'ssh-tunnel-server-2:9090'
+    relabel_configs:
+      - action: replace
+        target_label: app_instance
+        replacement: prod
+        # TODO: I want to set app_instance only when the following
+        # regex matches; I can't seem to get it working though.
+        # source_labels:
+        #   - kubernetes_namespace
+        # regex: "phd-assess"
