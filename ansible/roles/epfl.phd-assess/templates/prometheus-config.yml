@@ -38,6 +38,10 @@ scrape_configs:
         target_label: instance
       - action: replace
         source_labels:
+          - __meta_kubernetes_namespace
+        target_label: kubernetes_namespace
+      - action: replace
+        source_labels:
           - for_prometheus_job
         target_label: job
       - action: labeldrop
