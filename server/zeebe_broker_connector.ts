@@ -135,14 +135,10 @@ export default {
           (job: PhDZeebeJob,
           ) => {
             Metrics.zeebe.received.inc()
+            let outcome: PersistOutcome
 
             try {
-              const outcome = persistJob(job, Tasks)
-              if (outcome === PersistOutcome.NEW) {
-                Metrics.zeebe.inserted.inc()
-              }
-              // tell Zeebe that we'll think about it, and free ourselves to receive more work
-              return job.forward()
+              outcome = persistJob(job, Tasks)
             } catch (error) {
               if (error instanceof MongoInternals.NpmModules.mongodb.module.MongoNetworkError ||
                   error instanceof MongoInternals.NpmModules.mongodb.module.MongoTimeoutError
@@ -158,6 +154,13 @@ export default {
                 return job.fail(`Unable to decrypt some values or to mirror to Mongo, failing the job. ${error}.`, 0)
               }
             }
+
+            if (outcome === PersistOutcome.NEW) {
+              Metrics.zeebe.inserted.inc()
+            }
+
+            // as we had no error, tell Zeebe that we'll think about it, and free ourselves to receive more work
+            return job.forward()
           })
     })
     debug(`Zeebe worker "${taskType}" created`);
