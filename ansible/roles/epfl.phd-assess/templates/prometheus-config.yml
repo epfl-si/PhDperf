@@ -46,3 +46,16 @@ scrape_configs:
         target_label: job
       - action: labeldrop
         regex: for_prometheus_job
+      # Set up “persistence” label
+      - action: replace
+        target_label: persistence
+        replacement: nfs
+        source_labels:
+          - instance
+        regex: .*1.*
+      - action: replace
+        target_label: persistence
+        replacement: local
+        source_labels:
+          - instance
+        regex: .*2.*

@@ -22,6 +22,7 @@ scrape_configs:
         labels:
           instance: 'zeebe-broker-0'
           app_instance: prod
+          persistence: vm
   - job_name: 'traefik'
     static_configs:
       - targets: ['traefik:8080']
