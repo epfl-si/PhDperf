@@ -16,8 +16,10 @@ import {
 } from "/imports/model/tasks"
 import { TaskObservables } from '/imports/model/observability'
 import {PhDCustomHeaderShape, PhDInputVariables} from "/imports/model/tasksTypes";
+import {auditLogConsoleOut} from "/imports/lib/logging";
 
 const debug = debug_('phd-assess:zeebe-connector')
+const auditLog = auditLogConsoleOut.extend('server/zeebe_broker_connector')
 
 // what is send as result
 // should be the whole form, or an ACL decided value
@@ -71,7 +73,8 @@ function zeebeJobToTask(job: PhDZeebeJob): Task {
 
 enum PersistOutcome {
   NEW = 1,
-  ALREADY_KNOWN = 2
+  ALREADY_KNOWN = 2,
+  ALREADY_SUBMITTED = 3,
 }
 
 /**
@@ -87,15 +90,24 @@ enum PersistOutcome {
  *
  * @returns `PersistOutcome.NEW` if we see this job for the very first time
  * @returns `PersistOutcome.ALREADY_KNOWN` if we already had this job in store
+ * @returns `PersistOutcome.ALREADY_SUBMITTED` if the job is new but was marked as submitted. It can happens
+ *           if we are pulling some batch data that takes time while the job is being submitted
  */
 function persistJob (job: PhDZeebeJob, to_collection: typeof Tasks) : PersistOutcome {
+  let status : PersistOutcome
+
+  // assert before inserting that this task is not aldready submitted
+  if (TaskObservables.find({ _id: job.key, submittedAt: { $exists:true } }).count() !== 0) {
+    auditLog(`Refusing to add this task ( job key: ${job.key}, process instance : ${job.processInstanceKey} ) to meteor, as it was flagged as already submitted`)
+    return PersistOutcome.ALREADY_SUBMITTED
+  }
+
   const { insertedId } = to_collection.upsert(
     job.key,
     {
       $setOnInsert: zeebeJobToTask(job)
     })
 
-  let status : PersistOutcome
   if (insertedId !== undefined) {
     debug(`Received a new job from Zeebe ${ insertedId }`)
     status = PersistOutcome.NEW
