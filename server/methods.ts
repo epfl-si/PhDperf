@@ -16,6 +16,7 @@ import {auditLogConsoleOut} from "/imports/lib/logging";
 import '/imports/api/doctoralSchools/methods'
 import '/server/methods/ImportScipers'
 import '/server/methods/DoctoralSchools'
+import {TaskObservables} from "/imports/model/observability";
 
 const auditLog = auditLogConsoleOut.extend('server/methods')
 
@@ -112,6 +113,18 @@ Meteor.methods({
       auditLog(`Sending success: job ${task._id} of process instance ${task.processInstanceKey} with data ${JSON.stringify(formData)}`)
       await WorkersClient.success(task._id!, formData)
       Tasks.remove({_id: task._id})
+
+      // Once submitted and removed, add an entry about the submit date, so
+      // we don't recreate it accidently by pulling it the same time the submit is done
+      try {
+        TaskObservables.upsert(
+          task._id!,
+          {
+            $set: { submittedAt: new Date() },
+          })
+      } catch (e){
+        console.error("Unable to insert event into `tasks_journal` collection", e)
+      }
       auditLog(`Successfully submitted form for task id ${task._id}.`)
     } else {
       auditLog(`Error: the task that is being submitted can not be found. Task key requested: ${key}.`)

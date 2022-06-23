@@ -8,6 +8,9 @@ type IdempotenceObservable = {
   seenCount: number
   // The last time at which that happened
   lastSeen: Date
+
+  // The time at which this job as been submitted. Useful to mitigate an incoming but sumbbited task
+  submittedAt: Date
 }
 
 export const TaskObservables = new Mongo.Collection<IdempotenceObservable>('tasks_journal')
