@@ -118,6 +118,7 @@
   tags:
     - monitoring
     - monitoring-promote
+    - monitoring.zeebe-db-monitor
   include_tasks:
     file: "monitoring.yml"
     apply:

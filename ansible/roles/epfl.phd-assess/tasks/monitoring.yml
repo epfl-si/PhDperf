@@ -301,3 +301,81 @@
           port: 5000
       selector:
         app: zeebe-observability
+
+
+- name: "zeebe-db-monitor DeploymentConfig"
+  tags: monitoring.zeebe-db-monitor
+  openshift:
+    apiVersion: apps.openshift.io/v1
+    kind: DeploymentConfig
+    metadata:
+      name: zeebe-db-monitor
+      namespace: "{{ openshift_namespace }}"
+    spec:
+      replicas: 1
+      strategy:
+        resources: "{{ k8s_frugal_resources }}"
+      selector:
+        app: zeebe-db-monitor
+      template:
+        metadata:
+          labels:
+            app: zeebe-db-monitor
+            for-prometheus-job: zeebe
+        spec:
+          containers:
+            - name: zeebe-db-monitor
+              image: "{{ openshift_local_images_base }}/zeebe-db-monitor"
+              env:
+                - name: 'ZEEBE_DATA_PATH'
+                  value: '/zeebe-data-ro'
+              volumeMounts:
+                - mountPath: /zeebe-data-ro
+                  name: zeebe-data
+                  readOnly: true
+                # the working path where we open the symlinked zeebe data
+                - mountPath: /zeebe-data-rw
+                  name: volume-zeebe-data-symlinks-rw
+              resources:
+                limits:
+                  cpu: '100m'
+                  memory: 300M
+              ports:
+                - name: metrics
+                  containerPort: 8080
+          volumes:
+            - name: zeebe-data
+              persistentVolumeClaim:
+                claimName: "{{ volume_zeebe_name }}"
+                readOnly: true
+            - emptyDir: {}
+              name: volume-zeebe-data-symlinks-rw
+      triggers:
+        - type: ImageChange
+          imageChangeParams:
+            automatic: true
+            containerNames:
+              - zeebe-db-monitor
+            from:
+              kind: ImageStreamTag
+              name: 'zeebe-db-monitor:latest'
+              namespace: "{{openshift_namespace}}"
+
+
+- name: zeebe-db-monitor Service
+  tags: monitoring.zeebe-db-monitor
+  openshift:
+    state: latest
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: zeebe-db-monitor
+      namespace: "{{ openshift_namespace }}"
+      labels:
+        app: zeebe-db-monitor
+    spec:
+      ports:
+        - name: metrics
+          port: 8080
+      selector:
+        app: zeebe-db-monitor
