@@ -131,6 +131,8 @@
                 value: '300000'
               - name: 'ZEEBE_WORKER_MAX_JOBS_TO_ACTIVATE'
                 value: '100'
+              - name: 'TZ'
+                value: 'Europe/Zurich'
               - name: "{{ encryption_key_name }}"
                 valueFrom:
                   secretKeyRef:
