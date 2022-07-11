@@ -329,6 +329,8 @@
               env:
                 - name: 'ZEEBE_DATA_PATH'
                   value: '/zeebe-data-ro'
+                - name: 'ZDB_READ_CACHE_TIMEOUT'
+                  value: '120000'
               volumeMounts:
                 - mountPath: /zeebe-data-ro
                   name: zeebe-data
