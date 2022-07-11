@@ -119,6 +119,7 @@
     - monitoring
     - monitoring-promote
     - monitoring.zeebe-db-monitor
+    - monitoring.zeebe-db-monitor.promote
   include_tasks:
     file: "monitoring.yml"
     apply:

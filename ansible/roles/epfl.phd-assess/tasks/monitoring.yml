@@ -381,3 +381,21 @@
           port: 8080
       selector:
         app: zeebe-db-monitor
+
+- name: "Promote zeebe-db-monitor image from {{ phd_assess_build_namespace }} to production"
+  when:
+    - >-
+      openshift_namespace != phd_assess_build_namespace
+    - >-
+      "monitoring.zeebe-db-monitor.promote" in ansible_run_tags
+  tags: monitoring.zeebe-db-monitor.promote
+  include_tasks:
+    file: _promote_image.yml
+    apply:
+      tags:
+        - monitoring.zeebe-db-monitor
+        - monitoring.zeebe-db-monitor.promote
+  vars:
+    promote_image_name: zeebe-db-monitor
+    promote_image_tag: "latest"
+    promote_from_namespace: "{{ phd_assess_build_namespace }}"
