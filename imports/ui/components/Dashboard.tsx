@@ -79,16 +79,19 @@ const StepDone = () => <div className="participant border col m-1 p-2 bg-success
 const StepPending = ({task}: {task: Task}) => {
   const assignees: ParticipantDetail[] | undefined = task.assigneeScipers && Object.values(task.participants).filter((participant: ParticipantDetail) => task.assigneeScipers!.includes(participant.sciper))
 
-  let assigneesTitle = ""
-  assignees?.map((assignee: ParticipantDetail) => assigneesTitle = `${ assigneesTitle } ${assignee.name} (${assignee.sciper})`)
-  assigneesTitle = assigneesTitle ? `${assigneesTitle}, ` : ``
-  assigneesTitle = `${assigneesTitle}Last updated :${task!.updated_at!.toLocaleString('fr-CH')}`
+  let onHoverInfo = ""
+  assignees?.map((assignee: ParticipantDetail) => onHoverInfo = `${ onHoverInfo } ${assignee.name} (${assignee.sciper})`)
+  onHoverInfo = onHoverInfo ? `${onHoverInfo}, ` : ``
+  onHoverInfo = `${onHoverInfo}Last updated: ${task!.updated_at!.toLocaleString('fr-CH')}`
+  onHoverInfo = onHoverInfo ? `${onHoverInfo}, ` : ``
+  const currentStepLabel = _.flatten(phdAssesSteps).find((step) => step.id === task!.elementId)
+  if (currentStepLabel) onHoverInfo = `${onHoverInfo}Step: ${currentStepLabel?.label}`
 
   return (
     <div className="participant border col m-1 p-2 bg-awaiting text-white"
      data-toggle="tooltip"
      data-html="true"
-     title={ assigneesTitle } />
+     title={ onHoverInfo } />
   )
 }
 
