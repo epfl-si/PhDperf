@@ -1,11 +1,19 @@
 import {Meteor} from "meteor/meteor";
 import {DoctoralSchools} from "/imports/api/doctoralSchools/schema"
 import {ImportScipersList} from "/imports/api/importScipers/schema"
-import {get_user_permitted_tasks, get_user_permitted_tasks_dashboard} from "/imports/policy/tasks";
+import {
+  get_user_permitted_task,
+  get_user_permitted_tasks,
+  get_user_permitted_tasks_dashboard
+} from "/imports/policy/tasks";
 import {canEditDoctoralSchools} from "/imports/policy/doctoralSchools";
 import {canImportScipersFromISA} from "/imports/policy/importScipers";
 import {Tasks} from "/imports/model/tasks";
 import {refreshAlreadyStartedImportScipersList} from "/imports/api/importScipers/helpers";
+
+Meteor.publish('taskDetailed', function (args: [string]) {
+  return get_user_permitted_task(args[0])
+})
 
 Meteor.publish('tasks', function () {
   return get_user_permitted_tasks()

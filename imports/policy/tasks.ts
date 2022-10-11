@@ -9,96 +9,117 @@ export const canSeeMentorInfos = () : boolean => {
   return !!Meteor.user()?.isAdmin
 }
 
-// Define which tasks can be seen from the task list
-export const get_user_permitted_tasks = () => {
-  let taskQuery
-
-  // by default, filter out mentor infos from client
-  let taskFields: Mongo.FieldSpecifier | undefined = {
-    'variables.mentorSciper': 0,
-    'variables.mentorName': 0,
-    'variables.mentorEmail': 0
-  }
-
-  if (Meteor.user()?.isAdmin) {
-    // query all the tasks
-    taskQuery = {}
+/*
+ * Set specific finder when an user is not admin.
+ * Has it is a quiet complex finder used multiple time, you can find it as a function here
+ */
+const buildTaskQuery = (taskQuery: any, user: Meteor.User) => {
+  if (user.isAdmin) {
+    return taskQuery
   } else {
-    // hide any activities log if not admin
-    taskFields['variables.activityLogs'] = 0
-
-    const groups = Meteor.user()?.groupList
+    const groups = user.groupList
 
     if (groups && groups.length > 0) {
-      taskQuery = {
-        $or: [
-          { "customHeaders.allowedGroups": { $in: groups } },  // Get tasks for the group
-          { "variables.assigneeSciper": Meteor.user()?._id },  // Get assigned tasks
-        ]
-      }
+      taskQuery['$or'] = [
+        {"customHeaders.allowedGroups": {$in: groups}},  // Get tasks for the group
+        {"variables.assigneeSciper": user._id},  // Get assigned tasks
+      ]
     } else {
-      taskQuery = { "variables.assigneeSciper": Meteor.user()?._id }
+      taskQuery["variables.assigneeSciper"] = user._id
     }
+    return taskQuery
+  }
+}
+
+// set which fields can be seen, by admins or by an user
+const buildTaskFields = (user: Meteor.User) => {
+
+  // better safe than sorry, by default remove the "not for everyone" ones
+  const fieldsView: Mongo.FieldSpecifier = {
+    // filter out mentor infos
+    'variables.mentorSciper': 0,
+    'variables.mentorName': 0,
+    'variables.mentorEmail': 0,
+
+    // and admin stuffs
+    'variables.activityLogs': 0,
+
+    // not used fields can be removed too, for saving some bandwidth
+    //'variables.bpmnProcessId':0,
+    // ...
   }
 
-  if (canSeeMentorInfos()) {
-    taskFields = {}
+  if (user.isAdmin) {  // remove exclusion if admin
+    delete fieldsView['variables.mentorSciper']
+    delete fieldsView['variables.mentorName']
+    delete fieldsView['variables.mentorEmail']
+    delete fieldsView['variables.activityLogs']
   }
 
-  return Tasks.find(taskQuery, { 'fields': taskFields })
+  return fieldsView
+}
+
+export const get_user_permitted_task = (_id: string) => {  // when crawling for one task, we get more info, like the FormIO definition
+  const user = Meteor.user()
+
+  // at this point, check the user is goodly instanced, or return nothing
+  if (!user) return
+
+  const fieldsView = buildTaskFields(user)
+  const taskQuery = buildTaskQuery({ _id: _id }, user)  //get only the task needed
+
+  return Tasks.find(taskQuery, { 'fields': fieldsView })
+}
+
+// Define which tasks can be seen from the task list
+// use withoutFormDef to specifiy if you need the formIO definition
+export const get_user_permitted_tasks = (excludeFormDefinition: boolean = true) => {  // to show as list, simplified
+  const user = Meteor.user()
+
+  // at this point, check the user is goodly instanced, or return nothing
+  if (!user) return
+  const fieldsView = buildTaskFields(user)
+  const taskQuery = buildTaskQuery({}, user)  //get only the task needed
+
+  if (excludeFormDefinition) {  // should we exclude data that is about the form (useful on view without showing the form)
+    fieldsView['customHeaders.formIO'] = 0
+  }
+
+  return Tasks.find(taskQuery, { 'fields': fieldsView })
 }
 
 // Define which tasks can be seen from the dashboard
 export const get_user_permitted_tasks_dashboard = () => {
-  let taskQuery
+  const user = Meteor.user()
 
-  // by default, filter out mentor infos from client
-  let taskFields: Mongo.FieldSpecifier | undefined = {
-    'variables.mentorSciper': 0,
-    'variables.mentorName': 0,
-    'variables.mentorEmail': 0
-  }
+  // at this point, check the user is goodly instanced, or return nothing
+  if (!user) return
+  const fieldsView = buildTaskFields(user)
+  const taskQuery = buildTaskQuery({}, user)  //get only the task needed
 
-  if (Meteor.user()?.isAdmin) {
-    // query all the tasks
-    taskQuery = {}
-  } else if (Meteor.user()?.isProgramAssistant) {
-    const groups = Meteor.user()?.groupList
+  // remove unused "too big" fields
+  fieldsView['customHeaders.formIO'] = 0
 
-    if (groups && groups.length > 0) {
-      taskQuery = {
-        $or: [
-          { "customHeaders.allowedGroups": { $in: groups } },  // Get tasks for the group
-          { "variables.programAssistantSciper": Meteor.user()?._id },  // Get assigned tasks
-        ]
-      }
-    } else {
-      taskQuery = { "variables.programAssistantSciper": Meteor.user()?._id }
-    }
-  } else {
-    taskQuery = { "variables.phdStudentSciper": Meteor.user()?._id }
-  }
-
-  if (canSeeMentorInfos()) {
-    taskFields = {}
-  }
-
-  return Tasks.find(taskQuery, { 'fields': taskFields })
+  return Tasks.find(taskQuery, { 'fields': fieldsView })
 }
 
-export const canSubmit = (taskKey: string) : boolean => {
-  if (Meteor.user()?.isAdmin) {
+export const canSubmit = (taskId: string) : boolean => {
+  const user = Meteor.user()
+
+  if (!user) return false
+
+  if (user.isAdmin) {
     return true
   } else {
-    const groups = Meteor.user()?.groupList
+    const groups = user.groupList
 
     if (groups && groups.length > 0) {
       return Tasks.find({
         $and: [
-          { "key": taskKey },
+          { "_id": taskId },
           { $or: [
-              { "customHeaders.allowedGroups": {$in: Meteor.user()?.groupList} },
-              { "variables.assigneeSciper": Meteor.user()?._id }
+              { "customHeaders.allowedGroups": {$in: user.groupList} },
+              { "variables.assigneeSciper": user._id }
             ]
           }
         ]
@@ -106,8 +127,8 @@ export const canSubmit = (taskKey: string) : boolean => {
     } else {
       return Tasks.find({
         $and: [
-          { "key": taskKey },
-          { "variables.assigneeSciper": Meteor.user()?._id }
+          { "_id": taskId },
+          { "variables.assigneeSciper": user._id }
         ]
       }).count() > 0
     }

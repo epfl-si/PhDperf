@@ -17,7 +17,7 @@ export const Task = ({ _id }: { _id: string }) => {
   const taskLoading = useTracker(() => {
     // Note that this subscription will get cleaned up
     // when your component is unmounted or deps change.
-    const handle = Meteor.subscribe('tasks');
+    const handle = Meteor.subscribe('taskDetailed', [_id]);
     return !handle.ready();
   }, [_id]);
 
