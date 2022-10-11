@@ -10,7 +10,7 @@ export const canSeeMentorInfos = () : boolean => {
 }
 
 /*
- * Set specific finder when an user is not admin.
+ * Set specific finder when a user is not admin.
  * Has it is a quiet complex finder used multiple time, you can find it as a function here
  */
 const buildTaskQuery = (taskQuery: any, user: Meteor.User) => {
@@ -31,7 +31,7 @@ const buildTaskQuery = (taskQuery: any, user: Meteor.User) => {
   }
 }
 
-// set which fields can be seen, by admins or by an user
+// set which fields can be seen, by admins or by a user
 const buildTaskFields = (user: Meteor.User) => {
 
   // better safe than sorry, by default remove the "not for everyone" ones
