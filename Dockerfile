@@ -1,5 +1,8 @@
 FROM docker-registry.default.svc:5000/phd-assess-test/node-base:latest
 
+# to ignore caniuse-lite outdated warning
+ENV BROWSERSLIST_IGNORE_OLD_DATA=1
+
 # not recommended by the Meteor guide, but still works:
 RUN curl https://install.meteor.com/ | sh
 
