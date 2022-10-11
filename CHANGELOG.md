@@ -1,5 +1,13 @@
 # CHANGELOG
 
+*1.8.0* (2022-10-11)
+- Improve right checking
+- Remove having the list of users sent to admins
+- Separate subscribers, one for tasks list and one for task edit
+- Remove the troublesome usage of the task key value. Use _id instead
+- Add more info on the dashboard, when hovering a step
+- Update libs
+
 *1.7.2* (2022-05-05)
 - Fix task going into failing when Mongo is not accessible
 
