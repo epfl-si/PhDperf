@@ -97,6 +97,7 @@
     - meteor-build
     - meteor-rebuild
     - meteor-promote
+    - meteor-push
 
 - name: Route tasks
   include_tasks:
