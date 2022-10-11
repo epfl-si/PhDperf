@@ -108,7 +108,7 @@ const DrawProgress = ({tasks}: DrawProgressProps) => {
         // having an array means we can have multiple pending, or some pending, some finished. Let's discover it
         const multipleSteps = x.map((y, j) => {
           const task = tasks.find(t => t.elementId === y.id)
-          const taskKey = `${task?.key}_${i}_${j}`
+          const taskKey = `${task?._id}_${i}_${j}`
           if (pendingDone) {
             return <StepNotDone key={ taskKey } />
           } else if (pendingTasksIds.includes(y.id)) {
@@ -124,7 +124,7 @@ const DrawProgress = ({tasks}: DrawProgressProps) => {
       }
       else {
         const task = tasks.find(t => t.elementId === x.id)
-        const taskKey = `${task?.key}_${i}`
+        const taskKey = `${task?._id}_${i}`
         if (pendingTasksIds.includes(x.id)) {
           pendingDone = true
           return <StepPending key={ taskKey } task={ task! } />
@@ -186,10 +186,10 @@ export function Dashboard() {
               Object.keys(groupByWorkflowInstanceTasks).map((taskGrouper: string) => {
                 const workflowInstanceTasks = groupByWorkflowInstanceTasks[taskGrouper]
                 return (
-                  <div className="row" key={ `${workflowInstanceTasks[0].key}_main_div` }>
-                    <div className="participant col-2 m-1 p-2 text-black" key={ `${workflowInstanceTasks[0].key}_phdStdentScioer` } >{ workflowInstanceTasks[0].variables.phdStudentName ?? workflowInstanceTasks[0].variables.phdStudentSciper }</div>
-                    <div className="participant col m-1 p-2 text-black" key={ `${workflowInstanceTasks[0].key}_doctoralProgramName` } >{ workflowInstanceTasks[0].variables.doctoralProgramName }</div>
-                    <DrawProgress tasks={ workflowInstanceTasks }  key={ workflowInstanceTasks[0].key } />
+                  <div className="row" key={ `${workflowInstanceTasks[0]._id}_main_div` }>
+                    <div className="participant col-2 m-1 p-2 text-black" key={ `${workflowInstanceTasks[0]._id}_phdStdentScioer` } >{ workflowInstanceTasks[0].variables.phdStudentName ?? workflowInstanceTasks[0].variables.phdStudentSciper }</div>
+                    <div className="participant col m-1 p-2 text-black" key={ `${workflowInstanceTasks[0]._id}_doctoralProgramName` } >{ workflowInstanceTasks[0].variables.doctoralProgramName }</div>
+                    <DrawProgress tasks={ workflowInstanceTasks }  key={ workflowInstanceTasks[0]._id } />
                   </div>
                 )
               })

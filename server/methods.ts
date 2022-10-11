@@ -50,13 +50,13 @@ Meteor.methods({
     }
   },
 
-  async submit(key, formData, formMetaData: FormioActivityLog) {
-    if (!canSubmit(key)) {
-      auditLog(`Unallowed user ${Meteor.user()?._id} is trying to sumbit the task ${key}`)
+  async submit(_id, formData, formMetaData: FormioActivityLog) {
+    if (!canSubmit(_id)) {
+      auditLog(`Unallowed user ${Meteor.user()?._id} is trying to sumbit the task ${_id}`)
       throw new Meteor.Error(403, 'You are not allowed to submit this task')
     }
 
-    const task = Tasks.findOne({ _id: key } )
+    const task = Tasks.findOne({ _id: _id } )
 
     if (task) {
       formData = filterUnsubmittableVars(
@@ -127,7 +127,7 @@ Meteor.methods({
       }
       auditLog(`Successfully submitted form for task id ${task._id}.`)
     } else {
-      auditLog(`Error: the task that is being submitted can not be found. Task key requested: ${key}.`)
+      auditLog(`Error: the task that is being submitted can not be found. Task key requested: ${_id}.`)
       throw new Meteor.Error(404, 'Unknown task', 'Check the task exist by refreshing your browser')
     }
   },

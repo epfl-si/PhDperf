@@ -56,7 +56,7 @@ export const App = () => {
               <Route path="/doctoral-programs" element={<DoctoralSchoolsList/>}/>
             }
             <Route path="/dashboard" element={<Dashboard/>}/>
-            <Route path="/tasks/:key" element={<TheTask/>} />
+            <Route path="/tasks/:_id" element={<TheTask/>} />
             <Route path="/tasks/" element={<Navigate replace to="/" />} />
             { canImportScipersFromISA() &&
             <>
@@ -75,8 +75,8 @@ export const App = () => {
 }
 
 function TheTask() {
-  const {key} = useParams<{ key: string }>()
-  return <Task workflowKey={key!}/>
+  const {_id} = useParams<{ _id: string }>()
+  return <Task _id={_id!}/>
 }
 
 function PhDBreadcrumbs() {

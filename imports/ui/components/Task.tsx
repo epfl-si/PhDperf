@@ -13,16 +13,16 @@ import {ErrorIcon} from "react-hot-toast/src/components/error";
 import {toastClosable} from "/imports/ui/components/Toasters";
 
 
-export function Task({workflowKey}: { workflowKey: string }) {
+export const Task = ({ _id }: { _id: string }) => {
   const taskLoading = useTracker(() => {
     // Note that this subscription will get cleaned up
     // when your component is unmounted or deps change.
     const handle = Meteor.subscribe('tasks');
     return !handle.ready();
-  }, [workflowKey]);
+  }, [_id]);
 
-  const task = useTracker(() => Tasks.findOne({ _id:workflowKey }), [workflowKey])
-  const toastId = `toast-${workflowKey}`
+  const task = useTracker(() => Tasks.findOne({ _id:_id }), [_id])
+  const toastId = `toast-${_id}`
   const [toBeSubmitted, setToBeSubmitted] = useState<boolean | undefined>(true)
   const navigate = useNavigate()
 
@@ -62,7 +62,7 @@ export function Task({workflowKey}: { workflowKey: string }) {
           <Link to={`/`}><Button label={'Back'} onClickFn={() => void 0}/></Link>
         </>
       ) : (
-        <div>Unable to find the task no {workflowKey}.<br/>
+        <div>Unable to find the task no {_id}.<br/>
           Please try again or go <Link to={`/`}>back to the task list</Link>
         </div>
       )
@@ -82,7 +82,7 @@ export function Task({workflowKey}: { workflowKey: string }) {
     const formDataPicked = _.omit(formData.data, findDisabledFields(this))
 
     Meteor.call("submit",
-      workflowKey,
+      _id,
       formDataPicked,
       formData.metadata,
       (error: global_Error | Meteor.Error | undefined)  => {

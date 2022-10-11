@@ -16,7 +16,7 @@ import {ErrorIcon} from "react-hot-toast/src/components/error";
 
 
 function TaskRow({ task }: { task: Task }) {
-  const toastId = `toast-${task.key}`
+  const toastId = `toast-${task._id}`
 
   return (
     <div className={'border-top p-2'}>
