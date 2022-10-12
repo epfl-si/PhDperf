@@ -23,7 +23,7 @@
     "csstype": "^2.6.18",
     "debug": "^4.3.1",
     "dotenv": "^8.2.0",
-    "find-up": "^5.0.0",
+    "find-up": "^6.3.0",
     "formiojs": "^4.13.0-rc.19",
     "lodash": "^4.17.21",
     "meteor-node-stubs": "^1.1.0",

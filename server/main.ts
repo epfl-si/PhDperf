@@ -5,10 +5,10 @@ import './publish'
 import WorkersClient from './zeebe_broker_connector'
 import { PrometheusSource } from '/server/prometheus'
 import Tequila from 'meteor/epfl:accounts-tequila'
-import findUp from 'find-up'
+import {findUpSync} from 'find-up'
 import '/imports/policy'
 
-require("dotenv").config({path: findUp.sync(".env")})
+require("dotenv").config({path: findUpSync(".env")})
 
 
 Meteor.startup(() => {
