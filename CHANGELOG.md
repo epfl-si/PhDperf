@@ -1,4 +1,6 @@
 # CHANGELOG
+*1.9.1* (2022-10-12)
+- Update libs, the deep way this time
 
 *1.8.0* (2022-10-11)
 - Improve right checking
