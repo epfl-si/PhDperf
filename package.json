@@ -25,7 +25,12 @@
     "debug": "^4.3.4",
     "dotenv": "^16.0.3",
     "find-up": "^6.3.0",
-    "formiojs": "^4.14.9",
+    "//": [
+      "This formiojs version is fixed for a reason: the calendar widget behave differently with the input provided to the custom validate function, ",
+      "mainly because of this line: https://github.com/formio/formio.js/pull/4839/files",
+      "If you want to update it, be sure to check correctly the behavior of the calendar widget."
+    ],
+    "formiojs": "4.14.8",
     "lodash": "^4.17.21",
     "meteor-node-stubs": "^1.2.5",
     "plotly.js": "^2.6.1",
