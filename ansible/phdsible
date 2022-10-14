@@ -39,7 +39,7 @@ platform_check () {
             SUITCASE_DIR=$PWD/ansible-deps-cache \
             SUITCASE_ANSIBLE_REQUIREMENTS=requirements.yml \
             SUITCASE_PIP_EXTRA="bcrypt passlib" \
-            SUITCASE_ANSIBLE_VERSION=3.4.0 \
+            SUITCASE_ANSIBLE_VERSION=5.10.0 \
             SUITCASE_NO_EYAML=1 \
             sh -x
     fi
