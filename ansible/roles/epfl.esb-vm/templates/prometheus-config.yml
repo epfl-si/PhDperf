@@ -41,6 +41,7 @@ scrape_configs:
       'match[]':
         - '{job="prometheus"}'
         - '{job="zeebe"}'
+        - '{deploymentconfig="phd-assess-meteor"}'
         - '{__name__=~".*disk_usage.*"}'
 
     static_configs:
