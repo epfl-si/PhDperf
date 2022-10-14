@@ -35,6 +35,15 @@ export const Task = ({ _id }: { _id: string }) => {
     if (!task.customHeaders.formIO) {
       return (<div>Task exists but is not well formed (has no formIO field). Check with your administrator that the BPMN file is well formatted</div>)
     } else {
+      const parsedFormIO = JSON.parse(task.customHeaders.formIO)
+
+      const newValidate = 'let m = moment();' +
+       'let p = moment(input, "DD.MM.YYYY");' +
+       'let p2 = moment(input, "YYYY-MM-DD");' +
+       'valid = ((m>p) || (m>p2)) ? true : "date must not be in the future"'
+
+      if (parsedFormIO?.components[0]?.components[1]?.validate?.custom) parsedFormIO.components[0].components[1].validate.custom  = newValidate
+
       return (
         <>{
           taskLoading ? (<>
@@ -44,7 +53,7 @@ export const Task = ({ _id }: { _id: string }) => {
             (<>
               <h1 className={'h2'}>{task.customHeaders.title || `Task ${task._id}`}</h1>
               <Errors/>
-              <Form form={ JSON.parse(task.customHeaders.formIO) }
+              <Form form={ parsedFormIO }
                     submission={ {data: task.variables} }
                     onCustomEvent={ (event: customEvent) => event.type == 'cancelClicked' && navigate('/') }
                     options={ { hooks: { beforeSubmit: beforeSubmitHook,} } }
