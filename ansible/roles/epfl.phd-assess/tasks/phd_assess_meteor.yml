@@ -110,6 +110,9 @@
           containers:
             - name: phd-assess-meteor
               image: '{{ openshift_local_images_base }}/{{ phd_assess_meteor_servicename }}:latest'
+              ports:
+                - name: metrics
+                  containerPort: 3000
               env:
               - name: 'PORT'
                 value: '3000'
