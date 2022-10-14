@@ -94,6 +94,7 @@
       tags: meteor
   tags:
     - meteor
+    - meteor-deploy
     - meteor-build
     - meteor-rebuild
     - meteor-promote

@@ -165,6 +165,7 @@
             kind: ImageStreamTag
             name: 'phd-assess-meteor:latest'
             namespace: "{{openshift_namespace}}"
+  tags: meteor-deploy
 
 - name: phd-assess-meteor Service
   openshift:
