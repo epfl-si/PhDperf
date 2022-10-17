@@ -13,6 +13,7 @@ export interface DoctoralSchool {
   creditsNeeded: number,
   programDirectorSciper: Sciper,
   programDirectorName?: string
+  administrativeAssistantAccessGroup?: string
 }
 
 class DoctoralSchoolsCollection extends Mongo.Collection<DoctoralSchool> {
@@ -39,6 +40,7 @@ DoctoralSchools.schema = new SimpleSchema({
   creditsNeeded: { type: SimpleSchema.Integer, min:10, max:99 },
   programDirectorSciper: { type: String, min:6, max:6 },
   programDirectorName: { type: String, optional: true},
+  administrativeAssistantAccessGroup: { type: String, optional: true},
 });
 
 DoctoralSchools.attachSchema(DoctoralSchools.schema);

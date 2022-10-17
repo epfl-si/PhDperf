@@ -15,6 +15,7 @@ export const InlineEdit = ({ doctoralSchool }: DoctoralSchoolEditParameter) => {
   const [helpUrl, setHelpUrl] = useState(doctoralSchool.helpUrl)
   const [creditsNeeded, setCreditsNeeded] = useState(doctoralSchool.creditsNeeded?.toString())
   const [programDirectorSciper, setProgramDirectorSciper] = useState(doctoralSchool.programDirectorSciper)
+  const [administrativeAssistantAccessGroup] = useState(doctoralSchool.administrativeAssistantAccessGroup)
 
   const openEditingMode = () => {
     // refresh state values and show the inputs
@@ -121,6 +122,19 @@ export const InlineEdit = ({ doctoralSchool }: DoctoralSchoolEditParameter) => {
               id={`doctoralSchool-programDirectorSciper-edit-input-${doctoralSchool._id}`}
               placeholder="Type to here to enter the program director sciper"
               onChange={ (e) => setProgramDirectorSciper(e.target.value) }
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor={`doctoralSchool-administrativeAssistantAccessGroup-edit-input-${doctoralSchool._id}`}>
+              Access group for administrative assistants
+            </label>
+            <input
+              value={administrativeAssistantAccessGroup}
+              type="text"
+              className={'form-control'}
+              name="doctoralSchool-administrativeAssistantAccessGroup-edit-input"
+              id={`doctoralSchool-administrativeAssistantAccessGroup-edit-input-${doctoralSchool._id}`}
+              readOnly={true}
             />
           </div>
           <div>
