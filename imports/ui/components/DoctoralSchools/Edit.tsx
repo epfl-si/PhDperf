@@ -5,10 +5,11 @@ import toast from "react-hot-toast"
 
 
 type DoctoralSchoolEditParameter = {
-  doctoralSchool: DoctoralSchool;
+  doctoralSchool: DoctoralSchool
+  readonly : boolean
 };
 
-export const InlineEdit = ({ doctoralSchool }: DoctoralSchoolEditParameter) => {
+export const InlineEdit = ({ doctoralSchool, readonly }: DoctoralSchoolEditParameter) => {
   const [editing, setEditing] = useState(false)
   const [acronym, setAcronym] = useState(doctoralSchool.acronym)
   const [label, setLabel] = useState(doctoralSchool.label)
@@ -150,7 +151,7 @@ export const InlineEdit = ({ doctoralSchool }: DoctoralSchoolEditParameter) => {
           <div className={'col-4 text-break'}>{doctoralSchool.helpUrl}</div>
           <div className={'col-1'}>{doctoralSchool.creditsNeeded}</div>
           <div className={'col-2'}>{doctoralSchool.programDirectorSciper}</div>
-          <div className={'col-1'}><button className={"btn btn-secondary"} onClick={() => openEditingMode()}>Edit</button></div>
+          <div className={'col-1'}><button className={"btn btn-secondary"} onClick={() => openEditingMode()} disabled={ readonly }>Edit</button></div>
         </div>
         }
       </div>

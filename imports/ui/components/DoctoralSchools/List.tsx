@@ -1,9 +1,9 @@
 import React, {useState} from "react"
 import {useTracker} from "meteor/react-meteor-data";
 import {Meteor} from "meteor/meteor";
-import {canEditDoctoralSchools} from "/imports/policy/doctoralSchools";
+import {canEditAtLeastOneDoctoralSchool} from "/imports/policy/doctoralSchools";
 import {Loader} from "@epfl/epfl-sti-react-library";
-import {DoctoralSchools} from "/imports/api/doctoralSchools/schema";
+import {DoctoralSchool, DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 import {CreateForm} from './Create'
 import {InlineEdit} from './Edit'
 
@@ -23,11 +23,11 @@ export function DoctoralSchoolsList() {
   }, []);
 
   const doctoralSchools = useTracker(
-    () => DoctoralSchools.find({}, { sort: { 'acronym': 1 } }).fetch()
+    () => DoctoralSchools.find({}, { sort: { 'acronym': 1 } }).fetch() as Array<DoctoralSchool & {readonly:boolean}>
   , [])
 
   if (!userLoaded) return (<div>Loading user</div>)
-  if (userLoaded && !canEditDoctoralSchools()) return (<div>Your permissions does not allow you to set the doctoral schools.</div>)
+  if (userLoaded && !canEditAtLeastOneDoctoralSchool()) return (<div>Your permissions does not allow you to set the doctoral schools.</div>)
 
   return (
     <>
@@ -58,7 +58,7 @@ export function DoctoralSchoolsList() {
             <div className={'container mt-3'}>
               {
                 doctoralSchools.map((doctoralSchool) =>
-                  <InlineEdit key={doctoralSchool._id} doctoralSchool={ doctoralSchool } />
+                  <InlineEdit key={doctoralSchool._id} doctoralSchool={ doctoralSchool } readonly={ doctoralSchool.readonly} />
                 )
               }
             </div>

@@ -1,17 +1,19 @@
 import {Link, matchPath, useLocation} from "react-router-dom";
 import React from "react";
-import {canEditDoctoralSchools} from "/imports/policy/doctoralSchools";
+import {canEditAtLeastOneDoctoralSchool} from "/imports/policy/doctoralSchools";
 import {canImportScipersFromISA} from "/imports/policy/importScipers";
+import {useSubscribe} from "meteor/react-meteor-data";
 
 
 export const AsideMenu = () => {
   const { pathname } = useLocation()
+  useSubscribe('doctoralSchools');
 
   return (
     <aside className="nav-aside-wrapper">
       <nav id="nav-aside" className="nav-aside" role="navigation" aria-describedby="nav-aside-title">
         <ul>
-          { canEditDoctoralSchools() &&
+          { canEditAtLeastOneDoctoralSchool() &&
             <li>
               <a href="#">
                 Doctoral Programs

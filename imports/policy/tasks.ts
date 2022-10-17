@@ -3,36 +3,12 @@ import {Tasks} from "/imports/model/tasks";
 import {findFieldKeysToSubmit} from "/imports/lib/formIOUtils"
 import _ from "lodash";
 import { Mongo } from 'meteor/mongo';
+import {DoctoralSchool} from "/imports/api/doctoralSchools/schema";
 const debug = require('debug')('import/policy/tasks.ts')
 
-export const canSeeMentorInfos = () : boolean => {
-  return !!Meteor.user()?.isAdmin
-}
 
-/*
- * Set specific finder when a user is not admin.
- * Has it is a quiet complex finder used multiple time, you can find it as a function here
- */
-const buildTaskQuery = (taskQuery: any, user: Meteor.User) => {
-  if (user.isAdmin) {
-    return taskQuery
-  } else {
-    const groups = user.groupList
-
-    if (groups && groups.length > 0) {
-      taskQuery['$or'] = [
-        {"customHeaders.allowedGroups": {$in: groups}},  // Get tasks for the group
-        {"variables.assigneeSciper": user._id},  // Get assigned tasks
-      ]
-    } else {
-      taskQuery["variables.assigneeSciper"] = user._id
-    }
-    return taskQuery
-  }
-}
-
-// set which fields can be seen, by admins or by a user
-const buildTaskFields = (user: Meteor.User) => {
+// set which fields can be seen for a user, depending of their rights
+const getDefaultTaskFields = (user: Meteor.User) => {
 
   // better safe than sorry, by default remove the "not for everyone" ones
   const fieldsView: Mongo.FieldSpecifier = {
@@ -49,55 +25,106 @@ const buildTaskFields = (user: Meteor.User) => {
     // ...
   }
 
-  if (user.isAdmin) {  // remove exclusion if admin
+  if (user.isAdmin) {  // remove some exclusions, if admin
     delete fieldsView['variables.mentorSciper']
     delete fieldsView['variables.mentorName']
     delete fieldsView['variables.mentorEmail']
-    delete fieldsView['variables.activityLogs']
   }
 
   return fieldsView
 }
 
-export const get_user_permitted_task = (_id: string) => {  // when crawling for one task, we get more info, like the FormIO definition
+/**
+ * Used to get the task if the user is allowed to see/edit/proceed
+ */
+export const getUserPermittedTaskDetailed = (_id: String) => {
+
+  const getTaskQuery = (_id: String, user: Meteor.User) => {
+    let taskQuery: any = { _id: _id }
+
+    if (user.isAdmin) {
+      return taskQuery
+    } else {
+      taskQuery["variables.assigneeSciper"] = user._id
+      return taskQuery
+    }
+  }
+
   const user = Meteor.user()
 
   // at this point, check the user is goodly instanced, or return nothing
   if (!user) return
 
-  const fieldsView = buildTaskFields(user)
-  const taskQuery = buildTaskQuery({ _id: _id }, user)  //get only the task needed
+  const fieldsView = getDefaultTaskFields(user)
+  const taskQuery = getTaskQuery(_id, user)  // get only the task needed
 
   return Tasks.find(taskQuery, { 'fields': fieldsView })
 }
 
 // Define which tasks can be seen from the task list
-// use withoutFormDef to specifiy if you need the formIO definition
-export const get_user_permitted_tasks = (excludeFormDefinition: boolean = true) => {  // to show as list, simplified
+export const getUserPermittedTasksForList = () => {
+  const getTasksQuery = (user: Meteor.User) => {
+    if (user.isAdmin) {
+      return {}
+    } else {
+      return {"variables.assigneeSciper": user._id }
+    }
+  }
+
   const user = Meteor.user()
 
   // at this point, check the user is goodly instanced, or return nothing
   if (!user) return
-  const fieldsView = buildTaskFields(user)
-  const taskQuery = buildTaskQuery({}, user)  //get only the task needed
+  const fieldsView = getDefaultTaskFields(user)
+  const taskQuery = getTasksQuery(user)
 
-  if (excludeFormDefinition) {  // should we exclude data that is about the form (useful on view without showing the form)
-    fieldsView['customHeaders.formIO'] = 0
-  }
+  fieldsView['customHeaders.formIO'] = 0  // always exclude the formIO data from tasks list
 
   return Tasks.find(taskQuery, { 'fields': fieldsView })
 }
 
+/**
+ * Returns a dict, keyed by doctoral school acronym, of all `doctoralSchools` this `user` is an administrative assistant for.
+ *
+ * @param user A Meteor.User instance
+ * @param doctoralSchools A list of DoctoralSchool instances (either all of them, or only one of them to check rights on just that school)
+ */
+export const getAssistantAdministrativeMemberships = (user: Meteor.User, doctoralSchools: DoctoralSchool[]) => {
+  const schools : { [acronym : string ] : DoctoralSchool } = {};
+  user.groupList.forEach((groupName) => {
+    const moreSchools = doctoralSchools.filter((ds) => ds.administrativeAssistantAccessGroup === groupName);
+    moreSchools.forEach((ds) => { schools[ds.acronym] = ds });
+  });
+
+  return schools;
+}
+
 // Define which tasks can be seen from the dashboard
-export const get_user_permitted_tasks_dashboard = () => {
+export const getUserPermittedTasksForDashboard = (doctoralSchools : DoctoralSchool[]) => {
+
+  const getTasksQueryForDashboard = (user: Meteor.User) => {
+
+    if (user.isAdmin) {
+      return {}  // get all if admin
+    } else {
+      return {
+        '$or' : [
+          { "variables.programAssistantSciper": Meteor.user()?._id },  // Get tasks that we started as programAssistant
+          { "variables.assigneeSciper": Meteor.user()?._id },  // Get assigned tasks
+          { "variables.doctoralProgramName": { $in: Object.keys(getAssistantAdministrativeMemberships(user, doctoralSchools)) } }  // Get tasks for the group
+        ]
+      }
+    }
+  }
+
   const user = Meteor.user()
 
   // at this point, check the user is goodly instanced, or return nothing
   if (!user) return
-  const fieldsView = buildTaskFields(user)
-  const taskQuery = buildTaskQuery({}, user)  //get only the task needed
+  const fieldsView = getDefaultTaskFields(user)
+  const taskQuery = getTasksQueryForDashboard(user)  //get only the task needed
 
-  // remove unused "too big" fields
+  // remove unused "too big" fields from the dashboard
   fieldsView['customHeaders.formIO'] = 0
 
   return Tasks.find(taskQuery, { 'fields': fieldsView })
@@ -135,8 +162,11 @@ export const canSubmit = (taskId: string) : boolean => {
   }
 }
 
-export const canStartProcessInstance = () : boolean => {
-  return (Meteor.user()!.isProgramAssistant || Meteor.user()!.isAdmin)
+export const canStartProcessInstance = (doctoralSchools: DoctoralSchool[]) : boolean => {
+  const user = Meteor.user();
+  if (! user) return false;
+  if (user.isAdmin || user.isUberProgramAssistant) return true;
+  return Object.keys(getAssistantAdministrativeMemberships(user, doctoralSchools)).length > 0
 }
 
 export const canDeleteProcessInstance = () : boolean => {
@@ -146,7 +176,6 @@ export const canDeleteProcessInstance = () : boolean => {
 export const canRefreshProcessInstance = () : boolean => {
   return !!Meteor.user()?.isAdmin
 }
-
 
 /*
  * Limit what can be submitted per step, by reading the provided formIO

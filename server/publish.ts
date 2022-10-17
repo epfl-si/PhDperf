@@ -2,30 +2,46 @@ import {Meteor} from "meteor/meteor";
 import {DoctoralSchools} from "/imports/api/doctoralSchools/schema"
 import {ImportScipersList} from "/imports/api/importScipers/schema"
 import {
-  get_user_permitted_task,
-  get_user_permitted_tasks,
-  get_user_permitted_tasks_dashboard
+  getUserPermittedTaskDetailed,
+  getUserPermittedTasksForList,
+  getUserPermittedTasksForDashboard
 } from "/imports/policy/tasks";
-import {canEditDoctoralSchools} from "/imports/policy/doctoralSchools";
+import {canEditAtLeastOneDoctoralSchool, canEditDoctoralSchool} from "/imports/policy/doctoralSchools";
 import {canImportScipersFromISA} from "/imports/policy/importScipers";
 import {Tasks} from "/imports/model/tasks";
 import {refreshAlreadyStartedImportScipersList} from "/imports/api/importScipers/helpers";
 
 Meteor.publish('taskDetailed', function (args: [string]) {
-  return get_user_permitted_task(args[0])
+  return getUserPermittedTaskDetailed(args[0])
 })
 
 Meteor.publish('tasks', function () {
-  return get_user_permitted_tasks()
+  return getUserPermittedTasksForList()
 })
 
 Meteor.publish('tasksDashboard', function () {
-  return get_user_permitted_tasks_dashboard()
+  return getUserPermittedTasksForDashboard(DoctoralSchools.find({}).fetch())
 })
 
 Meteor.publish('doctoralSchools', function() {
-  if (canEditDoctoralSchools()) {
-    return DoctoralSchools.find()
+  if (canEditAtLeastOneDoctoralSchool()) {
+    const sub = DoctoralSchools.find({}).observeChanges({
+        added: (id, data) => {
+          const ds = DoctoralSchools.findOne({_id: id});
+          this.added('doctoralSchools', id, {...data, readonly: !(ds && canEditDoctoralSchool(ds))});
+        },
+        changed : (id, data) => {
+          const ds = DoctoralSchools.findOne({_id: id});
+          this.changed('doctoralSchools', id, {...data, readonly: !(ds && canEditDoctoralSchool(ds))});
+        },
+        removed : (id) => {
+          this.removed('doctoralSchools', id);
+        }
+      });
+    this.onStop(() => {
+      sub.stop();
+    });
+    this.ready();
   } else {
     return this.ready()
   }

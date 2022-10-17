@@ -16,7 +16,7 @@ User.transform.addComputedField('isAdmin', (user) => {
   }
 )
 
-User.transform.addComputedField('isProgramAssistant', (user) => {
+User.transform.addComputedField('isUberProgramAssistant', (user) => {
     const programAssistantsGroup = Meteor.settings.public.phdAssessRoleProgramAssistant
     if (!programAssistantsGroup) {
       console.warn('Unable to read the program assistants group. Nobody will have this right')
