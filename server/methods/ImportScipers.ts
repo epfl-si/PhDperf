@@ -234,7 +234,9 @@ Meteor.methods({
   async startPhDAssess(doctoralSchoolAcronym: string) {
     const auditLog = auditLogConsoleOut.extend('server/methods')
 
-    if (!canStartProcessInstance() || !canImportScipersFromISA()) {
+    const ds = DoctoralSchools.findOne({'acronym': doctoralSchoolAcronym})
+
+    if (!ds || !canStartProcessInstance([ds]) || !canImportScipersFromISA()) {
       auditLog(`Unallowed user ${Meteor.user()?._id} is trying to start a workflow.`)
       throw new Meteor.Error(403, 'You are not allowed to start a workflow')
     }

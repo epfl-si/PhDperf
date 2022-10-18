@@ -5,16 +5,18 @@ import toast from "react-hot-toast"
 
 
 type DoctoralSchoolEditParameter = {
-  doctoralSchool: DoctoralSchool;
+  doctoralSchool: DoctoralSchool
+  readonly : boolean
 };
 
-export const InlineEdit = ({ doctoralSchool }: DoctoralSchoolEditParameter) => {
+export const InlineEdit = ({ doctoralSchool, readonly }: DoctoralSchoolEditParameter) => {
   const [editing, setEditing] = useState(false)
   const [acronym, setAcronym] = useState(doctoralSchool.acronym)
   const [label, setLabel] = useState(doctoralSchool.label)
   const [helpUrl, setHelpUrl] = useState(doctoralSchool.helpUrl)
   const [creditsNeeded, setCreditsNeeded] = useState(doctoralSchool.creditsNeeded?.toString())
   const [programDirectorSciper, setProgramDirectorSciper] = useState(doctoralSchool.programDirectorSciper)
+  const [administrativeAssistantAccessGroup] = useState(doctoralSchool.administrativeAssistantAccessGroup)
 
   const openEditingMode = () => {
     // refresh state values and show the inputs
@@ -123,6 +125,19 @@ export const InlineEdit = ({ doctoralSchool }: DoctoralSchoolEditParameter) => {
               onChange={ (e) => setProgramDirectorSciper(e.target.value) }
             />
           </div>
+          <div className="form-group">
+            <label htmlFor={`doctoralSchool-administrativeAssistantAccessGroup-edit-input-${doctoralSchool._id}`}>
+              Access group for administrative assistants
+            </label>
+            <input
+              value={administrativeAssistantAccessGroup}
+              type="text"
+              className={'form-control'}
+              name="doctoralSchool-administrativeAssistantAccessGroup-edit-input"
+              id={`doctoralSchool-administrativeAssistantAccessGroup-edit-input-${doctoralSchool._id}`}
+              readOnly={true}
+            />
+          </div>
           <div>
             <button type="button" className={"btn btn-primary"} onClick={() => { saveEdit()}}>Save</button>
             <button type="button" className={"btn btn-secondary ml-2"} onClick={() => setEditing(false)}>Cancel</button>
@@ -136,7 +151,7 @@ export const InlineEdit = ({ doctoralSchool }: DoctoralSchoolEditParameter) => {
           <div className={'col-4 text-break'}>{doctoralSchool.helpUrl}</div>
           <div className={'col-1'}>{doctoralSchool.creditsNeeded}</div>
           <div className={'col-2'}>{doctoralSchool.programDirectorSciper}</div>
-          <div className={'col-1'}><button className={"btn btn-secondary"} onClick={() => openEditingMode()}>Edit</button></div>
+          <div className={'col-1'}><button className={"btn btn-secondary"} onClick={() => openEditingMode()} disabled={ readonly }>Edit</button></div>
         </div>
         }
       </div>

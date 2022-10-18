@@ -19,7 +19,7 @@ import {
   ImportScipersSchoolSelector
 } from "/imports/ui/components/ImportSciper/List";
 import {canImportScipersFromISA} from "/imports/policy/importScipers";
-import {canEditDoctoralSchools} from "/imports/policy/doctoralSchools";
+import {canEditAtLeastOneDoctoralSchool} from "/imports/policy/doctoralSchools";
 
 
 export const App = () => {
@@ -52,7 +52,7 @@ export const App = () => {
             <div className={'alert alert-info'} role={'alert'}><strong>Testing</strong> You are on the testing environment.</div>
           }
           <Routes>
-            { canEditDoctoralSchools() &&
+            { canEditAtLeastOneDoctoralSchool() &&
               <Route path="/doctoral-programs" element={<DoctoralSchoolsList/>}/>
             }
             <Route path="/dashboard" element={<Dashboard/>}/>

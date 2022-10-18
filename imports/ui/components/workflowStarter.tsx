@@ -1,15 +1,19 @@
 import {global_Error, Meteor} from "meteor/meteor";
 import React, {useState} from "react";
 import toast from 'react-hot-toast';
-import {useTracker} from "meteor/react-meteor-data";
+import {useFind, useSubscribe, useTracker} from "meteor/react-meteor-data";
 import {canStartProcessInstance} from "/imports/policy/tasks";
 import {toastClosable} from "/imports/ui/components/Toasters";
 import {ErrorIcon} from "react-hot-toast/src/components/error";
+import { DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 
 export const WorkflowStarter = () => {
   const userLoaded = !!useTracker(() => {
     return Meteor.user();
   }, []);
+
+  const isLoading = useSubscribe('doctoralSchools');
+  const doctoralSchools = useFind(() => DoctoralSchools.find(), []);
 
   const [isWaiting, setIsWaiting] = useState(false);
 
@@ -38,7 +42,7 @@ export const WorkflowStarter = () => {
 
   return (
     <>
-      {userLoaded && canStartProcessInstance() &&
+      {userLoaded && !isLoading() && canStartProcessInstance(doctoralSchools) &&
       <div id={'worklow-actions'} className={'mb-3'}>
         {isWaiting &&
         <button className="btn btn-secondary disabled">

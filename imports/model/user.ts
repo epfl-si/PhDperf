@@ -24,6 +24,7 @@ import _ from 'lodash'
 
 import { Meteor } from 'meteor/meteor'
 import { Mongo } from 'meteor/mongo'
+import * as MongoNpmModule from 'mongodb';
 import { LocalCollection } from 'meteor/minimongo'
 import SimpleSchema from 'simpl-schema'
 
@@ -41,7 +42,7 @@ declare module "meteor/mongo" {
   }
 }
 
-class Transform<T> {
+class Transform<T extends MongoNpmModule.Document> {
     private computedFields : Array<{k: string, f: (transform: T) => any}> = []
 
     constructor(private collection: Mongo.Collection<T>) {
@@ -65,6 +66,7 @@ const MeteorUsers = <Mongo.Collection<Meteor.User>> Meteor.users
 export class User {
     public _id : string | null = null
     public isAdmin: boolean = false
+    public isUberProgramAssistant: boolean = false
     public tequila?: {
       provider: string | ""
       email: string
@@ -134,6 +136,7 @@ if (Meteor.isServer) {
                   userId = this.userId
             if (! (user && userId)) return
             const isAdmin = user.isAdmin
+            const isUberProgramAssistant = user.isUberProgramAssistant
 
             debug(`Disclosing %s to ${userId}`,
                   isAdmin ? "all users' personal data" : "their own personal data")
@@ -142,6 +145,7 @@ if (Meteor.isServer) {
                 (changes: any, id: string) => {
                     if (id === userId) {
                         changes.isAdmin = isAdmin
+                        changes.isUberProgramAssistant = isUberProgramAssistant
                         return changes
                     } else {
                         return _.pick(changes, ['_id', 'tequila'])  // disclosed
