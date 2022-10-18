@@ -109,8 +109,8 @@ export const getUserPermittedTasksForDashboard = (doctoralSchools : DoctoralScho
     } else {
       return {
         '$or' : [
-          { "variables.programAssistantSciper": Meteor.user()?._id },  // Get tasks that we started as programAssistant
-          { "variables.assigneeSciper": Meteor.user()?._id },  // Get assigned tasks
+          { "variables.programAssistantSciper": user._id },  // Get tasks that we started as programAssistant
+          { "variables.assigneeSciper": user._id },  // Get assigned tasks
           { "variables.doctoralProgramName": { $in: Object.keys(getAssistantAdministrativeMemberships(user, doctoralSchools)) } }  // Get tasks for the group
         ]
       }
