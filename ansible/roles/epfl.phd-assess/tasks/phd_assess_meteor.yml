@@ -157,7 +157,7 @@
               resources:
                 limits:
                   cpu: '250m'
-                  memory: 800M
+                  memory: "{{ '2Gi' if openshift_namespace == 'phd-assess' else '800M' }}"
       triggers:
       - type: ImageChange
         imageChangeParams:
