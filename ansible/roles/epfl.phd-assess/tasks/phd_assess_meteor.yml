@@ -136,6 +136,8 @@
                 value: '100'
               - name: 'TZ'
                 value: 'Europe/Zurich'
+              - name: 'NODE_OPTIONS'
+                value: "--max_old_space_size={{ '1536' if openshift_namespace == 'phd-assess' else '615' }}"
               - name: "{{ encryption_key_name }}"
                 valueFrom:
                   secretKeyRef:
