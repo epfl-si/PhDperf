@@ -69,9 +69,9 @@ const phdAssesSteps = [
  */
 // here we can get multiple task, as they should be grouped by workflow instance id
 // if they are multiple, that means we are waiting for two steps = 2 blue color
-const StepNotDone = () => <div className="participant border col m-1 p-2 text-white"/>
+const StepNotDone = () => <div className="dashboard-step dashboard-step-not-done border col m-1 p-2 text-white"/>
 
-const StepDone = () => <div className="participant border col m-1 p-2 bg-success text-white"/>
+const StepDone = () => <div className="dashboard-step dashboard-step-done border col m-1 p-2 bg-success text-white"/>
 
 const StepPending = ({task}: {task: TaskDashboard}) => {
   let assignees: ParticipantDetail[] | undefined = task.assigneeScipers && Object.values(task.participants).filter((participant: ParticipantDetail) => task.assigneeScipers!.includes(participant.sciper))
@@ -91,7 +91,7 @@ const StepPending = ({task}: {task: TaskDashboard}) => {
   })}`
 
   return (
-    <div className="participant border col m-1 p-2 bg-awaiting text-white"
+    <div className="dashboard-step dashboard-step-pending border col m-1 p-2 bg-awaiting text-white"
      data-toggle="tooltip"
      title={ onHoverInfo } />
   )
@@ -178,10 +178,10 @@ export function Dashboard() {
           ) : (
           <div className="container small dashboard">
             <div className="row" key={ `dashboard_title_row` }>
-              <div className="participant col-2 m-1 p-2 text-black align-self-end">Name</div>
-              <div className="participant col m-1 p-2 text-black align-self-end">Program</div>
+              <div className="dashboard-header dashboard-header-phdStudentName col-2 m-1 p-2 text-black align-self-end">Name</div>
+              <div className="dashboard-header dashboard-header-doctoralProgramName col m-1 p-2 text-black align-self-end">Program</div>
               {
-                _.flatten(phdAssesSteps).map((step) => <div className="participant col m-1 p-2 text-black align-self-end" key={step.id}>{step.label}</div>)
+                _.flatten(phdAssesSteps).map((step) => <div className="dashboard-header col m-1 p-2 text-black align-self-end" key={step.id}>{step.label}</div>)
               }
             </div>
             {
@@ -189,8 +189,8 @@ export function Dashboard() {
                 const workflowInstanceTasks = groupByWorkflowInstanceTasks[taskGrouper]
                 return (
                   <div className="row" key={ `${workflowInstanceTasks[0]._id}_main_div` }>
-                    <div className="participant col-2 m-1 p-2 text-black" key={ `${workflowInstanceTasks[0]._id}_phdStdentScioer` } >{ workflowInstanceTasks[0].variables.phdStudentName ?? workflowInstanceTasks[0].variables.phdStudentSciper }</div>
-                    <div className="participant col m-1 p-2 text-black" key={ `${workflowInstanceTasks[0]._id}_doctoralProgramName` } >{ workflowInstanceTasks[0].variables.doctoralProgramName }</div>
+                    <div className="dashboard-phdStudentName col-2 m-1 p-2 text-black" key={ `${workflowInstanceTasks[0]._id}_phdStudentScioer` } >{ workflowInstanceTasks[0].variables.phdStudentName ?? workflowInstanceTasks[0].variables.phdStudentSciper }</div>
+                    <div className="dashboard-doctoralProgramName col m-1 p-2 text-black" key={ `${workflowInstanceTasks[0]._id}_doctoralProgramName` } >{ workflowInstanceTasks[0].variables.doctoralProgramName }</div>
                     <DrawProgress tasks={ workflowInstanceTasks }  key={ workflowInstanceTasks[0]._id } />
                   </div>
                 )
