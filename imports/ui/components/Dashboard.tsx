@@ -77,20 +77,25 @@ const StepNotDone = () => <div className="participant border col m-1 p-2 text-wh
 const StepDone = () => <div className="participant border col m-1 p-2 bg-success text-white"/>
 
 const StepPending = ({task}: {task: Task}) => {
-  const assignees: ParticipantDetail[] | undefined = task.assigneeScipers && Object.values(task.participants).filter((participant: ParticipantDetail) => task.assigneeScipers!.includes(participant.sciper))
+  let assignees: ParticipantDetail[] | undefined = task.assigneeScipers && Object.values(task.participants).filter((participant: ParticipantDetail) => task.assigneeScipers!.includes(participant.sciper))
 
-  let onHoverInfo = ""
-  assignees?.map((assignee: ParticipantDetail) => onHoverInfo = `${ onHoverInfo } ${assignee.name} (${assignee.sciper})`)
-  onHoverInfo = onHoverInfo ? `${onHoverInfo}, ` : ``
-  onHoverInfo = `${onHoverInfo}Last updated: ${task!.updated_at!.toLocaleString('fr-CH')}`
-  onHoverInfo = onHoverInfo ? `${onHoverInfo}, ` : ``
+  assignees = (assignees && assignees.length > 1) ? _.uniqWith(assignees, _.isEqual) : assignees  // make it uniqu if we have multiple roles
+  let onHoverInfo = ``
+
   const currentStepLabel = _.flatten(phdAssesSteps).find((step) => step.id === task!.elementId)
-  if (currentStepLabel) onHoverInfo = `${onHoverInfo}Step: ${currentStepLabel?.label}`
+  if (currentStepLabel) onHoverInfo += `Step: ${currentStepLabel?.label}\n`
+
+  const assigneesLabel = assignees?.map((assignee: ParticipantDetail) => ` ${assignee.name} (${assignee.sciper})`).join(',') ?? ''
+  if (assigneesLabel) onHoverInfo += `Assignee: ${assigneesLabel}\n`
+  if (task!.updated_at) onHoverInfo += `Preceding step completion date: ${task.updated_at!.toLocaleString('fr-CH', {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+  })}`
 
   return (
     <div className="participant border col m-1 p-2 bg-awaiting text-white"
      data-toggle="tooltip"
-     data-html="true"
      title={ onHoverInfo } />
   )
 }
