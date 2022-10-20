@@ -7,7 +7,7 @@ import {DoctoralSchool} from "/imports/api/doctoralSchools/schema";
 const debug = require('debug')('import/policy/tasks.ts')
 
 
-// set which fields can be seen for a user, depending of their rights
+// set which fields can be seen for a user, depending on their right
 const getDefaultTaskFields = (user: Meteor.User) => {
 
   // better safe than sorry, by default remove the "not for everyone" ones
@@ -97,37 +97,6 @@ export const getAssistantAdministrativeMemberships = (user: Meteor.User, doctora
   });
 
   return schools;
-}
-
-// Define which tasks can be seen from the dashboard
-export const getUserPermittedTasksForDashboard = (doctoralSchools : DoctoralSchool[]) => {
-
-  const getTasksQueryForDashboard = (user: Meteor.User) => {
-
-    if (user.isAdmin) {
-      return {}  // get all if admin
-    } else {
-      return {
-        '$or' : [
-          { "variables.programAssistantSciper": user._id },  // Get tasks that we started as programAssistant
-          { "variables.assigneeSciper": user._id },  // Get assigned tasks
-          { "variables.doctoralProgramName": { $in: Object.keys(getAssistantAdministrativeMemberships(user, doctoralSchools)) } }  // Get tasks for the group
-        ]
-      }
-    }
-  }
-
-  const user = Meteor.user()
-
-  // at this point, check the user is goodly instanced, or return nothing
-  if (!user) return
-  const fieldsView = getDefaultTaskFields(user)
-  const taskQuery = getTasksQueryForDashboard(user)  //get only the task needed
-
-  // remove unused "too big" fields from the dashboard
-  fieldsView['customHeaders.formIO'] = 0
-
-  return Tasks.find(taskQuery, { 'fields': fieldsView })
 }
 
 export const canSubmit = (taskId: string) : boolean => {

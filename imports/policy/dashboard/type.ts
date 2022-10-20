@@ -1,0 +1,40 @@
+import {PhDInputVariables} from "/imports/model/tasksTypes";
+import {Job} from "zeebe-node";
+import {Sciper} from "/imports/api/datatypes";
+import {ParticipantList} from "/imports/model/participants";
+
+export const taskFieldsNeededForDashboard = {
+  '_id': 1,
+  'elementId': 1,
+  'workflowInstanceKey': 1,
+  'variables.assigneeSciper': 1,
+  'variables.updated_at': 1,
+  'variables.phdStudentSciper': 1,
+  'variables.phdStudentEmail': 1,
+  'variables.phdStudentName': 1,
+  'variables.thesisDirectorSciper': 1,
+  'variables.thesisDirectorEmail': 1,
+  'variables.thesisDirectorName': 1,
+  'variables.thesisCoDirectorSciper': 1,
+  'variables.thesisCoDirectorEmail': 1,
+  'variables.thesisCoDirectorName': 1,
+  'variables.programDirectorSciper': 1,
+  'variables.programDirectorEmail': 1,
+  'variables.programDirectorName': 1,
+  'variables.doctoralProgramName': 1,
+}
+
+// define here what is allowed in code, as we filter out a full task to get only useful data
+type UnwantedPhDInputVariablesKeys = "created_by" | "created_at" | "activityLogs"
+
+type PhDInputVariablesDashboard = Omit<PhDInputVariables, UnwantedPhDInputVariablesKeys>
+
+// like the 'Task implements TaskI', minus the unused fields
+export interface TaskDashboard<WorkerInputVariables = PhDInputVariablesDashboard, CustomHeaderShape = {}> extends Job<WorkerInputVariables, CustomHeaderShape> {
+  _id: string
+  elementId: string
+  updated_at?: Date  // value built from variables.updated_at, see the Task class for details
+  workflowInstanceKey: string
+  assigneeScipers?: Sciper[]
+  participants: ParticipantList  // values built from participants found in the 'variables' fields, see the Task class for details
+}

@@ -3,9 +3,9 @@ import {DoctoralSchools} from "/imports/api/doctoralSchools/schema"
 import {ImportScipersList} from "/imports/api/importScipers/schema"
 import {
   getUserPermittedTaskDetailed,
-  getUserPermittedTasksForList,
-  getUserPermittedTasksForDashboard
+  getUserPermittedTasksForList
 } from "/imports/policy/tasks";
+import {getUserPermittedTasksForDashboard} from "/imports/policy/dashboard/tasks";
 import {canEditAtLeastOneDoctoralSchool, canEditDoctoralSchool} from "/imports/policy/doctoralSchools";
 import {canImportScipersFromISA} from "/imports/policy/importScipers";
 import {Tasks} from "/imports/model/tasks";

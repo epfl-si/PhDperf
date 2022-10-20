@@ -1,10 +1,11 @@
 import {useTracker} from "meteor/react-meteor-data"
 import {Meteor} from "meteor/meteor"
-import {Task, Tasks} from "/imports/model/tasks";
+import {Tasks} from "/imports/model/tasks";
 import _ from "lodash"
 import React from "react"
 import {Loader} from "@epfl/epfl-sti-react-library";
 import {ParticipantDetail} from "/imports/model/participants";
+import {TaskDashboard} from "/imports/policy/dashboard/type";
 
 
 /*
@@ -13,7 +14,7 @@ import {ParticipantDetail} from "/imports/model/participants";
  */
 
 /*
- * Define every steps, like in the bpmn. If there are parallel steps, put them inside an array
+ * Define every step, like in the bpmn. If there are parallel steps, put them inside an array
  */
 const phdAssesSteps = [
   {
@@ -68,15 +69,11 @@ const phdAssesSteps = [
  */
 // here we can get multiple task, as they should be grouped by workflow instance id
 // if they are multiple, that means we are waiting for two steps = 2 blue color
-type DrawProgressProps = {
-  tasks: Task[]
-}
-
 const StepNotDone = () => <div className="participant border col m-1 p-2 text-white"/>
 
 const StepDone = () => <div className="participant border col m-1 p-2 bg-success text-white"/>
 
-const StepPending = ({task}: {task: Task}) => {
+const StepPending = ({task}: {task: TaskDashboard}) => {
   let assignees: ParticipantDetail[] | undefined = task.assigneeScipers && Object.values(task.participants).filter((participant: ParticipantDetail) => task.assigneeScipers!.includes(participant.sciper))
 
   assignees = (assignees && assignees.length > 1) ? _.uniqWith(assignees, _.isEqual) : assignees  // make it uniqu if we have multiple roles
@@ -100,7 +97,7 @@ const StepPending = ({task}: {task: Task}) => {
   )
 }
 
-const DrawProgress = ({tasks}: DrawProgressProps) => {
+const DrawProgress = ({tasks}: { tasks: TaskDashboard[] }) => {
 
   let pendingDone = false
   let parallelPendingDone = false
@@ -165,7 +162,7 @@ export function Dashboard() {
 
   const allTasks = useTracker(
     () => Tasks.find({}, { sort: { 'variables.created_at': 1 } })
-      .fetch())
+      .fetch() as TaskDashboard[])
       .filter((task) => task.elementId !== 'Activity_Program_Assistant_Assigns_Participants')
   const groupByWorkflowInstanceTasks = _.groupBy(allTasks, 'workflowInstanceKey')
 
