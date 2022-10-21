@@ -5,7 +5,7 @@ import _ from "lodash"
 import React from "react"
 import {Loader} from "@epfl/epfl-sti-react-library";
 import {ParticipantDetail} from "/imports/model/participants";
-import {TaskDashboard} from "/imports/policy/dashboard/type";
+import {ITaskDashboard} from "/imports/policy/dashboard/type";
 
 
 /*
@@ -73,7 +73,7 @@ const StepNotDone = () => <div className="dashboard-step dashboard-step-not-done
 
 const StepDone = () => <div className="dashboard-step dashboard-step-done border col m-1 p-2 bg-success text-white"/>
 
-const StepPending = ({task}: {task: TaskDashboard}) => {
+const StepPending = ({task}: {task: ITaskDashboard}) => {
   let assignees: ParticipantDetail[] | undefined = task.assigneeScipers && Object.values(task.participants).filter((participant: ParticipantDetail) => task.assigneeScipers!.includes(participant.sciper))
 
   assignees = (assignees && assignees.length > 1) ? _.uniqWith(assignees, _.isEqual) : assignees  // make it uniqu if we have multiple roles
@@ -97,7 +97,7 @@ const StepPending = ({task}: {task: TaskDashboard}) => {
   )
 }
 
-const DrawProgress = ({tasks}: { tasks: TaskDashboard[] }) => {
+const DrawProgress = ({tasks}: { tasks: ITaskDashboard[] }) => {
 
   let pendingDone = false
   let parallelPendingDone = false
@@ -162,7 +162,7 @@ export function Dashboard() {
 
   const allTasks = useTracker(
     () => Tasks.find({}, { sort: { 'variables.created_at': 1 } })
-      .fetch() as TaskDashboard[])
+      .fetch() as ITaskDashboard[])
       .filter((task) => task.elementId !== 'Activity_Program_Assistant_Assigns_Participants')
   const groupByWorkflowInstanceTasks = _.groupBy(allTasks, 'workflowInstanceKey')
 

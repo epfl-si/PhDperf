@@ -61,28 +61,6 @@ export const getUserPermittedTaskDetailed = (_id: String) => {
   return Tasks.find(taskQuery, { 'fields': fieldsView })
 }
 
-// Define which tasks can be seen from the task list
-export const getUserPermittedTasksForList = () => {
-  const getTasksQuery = (user: Meteor.User) => {
-    if (user.isAdmin) {
-      return {}
-    } else {
-      return {"variables.assigneeSciper": user._id }
-    }
-  }
-
-  const user = Meteor.user()
-
-  // at this point, check the user is goodly instanced, or return nothing
-  if (!user) return
-  const fieldsView = getDefaultTaskFields(user)
-  const taskQuery = getTasksQuery(user)
-
-  fieldsView['customHeaders.formIO'] = 0  // always exclude the formIO data from tasks list
-
-  return Tasks.find(taskQuery, { 'fields': fieldsView })
-}
-
 /**
  * Returns a dict, keyed by doctoral school acronym, of all `doctoralSchools` this `user` is an administrative assistant for.
  *
