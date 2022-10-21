@@ -1,10 +1,11 @@
 import {useTracker} from "meteor/react-meteor-data"
 import {Meteor} from "meteor/meteor"
-import {Task, Tasks} from "/imports/model/tasks";
+import {Tasks} from "/imports/model/tasks";
 import _ from "lodash"
 import React from "react"
 import {Loader} from "@epfl/epfl-sti-react-library";
 import {ParticipantDetail} from "/imports/model/participants";
+import {TaskDashboard} from "/imports/policy/dashboard/type";
 
 
 /*
@@ -13,7 +14,7 @@ import {ParticipantDetail} from "/imports/model/participants";
  */
 
 /*
- * Define every steps, like in the bpmn. If there are parallel steps, put them inside an array
+ * Define every step, like in the bpmn. If there are parallel steps, put them inside an array
  */
 const phdAssesSteps = [
   {
@@ -68,34 +69,35 @@ const phdAssesSteps = [
  */
 // here we can get multiple task, as they should be grouped by workflow instance id
 // if they are multiple, that means we are waiting for two steps = 2 blue color
-type DrawProgressProps = {
-  tasks: Task[]
-}
+const StepNotDone = () => <div className="dashboard-step dashboard-step-not-done border col m-1 p-2 text-white"/>
 
-const StepNotDone = () => <div className="participant border col m-1 p-2 text-white"/>
+const StepDone = () => <div className="dashboard-step dashboard-step-done border col m-1 p-2 bg-success text-white"/>
 
-const StepDone = () => <div className="participant border col m-1 p-2 bg-success text-white"/>
+const StepPending = ({task}: {task: TaskDashboard}) => {
+  let assignees: ParticipantDetail[] | undefined = task.assigneeScipers && Object.values(task.participants).filter((participant: ParticipantDetail) => task.assigneeScipers!.includes(participant.sciper))
 
-const StepPending = ({task}: {task: Task}) => {
-  const assignees: ParticipantDetail[] | undefined = task.assigneeScipers && Object.values(task.participants).filter((participant: ParticipantDetail) => task.assigneeScipers!.includes(participant.sciper))
+  assignees = (assignees && assignees.length > 1) ? _.uniqWith(assignees, _.isEqual) : assignees  // make it uniqu if we have multiple roles
+  let onHoverInfo = ``
 
-  let onHoverInfo = ""
-  assignees?.map((assignee: ParticipantDetail) => onHoverInfo = `${ onHoverInfo } ${assignee.name} (${assignee.sciper})`)
-  onHoverInfo = onHoverInfo ? `${onHoverInfo}, ` : ``
-  onHoverInfo = `${onHoverInfo}Last updated: ${task!.updated_at!.toLocaleString('fr-CH')}`
-  onHoverInfo = onHoverInfo ? `${onHoverInfo}, ` : ``
   const currentStepLabel = _.flatten(phdAssesSteps).find((step) => step.id === task!.elementId)
-  if (currentStepLabel) onHoverInfo = `${onHoverInfo}Step: ${currentStepLabel?.label}`
+  if (currentStepLabel) onHoverInfo += `Step: ${currentStepLabel?.label}\n`
+
+  const assigneesLabel = assignees?.map((assignee: ParticipantDetail) => ` ${assignee.name} (${assignee.sciper})`).join(',') ?? ''
+  if (assigneesLabel) onHoverInfo += `Assignee: ${assigneesLabel}\n`
+  if (task!.updated_at) onHoverInfo += `Preceding step completion date: ${task.updated_at!.toLocaleString('fr-CH', {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+  })}`
 
   return (
-    <div className="participant border col m-1 p-2 bg-awaiting text-white"
+    <div className="dashboard-step dashboard-step-pending border col m-1 p-2 bg-awaiting text-white"
      data-toggle="tooltip"
-     data-html="true"
      title={ onHoverInfo } />
   )
 }
 
-const DrawProgress = ({tasks}: DrawProgressProps) => {
+const DrawProgress = ({tasks}: { tasks: TaskDashboard[] }) => {
 
   let pendingDone = false
   let parallelPendingDone = false
@@ -160,7 +162,7 @@ export function Dashboard() {
 
   const allTasks = useTracker(
     () => Tasks.find({}, { sort: { 'variables.created_at': 1 } })
-      .fetch())
+      .fetch() as TaskDashboard[])
       .filter((task) => task.elementId !== 'Activity_Program_Assistant_Assigns_Participants')
   const groupByWorkflowInstanceTasks = _.groupBy(allTasks, 'workflowInstanceKey')
 
@@ -176,10 +178,10 @@ export function Dashboard() {
           ) : (
           <div className="container small dashboard">
             <div className="row" key={ `dashboard_title_row` }>
-              <div className="participant col-2 m-1 p-2 text-black align-self-end">Name</div>
-              <div className="participant col m-1 p-2 text-black align-self-end">Program</div>
+              <div className="dashboard-header dashboard-header-phdStudentName col-2 m-1 p-2 text-black align-self-end">Name</div>
+              <div className="dashboard-header dashboard-header-doctoralProgramName col m-1 p-2 text-black align-self-end">Program</div>
               {
-                _.flatten(phdAssesSteps).map((step) => <div className="participant col m-1 p-2 text-black align-self-end" key={step.id}>{step.label}</div>)
+                _.flatten(phdAssesSteps).map((step) => <div className="dashboard-header col m-1 p-2 text-black align-self-end" key={step.id}>{step.label}</div>)
               }
             </div>
             {
@@ -187,8 +189,8 @@ export function Dashboard() {
                 const workflowInstanceTasks = groupByWorkflowInstanceTasks[taskGrouper]
                 return (
                   <div className="row" key={ `${workflowInstanceTasks[0]._id}_main_div` }>
-                    <div className="participant col-2 m-1 p-2 text-black" key={ `${workflowInstanceTasks[0]._id}_phdStdentScioer` } >{ workflowInstanceTasks[0].variables.phdStudentName ?? workflowInstanceTasks[0].variables.phdStudentSciper }</div>
-                    <div className="participant col m-1 p-2 text-black" key={ `${workflowInstanceTasks[0]._id}_doctoralProgramName` } >{ workflowInstanceTasks[0].variables.doctoralProgramName }</div>
+                    <div className="dashboard-phdStudentName col-2 m-1 p-2 text-black" key={ `${workflowInstanceTasks[0]._id}_phdStudentScioer` } >{ workflowInstanceTasks[0].variables.phdStudentName ?? workflowInstanceTasks[0].variables.phdStudentSciper }</div>
+                    <div className="dashboard-doctoralProgramName col m-1 p-2 text-black" key={ `${workflowInstanceTasks[0]._id}_doctoralProgramName` } >{ workflowInstanceTasks[0].variables.doctoralProgramName }</div>
                     <DrawProgress tasks={ workflowInstanceTasks }  key={ workflowInstanceTasks[0]._id } />
                   </div>
                 )
