@@ -2,7 +2,7 @@ import {global_Error, Meteor} from "meteor/meteor"
 import React from "react"
 import _ from "lodash"
 import {useTracker} from 'meteor/react-meteor-data'
-import {Task, Tasks} from "/imports/model/tasks";
+import {Tasks} from "/imports/model/tasks";
 import {WorkflowStarter} from './workflowStarter'
 import {Button, Loader} from "@epfl/epfl-sti-react-library"
 import {Link} from "react-router-dom"
@@ -13,10 +13,12 @@ import {
 } from "/imports/policy/tasks";
 import {toastClosable} from "/imports/ui/components/Toasters";
 import {ErrorIcon} from "react-hot-toast/src/components/error";
+import {ITaskList} from "/imports/policy/tasksList/type";
 
 
-function TaskRow({ task }: { task: Task }) {
+function TaskRow({ task }: { task: ITaskList }) {
   const toastId = `toast-${task._id}`
+  const user = Meteor.user()
 
   return (
     <div className={'border-top p-2'}>
@@ -31,7 +33,7 @@ function TaskRow({ task }: { task: Task }) {
             <span className={'small'}>Updated {task.updated_at.toLocaleString('fr-CH')}</span>
           }
           {task.created_by &&
-          task.created_by !== Meteor.user()?._id &&
+          task.created_by !== user?._id &&
             <span className={'ml-2 small'}>By {task.variables.created_by}</span>
           }
           </span>
@@ -111,8 +113,7 @@ function TaskRow({ task }: { task: Task }) {
           </span>
         </summary>
         <pre><code>{task.detail}</code></pre>
-
-        {Meteor.user()?.isAdmin &&
+        {user?.isAdmin &&
         <div className={'container'}>
           <div className="row">
             {task.participants &&
@@ -142,7 +143,7 @@ export default function TaskList() {
     return !handle.ready();
   }, []);
 
-  const tasks = useTracker(() => Tasks.find({}).fetch())
+  const tasks = useTracker(() => Tasks.find({}).fetch() as ITaskList[])
   const groupByTasks = _.groupBy(tasks, 'customHeaders.title')
 
   return (
@@ -158,7 +159,7 @@ export default function TaskList() {
               <div key={taskGrouper}>
                 <h3 className={'mt-5'}>{taskGrouper}</h3>
                 {
-                  groupByTasks[taskGrouper].map((task: Task) =>
+                  groupByTasks[taskGrouper].map((task) =>
                     <TaskRow key={task._id} task={task}/>
                   )
                 }
