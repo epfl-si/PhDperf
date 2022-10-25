@@ -41,7 +41,7 @@ make pull build up logs
 
 ### Deploy the workflow
   ```
-  meteor node scripts/deployProcess.js
+  meteor node scripts/deployProcess.mjs
   ```
 
 ### Browse
