@@ -152,8 +152,7 @@ export default {
             try {
               outcome = persistJob(job, Tasks)
             } catch (error) {
-              if (error instanceof MongoInternals.NpmModules.mongodb.module.MongoNetworkError ||
-                  error instanceof MongoInternals.NpmModules.mongodb.module.MongoTimeoutError
+              if (error instanceof MongoInternals.NpmModules.mongodb.module.MongoNetworkError
               ) {
                 // retry later, Mongo may not be available at that time
                 return job.forward()
