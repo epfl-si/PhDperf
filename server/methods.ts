@@ -17,6 +17,7 @@ import '/imports/api/doctoralSchools/methods'
 import '/server/methods/ImportScipers'
 import '/server/methods/DoctoralSchools'
 import {TaskObservables} from "/imports/model/observability";
+import {DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 
 const auditLog = auditLogConsoleOut.extend('server/methods')
 
@@ -24,7 +25,7 @@ const auditLog = auditLogConsoleOut.extend('server/methods')
 Meteor.methods({
 
   async startWorkflow() {  // aka start a new instance in Zeebe terms
-    if (!canStartProcessInstance()) {
+    if (!canStartProcessInstance(DoctoralSchools.find({}).fetch())) {
       auditLog(`Unallowed user ${Meteor.user()?._id} is trying to start a workflow.`)
       throw new Meteor.Error(403, 'You are not allowed to start a workflow')
     }

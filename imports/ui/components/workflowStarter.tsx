@@ -5,7 +5,7 @@ import {useFind, useSubscribe, useTracker} from "meteor/react-meteor-data";
 import {canStartProcessInstance} from "/imports/policy/tasks";
 import {toastClosable} from "/imports/ui/components/Toasters";
 import {ErrorIcon} from "react-hot-toast/src/components/error";
-import { DoctoralSchools} from "/imports/api/doctoralSchools/schema";
+import {DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 
 export const WorkflowStarter = () => {
   const userLoaded = !!useTracker(() => {

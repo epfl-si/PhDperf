@@ -1,5 +1,8 @@
 # CHANGELOG
 
+*1.10.1* (2022-10-25)
+- Fix checking for the right to start an instance without the doctoral list
+
 *1.10.0* (2022-10-21)
 - Reduce bandwidth needed to show the dasboard and the tasks list
 - Improve dashboard presentation
