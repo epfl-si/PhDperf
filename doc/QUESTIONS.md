@@ -2,16 +2,16 @@ Some questions from devs
 
 # Open questions
 
-**Q: Will this app cover all the job types ? like the send_email, generate_pdf, ... ?**
-
-**A:** Needed
-
 **Q: How to resolve the "one worker per worker_processor until timeout" ? Should the Zeebe exporter API design be used to get a workaround on this ?**
 
 **A:** Needed
 
 
 # Closed questions
+
+**Q: Will this app cover all the job types ? like the send_email, generate_pdf, ... ?**
+
+**A:** No, following the micro-service architecture, they are specialized apps doing this part.
 
 **Q: How to have a global view per participant ?**
   Eg: the secretary need to know at which step the process is now, or the student about his PhD Assessement steps
@@ -24,7 +24,7 @@ Some questions from devs
 
 **Q: Do we want shared live form filling session ?
 
-**A:** Well, as we are in the early dev process, it can be seens as a sugar over the top
+**A:** Well, as we are in the early dev process, it can be seen as a sugar over the top
 
 **Q: As the process initiator will be the program assistant,
 should we consider every choose_student step as a bach or a fire-and-forget step ?**
