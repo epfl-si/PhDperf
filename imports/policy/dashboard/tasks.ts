@@ -14,9 +14,10 @@ export const getUserPermittedTasksForDashboard = (doctoralSchools : DoctoralScho
     } else {
       return {
         '$or' : [
-          { "variables.programAssistantSciper": user._id },  // Get tasks that we started as programAssistant
           { "variables.assigneeSciper": user._id },  // Get assigned tasks
-          { "variables.doctoralProgramName": { $in: Object.keys(getAssistantAdministrativeMemberships(user, doctoralSchools)) } }  // Get tasks for the group
+          { "variables.phdStudentSciper": user._id },
+          { "variables.programAssistantSciper": user._id },  // Get tasks that we started as programAssistant
+          { "variables.doctoralProgramName": { $in: Object.keys(getAssistantAdministrativeMemberships(user, doctoralSchools)) } },  // Get tasks for the group
         ]
       }
     }
