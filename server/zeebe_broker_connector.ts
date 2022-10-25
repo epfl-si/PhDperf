@@ -21,7 +21,7 @@ import {auditLogConsoleOut} from "/imports/lib/logging";
 const debug = debug_('phd-assess:zeebe-connector')
 const auditLog = auditLogConsoleOut.extend('server/zeebe_broker_connector')
 
-// what is send as result
+// what is sent as result
 // should be the whole form, or an ACL decided value
 interface OutputVariables {
   [key: string]: any
@@ -90,13 +90,13 @@ enum PersistOutcome {
  *
  * @returns `PersistOutcome.NEW` if we see this job for the very first time
  * @returns `PersistOutcome.ALREADY_KNOWN` if we already had this job in store
- * @returns `PersistOutcome.ALREADY_SUBMITTED` if the job is new but was marked as submitted. It can happens
+ * @returns `PersistOutcome.ALREADY_SUBMITTED` if the job is new but was marked as submitted. It can happen
  *           if we are pulling some batch data that takes time while the job is being submitted
  */
 function persistJob (job: PhDZeebeJob, to_collection: typeof Tasks) : PersistOutcome {
   let status : PersistOutcome
 
-  // assert before inserting that this task is not aldready submitted
+  // assert before inserting that this task is not already submitted
   if (TaskObservables.find({ _id: job.key, submittedAt: { $exists:true } }).count() !== 0) {
     auditLog(`Refusing to add this task ( job key: ${job.key}, process instance : ${job.processInstanceKey} ) to meteor, as it was flagged as already submitted`)
     return PersistOutcome.ALREADY_SUBMITTED

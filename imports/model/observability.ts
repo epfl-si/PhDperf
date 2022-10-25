@@ -9,7 +9,7 @@ type IdempotenceObservable = {
   // The last time at which that happened
   lastSeen: Date
 
-  // The time at which this job as been submitted. Useful to mitigate an incoming but sumbbited task
+  // The time at which this job as been submitted. Useful to mitigate an incoming but submitted task
   submittedAt: Date
 }
 
