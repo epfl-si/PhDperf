@@ -32,7 +32,7 @@ export function DoctoralSchoolsList() {
   return (
     <>
       {doctoralSchoolsLoading ? (
-        <Loader message={'Loading doctoral schools data...'}/>
+        <Loader message={'Loading doctoral schools...'}/>
       ) : (
         doctoralSchools.length === 0 ? (
           <>
