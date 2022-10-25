@@ -136,6 +136,10 @@ function TaskRow({ task }: { task: ITaskList }) {
 }
 
 export default function TaskList() {
+  const userLoaded = !!useTracker(() => {
+    return Meteor.user();
+  }, []);
+
   const listLoading = useTracker(() => {
     // Note that this subscription will get cleaned up
     // when your component is unmounted or deps change.
@@ -145,6 +149,8 @@ export default function TaskList() {
 
   const tasks = useTracker(() => Tasks.find({}).fetch() as ITaskList[])
   const groupByTasks = _.groupBy(tasks, 'customHeaders.title')
+
+  if (!userLoaded) return (<Loader message={'Loading user...'}/>)
 
   return (
     <>

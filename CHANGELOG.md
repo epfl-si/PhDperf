@@ -1,6 +1,6 @@
 # CHANGELOG
 
-*1.10.1* (2022-10-25)
+*1.11.0* (2022-10-25)
 - Fix checking for the right to start an instance without the doctoral list
 - Fix students is unable to see the dashboard for his tasks
 - Remove useless info from activityLogs on submit (self-cleaning)

@@ -79,7 +79,7 @@ Meteor.methods({
       try {
         let participantsToUpdate: any
         if (!task.variables.phdStudentSciper) {
-          // look like a first step if we dont have the phdStudentSciper in task.variables.
+          // look like a first step if we do not have the phdStudentSciper in task.variables.
           // let's fetch with formData then
           participantsToUpdate = await getParticipantsToUpdateFromSciper(formData)
         } else {
