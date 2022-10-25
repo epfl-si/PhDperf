@@ -3,6 +3,7 @@
 *1.10.1* (2022-10-25)
 - Fix checking for the right to start an instance without the doctoral list
 - Fix students is unable to see the dashboard for his tasks
+- Remove useless info from activityLogs on submit (self-cleaning)
 
 *1.10.0* (2022-10-21)
 - Reduce bandwidth needed to show the dasboard and the tasks list
