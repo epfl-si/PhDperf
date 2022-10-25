@@ -166,7 +166,7 @@ export function Dashboard() {
       .filter((task) => task.elementId !== 'Activity_Program_Assistant_Assigns_Participants')
   const groupByWorkflowInstanceTasks = _.groupBy(allTasks, 'workflowInstanceKey')
 
-  if (!userLoaded) return (<Loader message={'Loading user...'}/>)
+  if (!userLoaded) return (<Loader message={'Loading your data...'}/>)
 
   return (
     <>

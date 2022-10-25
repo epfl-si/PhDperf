@@ -26,7 +26,7 @@ export function DoctoralSchoolsList() {
     () => DoctoralSchools.find({}, { sort: { 'acronym': 1 } }).fetch() as Array<DoctoralSchool & {readonly:boolean}>
   , [])
 
-  if (!userLoaded) return (<Loader message={'Loading user...'}/>)
+  if (!userLoaded) return (<Loader message={'Loading your data...'}/>)
   if (userLoaded && !canEditAtLeastOneDoctoralSchool()) return (<div>Your permissions does not allow you to set the doctoral schools.</div>)
 
   return (

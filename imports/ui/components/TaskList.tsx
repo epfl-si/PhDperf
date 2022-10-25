@@ -150,7 +150,7 @@ export default function TaskList() {
   const tasks = useTracker(() => Tasks.find({}).fetch() as ITaskList[])
   const groupByTasks = _.groupBy(tasks, 'customHeaders.title')
 
-  if (!userLoaded) return (<Loader message={'Loading user...'}/>)
+  if (!userLoaded) return (<Loader message={'Loading your data...'}/>)
 
   return (
     <>
