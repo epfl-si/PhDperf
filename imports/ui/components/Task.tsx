@@ -20,10 +20,10 @@ export const Task = ({ _id }: { _id: string }) => {
     const handle = Meteor.subscribe('taskDetailed', [_id]);
     return !handle.ready();
   }, [_id]);
-
   const task = useTracker(() => Tasks.findOne({ _id:_id }), [_id])
-  const toastId = `toast-${_id}`
+
   const [toBeSubmitted, setToBeSubmitted] = useState<boolean | undefined>(true)
+  const toastId = `toast-${_id}`
   const navigate = useNavigate()
 
   // Remove the current notification
@@ -31,27 +31,21 @@ export const Task = ({ _id }: { _id: string }) => {
     toast.dismiss(toastId)
   });
 
+  if (taskLoading) return (<Loader message={'Fetching task...'}/>)
+
   if (task) {
     if (!task.customHeaders.formIO) {
-      return (<div>Task exists but is not well formed (has no formIO field). Check with your administrator that the BPMN file is well formatted</div>)
+      return (<div>Task exists but is not well formed (has no formIO field). This state should not exist. Please contact 1234@epfl.ch about that problem.</div>)
     } else {
-      return (
-        <>{
-          taskLoading ? (<>
-              <Loader message={'Fetching task...'}/>
-            </>)
-            :
-            (<>
-              <h1 className={'h2'}>{task.customHeaders.title || `Task ${task._id}`}</h1>
-              <Errors/>
-              <Form form={ JSON.parse(task.customHeaders.formIO) }
-                    submission={ {data: task.variables} }
-                    onCustomEvent={ (event: customEvent) => event.type == 'cancelClicked' && navigate('/') }
-                    options={ { hooks: { beforeSubmit: beforeSubmitHook,} } }
-              />
-            </>)
-        }</>
-      )
+      return (<>
+          <h1 className={'h2'}>{task.customHeaders.title || `Task ${task._id}`}</h1>
+          <Errors/>
+          <Form form={ JSON.parse(task.customHeaders.formIO) }
+          submission={ {data: task.variables} }
+          onCustomEvent={ (event: customEvent) => event.type == 'cancelClicked' && navigate('/') }
+          options={ { hooks: { beforeSubmit: beforeSubmitHook,} } }
+          />
+      </>)
     }
   } else {
     // if task is no more, it can be that we already submitted it or a 404
