@@ -53,7 +53,7 @@ Meteor.methods({
 
   async submit(_id, formData, formMetaData: FormioActivityLog) {
     if (!canSubmit(_id)) {
-      auditLog(`Unallowed user ${Meteor.user()?._id} is trying to sumbit the task ${_id}`)
+      auditLog(`Unallowed user ${Meteor.user()?._id} is trying to submit the task ${_id}`)
       throw new Meteor.Error(403, 'You are not allowed to submit this task')
     }
 
