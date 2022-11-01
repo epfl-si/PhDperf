@@ -4,59 +4,58 @@ import {findFieldKeysToSubmit} from "/imports/lib/formIOUtils"
 import _ from "lodash";
 import { Mongo } from 'meteor/mongo';
 import {DoctoralSchool} from "/imports/api/doctoralSchools/schema";
+import dayjs from "dayjs";
 const debug = require('debug')('import/policy/tasks.ts')
 
 
-// set which fields can be seen for a user, depending on their right
-const getDefaultTaskFields = (user: Meteor.User) => {
+/**
+ * Utility to build the filter query on  the tasks that should not be here for this reason:
+ * - already submitted
+ * - last seen on zeebe is too old
+ *
+ * This kind of "desync" can happen, yeah, it has already happened  because some OOM error
+ */
+export const filterOutObsoleteTasksQuery = () => {
+  const today = dayjs()
+  const yesterday = today.subtract(1, 'day')
 
-  // better safe than sorry, by default remove the "not for everyone" ones
+  return {
+    "journal.lastSeen": { $gte: yesterday.toDate() },
+    'journal.submittedAt': { $exists:false },
+  }
+}
+
+/**
+ * Used to get the task if the user is allowed to see/edit/proceed
+ */
+export const getUserPermittedTaskDetailed = (_id: string) => {
+  const user = Meteor.user()
+  // at this point, check the user is goodly instanced, or return nothing
+  if (!user) return
+
+  const taskQuery = {
+    _id: _id,
+    ...filterOutObsoleteTasksQuery(),
+    ...(!user.isAdmin && { "variables.assigneeSciper": user._id }),
+  }
+
+  // Set which fields can be seen for a user, depending on their right
+  // Better safe than sorry: by default remove the "not for everyone" ones
   const fieldsView: Mongo.FieldSpecifier = {
     // filter out mentor infos
     'variables.mentorSciper': 0,
     'variables.mentorName': 0,
     'variables.mentorEmail': 0,
 
-    // and admin stuffs
+    // and not really needed stuffs for UI
     'variables.activityLogs': 0,
-
-    // not used fields can be removed too, for saving some bandwidth
-    //'variables.bpmnProcessId':0,
-    // ...
   }
 
-  if (user.isAdmin) {  // remove some exclusions, if admin
+  if (user.isAdmin) {  // admin can see the exclusions, reactivate it
     delete fieldsView['variables.mentorSciper']
     delete fieldsView['variables.mentorName']
     delete fieldsView['variables.mentorEmail']
   }
-
-  return fieldsView
-}
-
-/**
- * Used to get the task if the user is allowed to see/edit/proceed
- */
-export const getUserPermittedTaskDetailed = (_id: String) => {
-
-  const getTaskQuery = (_id: String, user: Meteor.User) => {
-    let taskQuery: any = { _id: _id }
-
-    if (user.isAdmin) {
-      return taskQuery
-    } else {
-      taskQuery["variables.assigneeSciper"] = user._id
-      return taskQuery
-    }
-  }
-
-  const user = Meteor.user()
-
-  // at this point, check the user is goodly instanced, or return nothing
-  if (!user) return
-
-  const fieldsView = getDefaultTaskFields(user)
-  const taskQuery = getTaskQuery(_id, user)  // get only the task needed
 
   return Tasks.find(taskQuery, { 'fields': fieldsView })
 }
