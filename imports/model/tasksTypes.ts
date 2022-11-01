@@ -34,6 +34,22 @@ export interface PhDInputVariables extends ZeebeParticipantsVariables, IInputVar
   //[key: string]: any  // the others var
 }
 
+export type TaskJournal = {
+  // The number of times we received an ActivateJobsResponse from
+  // Zeebe, that referenced this Task
+  seenCount: number
+
+  // The last time at which that happened
+  lastSeen: Date
+
+  // The time at which this job as been submitted. Useful to mitigate an incoming but submitted task
+  submittedAt: Date
+}
+
 // Model the task on what we await from zeebe
-export interface TaskI<WorkerInputVariables = PhDInputVariables, CustomHeaderShape = PhDCustomHeaderShape> extends Job<WorkerInputVariables, CustomHeaderShape> {
+export interface TaskI<
+  WorkerInputVariables = PhDInputVariables,
+  CustomHeaderShape = PhDCustomHeaderShape
+  > extends Job<WorkerInputVariables, CustomHeaderShape> {
+  journal: TaskJournal
 }

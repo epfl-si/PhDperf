@@ -3,7 +3,7 @@ import { Mongo } from 'meteor/mongo'
 import {Sciper} from "/imports/api/datatypes";
 import {ParticipantList, participantsFromZeebe} from './participants';
 import _ from 'lodash';
-import {PhDCustomHeaderShape, PhDInputVariables, TaskI} from "/imports/model/tasksTypes";
+import {PhDCustomHeaderShape, PhDInputVariables, TaskI, TaskJournal} from "/imports/model/tasksTypes";
 
 
 export class Task implements TaskI {
@@ -25,6 +25,7 @@ export class Task implements TaskI {
   declare worker: string;
   declare retries: number;
   declare deadline: string;
+  declare journal: TaskJournal;
 
   assigneeScipers?: Sciper[]
   participants: ParticipantList
@@ -66,6 +67,29 @@ export class Task implements TaskI {
 }
 
 class TasksCollection extends Mongo.Collection<Task> {
+  /**
+   * Once a task is finished, instead of removing it completely,
+   * journalize the submit operation, then remove the others fields (to free spaces, like a remove would do),
+   * and keep it as it is, so we can set check status from incoming zeebe jobs
+   */
+    markAsSubmitted(_id: string) {
+    const task = this.findOne( {_id: _id} );
+
+    if (!task) return
+
+    const betterKeepFields = [
+      "_id",
+      "journal"]
+
+    const fieldsToUnsets =
+      Object.keys(task).filter(el => !betterKeepFields.includes(el)).map(v => [v, ""])
+    const unsetList = Object.fromEntries(fieldsToUnsets)
+
+    this.update({_id: _id }, {
+      $unset: unsetList,
+      $set: { 'journal.submittedAt': new Date() }
+    })
+  }
 }
 
 export const Tasks = new TasksCollection('tasks',
