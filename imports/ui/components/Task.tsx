@@ -11,12 +11,13 @@ import {findDisabledFields} from "/imports/lib/formIOUtils";
 import toast from 'react-hot-toast';
 import {ErrorIcon} from "react-hot-toast/src/components/error";
 import {toastClosable} from "/imports/ui/components/Toasters";
+import {useAccountContext} from "/imports/ui/components/Account";
 
 
 export const Task = ({ _id }: { _id: string }) => {
+  const account = useAccountContext()
+
   const taskLoading = useTracker(() => {
-    // Note that this subscription will get cleaned up
-    // when your component is unmounted or deps change.
     const handle = Meteor.subscribe('taskDetailed', [_id]);
     return !handle.ready();
   }, [_id]);
@@ -30,6 +31,8 @@ export const Task = ({ _id }: { _id: string }) => {
   useEffect(() => {
     toast.dismiss(toastId)
   });
+
+  if (!account || !account.isLoggedIn) return (<Loader message={'Loading your data...'}/>)
 
   if (taskLoading) return (<Loader message={'Fetching task...'}/>)
 

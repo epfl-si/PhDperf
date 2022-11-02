@@ -6,14 +6,13 @@ import {Loader} from "@epfl/epfl-sti-react-library";
 import {DoctoralSchool, DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 import {CreateForm} from './Create'
 import {InlineEdit} from './Edit'
+import {useAccountContext} from "/imports/ui/components/Account";
 
 
 export function DoctoralSchoolsList() {
-  const [showAdd, setShowAdd] = useState(false)
+  const account = useAccountContext()
 
-  const userLoaded = !!useTracker(() => {
-    return Meteor.user();
-  }, []);
+  const [showAdd, setShowAdd] = useState(false)
 
   const doctoralSchoolsLoading = useTracker(() => {
     // Note that this subscription will get cleaned up
@@ -26,10 +25,9 @@ export function DoctoralSchoolsList() {
     () => DoctoralSchools.find({}, { sort: { 'acronym': 1 } }).fetch() as Array<DoctoralSchool & {readonly:boolean}>
   , [])
 
-  if (!userLoaded) return (<Loader message={'Loading your data...'}/>)
-  if (userLoaded && !canEditAtLeastOneDoctoralSchool()) return (<div>Your permissions does not allow you to set the doctoral schools.</div>)
+  if (!account || !account.isLoggedIn) return (<Loader message={'Loading your data...'}/>)
 
-  return (
+  if (account && account.isLoggedIn && canEditAtLeastOneDoctoralSchool()) return (
     <>
       {doctoralSchoolsLoading ? (
         <Loader message={'Loading doctoral schools...'}/>
@@ -67,4 +65,6 @@ export function DoctoralSchoolsList() {
       )}
     </>
   )
+
+  return (<div>Your permissions does not allow you to set the doctoral schools.</div>)
 }

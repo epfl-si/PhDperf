@@ -20,6 +20,7 @@ import {
 } from "/imports/ui/components/ImportSciper/List";
 import {canImportScipersFromISA} from "/imports/policy/importScipers";
 import {canEditAtLeastOneDoctoralSchool} from "/imports/policy/doctoralSchools";
+import {AccountProvider} from "/imports/ui/components/Account";
 
 
 export const App = () => {
@@ -30,47 +31,49 @@ export const App = () => {
   const mainPanelBackgroundColor: CSSProperties = Meteor.settings.public.isTest ? { backgroundColor: 'Cornsilk'} : {}
 
   return (
-    <BrowserRouter>
-      <Toaster
-        toastOptions={{
-          // Define default options
-          duration: 5000,
-          // Default options for specific types
-          success: {
-            duration: 4000,
-          },
-        }}
-      />
-      <PhDHeader/>
-      <PhDBreadcrumbs/>
-      <div className={ 'nav-toggle-layout nav-aside-layout' }>
-        { userLoaded &&
-          <AsideMenu/>
-        }
-        <div className="container" style={ mainPanelBackgroundColor }>
-          { Meteor.settings.public.isTest &&
-            <div className={'alert alert-info'} role={'alert'}><strong>Testing</strong> You are on the testing environment.</div>
+    <AccountProvider>
+      <BrowserRouter>
+        <Toaster
+          toastOptions={{
+            // Define default options
+            duration: 5000,
+            // Default options for specific types
+            success: {
+              duration: 4000,
+            },
+          }}
+        />
+        <PhDHeader/>
+        <PhDBreadcrumbs/>
+        <div className={ 'nav-toggle-layout nav-aside-layout' }>
+          { userLoaded &&
+            <AsideMenu/>
           }
-          <Routes>
-            { canEditAtLeastOneDoctoralSchool() &&
-              <Route path="/doctoral-programs" element={<DoctoralSchoolsList/>}/>
+          <div className="container" style={ mainPanelBackgroundColor }>
+            { Meteor.settings.public.isTest &&
+              <div className={'alert alert-info'} role={'alert'}><strong>Testing</strong> You are on the testing environment.</div>
             }
-            <Route path="/dashboard" element={<Dashboard/>}/>
-            <Route path="/tasks/:_id" element={<TheTask/>} />
-            <Route path="/tasks/" element={<Navigate replace to="/" />} />
-            { canImportScipersFromISA() &&
-            <>
-              <Route path="/import-scipers/:doctoralSchool" element={<ImportScipersForSchool/>}/>
-              <Route path="/import-scipers/" element={<ImportScipersSchoolSelector/>} />
-            </>
-            }
-            <Route path="/" element={<TaskList />} />
-          </Routes>
+            <Routes>
+              { canEditAtLeastOneDoctoralSchool() &&
+                <Route path="/doctoral-programs" element={<DoctoralSchoolsList/>}/>
+              }
+              <Route path="/dashboard" element={<Dashboard/>}/>
+              <Route path="/tasks/:_id" element={<TheTask/>} />
+              <Route path="/tasks/" element={<Navigate replace to="/" />} />
+              { canImportScipersFromISA() &&
+              <>
+                <Route path="/import-scipers/:doctoralSchool" element={<ImportScipersForSchool/>}/>
+                <Route path="/import-scipers/" element={<ImportScipersSchoolSelector/>} />
+              </>
+              }
+              <Route path="/" element={<TaskList />} />
+            </Routes>
+          </div>
         </div>
-      </div>
-      <ZeebeStatus/>
-      <FooterLight/>
-    </BrowserRouter>
+        <ZeebeStatus/>
+        <FooterLight/>
+      </BrowserRouter>
+    </AccountProvider>
   )
 }
 

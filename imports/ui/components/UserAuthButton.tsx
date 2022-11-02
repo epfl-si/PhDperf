@@ -1,14 +1,15 @@
-import { Meteor } from 'meteor/meteor'
-import { useTracker } from 'meteor/react-meteor-data'
 import React, { useState, useRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faUserShield } from '@fortawesome/free-solid-svg-icons'
-import { Popper, PopperOptions } from './Popper'
-import {User} from "/imports/model/user";
+
 import packageJson from '/package.json'
+import {useAccountContext} from "/imports/ui/components/Account";
+import { Popper, PopperOptions } from './Popper'
+
 
 export function UserAuthButton() {
-  const user: User | undefined = useTracker(() => Meteor.user() || undefined)
+  const account = useAccountContext()
+  const user = account?.user
 
   const icon = ( user?.isAdmin) ? faUserShield : faUser
 

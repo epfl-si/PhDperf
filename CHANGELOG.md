@@ -1,6 +1,7 @@
 # CHANGELOG
 
-*1.11.0* (2022-10-25)
+*1.11.0* (2022-11-02)
+- Add the account React provider for components
 - Fix checking for the right to start an instance without the doctoral list
 - Fix students is unable to see the dashboard for his tasks
 - Remove useless info from activityLogs on submit (self-cleaning)

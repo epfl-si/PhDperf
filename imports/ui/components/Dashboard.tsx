@@ -6,6 +6,7 @@ import React from "react"
 import {Loader} from "@epfl/epfl-sti-react-library";
 import {ParticipantDetail} from "/imports/model/participants";
 import {ITaskDashboard} from "/imports/policy/dashboard/type";
+import {useAccountContext} from "/imports/ui/components/Account";
 
 
 /*
@@ -149,9 +150,7 @@ const DrawProgress = ({tasks}: { tasks: ITaskDashboard[] }) => {
 }
 
 export function Dashboard() {
-  const userLoaded = !!useTracker(() => {
-    return Meteor.user();
-  }, []);
+  const account = useAccountContext()
 
   const listLoading = useTracker(() => {
     // Note that this subscription will get cleaned up
@@ -166,7 +165,7 @@ export function Dashboard() {
       .filter((task) => task.elementId !== 'Activity_Program_Assistant_Assigns_Participants')
   const groupByWorkflowInstanceTasks = _.groupBy(allTasks, 'workflowInstanceKey')
 
-  if (!userLoaded) return (<Loader message={'Loading your data...'}/>)
+  if (!account?.isLoggedIn) return (<Loader message={'Loading your data...'}/>)
 
   return (
     <>
