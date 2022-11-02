@@ -49,6 +49,7 @@ export const getUserPermittedTaskDetailed = (_id: string) => {
 
     // and not really needed stuffs for UI
     'variables.activityLogs': 0,
+    'journal':0,
   }
 
   if (user.isAdmin) {  // admin can see the exclusions, reactivate it
