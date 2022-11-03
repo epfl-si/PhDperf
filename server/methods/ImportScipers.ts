@@ -94,7 +94,14 @@ const fetchISA = async (doctoralSchoolAcronym: string) => {
 Meteor.methods({
 
   async getISAScipers(doctoralSchoolAcronym) {
-    if (!canImportScipersFromISA()) {
+    let user: Meteor.User | null = null
+    if (this.userId) {
+      user = Meteor.users.findOne({_id: this.userId}) ?? null
+    }
+
+    if (!user) return
+
+    if (!canImportScipersFromISA(user)) {
       const auditLog = auditLogConsoleOut.extend('server/methods')
       auditLog(`Unallowed user trying to import scipers from ISA`)
 
@@ -122,7 +129,7 @@ Meteor.methods({
         doctoralSchoolAcronym: doctoralSchoolAcronym,
         doctorants: doctorants,
         createdAt: new Date(),
-        createdBy: Meteor.user()?._id ?? '',
+        createdBy: user._id ?? '',
         isAllSelected: false,
       })
     } catch (e: any) {
@@ -132,7 +139,14 @@ Meteor.methods({
   },
 
   async toggleDoctorantCheck(doctoralSchoolAcronym, sciper, checked: boolean) {
-    if (!canImportScipersFromISA()) {
+    let user: Meteor.User | null = null
+    if (this.userId) {
+      user = Meteor.users.findOne({_id: this.userId}) ?? null
+    }
+
+    if (!user) return
+
+    if (!canImportScipersFromISA(user)) {
       const auditLog = auditLogConsoleOut.extend('server/methods')
       auditLog(`Unallowed user trying to import scipers from ISA`)
 
@@ -161,7 +175,14 @@ Meteor.methods({
   },
 
   async toggleAllDoctorantCheck(doctoralSchoolAcronym: string, checked: boolean) {
-    if (!canImportScipersFromISA()) {
+    let user: Meteor.User | null = null
+    if (this.userId) {
+      user = Meteor.users.findOne({_id: this.userId}) ?? null
+    }
+
+    if (!user) return
+
+    if (!canImportScipersFromISA(user)) {
       const auditLog = auditLogConsoleOut.extend('server/methods')
       auditLog(`Unallowed user trying to import scipers from ISA`)
 
@@ -199,7 +220,14 @@ Meteor.methods({
                             doctorantSciper: string,
                             coDirectorSciper: string) {
 
-    if (!canImportScipersFromISA()) {
+    let user: Meteor.User | null = null
+    if (this.userId) {
+      user = Meteor.users.findOne({_id: this.userId}) ?? null
+    }
+
+    if (!user) return
+
+    if (!canImportScipersFromISA(user)) {
       const auditLog = auditLogConsoleOut.extend('server/methods')
       auditLog(`Unallowed user trying to import scipers from ISA`)
 
@@ -232,12 +260,19 @@ Meteor.methods({
   },
 
   async startPhDAssess(doctoralSchoolAcronym: string) {
+    let user: Meteor.User | null = null
+    if (this.userId) {
+      user = Meteor.users.findOne({_id: this.userId}) ?? null
+    }
+
+    if (!user) return
+
     const auditLog = auditLogConsoleOut.extend('server/methods')
 
     const ds = DoctoralSchools.findOne({'acronym': doctoralSchoolAcronym})
 
-    if (!ds || !canStartProcessInstance([ds]) || !canImportScipersFromISA()) {
-      auditLog(`Unallowed user ${Meteor.user()?._id} is trying to start a workflow.`)
+    if (!ds || !canStartProcessInstance(user, [ds]) || !canImportScipersFromISA(user)) {
+      auditLog(`Unallowed user ${user._id} is trying to start a workflow.`)
       throw new Meteor.Error(403, 'You are not allowed to start a workflow')
     }
 
@@ -299,15 +334,15 @@ Meteor.methods({
         thesisCoDirectorName: encrypt(doctorant.thesis.coDirecteur?.fullName ?? ''),
         thesisCoDirectorEmail: encrypt(doctorant.thesis.coDirecteur?.email ?? ''),
 
-        programAssistantSciper: encrypt(Meteor.user()!._id),
-        programAssistantName: encrypt(Meteor.user()?.tequila?.displayname ?? ''),
-        programAssistantEmail: encrypt(Meteor.user()?.tequila.email ?? ''),
+        programAssistantSciper: encrypt(user!._id),
+        programAssistantName: encrypt(user?.tequila?.displayname ?? ''),
+        programAssistantEmail: encrypt(user?.tequila.email ?? ''),
       }
 
       ProcessInstanceCreationPromises.push(
         zBClient!.createProcessInstance('phdAssessProcess', _.merge(dataToPush, {
           created_at: encrypt(new Date().toJSON()),
-          created_by: encrypt(Meteor.user()!._id),
+          created_by: encrypt(user!._id),
           updated_at: encrypt(new Date().toJSON()),
         })
       ))

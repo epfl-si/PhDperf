@@ -24,8 +24,15 @@ const auditLog = auditLogConsoleOut.extend('server/methods')
 Meteor.methods({
 
   async startWorkflow() {  // aka start a new instance in Zeebe terms
-    if (!canStartProcessInstance(DoctoralSchools.find({}).fetch())) {
-      auditLog(`Unallowed user ${Meteor.user()?._id} is trying to start a workflow.`)
+    let user: Meteor.User | null = null
+    if (this.userId) {
+      user = Meteor.users.findOne({_id: this.userId}) ?? null
+    }
+
+    if (!user) return
+
+    if (!canStartProcessInstance(user, DoctoralSchools.find({}).fetch())) {
+      auditLog(`Unallowed user ${user._id} is trying to start a workflow.`)
       throw new Meteor.Error(403, 'You are not allowed to start a workflow')
     }
 
@@ -38,9 +45,9 @@ Meteor.methods({
     try {
       const createProcessInstanceResponse = await Promise.resolve(zBClient.createProcessInstance(diagramProcessId, {
         created_at: encrypt(new Date().toJSON()),
-        created_by: encrypt(Meteor.user()!._id),
+        created_by: encrypt(user._id),
         updated_at: encrypt(new Date().toJSON()),
-        assigneeSciper: encrypt(Meteor.user()!._id),
+        assigneeSciper: encrypt(user._id),
       }))
       auditLog(`created new instance ${diagramProcessId}, response: ${JSON.stringify(createProcessInstanceResponse)}`)
       return createProcessInstanceResponse?.processKey
@@ -51,8 +58,15 @@ Meteor.methods({
   },
 
   async submit(_id, formData, formMetaData: FormioActivityLog) {
-    if (!canSubmit(_id)) {
-      auditLog(`Unallowed user ${Meteor.user()?._id} is trying to submit the task ${_id}`)
+    let user: Meteor.User | null = null
+    if (this.userId) {
+      user = Meteor.users.findOne({_id: this.userId}) ?? null
+    }
+
+    if (!user) return
+
+    if (!canSubmit(user, _id)) {
+      auditLog(`Unallowed user ${user._id} is trying to submit the task ${_id}`)
       throw new Meteor.Error(403, 'You are not allowed to submit this task')
     }
 
@@ -70,7 +84,7 @@ Meteor.methods({
       )
 
       if (formData.length == 0) {
-        auditLog(`Error: the form being submitted by ${Meteor.user()?._id} as insufficient data.`)
+        auditLog(`Error: the form being submitted by ${user._id} as insufficient data.`)
         throw new Meteor.Error(400, 'There is not enough valid data to validate this form. Canceling.')
       }
 
@@ -129,7 +143,14 @@ Meteor.methods({
   },
 
   async deleteProcessInstance(processInstanceKey) {
-    if (!canDeleteProcessInstance()) {
+    let user: Meteor.User | null = null
+    if (this.userId) {
+      user = Meteor.users.findOne({_id: this.userId}) ?? null
+    }
+
+    if (!user) return
+
+    if (!canDeleteProcessInstance(user)) {
       auditLog(`Unallowed user to delete the process instance key ${processInstanceKey}`)
       throw new Meteor.Error(403, 'You are not allowed to delete a process instance')
     }
@@ -149,8 +170,15 @@ Meteor.methods({
   },
 
   async refreshProcessInstance(processInstanceKey) {
-    if (!canRefreshProcessInstance()) {
-      auditLog(`Unallowed user ${Meteor.user()?._id} is trying to refresh the process instance key ${processInstanceKey}.`)
+    let user: Meteor.User | null = null
+    if (this.userId) {
+      user = Meteor.users.findOne({_id: this.userId}) ?? null
+    }
+
+    if (!user) return
+
+    if (!canRefreshProcessInstance(user)) {
+      auditLog(`Unallowed user ${user._id} is trying to refresh the process instance key ${processInstanceKey}.`)
       throw new Meteor.Error(403, 'You are not allowed to refresh a process instance')
     }
 

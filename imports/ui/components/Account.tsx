@@ -1,22 +1,19 @@
 /**
  * Provde a reactive context for user info
  */
-
+import {Meteor} from "meteor/meteor";
 import React, {useContext} from 'react'
 import {createContext} from "react";
 import {useTracker} from 'meteor/react-meteor-data'
 
-import {User} from "/imports/model/user";
-
-
 interface AccountContextInterface {
-  user: User | null;
+  user: Meteor.User | null;
   userId: string | null;
   isLoggedIn: boolean;
 }
 
 const useAccount = () => useTracker(() => {
-  const user = Meteor.user() as User
+  const user = Meteor.user()
   const userId = Meteor.userId()
   return {
     user,

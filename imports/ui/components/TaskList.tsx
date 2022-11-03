@@ -44,7 +44,7 @@ function TaskRow({ task }: { task: ITaskList }) {
               <a href={task.monitorUri} target="_blank" className={'pr-3'}>on Monitor <span
                 className={"fa fa-external-link"}/></a>
             }
-            { canDeleteProcessInstance() &&
+            { user && canDeleteProcessInstance(user) &&
               <span className={"mr-2"}>
                 <Button
                   label={'Cancel process'}
@@ -75,7 +75,7 @@ function TaskRow({ task }: { task: ITaskList }) {
                 />
               </span>
             }
-            { canRefreshProcessInstance() &&
+            { user && canRefreshProcessInstance(user) &&
             <span className={"mr-2"}>
                 <Button
                   label={'Refresh'}
@@ -115,7 +115,7 @@ function TaskRow({ task }: { task: ITaskList }) {
           </span>
         </summary>
         <pre><code>{task.detail}</code></pre>
-        {user?.isAdmin &&
+        { user && user.isAdmin &&
         <div className={'container'}>
           <div className="row">
             {task.participants &&

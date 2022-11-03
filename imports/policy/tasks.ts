@@ -28,8 +28,7 @@ export const filterOutObsoleteTasksQuery = () => {
 /**
  * Used to get the task if the user is allowed to see/edit/proceed
  */
-export const getUserPermittedTaskDetailed = (_id: string) => {
-  const user = Meteor.user()
+export const getUserPermittedTaskDetailed = (user: Meteor.User | null, _id: string) => {
   // at this point, check the user is goodly instanced, or return nothing
   if (!user) return
 
@@ -77,9 +76,7 @@ export const getAssistantAdministrativeMemberships = (user: Meteor.User, doctora
   return schools;
 }
 
-export const canSubmit = (taskId: string) : boolean => {
-  const user = Meteor.user()
-
+export const canSubmit = (user: Meteor.User | null, taskId: string) : boolean => {
   if (!user) return false
 
   if (user.isAdmin) {
@@ -109,19 +106,20 @@ export const canSubmit = (taskId: string) : boolean => {
   }
 }
 
-export const canStartProcessInstance = (doctoralSchools: DoctoralSchool[]) : boolean => {
-  const user = Meteor.user();
+export const canStartProcessInstance = (user: Meteor.User, doctoralSchools: DoctoralSchool[]) : boolean => {
   if (! user) return false;
+
   if (user.isAdmin || user.isUberProgramAssistant) return true;
+
   return Object.keys(getAssistantAdministrativeMemberships(user, doctoralSchools)).length > 0
 }
 
-export const canDeleteProcessInstance = () : boolean => {
-  return !!Meteor.user()?.isAdmin
+export const canDeleteProcessInstance = (user: Meteor.User) : boolean => {
+  return !!user?.isAdmin
 }
 
-export const canRefreshProcessInstance = () : boolean => {
-  return !!Meteor.user()?.isAdmin
+export const canRefreshProcessInstance = (user: Meteor.User) : boolean => {
+  return !!user?.isAdmin
 }
 
 /*

@@ -5,8 +5,7 @@ import {filterOutObsoleteTasksQuery, getAssistantAdministrativeMemberships} from
 import {taskFieldsNeededForDashboard} from "/imports/policy/dashboard/type";
 
 // Define which tasks can be seen from the dashboard
-export const getUserPermittedTasksForDashboard = (doctoralSchools : DoctoralSchool[]) => {
-  const user = Meteor.user()
+export const getUserPermittedTasksForDashboard = (user: Meteor.User | null, doctoralSchools : DoctoralSchool[]) => {
   // at this point, check the user is goodly instanced, or return nothing
   if (!user) return
 

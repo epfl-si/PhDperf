@@ -27,7 +27,7 @@ export function DoctoralSchoolsList() {
 
   if (!account || !account.isLoggedIn) return (<Loader message={'Loading your data...'}/>)
 
-  if (account && account.isLoggedIn && canEditAtLeastOneDoctoralSchool()) return (
+  if (account && account.user && canEditAtLeastOneDoctoralSchool(account.user)) return (
     <>
       {doctoralSchoolsLoading ? (
         <Loader message={'Loading doctoral schools...'}/>

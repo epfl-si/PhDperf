@@ -13,27 +13,47 @@ import {refreshAlreadyStartedImportScipersList} from "/imports/api/importScipers
 
 
 Meteor.publish('taskDetailed', function (args: [string]) {
-  return getUserPermittedTaskDetailed(args[0])
-})
+  if (this.userId) {
+    const user = Meteor.users.findOne({ _id: this.userId }) ?? null
+    return getUserPermittedTaskDetailed(user, args[0])
+  } else {
+    this.ready()
+  }
+}, )
 
 Meteor.publish('tasks', function () {
-  return getUserPermittedTasksForList()
+  if (this.userId) {
+    const user = Meteor.users.findOne({ _id: this.userId }) ?? null
+    return getUserPermittedTasksForList(user)
+  } else {
+    this.ready()
+  }
 })
 
 Meteor.publish('tasksDashboard', function () {
-  return getUserPermittedTasksForDashboard(DoctoralSchools.find({}).fetch())
+  if (this.userId) {
+    const user = Meteor.users.findOne({_id: this.userId}) ?? null
+    return getUserPermittedTasksForDashboard(user, DoctoralSchools.find({}).fetch())
+  } else {
+    this.ready()
+  }
 })
 
 Meteor.publish('doctoralSchools', function() {
-  if (canEditAtLeastOneDoctoralSchool()) {
+  let user: Meteor.User | null = null
+  if (this.userId) {
+    user = Meteor.users.findOne({_id: this.userId}) ?? null
+  }
+
+  if (user && canEditAtLeastOneDoctoralSchool(user)) {
     const sub = DoctoralSchools.find({}).observeChanges({
         added: (id, data) => {
           const ds = DoctoralSchools.findOne({_id: id});
-          this.added('doctoralSchools', id, {...data, readonly: !(ds && canEditDoctoralSchool(ds))});
+          this.added('doctoralSchools', id, {...data, readonly: !(ds && canEditDoctoralSchool(user, ds))});
         },
         changed : (id, data) => {
           const ds = DoctoralSchools.findOne({_id: id});
-          this.changed('doctoralSchools', id, {...data, readonly: !(ds && canEditDoctoralSchool(ds))});
+          this.changed('doctoralSchools', id, {...data, readonly: !(ds && canEditDoctoralSchool(user, ds))});
         },
         removed : (id) => {
           this.removed('doctoralSchools', id);
@@ -44,12 +64,17 @@ Meteor.publish('doctoralSchools', function() {
     });
     this.ready();
   } else {
-    return this.ready()
+    this.ready()
   }
 })
 
 Meteor.publish('importScipersList', function(doctoralSchoolAcronym: string) {
-  if (canImportScipersFromISA()) {
+  let user: Meteor.User | null = null
+  if (this.userId) {
+    user = Meteor.users.findOne({_id: this.userId}) ?? null
+  }
+
+  if (user && canImportScipersFromISA(user)) {
     let initializing = true;
 
     /*
@@ -104,6 +129,6 @@ Meteor.publish('importScipersList', function(doctoralSchoolAcronym: string) {
 
     return ImportScipersList.find({ _id: doctoralSchoolAcronym })
   } else {
-    return this.ready()
+    this.ready()
   }
 })

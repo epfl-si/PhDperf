@@ -1,33 +1,20 @@
 import React, {CSSProperties} from 'react';
 import {
-  BrowserRouter, Route, Routes,
-  useParams, useLocation, matchPath, Navigate
+  BrowserRouter, useLocation, matchPath
 } from "react-router-dom"
 import {FooterLight, Breadcrumbs} from "@epfl/epfl-sti-react-library"
 import {PhDHeader} from "./components/PhDHeader"
-import TaskList from "./components/TaskList"
-import {Task} from "./components/Task"
+
 import {ZeebeStatus} from "/imports/ui/components/ZeebeStatus"
 import {Toaster} from "react-hot-toast";
-import {DoctoralSchoolsList} from "/imports/ui/components/DoctoralSchools/List";
-import {Dashboard} from "/imports/ui/components/Dashboard";
-import {useTracker} from "meteor/react-meteor-data";
+
 import {Meteor} from "meteor/meteor";
 import {AsideMenu} from "/imports/ui/components/AsideMenu";
-import {
-  ImportScipersForSchool,
-  ImportScipersSchoolSelector
-} from "/imports/ui/components/ImportSciper/List";
-import {canImportScipersFromISA} from "/imports/policy/importScipers";
-import {canEditAtLeastOneDoctoralSchool} from "/imports/policy/doctoralSchools";
 import {AccountProvider} from "/imports/ui/components/Account";
+import {PhDRoutes} from "/imports/ui/routes";
 
 
 export const App = () => {
-  const userLoaded = useTracker(() => {
-    return Meteor.user();
-  }, []);
-
   const mainPanelBackgroundColor: CSSProperties = Meteor.settings.public.isTest ? { backgroundColor: 'Cornsilk'} : {}
 
   return (
@@ -46,28 +33,12 @@ export const App = () => {
         <PhDHeader/>
         <PhDBreadcrumbs/>
         <div className={ 'nav-toggle-layout nav-aside-layout' }>
-          { userLoaded &&
-            <AsideMenu/>
-          }
+          <AsideMenu/>
           <div className="container" style={ mainPanelBackgroundColor }>
             { Meteor.settings.public.isTest &&
               <div className={'alert alert-info'} role={'alert'}><strong>Testing</strong> You are on the testing environment.</div>
             }
-            <Routes>
-              { canEditAtLeastOneDoctoralSchool() &&
-                <Route path="/doctoral-programs" element={<DoctoralSchoolsList/>}/>
-              }
-              <Route path="/dashboard" element={<Dashboard/>}/>
-              <Route path="/tasks/:_id" element={<TheTask/>} />
-              <Route path="/tasks/" element={<Navigate replace to="/" />} />
-              { canImportScipersFromISA() &&
-              <>
-                <Route path="/import-scipers/:doctoralSchool" element={<ImportScipersForSchool/>}/>
-                <Route path="/import-scipers/" element={<ImportScipersSchoolSelector/>} />
-              </>
-              }
-              <Route path="/" element={<TaskList />} />
-            </Routes>
+            <PhDRoutes/>
           </div>
         </div>
         <ZeebeStatus/>
@@ -75,11 +46,6 @@ export const App = () => {
       </BrowserRouter>
     </AccountProvider>
   )
-}
-
-function TheTask() {
-  const {_id} = useParams<{ _id: string }>()
-  return <Task _id={_id!}/>
 }
 
 function PhDBreadcrumbs() {

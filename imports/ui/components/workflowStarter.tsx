@@ -39,10 +39,12 @@ export const WorkflowStarter = () => {
     )
   }
 
+  if (isLoading() || !account || !account.user) return <></>
+
   return (
     <>
       {
-        account && account.isLoggedIn && !isLoading() && canStartProcessInstance(doctoralSchools) &&
+        canStartProcessInstance(account.user, doctoralSchools) &&
           <div id={'worklow-actions'} className={'mb-3'}>
             {isWaiting &&
             <button className="btn btn-secondary disabled">

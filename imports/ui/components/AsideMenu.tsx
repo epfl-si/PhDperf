@@ -16,7 +16,7 @@ export const AsideMenu = () => {
     <aside className="nav-aside-wrapper">
       <nav id="nav-aside" className="nav-aside" role="navigation" aria-describedby="nav-aside-title">
         <ul>
-          { account && account.isLoggedIn && canEditAtLeastOneDoctoralSchool() &&
+          { account && account.user && canEditAtLeastOneDoctoralSchool(account.user) &&
             <li>
               <a href="#">
                 Doctoral Programs
@@ -35,7 +35,7 @@ export const AsideMenu = () => {
               <li className={matchPath("/", pathname) ? 'active' : undefined }><Link to={`/`}>List</Link></li>
               <li className={matchPath("/dashboard", pathname) ? 'active' : undefined}><Link
                 to={`/dashboard`}>Dashboard</Link></li>
-                { account && account.isLoggedIn && canImportScipersFromISA() &&
+                { account && account.user && canImportScipersFromISA(account.user) &&
                   <li className={matchPath("/import-scipers", pathname) ? 'active' : undefined }><Link
                     to={`/import-scipers`}>Import scipers</Link></li>
                 }
