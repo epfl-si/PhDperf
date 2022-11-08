@@ -1,7 +1,11 @@
 import {DoctoralSchool} from "/imports/api/doctoralSchools/schema";
 import {Meteor} from "meteor/meteor";
 import {Tasks} from "/imports/model/tasks";
-import {filterOutObsoleteTasksQuery, getAssistantAdministrativeMemberships} from "/imports/policy/tasks";
+import {
+  filterOutObsoleteTasksQuery,
+  filterOutSubmittedTasksQuery,
+  getAssistantAdministrativeMemberships
+} from "/imports/policy/tasks";
 import {taskFieldsNeededForDashboard} from "/imports/policy/dashboard/type";
 
 // Define which tasks can be seen from the dashboard
@@ -11,6 +15,7 @@ export const getUserPermittedTasksForDashboard = (user: Meteor.User | null, doct
 
   const taskQuery = {
     ...(!user.isAdmin && filterOutObsoleteTasksQuery()),
+    ...filterOutSubmittedTasksQuery(),
     ...(!user.isAdmin && {
       '$or': [
         {"variables.assigneeSciper": user._id},

@@ -104,7 +104,10 @@ function persistJob (job: PhDZeebeJob) : PersistOutcome {
   const { insertedId } = Tasks.upsert(
     job.key,
     {
-      $setOnInsert: zeebeJobToTask(job)
+      $setOnInsert: zeebeJobToTask(job),
+      // add journal about operations on this task
+      $inc: { "journal.seenCount": 1 },
+      $set: { "journal.lastSeen": new Date() },
     })
 
   if (insertedId !== undefined) {
@@ -113,14 +116,6 @@ function persistJob (job: PhDZeebeJob) : PersistOutcome {
   } else {
     status = PersistOutcome.ALREADY_KNOWN
   }
-
-  // add journal about operations on this task
-  Tasks.upsert(
-    job.key,
-    {
-      $inc: { "journal.seenCount": 1 },
-      $set: { "journal.lastSeen": new Date() },
-    })
 
   return status
 }

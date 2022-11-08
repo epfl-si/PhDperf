@@ -10,7 +10,6 @@ const debug = require('debug')('import/policy/tasks.ts')
 
 /**
  * Utility to build the filter query on  the tasks that should not be here for this reason:
- * - already submitted
  * - last seen on zeebe is too old
  *
  * This kind of "desync" can happen, yeah, it has already happened  because some OOM error
@@ -21,6 +20,15 @@ export const filterOutObsoleteTasksQuery = () => {
 
   return {
     "journal.lastSeen": { $gte: yesterday.toDate() },
+  }
+}
+
+/**
+ * Filter the already submitted that we keep as rule to not reload,
+ * if a task is coming from Zeebe while being submitted
+ */
+export const filterOutSubmittedTasksQuery = () => {
+  return {
     'journal.submittedAt': { $exists:false },
   }
 }
@@ -35,6 +43,7 @@ export const getUserPermittedTaskDetailed = (user: Meteor.User | null, _id: stri
   const taskQuery = {
     _id: _id,
     ...filterOutObsoleteTasksQuery(),
+    ...filterOutSubmittedTasksQuery(),
     ...(!user.isAdmin && { "variables.assigneeSciper": user._id }),
   }
 
@@ -55,6 +64,7 @@ export const getUserPermittedTaskDetailed = (user: Meteor.User | null, _id: stri
     delete fieldsView['variables.mentorSciper']
     delete fieldsView['variables.mentorName']
     delete fieldsView['variables.mentorEmail']
+    delete fieldsView['journal']
   }
 
   return Tasks.find(taskQuery, { 'fields': fieldsView })

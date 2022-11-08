@@ -7,11 +7,11 @@ import {ImportScipersForSchool, ImportScipersSchoolSelector} from "/imports/ui/c
 import TaskList from "/imports/ui/components/TaskList";
 import React from "react";
 import {useAccountContext} from "/imports/ui/components/Account";
-import {Task} from "/imports/ui/components/Task";
+import {TaskForm} from "/imports/ui/components/TaskForm";
 
-function TheTask() {
+function TaskEdit() {
   const {_id} = useParams<{ _id: string }>()
-  return <Task _id={_id!}/>
+  return <TaskForm _id={_id!}/>
 }
 
 export const PhDRoutes = () => {
@@ -23,7 +23,7 @@ export const PhDRoutes = () => {
         <Route path="/doctoral-programs" element={<DoctoralSchoolsList/>}/>
       }
       <Route path="/dashboard" element={<Dashboard/>}/>
-      <Route path="/tasks/:_id" element={<TheTask/>} />
+      <Route path="/tasks/:_id" element={<TaskEdit/>} />
       <Route path="/tasks/" element={<Navigate replace to="/" />} />
       { account && account.user && canImportScipersFromISA(account.user) &&
         <>

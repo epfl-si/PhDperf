@@ -2,7 +2,7 @@
 import {Meteor} from "meteor/meteor";
 import {Tasks} from "/imports/model/tasks";
 import {taskFieldsNeededForList, taskFieldsNeededForListAdmin} from "/imports/policy/tasksList/type";
-import {filterOutObsoleteTasksQuery} from "/imports/policy/tasks";
+import {filterOutObsoleteTasksQuery, filterOutSubmittedTasksQuery} from "/imports/policy/tasks";
 
 export const getUserPermittedTasksForList = (user: Meteor.User | null) => {
   // at this point, check the user is goodly instanced, or return nothing
@@ -11,6 +11,7 @@ export const getUserPermittedTasksForList = (user: Meteor.User | null) => {
   const taskQuery = {
     ...(!user.isAdmin && filterOutObsoleteTasksQuery()),
     ...(!user.isAdmin && { "variables.assigneeSciper": user._id }),
+    ...filterOutSubmittedTasksQuery()
   }
 
   const taskFields = {

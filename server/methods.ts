@@ -4,7 +4,8 @@ import {Tasks} from "/imports/model/tasks";
 import {FormioActivityLog} from "/imports/model/tasksTypes";
 import {
   filterUnsubmittableVars, canSubmit, canDeleteProcessInstance,
-  canStartProcessInstance, canRefreshProcessInstance
+  canStartProcessInstance, canRefreshProcessInstance,
+  getUserPermittedTaskDetailed
 } from "/imports/policy/tasks";
 import _ from "lodash";
 import {zBClient} from "/server/zeebe_broker_connector";
@@ -54,6 +55,24 @@ Meteor.methods({
     } catch (e) {
       auditLog(`Error: Unable to create a new workflow instance. ${e}`)
       throw new Meteor.Error(500, `Unable to start a new workflow. Please contact the admin to verify the server. ${e}`)
+    }
+  },
+
+  async getTaskForm(_id) {
+    let user: Meteor.User | null = null
+    if (this.userId) {
+      user = Meteor.users.findOne({_id: this.userId}) ?? null
+    }
+
+    if (!user) return
+
+    const task = getUserPermittedTaskDetailed(user, _id)?.fetch()
+
+    if (task && task[0]) {
+      return task[0]
+    } else {
+      auditLog(`Error: the task that is trying to be edited can not be found or the user has no the correct rights. Task key requested: ${_id}.`)
+      throw new Meteor.Error(404, 'Unknown task or unallowed permission', 'Check the task exist by refreshing your browser')
     }
   },
 

@@ -3,10 +3,15 @@ import { Mongo } from 'meteor/mongo'
 import {Sciper} from "/imports/api/datatypes";
 import {ParticipantList, participantsFromZeebe} from './participants';
 import _ from 'lodash';
-import {PhDCustomHeaderShape, PhDInputVariables, TaskI, TaskJournal} from "/imports/model/tasksTypes";
+import {
+  PhDCustomHeaderShape,
+  PhDInputVariables,
+  TaskInterface,
+  TaskJournal
+} from "/imports/model/tasksTypes";
 
 
-export class Task implements TaskI {
+export class Task implements TaskInterface {
   declare _id?: string
   declare variables: PhDInputVariables
   declare processInstanceKey: string
@@ -28,7 +33,7 @@ export class Task implements TaskI {
   declare journal: TaskJournal;
 
   assigneeScipers?: Sciper[]
-  participants: ParticipantList
+  participants?: ParticipantList
   created_by?: Sciper
   created_at?: Date
   updated_at?: Date
@@ -39,7 +44,7 @@ export class Task implements TaskI {
 
     // historically, assignees can come from multiple ways: as string or as array, from variables.assigneeSciper
     // Transform all into an array, named assigneeScipers
-    if (this.variables.assigneeSciper) {
+    if (this.variables?.assigneeSciper) {
       if (Array.isArray(this.variables.assigneeSciper)) {
         this.assigneeScipers = this.variables.assigneeSciper
       } else {
@@ -47,7 +52,7 @@ export class Task implements TaskI {
       }
     }
 
-    this.participants = participantsFromZeebe(this.variables)
+    if (this.variables) this.participants = participantsFromZeebe(this.variables)
     this.created_by = this.variables?.created_by
     this.created_at = this.variables.created_at ? new Date(this.variables?.created_at) : undefined
     this.updated_at = this.variables.updated_at ? new Date(this.variables?.updated_at) : undefined

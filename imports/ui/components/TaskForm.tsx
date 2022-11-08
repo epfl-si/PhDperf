@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import {Errors, Form} from '@formio/react'
 import {customEvent} from '/imports/ui/model/formIo'
-import {Tasks} from "/imports/model/tasks";
+import {Task, Tasks} from "/imports/model/tasks";
 import {global_Error, Meteor} from 'meteor/meteor'
 import {useTracker} from 'meteor/react-meteor-data'
 import {Button, Loader} from "@epfl/epfl-sti-react-library"
@@ -14,15 +14,48 @@ import {toastClosable} from "/imports/ui/components/Toasters";
 import {useAccountContext} from "/imports/ui/components/Account";
 
 
-export const Task = ({ _id }: { _id: string }) => {
+const TaskAdminInfo = ({ _id }: { _id: string }) => {
   const account = useAccountContext()
 
+  const [showAdminInfo, setShowAdminInfo] = useState(false)
   const taskLoading = useTracker(() => {
     const handle = Meteor.subscribe('taskDetailed', [_id]);
     return !handle.ready();
   }, [_id]);
+
   const task = useTracker(() => Tasks.findOne({ _id:_id }), [_id])
 
+  return (
+    <>
+      { !taskLoading && account?.user?.isAdmin && task &&
+        <div>
+          {showAdminInfo ?
+            <>
+              <div>
+                <a href={'#'}
+                  onClick={ () => setShowAdminInfo(false) }
+                >Close admin info
+                </a>
+              </div>
+              <div>Last seen { task.journal.lastSeen?.toLocaleString('fr-CH') }, { task.journal.seenCount }x</div>
+            </> :
+            <div>
+              <a
+                href={'#'}
+                onClick={ () => setShowAdminInfo(true) }
+              >Admin info</a>
+            </div>
+          }
+        </div>
+      }
+    </>
+  )
+}
+
+const TaskFormEdit = ({ _id }: { _id: string }) => {
+  const account = useAccountContext()
+
+  const [task, setTask] = useState<Task | undefined>()
   const [toBeSubmitted, setToBeSubmitted] = useState<boolean | undefined>(true)
   const toastId = `toast-${_id}`
   const navigate = useNavigate()
@@ -32,23 +65,50 @@ export const Task = ({ _id }: { _id: string }) => {
     toast.dismiss(toastId)
   });
 
+  useEffect(() => {
+    Meteor.apply(
+      'getTaskForm',
+      [_id],
+      {
+        wait: true,
+        onResultReceived: (error: Error | Meteor.Error | undefined, result) => {
+          if (error) {
+            toast(
+              toastClosable(toastId, `${error}`),
+              {
+                id: toastId,
+                duration: Infinity,
+                icon: <ErrorIcon />,
+              }
+            );
+          } else {
+            setTask(result as Task)
+          }
+        }
+      },
+    )
+  }, [_id])
+
+
   if (!account || !account.isLoggedIn) return (<Loader message={'Loading your data...'}/>)
 
-  if (taskLoading) return (<Loader message={'Fetching task...'}/>)
+  if (!task) return (<Loader message={'Fetching task...'}/>)
 
   if (task) {
     if (!task.customHeaders.formIO) {
       return (<div>Task exists but is not well formed (has no formIO field). This state should not exist. Please contact 1234@epfl.ch about that problem.</div>)
     } else {
-      return (<>
+      return (
+        <>
           <h1 className={'h2'}>{task.customHeaders.title || `Task ${task._id}`}</h1>
           <Errors/>
           <Form form={ JSON.parse(task.customHeaders.formIO) }
-          submission={ {data: task.variables} }
-          onCustomEvent={ (event: customEvent) => event.type == 'cancelClicked' && navigate('/') }
-          options={ { hooks: { beforeSubmit: beforeSubmitHook,} } }
+            submission={ {data: task.variables} }
+            onCustomEvent={ (event: customEvent) => event.type == 'cancelClicked' && navigate('/') }
+            options={ { hooks: { beforeSubmit: beforeSubmitHook,} } }
           />
-      </>)
+        </>
+      )
     }
   } else {
     // if task is no more, it can be that we already submitted it or a 404
@@ -101,4 +161,16 @@ export const Task = ({ _id }: { _id: string }) => {
       }
     )
   }
+}
+
+export const TaskForm = ({ _id }: { _id: string }) => {
+  const account = useAccountContext()
+  if (!account || !account.isLoggedIn) return (<Loader message={'Loading your data...'}/>)
+
+  return (
+    <div>
+      <TaskAdminInfo _id={ _id } />
+      <TaskFormEdit _id={ _id }/>
+    </div>
+  )
 }

@@ -19,7 +19,7 @@ Meteor.publish('taskDetailed', function (args: [string]) {
   } else {
     this.ready()
   }
-}, )
+})
 
 Meteor.publish('tasks', function () {
   if (this.userId) {
