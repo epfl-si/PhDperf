@@ -1,5 +1,10 @@
 # CHANGELOG
 
+*1.12.0* (2022-11-08)
+- Improve how the task is fetched from the server (from a subscribtion to a method)
+- Adding admin info into the task edition view
+- Filter submitted task and obsolete one from queries
+
 *1.11.0* (2022-11-02)
 - Add the account React provider for components
 - Fix checking for the right to start an instance without the doctoral list
