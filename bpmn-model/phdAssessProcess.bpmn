@@ -426,7 +426,7 @@
         </zeebe:taskHeaders>
         <zeebe:ioMapping>
           <zeebe:input source="= programDirectorEmail" target="to" />
-          <zeebe:input source="= programAssistantEmail" target="cc" />
+          <zeebe:input source="= doctoralProgramEmail" target="cc" />
           <zeebe:input source="= null" target="PDF" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
@@ -659,7 +659,7 @@
           <zeebe:header key="pdfName" value="phd_annual_report" />
         </zeebe:taskHeaders>
         <zeebe:ioMapping>
-          <zeebe:input source="= programAssistantEmail" target="to" />
+          <zeebe:input source="= doctoralProgramEmail" target="to" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1no9et7</bpmn:incoming>
