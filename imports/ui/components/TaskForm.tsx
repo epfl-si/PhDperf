@@ -31,13 +31,9 @@ const TaskAdminInfo = ({ _id }: { _id: string }) => {
         <div>
           {showAdminInfo ?
             <>
-              <div>
-                <a href={'#'}
-                  onClick={ () => setShowAdminInfo(false) }
-                >Close admin info
-                </a>
-              </div>
-              <div>Last seen { task.journal.lastSeen?.toLocaleString('fr-CH') }, { task.journal.seenCount }x</div>
+              <div><a href={'#'} onClick={ () => setShowAdminInfo(false) }>Close</a></div>
+              <div>Task last seen on Zeebe at { task.journal.lastSeen?.toLocaleString('fr-CH') }, { task.journal.seenCount }x</div>
+
             </> :
             <div>
               <a
@@ -56,7 +52,9 @@ const TaskFormEdit = ({ _id }: { _id: string }) => {
   const account = useAccountContext()
 
   const [task, setTask] = useState<Task | undefined>()
-  const [toBeSubmitted, setToBeSubmitted] = useState<boolean | undefined>(true)
+
+  const [isSubmitted, setIsSubmitted] = useState(false)
+
   const toastId = `toast-${_id}`
   const navigate = useNavigate()
 
@@ -87,8 +85,14 @@ const TaskFormEdit = ({ _id }: { _id: string }) => {
         }
       },
     )
-  }, [_id])
+  }, [])
 
+  if (isSubmitted) return (
+    <>
+      <div className={'alert alert-success'} role='alert'>{'Data submitted !'}</div>
+      <Link to={`/`}><Button label={'Back'} onClickFn={() => void 0}/></Link>
+    </>
+  )
 
   if (!account || !account.isLoggedIn) return (<Loader message={'Loading your data...'}/>)
 
@@ -113,7 +117,7 @@ const TaskFormEdit = ({ _id }: { _id: string }) => {
   } else {
     // if task is no more, it can be that we already submitted it or a 404
     return (<>
-      {!toBeSubmitted ? (
+      {!isSubmitted ? (
         <>
           <div className={'alert alert-success'} role='alert'>{'Data submitted !'}</div>
           <Link to={`/`}><Button label={'Back'} onClickFn={() => void 0}/></Link>
@@ -155,7 +159,7 @@ const TaskFormEdit = ({ _id }: { _id: string }) => {
           next(error)
         } else {
           toast.dismiss(toastId)
-          setToBeSubmitted(undefined)
+          setIsSubmitted(true)
           next()
         }
       }
