@@ -1,5 +1,5 @@
 /**
- * Provde a reactive context for user info
+ * Provide a reactive context for user info
  */
 import {Meteor} from "meteor/meteor";
 import React, {useContext} from 'react'

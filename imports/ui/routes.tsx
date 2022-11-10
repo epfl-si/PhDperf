@@ -6,7 +6,7 @@ import {canImportScipersFromISA} from "/imports/policy/importScipers";
 import {ImportScipersForSchool, ImportScipersSchoolSelector} from "/imports/ui/components/ImportSciper/List";
 import TaskList from "/imports/ui/components/TaskList";
 import React from "react";
-import {useAccountContext} from "/imports/ui/components/Account";
+import {useAccountContext} from "/imports/ui/contexts/Account";
 import {TaskForm} from "/imports/ui/components/TaskForm";
 
 function TaskEdit() {

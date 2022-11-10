@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faUserShield } from '@fortawesome/free-solid-svg-icons'
 
 import packageJson from '/package.json'
-import {useAccountContext} from "/imports/ui/components/Account";
+import {useAccountContext} from "/imports/ui/contexts/Account";
 import { Popper, PopperOptions } from './Popper'
 
 

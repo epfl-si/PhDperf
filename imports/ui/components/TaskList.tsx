@@ -14,7 +14,7 @@ import {
 import {toastClosable} from "/imports/ui/components/Toasters";
 import {ErrorIcon} from "react-hot-toast/src/components/error";
 import {ITaskList} from "/imports/policy/tasksList/type";
-import {useAccountContext} from "/imports/ui/components/Account";
+import {useAccountContext} from "/imports/ui/contexts/Account";
 
 
 function TaskRow({ task }: { task: ITaskList }) {

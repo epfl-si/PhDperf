@@ -2,49 +2,52 @@ import React, {CSSProperties} from 'react';
 import {
   BrowserRouter, useLocation, matchPath
 } from "react-router-dom"
-import {FooterLight, Breadcrumbs} from "@epfl/epfl-sti-react-library"
-import {PhDHeader} from "./components/PhDHeader"
+import {Meteor} from "meteor/meteor";
 
-import {ZeebeStatus} from "/imports/ui/components/ZeebeStatus"
+import {FooterLight, Breadcrumbs} from "@epfl/epfl-sti-react-library"
 import {Toaster} from "react-hot-toast";
 
-import {Meteor} from "meteor/meteor";
+import {PhDHeader} from "./components/PhDHeader"
 import {AsideMenu} from "/imports/ui/components/AsideMenu";
-import {AccountProvider} from "/imports/ui/components/Account";
+import {AccountProvider} from "/imports/ui/contexts/Account";
 import {PhDRoutes} from "/imports/ui/routes";
+import {ConnectionStatusFooter} from "/imports/ui/components/ConnectionStatus";
+import {ConnectionStatusProvider} from "/imports/ui/contexts/ConnectionStatus";
 
 
 export const App = () => {
   const mainPanelBackgroundColor: CSSProperties = Meteor.settings.public.isTest ? { backgroundColor: 'Cornsilk'} : {}
 
   return (
-    <AccountProvider>
-      <BrowserRouter>
-        <Toaster
-          toastOptions={{
-            // Define default options
-            duration: 5000,
-            // Default options for specific types
-            success: {
-              duration: 4000,
-            },
-          }}
-        />
-        <PhDHeader/>
-        <PhDBreadcrumbs/>
-        <div className={ 'nav-toggle-layout nav-aside-layout' }>
-          <AsideMenu/>
-          <div className="container" style={ mainPanelBackgroundColor }>
-            { Meteor.settings.public.isTest &&
-              <div className={'alert alert-info'} role={'alert'}><strong>Testing</strong> You are on the testing environment.</div>
-            }
-            <PhDRoutes/>
+    <ConnectionStatusProvider>
+      <AccountProvider>
+        <BrowserRouter>
+          <Toaster
+            toastOptions={{
+              // Define default options
+              duration: 5000,
+              // Default options for specific types
+              success: {
+                duration: 4000,
+              },
+            }}
+          />
+          <PhDHeader/>
+          <PhDBreadcrumbs/>
+          <div className={ 'nav-toggle-layout nav-aside-layout' }>
+            <AsideMenu/>
+            <div className="container" style={ mainPanelBackgroundColor }>
+              { Meteor.settings.public.isTest &&
+                <div className={'alert alert-info'} role={'alert'}><strong>Testing</strong> You are on the testing environment.</div>
+              }
+              <PhDRoutes/>
+            </div>
           </div>
-        </div>
-        <ZeebeStatus/>
-        <FooterLight/>
-      </BrowserRouter>
-    </AccountProvider>
+          <ConnectionStatusFooter/>
+          <FooterLight/>
+        </BrowserRouter>
+      </AccountProvider>
+    </ConnectionStatusProvider>
   )
 }
 

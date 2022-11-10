@@ -6,7 +6,7 @@ import React from "react"
 import {Loader} from "@epfl/epfl-sti-react-library";
 import {ParticipantDetail} from "/imports/model/participants";
 import {ITaskDashboard} from "/imports/policy/dashboard/type";
-import {useAccountContext} from "/imports/ui/components/Account";
+import {useAccountContext} from "/imports/ui/contexts/Account";
 
 
 /*

@@ -2,7 +2,7 @@ import {Link, matchPath, useLocation} from "react-router-dom";
 import React from "react";
 import {useSubscribe} from "meteor/react-meteor-data";
 
-import {useAccountContext} from "/imports/ui/components/Account";
+import {useAccountContext} from "/imports/ui/contexts/Account";
 import {canEditAtLeastOneDoctoralSchool} from "/imports/policy/doctoralSchools";
 import {canImportScipersFromISA} from "/imports/policy/importScipers";
 

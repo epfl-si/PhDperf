@@ -6,7 +6,7 @@ import {Loader} from "@epfl/epfl-sti-react-library";
 import {DoctoralSchool, DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 import {CreateForm} from './Create'
 import {InlineEdit} from './Edit'
-import {useAccountContext} from "/imports/ui/components/Account";
+import {useAccountContext} from "/imports/ui/contexts/Account";
 
 
 export function DoctoralSchoolsList() {
