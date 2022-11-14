@@ -1,17 +1,20 @@
 import React, {useEffect, useState} from 'react'
-import {Errors, Form} from '@formio/react'
-import {customEvent} from '/imports/ui/model/formIo'
-import {Task} from "/imports/model/tasks";
 import {global_Error, Meteor} from 'meteor/meteor'
-import {Button, Loader} from "@epfl/epfl-sti-react-library"
+import {useTracker} from "meteor/react-meteor-data";
+import {Errors, Form} from '@formio/react'
 import {Link, useNavigate} from "react-router-dom"
 import _ from "lodash"
-import {findDisabledFields} from "/imports/lib/formIOUtils";
+
+import {Button, Loader} from "@epfl/epfl-sti-react-library"
 import toast from 'react-hot-toast';
 import {ErrorIcon} from "react-hot-toast/src/components/error";
+
 import {toastClosable} from "/imports/ui/components/Toasters";
+import {findDisabledFields} from "/imports/lib/formIOUtils";
+import {customEvent} from '/imports/ui/model/formIo'
 import {useAccountContext} from "/imports/ui/contexts/Account";
 import {useConnectionStatusContext} from "/imports/ui/contexts/ConnectionStatus";
+import {Task, Tasks} from "/imports/model/tasks";
 
 
 const ConnectionStatusForSubmit = ({ task }: { task?: Task }) => {
@@ -58,12 +61,23 @@ const ConnectionStatusForSubmit = ({ task }: { task?: Task }) => {
   }
 }
 
-const TaskAdminInfo = ({ task }: { task: Task }) => {
+const TaskAdminInfo = ({ taskId }: { taskId: string }) => {
+  const taskSubscriptionLoading = useTracker(() => {
+    const handle = Meteor.subscribe('taskDetailed', [taskId]);
+    return !handle.ready();
+  }, [taskId]);
+
+  const task = useTracker(() => Tasks.findOne({ '_id': taskId}), [taskId])
+
   const [showAdminInfo, setShowAdminInfo] = useState(false)
+
+  if (taskSubscriptionLoading) return <Loader>Loading task admin info</Loader>
+
+  if (!task) return <div>No task for {taskId}</div>
 
   return (
     <div>
-      {showAdminInfo ?
+      { showAdminInfo ?
         <>
           <div role="button" onClick={ () => setShowAdminInfo(false) }>Close</div>
           <div>Task last seen on Zeebe at { task.journal.lastSeen?.toLocaleString('fr-CH') }, { task.journal.seenCount }x</div>
@@ -154,7 +168,7 @@ export const TaskForm = ({ _id }: { _id: string }) => {
   const account = useAccountContext()
 
   const [task, setTask] = useState<Task | undefined>()
-  const [taskLoading, setTaskLoading] = useState(true)
+  const [taskFormLoading, setTaskFormLoading] = useState(true)
 
   useEffect(() => {
     Meteor.apply(
@@ -164,10 +178,10 @@ export const TaskForm = ({ _id }: { _id: string }) => {
         wait: true,
         onResultReceived: (error: Error | Meteor.Error | undefined, result) => {
           if (error) {
-            setTaskLoading(false)
+            setTaskFormLoading(false)
           } else {
             setTask(result as Task)
-            setTaskLoading(false)
+            setTaskFormLoading(false)
           }
         }
       },
@@ -175,13 +189,13 @@ export const TaskForm = ({ _id }: { _id: string }) => {
   }, [_id])
 
   if (!account || !account.isLoggedIn) return (<Loader message={'Loading your data...'}/>)
-  if (taskLoading) return (<Loader message={'Loading the task form...'}/>)
+  if (taskFormLoading) return (<Loader message={'Loading the task form...'}/>)
 
   return (<>
     { task ? (
         <div>
           { account.user?.isAdmin &&
-            <TaskAdminInfo task={ task }/>
+            <TaskAdminInfo taskId={ task._id! }/>
           }
           <TaskFormEdit task={ task }/>
         </div>
