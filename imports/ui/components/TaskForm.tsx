@@ -74,18 +74,20 @@ const TaskStatus = ({ taskId }: { taskId: string }) => {
 
   const task = useTracker(() => Tasks.findOne({ '_id': taskId}), [taskId])
 
-  if (taskSubscriptionLoading) return <></>
+  if (taskSubscriptionLoading) return (<></>)
 
-  if (!task) return (
-    <div
-      className={'alert alert-danger'}
-      role='alert'>
-      <div>The task you are working on is not available anymore. It may have been submitted from elsewhere or the server may have some troubles.</div>
-      <div>Please take the appropriate actions to save your current form data.</div>
-    </div>
-  )
-
-  return <></>
+  if (!task) {
+    return (
+      <div
+        className={'alert alert-danger'}
+        role='alert'>
+        <div>The task you are working on is not available anymore. It may have been submitted from elsewhere or the server may have some troubles.</div>
+        <div>Please take the appropriate actions to save your current form data.</div>
+      </div>
+    )
+  } else {
+    return (<></>)
+  }
 }
 
 const TaskAdminInfo = ({ taskId }: { taskId: string }) => {
@@ -236,9 +238,7 @@ export const TaskForm = ({ _id }: { _id: string }) => {
           { !taskSubmitted &&
             <TaskStatus taskId={task._id!}/>
           }
-
           <TaskFormEdit task={ task } onSubmitted={ onSubmit } />
-
           { !taskSubmitted &&
             <TaskStatus taskId={task._id!}/>
           }

@@ -157,7 +157,7 @@ Meteor.methods({
       auditLog(`Successfully submitted form for task id ${task._id}.`)
     } else {
       auditLog(`Error: the task that is being submitted can not be found. Task key requested: ${_id}.`)
-      throw new Meteor.Error(404, 'Unknown task', 'Check the task exist by refreshing your browser')
+      throw new Meteor.Error(404, 'Unknown task', 'The task does not exist anymore.')
     }
   },
 
