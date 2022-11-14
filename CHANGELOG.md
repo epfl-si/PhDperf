@@ -4,6 +4,7 @@
 - Improve how the task is fetched from the server (from a subscribtion to a method)
 - Adding admin info into the task edition view
 - Filter submitted task and obsolete one from queries
+- Monitor status of the task when editing it, as in some cases the task can be submitted by someone else
 
 *1.11.0* (2022-11-02)
 - Add the account React provider for components

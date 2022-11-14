@@ -54,11 +54,38 @@ const ConnectionStatusForSubmit = ({ task }: { task?: Task }) => {
           className={'alert alert-danger'}
           role='alert'>
           <div>Connection to the server seems troublesome. Submitting is not guaranteed.</div>
-          <div>Please take action to save your current form data.</div>
+          <div>Please take the appropriate action to save your current form data.</div>
         </div>
       </div>
     )
   }
+}
+
+
+/**
+ * Component to manage when we are currently working on a task that was loaded but is not anymore.
+ * It can happen when multiple assignee are working on the same time on a task
+ */
+const TaskStatus = ({ taskId }: { taskId: string }) => {
+  const taskSubscriptionLoading = useTracker(() => {
+    const handle = Meteor.subscribe('taskDetailed', [taskId]);
+    return !handle.ready();
+  }, [taskId]);
+
+  const task = useTracker(() => Tasks.findOne({ '_id': taskId}), [taskId])
+
+  if (taskSubscriptionLoading) return <></>
+
+  if (!task) return (
+    <div
+      className={'alert alert-danger'}
+      role='alert'>
+      <div>The task you are working on is not available anymore. It may have been submitted from elsewhere or the server may have some troubles.</div>
+      <div>Please take the appropriate actions to save your current form data.</div>
+    </div>
+  )
+
+  return <></>
 }
 
 const TaskAdminInfo = ({ taskId }: { taskId: string }) => {
@@ -73,7 +100,7 @@ const TaskAdminInfo = ({ taskId }: { taskId: string }) => {
 
   if (taskSubscriptionLoading) return <Loader>Loading task admin info</Loader>
 
-  if (!task) return <div>No task for {taskId}</div>
+  if (!task) return <></>
 
   return (
     <div>
@@ -91,7 +118,7 @@ const TaskAdminInfo = ({ taskId }: { taskId: string }) => {
   )
 }
 
-const TaskFormEdit = ({ task }: { task: Task }) => {
+const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => void }) => {
   const [isSubmitted, setIsSubmitted] = useState(false)
 
   const toastId = `toast-${task._id}`
@@ -157,6 +184,7 @@ const TaskFormEdit = ({ task }: { task: Task }) => {
         } else {
           toast.dismiss(toastId)
           setIsSubmitted(true)
+          onSubmitted()  // call the event that the submit has been done successfully
           next()
         }
       }
@@ -164,11 +192,19 @@ const TaskFormEdit = ({ task }: { task: Task }) => {
   }
 }
 
+/**
+ * As the form is not MeteorReactive (no useTracker), we separate the loading from the component that uses live states
+ */
 export const TaskForm = ({ _id }: { _id: string }) => {
   const account = useAccountContext()
 
   const [task, setTask] = useState<Task | undefined>()
   const [taskFormLoading, setTaskFormLoading] = useState(true)
+  const [taskSubmitted, setTaskSubmitted] = useState(false)
+
+  const onSubmit = () => {
+    setTaskSubmitted(true)
+  }
 
   useEffect(() => {
     Meteor.apply(
@@ -197,7 +233,15 @@ export const TaskForm = ({ _id }: { _id: string }) => {
           { account.user?.isAdmin &&
             <TaskAdminInfo taskId={ task._id! }/>
           }
-          <TaskFormEdit task={ task }/>
+          { !taskSubmitted &&
+            <TaskStatus taskId={task._id!}/>
+          }
+
+          <TaskFormEdit task={ task } onSubmitted={ onSubmit } />
+
+          { !taskSubmitted &&
+            <TaskStatus taskId={task._id!}/>
+          }
         </div>
       ) : (
         <>
