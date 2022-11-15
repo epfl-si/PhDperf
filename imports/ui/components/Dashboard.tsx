@@ -159,17 +159,25 @@ export function Dashboard() {
     return !handle.ready();
   }, []);
 
-  const allTasks = useTracker(
-    () => Tasks.find(
-      {},
-      { sort: {
-        'variables.doctoralProgramName': 1,
-        'variables.phdStudentLastName': 1,
-        'variables.phdStudentFirstName': 1,
-        }}
-      )
+  let allTasks = useTracker(
+    () => Tasks.find({})
       .fetch() as ITaskDashboard[])
       .filter((task) => task.elementId !== 'Activity_Program_Assistant_Assigns_Participants')
+
+  // sort by second part of email address, that's the best way to get the name at this point
+  allTasks = _.sortBy(
+    allTasks,
+    [
+      function(task:ITaskDashboard) {
+        const doctoralSchool = task.variables.doctoralProgramName
+        if (task.variables?.phdStudentEmail) {
+          return `${doctoralSchool}${_.split(task.variables?.phdStudentEmail, '.')[1]}`
+        } else {
+          return `${doctoralSchool}`
+        }
+    }]
+  )
+
   const groupByWorkflowInstanceTasks = _.groupBy(allTasks, 'workflowInstanceKey')
 
   if (!account?.isLoggedIn) return (<Loader message={'Loading your data...'}/>)
