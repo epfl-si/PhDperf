@@ -1,6 +1,8 @@
 # CHANGELOG
 
 *1.12.0* (2022-11-15)
+- Set link to people profile from the dashboard
+- Show student'sciper on the dasboard
 - Change participants visibility to all users on task list
 - Change participants colors on task list
 - Remove the "by" info on the task list
