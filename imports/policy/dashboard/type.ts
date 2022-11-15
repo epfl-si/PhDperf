@@ -12,6 +12,8 @@ export const taskFieldsNeededForDashboard = {
   'variables.phdStudentSciper': 1,
   'variables.phdStudentEmail': 1,
   'variables.phdStudentName': 1,
+  'variables.phdStudentLastName': 1,  // for sorting
+  'variables.phdStudentFirstName': 1,  // for sorting
   'variables.thesisDirectorSciper': 1,
   'variables.thesisDirectorEmail': 1,
   'variables.thesisDirectorName': 1,

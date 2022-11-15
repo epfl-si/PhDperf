@@ -1,6 +1,7 @@
 # CHANGELOG
 
 *1.12.0* (2022-11-15)
+- Order dashboard by Doctoral school, then student's name
 - Set link to people profile from the dashboard
 - Show student'sciper on the dasboard
 - Change participants visibility to all users on task list

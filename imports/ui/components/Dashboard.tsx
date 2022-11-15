@@ -160,7 +160,14 @@ export function Dashboard() {
   }, []);
 
   const allTasks = useTracker(
-    () => Tasks.find({}, { sort: { 'variables.created_at': 1 } })
+    () => Tasks.find(
+      {},
+      { sort: {
+        'variables.doctoralProgramName': 1,
+        'variables.phdStudentLastName': 1,
+        'variables.phdStudentFirstName': 1,
+        }}
+      )
       .fetch() as ITaskDashboard[])
       .filter((task) => task.elementId !== 'Activity_Program_Assistant_Assigns_Participants')
   const groupByWorkflowInstanceTasks = _.groupBy(allTasks, 'workflowInstanceKey')
