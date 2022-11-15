@@ -1,6 +1,7 @@
 # CHANGELOG
 
 *1.12.0* (2022-11-15)
+- Change participants visibility to all users on task list
 - Change participants colors on task list
 - Remove the "by" info on the task list
 - Improve how the task is fetched from the server (from a subscribtion to a method)

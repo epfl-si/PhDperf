@@ -13,9 +13,6 @@ export const taskFieldsNeededForList = {
   'variables.created_at': 1,
   'variables.created_by': 1,
   'variables.updated_at': 1,
-}
-
-export const taskFieldsNeededForListAdmin = {
   'variables.phdStudentSciper': 1,
   'variables.phdStudentEmail': 1,
   'variables.phdStudentName': 1,
@@ -31,6 +28,9 @@ export const taskFieldsNeededForListAdmin = {
   'variables.programAssistantSciper': 1,
   'variables.programAssistantEmail': 1,
   'variables.programAssistantName': 1,
+}
+
+export const taskFieldsNeededForListAdmin = {
   'variables.mentorSciper': 1,
   'variables.mentorName': 1,
   'variables.mentorEmail': 1,

@@ -111,7 +111,7 @@ function TaskRow({ task }: { task: ITaskList }) {
           </span>
         </summary>
         <pre><code>{task.detail}</code></pre>
-        { user && user.isAdmin &&
+        { user &&
         <div className={'container'}>
           <div className="row">
             {task.participants &&
