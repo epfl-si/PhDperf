@@ -107,7 +107,7 @@ div[id^=error-list].alert-success {
   display: none;
 }
 
-.dashboard .bg-awaiting {
+.bg-awaiting {
   background-color: #ff9933;
 }
 

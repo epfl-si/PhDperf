@@ -1,12 +1,14 @@
 # CHANGELOG
 
-*1.12.0* (2022-11-08)
+*1.12.0* (2022-11-15)
+- Change participants colors on task list
+- Remove the "by" info on the task list
 - Improve how the task is fetched from the server (from a subscribtion to a method)
 - Adding admin info into the task edition view
 - Filter submitted task and obsolete one from queries
 - Monitor status of the task when editing it, as in some cases the task can be submitted by someone else
 
-*1.11.0* (2022-11-15)
+*1.11.0* (2022-11-02)
 - Remove the "by" info on the task list
 - Add the account React provider for components
 - Fix checking for the right to start an instance without the doctoral list

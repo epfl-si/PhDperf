@@ -1,8 +1,8 @@
 import React from "react"
 import {ParticipantDetail} from "/imports/model/participants";
 
-const allGoodBoxColor = 'bg-success text-white'
-const awaitingBoxColor = 'bg-info text-white'
+const allGoodBoxColor = 'bg-info text-white'
+const awaitingBoxColor = 'bg-awaiting text-white'
 
 export type ParticipantsInfo = {
   role: string
