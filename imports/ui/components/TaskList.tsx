@@ -34,10 +34,6 @@ function TaskRow({ task }: { task: ITaskList }) {
           {task.updated_at &&
             <span className={'small'}>Updated {task.updated_at.toLocaleString('fr-CH')}</span>
           }
-          {task.created_by &&
-          task.created_by !== user?._id &&
-            <span className={'ml-2 small'}>By {task.variables.created_by}</span>
-          }
           </span>
           <span className={'small'}>
             { task.monitorUri &&
