@@ -9,9 +9,7 @@ const debug = require('debug')('import/policy/tasks.ts')
 
 
 /**
- * Utility to build the filter query on  the tasks that should not be here for this reason:
- * - last seen on zeebe is too old
- *
+ * Build the filter query on the tasks taht last seen on zeebe is too old
  * This kind of "desync" can happen, yeah, it has already happened  because some OOM error
  */
 export const filterOutObsoleteTasksQuery = () => {
@@ -42,7 +40,7 @@ export const getUserPermittedTaskDetailed = (user: Meteor.User | null, _id: stri
 
   const taskQuery = {
     _id: _id,
-    ...filterOutObsoleteTasksQuery(),
+    ...(!user.isAdmin && filterOutObsoleteTasksQuery()),
     ...filterOutSubmittedTasksQuery(),
     ...(!user.isAdmin && { "variables.assigneeSciper": user._id }),
   }
