@@ -23,7 +23,9 @@ function TaskRow({ task }: { task: ITaskList }) {
   const user = account?.user
 
   return (
-    <div className={'border-top p-2'}>
+    <div className={'border-top p-2'} style={ {
+      ...((user && user.isAdmin && task.isObsolete) && {backgroundColor: 'WhiteSmoke'})
+      } }>
       <details>
         <summary className={'d-flex align-items-center'}>
           <span className={'mr-auto'}>
@@ -33,6 +35,9 @@ function TaskRow({ task }: { task: ITaskList }) {
           }
           {task.updated_at &&
             <span className={'small'}>Updated {task.updated_at.toLocaleString('fr-CH')}</span>
+          }
+          { user && user.isAdmin && task.isObsolete &&
+            <span className={'small ml-2'}>Task is obsolete</span>
           }
           </span>
           <span className={'small'}>

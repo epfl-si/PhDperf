@@ -9,6 +9,7 @@ import {
   TaskInterface,
   TaskJournal
 } from "/imports/model/tasksTypes";
+import dayjs from "dayjs";
 
 
 export class Task implements TaskInterface {
@@ -68,6 +69,22 @@ export class Task implements TaskInterface {
     return Meteor.settings.public.monitor_address && Meteor.user()?.isAdmin ?
       `http://${Meteor.settings.public.monitor_address}/views/instances/${this.processInstanceKey}` :
       undefined
+  }
+
+  /*
+   * as admins can have the lastSeen info, check here if the task is obsolete, or return undefined if the value can't be seen
+   */
+  get isObsolete(): boolean | undefined {
+    if (this.journal?.lastSeen) {
+      const yesterday = dayjs().subtract(1, 'day')
+      const lastSeen = dayjs(this.journal.lastSeen)
+
+      if (lastSeen <= yesterday) {
+        return true
+      } else {
+        return false
+      }
+    }
   }
 }
 

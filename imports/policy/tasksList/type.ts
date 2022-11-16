@@ -34,6 +34,7 @@ export const taskFieldsNeededForListAdmin = {
   'variables.mentorSciper': 1,
   'variables.mentorName': 1,
   'variables.mentorEmail': 1,
+  'journal.lastSeen': 1,  // to mark it on the list as obosolete
   ...taskFieldsNeededForList
 }
 
@@ -52,5 +53,6 @@ export interface ITaskList<WorkerInputVariables = PhDInputVariablesList, CustomH
   assigneeScipers?: Sciper[]
   participants: ParticipantList  // values built from participants found in the 'variables' fields, see the Task class for details
   detail: any
+  isObsolete: boolean | undefined
   monitorUri?: string
 }
