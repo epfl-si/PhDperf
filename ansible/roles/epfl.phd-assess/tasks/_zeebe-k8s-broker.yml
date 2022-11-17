@@ -52,7 +52,7 @@
               resources:
                 limits:
                   cpu: '250m'
-                  memory: "{{ '2500M' if openshift_namespace == 'phd-assess' else '1500M' }}"
+                  memory: "{{ '2500M' if openshift_namespace == 'phd-assess' else '2000M' }}"
               ports:
                 - name: metrics
                   containerPort: 9600
