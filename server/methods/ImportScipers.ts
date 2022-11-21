@@ -16,7 +16,7 @@ import AbortController from "abort-controller";
 import path from 'path'
 
 
-const debug = require('debug')('server/ImportScipers')
+const debug = require('debug')('server/methods/ImportScipers')
 
 /*
  * Thesis co directors can have

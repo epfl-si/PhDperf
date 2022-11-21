@@ -3,13 +3,12 @@ import {encrypt} from "/server/encryption";
 import {Tasks} from "/imports/model/tasks";
 import {FormioActivityLog} from "/imports/model/tasksTypes";
 import {
-  filterUnsubmittableVars, canSubmit, canDeleteProcessInstance,
-  canStartProcessInstance, canRefreshProcessInstance,
+  filterUnsubmittableVars, canSubmit,
   getUserPermittedTaskDetailed
 } from "/imports/policy/tasks";
 import _ from "lodash";
-import {zBClient} from "/server/zeebe_broker_connector";
-import WorkersClient from './zeebe_broker_connector'
+
+import WorkersClient from '../zeebe_broker_connector'
 import {getParticipantsToUpdateFromSciper} from "/server/userFetcher";
 import {auditLogConsoleOut} from "/imports/lib/logging";
 
@@ -17,46 +16,11 @@ import {auditLogConsoleOut} from "/imports/lib/logging";
 import '/imports/api/doctoralSchools/methods'
 import '/server/methods/ImportScipers'
 import '/server/methods/DoctoralSchools'
-import {DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 
-const auditLog = auditLogConsoleOut.extend('server/methods')
+const auditLog = auditLogConsoleOut.extend('server/methods/TaskForm')
 
 
 Meteor.methods({
-
-  async startWorkflow() {  // aka start a new instance in Zeebe terms
-    let user: Meteor.User | null = null
-    if (this.userId) {
-      user = Meteor.users.findOne({_id: this.userId}) ?? null
-    }
-
-    if (!user) return
-
-    if (!canStartProcessInstance(user, DoctoralSchools.find({}).fetch())) {
-      auditLog(`Unallowed user ${user._id} is trying to start a workflow.`)
-      throw new Meteor.Error(403, 'You are not allowed to start a workflow')
-    }
-
-    const diagramProcessId = 'phdAssessProcess'
-
-    auditLog(`calling for a new "phdAssessProcess" instance`)
-
-    if(!zBClient) throw new Meteor.Error(500, `The Zeebe client has not been able to start on the server.`)
-
-    try {
-      const createProcessInstanceResponse = await Promise.resolve(zBClient.createProcessInstance(diagramProcessId, {
-        created_at: encrypt(new Date().toJSON()),
-        created_by: encrypt(user._id),
-        updated_at: encrypt(new Date().toJSON()),
-        assigneeSciper: encrypt(user._id),
-      }))
-      auditLog(`created new instance ${diagramProcessId}, response: ${JSON.stringify(createProcessInstanceResponse)}`)
-      return createProcessInstanceResponse?.processKey
-    } catch (e) {
-      auditLog(`Error: Unable to create a new workflow instance. ${e}`)
-      throw new Meteor.Error(500, `Unable to start a new workflow. Please contact the admin to verify the server. ${e}`)
-    }
-  },
 
   async getTaskForm(_id) {
     let user: Meteor.User | null = null
@@ -89,7 +53,7 @@ Meteor.methods({
       throw new Meteor.Error(403, 'You are not allowed to submit this task')
     }
 
-    const task = Tasks.findOne({ _id: _id } )
+    const task = Tasks.findOne({_id: _id})
 
     if (task) {
       formData = filterUnsubmittableVars(
@@ -124,7 +88,7 @@ Meteor.methods({
           // Look like the fetching of user info has got a timeout,
           // make it bad only if we don't have already some data, or ignore it
           auditLog(`Error: Timeout while fetching scipers.`)
-          if (!task.variables.phdStudentEmail) throw new Meteor.Error(422,'Unable to get users information, aborting. Please contact the administrator or try again later.')
+          if (!task.variables.phdStudentEmail) throw new Meteor.Error(422, 'Unable to get users information, aborting. Please contact the administrator or try again later.')
         } else {
           auditLog(`Error: parsing a participant ${e} has failed. Aborting.`)
           throw new Meteor.Error(422, `There is a problem with a participant: ${e}`)
@@ -147,7 +111,7 @@ Meteor.methods({
         }
       }
 
-      jobURLs.push(_.pick(formMetaData, 'pathName' ))  // push the actual one
+      jobURLs.push(_.pick(formMetaData, 'pathName'))  // push the actual one
 
       formData.activityLogs = encrypt(JSON.stringify(jobURLs))
 
@@ -159,49 +123,5 @@ Meteor.methods({
       auditLog(`Error: the task that is being submitted can not be found. Task key requested: ${_id}.`)
       throw new Meteor.Error(404, 'Unknown task', 'The task does not exist anymore.')
     }
-  },
-
-  async deleteProcessInstance(processInstanceKey) {
-    let user: Meteor.User | null = null
-    if (this.userId) {
-      user = Meteor.users.findOne({_id: this.userId}) ?? null
-    }
-
-    if (!user) return
-
-    if (!canDeleteProcessInstance(user)) {
-      auditLog(`Unallowed user to delete the process instance key ${processInstanceKey}`)
-      throw new Meteor.Error(403, 'You are not allowed to delete a process instance')
-    }
-
-    if(!zBClient) throw new Meteor.Error(500, `The Zeebe client has not been able to start on the server.`)
-
-    try {
-      await zBClient.cancelProcessInstance(processInstanceKey)
-      // delete in db too
-      Tasks.remove({processInstanceKey: processInstanceKey})
-      auditLog(`Sucessfully deleted a process instance ${processInstanceKey}`)
-    } catch (error) {
-      auditLog(`Error: Unable to cancel the process instance ${processInstanceKey}. ${error}`)
-      Tasks.remove({processInstanceKey: processInstanceKey})
-      throw new Meteor.Error(500, `Unable to cancel the task. ${error}. Deleting locally anyway`)
-    }
-  },
-
-  async refreshProcessInstance(processInstanceKey) {
-    let user: Meteor.User | null = null
-    if (this.userId) {
-      user = Meteor.users.findOne({_id: this.userId}) ?? null
-    }
-
-    if (!user) return
-
-    if (!canRefreshProcessInstance(user)) {
-      auditLog(`Unallowed user ${user._id} is trying to refresh the process instance key ${processInstanceKey}.`)
-      throw new Meteor.Error(403, 'You are not allowed to refresh a process instance')
-    }
-
-    auditLog(`Refreshing a process instance ${processInstanceKey} by removing it from Meteor`)
-    Tasks.remove({processInstanceKey: processInstanceKey})
   },
 })
