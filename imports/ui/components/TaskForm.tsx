@@ -63,31 +63,33 @@ const ConnectionStatusForSubmit = ({ task }: { task?: Task }) => {
 
 
 /**
- * Component to manage when we are currently working on a task that was loaded but is not anymore.
+ * Component to monitor the task, to manage when the task was loaded but is not anymore later.
  * It can happen when multiple assignee are working on the same time on a task
  */
-const TaskStatus = ({ taskId }: { taskId: string }) => {
+const TaskStatus = ({ taskMonitored }: { taskMonitored: Task }) => {
   const taskSubscriptionLoading = useTracker(() => {
-    const handle = Meteor.subscribe('taskDetailed', [taskId]);
+    const handle = Meteor.subscribe('taskDetailed', [taskMonitored?._id]);
     return !handle.ready();
-  }, [taskId]);
+  }, [taskMonitored]);
 
-  const task = useTracker(() => Tasks.findOne({ '_id': taskId}), [taskId])
+  const task = useTracker(() => Tasks.findOne({ '_id': taskMonitored._id}), [taskMonitored])
+  const toastId = `toast-${task?._id}`
 
-  if (taskSubscriptionLoading) return (<></>)
-
-  if (!task) {
-    return (
-      <div
-        className={'alert alert-danger'}
-        role='alert'>
-        <div>The task you are working on is not available anymore. It may have been submitted from elsewhere or the server may have some troubles.</div>
-        <div>Please take the appropriate actions to save your current form data.</div>
-      </div>
-    )
-  } else {
-    return (<></>)
+  if (!taskSubscriptionLoading && !task) {
+    toast(
+      toastClosable(toastId,
+        `The form has been submitted elsewhere or does not exist anymore.
+          Please take the appropriate actions to save your current form data if needed.`),
+      {
+        id: toastId,
+        duration: Infinity,
+        icon: <ErrorIcon />,
+      }
+    );
   }
+
+  // only here for the toast :)
+  return (<></>)
 }
 
 const TaskAdminInfo = ({ taskId }: { taskId: string }) => {
@@ -216,6 +218,7 @@ export const TaskForm = ({ _id }: { _id: string }) => {
         wait: true,
         onResultReceived: (error: Error | Meteor.Error | undefined, result) => {
           if (error) {
+            setTask(undefined)
             setTaskFormLoading(false)
           } else {
             setTask(result as Task)
@@ -232,16 +235,13 @@ export const TaskForm = ({ _id }: { _id: string }) => {
   return (<>
     { task ? (
         <div>
+          {!taskSubmitted &&
+            <TaskStatus taskMonitored={task}/>
+          }
           { account.user?.isAdmin &&
             <TaskAdminInfo taskId={ task._id! }/>
           }
-          { !taskSubmitted &&
-            <TaskStatus taskId={task._id!}/>
-          }
           <TaskFormEdit task={ task } onSubmitted={ onSubmit } />
-          { !taskSubmitted &&
-            <TaskStatus taskId={task._id!}/>
-          }
         </div>
       ) : (
         <>

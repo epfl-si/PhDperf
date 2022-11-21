@@ -1,5 +1,8 @@
 # CHANGELOG
 
+*1.13.0* (2022-11-21)
+- Change error message container when task is submitted while being edited, from a div to toast
+
 *1.12.0* (2022-11-16)
 - Add a way to see obsolete tasks on the admin list view
 - Order dashboard by Doctoral school, then student's name
