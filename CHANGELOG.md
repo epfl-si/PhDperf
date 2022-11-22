@@ -2,6 +2,7 @@
 
 *1.13.0* (2022-11-21)
 - Change error message container when task is submitted while being edited, from a div to toast
+- Remove assignee sciper info on dashboard when the task is waiting on the mentor, for some roles
 
 *1.12.0* (2022-11-16)
 - Add a way to see obsolete tasks on the admin list view

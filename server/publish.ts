@@ -8,7 +8,7 @@ import {getUserPermittedTasksForDashboard} from "/imports/policy/dashboard/tasks
 import {getUserPermittedTasksForList} from "/imports/policy/tasksList/tasks";
 import {canEditAtLeastOneDoctoralSchool, canEditDoctoralSchool} from "/imports/policy/doctoralSchools";
 import {canImportScipersFromISA} from "/imports/policy/importScipers";
-import {Tasks} from "/imports/model/tasks";
+import {Task, Tasks} from "/imports/model/tasks";
 import {refreshAlreadyStartedImportScipersList} from "/imports/api/importScipers/helpers";
 
 
@@ -31,12 +31,45 @@ Meteor.publish('tasks', function () {
 })
 
 Meteor.publish('tasksDashboard', function () {
-  if (this.userId) {
-    const user = Meteor.users.findOne({_id: this.userId}) ?? null
-    return getUserPermittedTasksForDashboard(user, DoctoralSchools.find({}).fetch())
-  } else {
-    this.ready()
-  }
+  if (!this.userId) return this.ready()
+
+  const user = Meteor.users.findOne({_id: this.userId}) ?? null
+
+  if (!user) return this.ready()
+
+  // no additionnal filter when admin, get raw tasks
+  if (user.isAdmin) return getUserPermittedTasksForDashboard(user, DoctoralSchools.find({}).fetch())
+
+  // Set a custom handler for users, as we don't want to show the AssigneeSciper when the mentor task is going on
+  const handle = getUserPermittedTasksForDashboard(user, DoctoralSchools.find({}).fetch())?.observeChanges({
+    added: (id, task) => {
+      // remove assigneeSciper for mentor task if
+      //   - task is currently on the mentor task
+      //   - assigneeSciper is not the mentor, nor the students, as they are allowed to know each other
+      if (task.elementId === 'Activity_Post_Mentor_Meeting_Mentor_Signs' &&
+          task.variables?.assigneeSciper
+      ) {
+
+        const isCurrentUserTheStudentOrTheMentor = (task: Partial<Task>) => {
+          return (
+            user._id === task.variables!.phdStudentSciper ||
+            user._id === task.variables!.mentorSciper
+          )
+        }
+
+        if (!isCurrentUserTheStudentOrTheMentor(task)) {
+          task.variables.assigneeSciper = ''
+          task.assigneeScipers = []
+        }
+      }
+
+      this.added('tasks', id, task);
+    },
+  })
+
+  this.ready()
+
+  if (handle) this.onStop(() => handle.stop());
 })
 
 Meteor.publish('doctoralSchools', function() {
