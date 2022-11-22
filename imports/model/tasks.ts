@@ -12,6 +12,14 @@ import {
 import dayjs from "dayjs";
 
 
+// historically, assignees can come from multiple ways: as string or as array, from variables.assigneeSciper
+// Transform all into an array
+const assigneeSciperToArray = (assigneSciperUnknownType: string | string[]) => {
+  if (Array.isArray(assigneSciperUnknownType)) return assigneSciperUnknownType
+
+  return [assigneSciperUnknownType]
+}
+
 export class Task implements TaskInterface {
   declare _id?: string
   declare variables: PhDInputVariables
@@ -46,17 +54,13 @@ export class Task implements TaskInterface {
     // historically, assignees can come from multiple ways: as string or as array, from variables.assigneeSciper
     // Transform all into an array, named assigneeScipers
     if (this.variables?.assigneeSciper) {
-      if (Array.isArray(this.variables.assigneeSciper)) {
-        this.assigneeScipers = this.variables.assigneeSciper
-      } else {
-        this.assigneeScipers = [this.variables.assigneeSciper]
-      }
+      this.assigneeScipers = assigneeSciperToArray(this.variables.assigneeSciper)
     }
 
     if (this.variables) this.participants = participantsFromZeebe(this.variables)
     this.created_by = this.variables?.created_by
-    this.created_at = this.variables.created_at ? new Date(this.variables?.created_at) : undefined
-    this.updated_at = this.variables.updated_at ? new Date(this.variables?.updated_at) : undefined
+    this.created_at = this.variables?.created_at ? new Date(this.variables.created_at) : undefined
+    this.updated_at = this.variables?.updated_at ? new Date(this.variables.updated_at) : undefined
 
     this.detail = [
       `Job key: ${this._id}`,

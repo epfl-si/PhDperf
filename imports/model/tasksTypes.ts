@@ -44,10 +44,10 @@ export type TaskJournal = {
 
 // Model the task on what we await from zeebe
 export interface TaskInterface<
-    WorkerInputVariables = PhDInputVariables,
+    WorkerInputVariables = Partial<PhDInputVariables>,
     CustomHeaderShape = PhDCustomHeaderShape
   > extends Job<
-  WorkerInputVariables, CustomHeaderShape
+  Partial<WorkerInputVariables>, CustomHeaderShape
   > {
     journal: TaskJournal
   }
