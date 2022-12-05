@@ -10,9 +10,16 @@ import {DoctoralSchool, DoctoralSchools} from "/imports/api/doctoralSchools/sche
 import {DoctoralSchoolInfo} from "/imports/ui/components/ImportSciper/DoctoralSchoolInfo";
 import toast from "react-hot-toast";
 import _ from "lodash";
+import {useAccountContext} from "/imports/ui/contexts/Account";
+import {canImportScipersFromISA} from "/imports/policy/importScipers";
 
 
 export const ImportScipersSchoolSelector = () => {
+  const account = useAccountContext()
+
+  if (!account || !account.isLoggedIn) return (<Loader message={'Loading your data...'}/>)
+  if (!account.user || !canImportScipersFromISA(account.user)) return (<div>Your permissions does not allow you to import Scipers.</div>)
+
   const [input, setInput] = useState('')
   const navigate = useNavigate()
 
@@ -37,6 +44,8 @@ export function ImportScipersForSchool() {
 }
 
 export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralSchool }) {
+  const account = useAccountContext()
+
   const { ISAScipersForSchool,
     ISAScipersLoading,
     isBeingImported,
@@ -92,6 +101,9 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
     )
   }
 
+  if (!account || !account.isLoggedIn) return (<Loader message={'Loading your data...'}/>)
+  if (!account.user || !canImportScipersFromISA(account.user)) return (<div>Your permissions does not allow you to import from ISA.</div>)
+
   if (isErronous) return <Alert alertType={ 'danger' } title={ 'Error' } message={ isErronous } onCloseClick={ () => navigate(`/import-scipers/`) } />
 
   if (ISAScipersLoading) return <Loader message={`Fetching ISA for the list of ${doctoralSchool.acronym} PhD students...`}/>
@@ -140,6 +152,8 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
 }
 
 export function ImportSciperLoader({doctoralSchoolAcronym}: {doctoralSchoolAcronym?: string}) {
+  const account = useAccountContext()
+
   const doctoralSchoolsLoading = useTracker(() => {
     // Note that this subscription will get cleaned up
     // when your component is unmounted or deps change.
@@ -150,6 +164,10 @@ export function ImportSciperLoader({doctoralSchoolAcronym}: {doctoralSchoolAcron
   const currentDoctoralSchool = useTracker(
     () => DoctoralSchools.findOne({ acronym: doctoralSchoolAcronym }),
     [])
+
+  if (!account || !account.isLoggedIn) return (<Loader message={'Loading your data...'}/>)
+
+  if (!canImportScipersFromISA(account.user)) return (<div>Your permissions does not allow you to import from Doctoral programs.</div>)
 
   if (doctoralSchoolsLoading) return <Loader message={`Loading the ${doctoralSchoolAcronym} doctoral program data...`}/>
 
