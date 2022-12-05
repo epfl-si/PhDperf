@@ -23,7 +23,7 @@ export default function Main() {
       <ToasterConfig/>
       <PhDHeader/>
       <PhDBreadcrumb/>
-      <div className={ 'nav-toggle-layout nav-aside-layout' }>
+      <div className={ 'main nav-toggle-layout nav-aside-layout' }>
         <AsideMenu/>
         <div className="container" style={ mainPanelBackgroundColor }>
           { Meteor.settings.public.isTest &&

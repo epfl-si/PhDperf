@@ -3,6 +3,13 @@ body {
   font-family: sans-serif;
 }
 
+.main {
+  /* Fix the jumping footer up-down when components are loading
+    this size is close to the default size of the nav-aside-wrapper
+   */
+  min-height: 360px;
+}
+
 /* TODO: maybe epfl-elements shouldn't do any of this jazz. */
 /* Removed this two line as tearing is happening on breadcrumb */
 /*body .breadcrumb-container, body .breadcrumb-item {
