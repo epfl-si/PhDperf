@@ -7,7 +7,7 @@ import {useAccountContext} from "/imports/ui/contexts/Account";
 import { Popper, PopperOptions } from './Popper'
 
 
-export function UserAuthButton() {
+export const UserAuthInfo = () => {
   const account = useAccountContext()
   const user = account?.user
 

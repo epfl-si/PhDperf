@@ -1,6 +1,6 @@
 import React from "react"
 import { Drawer, Logo } from "@epfl/epfl-sti-react-library"
-import { UserAuthButton } from "./UserAuthButton"
+import {UserAuthInfo} from "/imports/ui/components/UserAuthInfo";
 
 export function PhDHeader() {
   return (
@@ -8,7 +8,7 @@ export function PhDHeader() {
       <Drawer contents={{link: "https://www.epfl.ch", anchor: "Go to main site"}} />
       <Logo />
       <nav className='ml-auto'>
-        <UserAuthButton />
+        <UserAuthInfo />
       </nav>
     </header>
   )
