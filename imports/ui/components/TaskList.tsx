@@ -11,8 +11,7 @@ import toast from "react-hot-toast";
 import {
   canDeleteProcessInstance, canRefreshProcessInstance
 } from "/imports/policy/tasks";
-import {toastClosable} from "/imports/ui/components/Toasters";
-import {ErrorIcon} from "react-hot-toast/src/components/error";
+import {toastErrorClosable} from "/imports/ui/components/Toasters";
 import {ITaskList} from "/imports/policy/tasksList/type";
 import {useAccountContext} from "/imports/ui/contexts/Account";
 
@@ -57,14 +56,7 @@ function TaskRow({ task }: { task: ITaskList }) {
                           "deleteProcessInstance", [task.processInstanceKey], { wait: true, noRetry: true },
                           (error: global_Error | Meteor.Error | undefined) => {
                             if (error) {
-                              toast(
-                                toastClosable(toastId, `${error}`),
-                                {
-                                  id: toastId,
-                                  duration: Infinity,
-                                  icon: <ErrorIcon />,
-                                }
-                              )
+                              toastErrorClosable(toastId, `${error}`)
                             } else {
                               toast.success(`Successfully removed the process instance`)
                             }
@@ -88,14 +80,7 @@ function TaskRow({ task }: { task: ITaskList }) {
                         "refreshProcessInstance", [task.processInstanceKey], { wait: true, noRetry: true },
                         (error: global_Error | Meteor.Error | undefined) => {
                           if (error) {
-                            toast(
-                              toastClosable(toastId, `${error}`),
-                              {
-                                id: toastId,
-                                duration: Infinity,
-                                icon: <ErrorIcon />,
-                              }
-                            )
+                            toastErrorClosable(toastId, `${error}`)
                           } else {
                             toast.success(`Successfully refreshed the process instance by removing it from the app`)
                           }

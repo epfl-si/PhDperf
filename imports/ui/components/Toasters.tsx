@@ -1,5 +1,6 @@
 import React from "react";
 import toast, {Toaster} from "react-hot-toast";
+import {ErrorIcon} from "react-hot-toast/src/components/error";
 
 export const ToasterConfig = () => {
   return (
@@ -25,4 +26,16 @@ export const toastClosable = (toastId: string, message: string) => (
       <button className={'ml-2 small'} onClick={() => toast.dismiss(toastId)}> x </button>
     </div>
   </div>
+)
+
+
+export const toastErrorClosable = (toastId: string, message: string) => (
+  toast(
+    toastClosable(toastId, `${message}`),
+    {
+      id: toastId,
+      duration: Infinity,
+      icon: <ErrorIcon />,
+    }
+  )
 )

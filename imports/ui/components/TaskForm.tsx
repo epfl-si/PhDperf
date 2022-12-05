@@ -7,9 +7,8 @@ import _ from "lodash"
 
 import {Button, Loader} from "@epfl/epfl-sti-react-library"
 import toast from 'react-hot-toast';
-import {ErrorIcon} from "react-hot-toast/src/components/error";
 
-import {toastClosable} from "/imports/ui/components/Toasters";
+import {toastErrorClosable} from "/imports/ui/components/Toasters";
 import {findDisabledFields} from "/imports/lib/formIOUtils";
 import {customEvent} from '/imports/ui/model/formIo'
 import {useAccountContext} from "/imports/ui/contexts/Account";
@@ -27,14 +26,7 @@ const ConnectionStatusForSubmit = ({ task }: { task?: Task }) => {
   useEffect(() => {
     if (connectionStatus.ddp.status === 'offline') {
       setHasDisconnected(true)
-      toast(
-        toastClosable(toastId, 'It look like you lost connection to the server. Please save a backup of your form before trying to submit. Reconnecting...'),
-        {
-          id: toastId,
-          duration: Infinity,
-          icon: <ErrorIcon />,
-        }
-      );
+      toastErrorClosable(toastId, 'It look like you lost connection to the server. Please save a backup of your form before trying to submit. Reconnecting...')
     } else if (hasDisconnected && connectionStatus.ddp.status === 'connected') {
       toast.dismiss(toastId)
       setHasDisconnected(false)
@@ -76,16 +68,9 @@ const TaskStatus = ({ taskMonitored }: { taskMonitored: Task }) => {
   const toastId = `toast-${task?._id}`
 
   if (!taskSubscriptionLoading && !task) {
-    toast(
-      toastClosable(toastId,
-        `The form has been submitted elsewhere or does not exist anymore.
-          Please take the appropriate actions to save your current form data if needed.`),
-      {
-        id: toastId,
-        duration: Infinity,
-        icon: <ErrorIcon />,
-      }
-    );
+    toastErrorClosable(toastId,
+      `The form has been submitted elsewhere or does not exist anymore.
+          Please take the appropriate actions to save your current form data if needed.`)
   }
 
   // only here for the toast :)
@@ -176,14 +161,7 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
       formData.metadata,
       (error: global_Error | Meteor.Error | undefined)  => {
         if (error) {
-          toast(
-            toastClosable(toastId, `${error}`),
-            {
-              id: toastId,
-              duration: Infinity,
-              icon: <ErrorIcon />,
-            }
-          );
+          toastErrorClosable(toastId, `${error}`)
           next(error)
         } else {
           toast.dismiss(toastId)
