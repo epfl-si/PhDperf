@@ -11,7 +11,6 @@ import toast from 'react-hot-toast';
 import {toastErrorClosable} from "/imports/ui/components/Toasters";
 import {findDisabledFields} from "/imports/lib/formIOUtils";
 import {customEvent} from '/imports/ui/model/formIo'
-import {useAccountContext} from "/imports/ui/contexts/Account";
 import {useConnectionStatusContext} from "/imports/ui/contexts/ConnectionStatus";
 import {Task, Tasks} from "/imports/model/tasks";
 
@@ -58,14 +57,14 @@ const ConnectionStatusForSubmit = ({ task }: { task?: Task }) => {
  * Component to monitor the task, to manage when the task was loaded but is not anymore later.
  * It can happen when multiple assignee are working on the same time on a task
  */
-const TaskStatus = ({ taskMonitored }: { taskMonitored: Task }) => {
+const TaskMonitor = ({ task }: { task: Task }) => {
   const taskSubscriptionLoading = useTracker(() => {
-    const handle = Meteor.subscribe('taskDetailed', [taskMonitored?._id]);
+    const handle = Meteor.subscribe('taskDetailed', [task?._id]);
     return !handle.ready();
-  }, [taskMonitored]);
+  }, [task]);
 
-  const task = useTracker(() => Tasks.findOne({ '_id': taskMonitored._id}), [taskMonitored])
-  const toastId = `toast-${task?._id}`
+  const taskMonitored = useTracker(() => Tasks.findOne({ '_id': task._id}), [task])
+  const toastId = `toast-${taskMonitored?._id}`
 
   if (!taskSubscriptionLoading && !task) {
     toastErrorClosable(toastId,
@@ -73,7 +72,7 @@ const TaskStatus = ({ taskMonitored }: { taskMonitored: Task }) => {
           Please take the appropriate actions to save your current form data if needed.`)
   }
 
-  // only here for the toast :)
+  // this component as nothing to draw, it's only here for the toast :)
   return (<></>)
 }
 
@@ -178,7 +177,8 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
  * As the form is not MeteorReactive (no useTracker), we separate the loading from the component that uses live states
  */
 export const TaskForm = ({ _id }: { _id: string }) => {
-  const account = useAccountContext()
+  const user = Meteor.user() // don't use accountProvider here, as we don't want to have a resetting form on user connection
+  const toastId = `taskFormToast${_id}`
 
   const [task, setTask] = useState<Task | undefined>()
   const [taskFormLoading, setTaskFormLoading] = useState(true)
@@ -197,26 +197,27 @@ export const TaskForm = ({ _id }: { _id: string }) => {
         onResultReceived: (error: Error | Meteor.Error | undefined, result) => {
           if (error) {
             setTask(undefined)
-            setTaskFormLoading(false)
+            setTaskFormLoading(false) // to remove
+            toastErrorClosable(toastId, `${error}`)
           } else {
             setTask(result as Task)
-            setTaskFormLoading(false)
+            setTaskFormLoading(false)  // to remove
           }
         }
       },
     )
   }, [_id])
 
-  if (!account || !account.isLoggedIn) return (<Loader message={'Loading your data...'}/>)
+  if (!user) return (<Loader message={'Loading your data...'}/>)
   if (taskFormLoading) return (<Loader message={'Loading the task form...'}/>)
 
   return (<>
     { task ? (
         <div>
           {!taskSubmitted &&
-            <TaskStatus taskMonitored={task}/>
+            <TaskMonitor task={task}/>
           }
-          { account.user?.isAdmin &&
+          { user?.isAdmin &&
             <TaskAdminInfo taskId={ task._id! }/>
           }
           <TaskFormEdit task={ task } onSubmitted={ onSubmit } />
