@@ -7,9 +7,17 @@
     }
   },
   "public": {
-    "isTest": true,
     "monitor_address": "localhost:8082",
     "phdAssessRoleAdmin":"PhD-annual-report-admin",
-    "phdAssessRoleProgramAssistant":"PhD-annual-report-administrative-assistant"
+    "phdAssessRoleProgramAssistant":"PhD-annual-report-administrative-assistant",
+    "//": [
+      "Used on pre-production environment (which is",
+      "neither Meteor.isDevelopment nor Meteor.isProduction)"
+    ],
+    "isTest": true,
+    "///": [
+      "Allow to control the Meteor connexion status from the client"
+    ],
+    "showClientConnexionControl": true
   }
 }
