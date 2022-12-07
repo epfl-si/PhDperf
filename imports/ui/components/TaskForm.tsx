@@ -23,7 +23,7 @@ const ConnectionStatusForSubmit = ({ task }: { task?: Task }) => {
   const [hasDisconnected, setHasDisconnected] = useState(false)
 
   useEffect(() => {
-    if (connectionStatus.ddp.status === 'offline') {
+    if (connectionStatus.ddp.status !== 'connected' && connectionStatus.ddp.status !== 'connecting') {
       setHasDisconnected(true)
       toastErrorClosable(toastId, 'It look like you lost connection to the server. Please save a backup of your form before trying to submit. Reconnecting...')
     } else if (hasDisconnected && connectionStatus.ddp.status === 'connected') {
@@ -52,7 +52,6 @@ const ConnectionStatusForSubmit = ({ task }: { task?: Task }) => {
   }
 }
 
-
 /**
  * Component to monitor the task, to manage when the task was loaded but is not anymore later.
  * It can happen when multiple assignee are working on the same time on a task
@@ -69,7 +68,7 @@ const TaskMonitor = ({ task }: { task: Task }) => {
   if (!taskSubscriptionLoading && !task) {
     toastErrorClosable(toastId,
       `The form has been submitted elsewhere or does not exist anymore.
-          Please take the appropriate actions to save your current form data if needed.`)
+       If needed, please take the appropriate actions to save your current form data.`)
   }
 
   // this component as nothing to draw, it's only here for the toast :)
