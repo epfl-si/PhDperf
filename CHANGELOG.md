@@ -1,7 +1,10 @@
 # CHANGELOG
 
+*1.14.0* (2022-12-09)
+- Redo the form edition, giving a better flow when things go wrong
+
 *1.13.0* (2022-11-21)
-- Updte to Meteor 2.8.1
+- Update to Meteor 2.8.1
 - Change error message container when task is submitted while being edited, from a div to toast
 - Remove assignee sciper info on dashboard when the task is waiting on the mentor, for some roles
 
