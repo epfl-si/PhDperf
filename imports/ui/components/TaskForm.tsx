@@ -83,24 +83,13 @@ const TaskAdminInfo = ({ taskId }: { taskId: string }) => {
 
   const task = useTracker(() => Tasks.findOne({ '_id': taskId}), [taskId])
 
-  const [showAdminInfo, setShowAdminInfo] = useState(false)
-
   if (taskSubscriptionLoading) return <Loader>Loading task admin info</Loader>
 
   if (!task) return <></>
 
   return (
     <div>
-      { showAdminInfo ?
-        <>
-          <div role="button" onClick={ () => setShowAdminInfo(false) }>Close</div>
-          <div>Task last seen on Zeebe at { task.journal.lastSeen?.toLocaleString('fr-CH') }, { task.journal.seenCount }x</div>
-        </>
-        :
-        <div role="button" onClick={ () => setShowAdminInfo(true) }>
-          Admin info
-        </div>
-      }
+      <div>Task last seen on Zeebe at { task.journal.lastSeen?.toLocaleString('fr-CH') }, { task.journal.seenCount }x</div>
     </div>
   )
 }
