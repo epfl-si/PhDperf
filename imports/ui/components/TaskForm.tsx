@@ -11,46 +11,8 @@ import toast from 'react-hot-toast';
 import {toastErrorClosable} from "/imports/ui/components/Toasters";
 import {findDisabledFields} from "/imports/lib/formIOUtils";
 import {customEvent} from '/imports/ui/model/formIo'
-import {useConnectionStatusContext} from "/imports/ui/contexts/ConnectionStatus";
 import {Task, Tasks} from "/imports/model/tasks";
 
-
-const ConnectionStatusForSubmit = ({ task }: { task?: Task }) => {
-  const connectionStatus = useConnectionStatusContext()
-
-  // link toast id to the subscription connection
-  const toastId = `toast-${task?._id}`
-  const [hasDisconnected, setHasDisconnected] = useState(false)
-
-  useEffect(() => {
-    if (connectionStatus.ddp.status !== 'connected' && connectionStatus.ddp.status !== 'connecting') {
-      setHasDisconnected(true)
-      toastErrorClosable(toastId, 'It look like you lost connection to the server. Please save a backup of your form before trying to submit. Reconnecting...')
-    } else if (hasDisconnected && connectionStatus.ddp.status === 'connected') {
-      toast.dismiss(toastId)
-      setHasDisconnected(false)
-      toast.success(
-        'Reconnected to the server',
-        { duration: 5000 }
-      )
-    }
-  }, [connectionStatus.ddp.status])
-
-  if (connectionStatus.ddp.status === 'connected')
-    return (<></>)
-  else {
-    return (
-      <div>
-        <div
-          className={'alert alert-danger'}
-          role='alert'>
-          <div>Connection to the server seems troublesome. Submitting is not guaranteed.</div>
-          <div>Please take the appropriate action to save your current form data.</div>
-        </div>
-      </div>
-    )
-  }
-}
 
 /**
  * Monitor the task, to reflect to the UI when the task was loaded but is not anymore later.
@@ -107,14 +69,14 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
 
   if (isSubmitted) return (
     <>
-      <div className={'alert alert-success'} role='alert'>{'Data submitted !'}</div>
+      <div className={'alert alert-success'} role='alert'>{'Data successfully submitted.'}</div>
       <Link to={`/`}><Button label={'Back'} onClickFn={() => void 0}/></Link>
     </>
   )
 
   if (!task.customHeaders.formIO) return (
     <div>
-      {'Task exists but is not well formed (has no formIO field). This state should not exist. Please contact 1234@epfl.ch about that problem.'}
+      {'Task exists but is not well formed (has no formIO field). Please contact 1234@epfl.ch about that problem.'}
     </div>
   )
 
@@ -131,33 +93,46 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
   )
 
   function beforeSubmitHook(this: any, formData: { data: any, metadata: any }, next: any) {
-    toast.loading("Submitting...",
-      {
-        id: toastId,
-        duration: 10000,
-      })
+    // get meteor status, if we are connected, submnit is good, otherwise, well, open the toaster about it and leave the UI ready to be saved
+    if (Meteor.status()?.status === "connected") {
+      toast.loading("Submitting...",
+        {
+          id: toastId,
+          duration: 10000,
+        })
 
-    // As formio sent all the form fields (disabled included)
-    // we remove the "disabled" one, so we can control
-    // the workflow variables with only the needed values
-    const formDataPicked = _.omit(formData.data, findDisabledFields(this))
+      // As formio sent all the form fields (disabled included)
+      // we remove the "disabled" one, so we can control
+      // the workflow variables with only the needed values
+      const formDataPicked = _.omit(formData.data, findDisabledFields(this))
 
-    Meteor.call("submit",
-      task._id,
-      formDataPicked,
-      formData.metadata,
-      (error: global_Error | Meteor.Error | undefined)  => {
-        if (error) {
-          toastErrorClosable(toastId, `${error}`)
-          next(error)
-        } else {
-          toast.dismiss(toastId)
-          setIsSubmitted(true)
-          onSubmitted()  // call the event that the submit has been done successfully
-          next()
+      Meteor.apply(
+        'submit',
+        [
+          task._id,
+          formDataPicked,
+          formData.metadata
+        ],
+        {
+          wait: true,
+          onResultReceived: (error: global_Error | Meteor.Error | undefined) => {
+            if (error) {
+              toastErrorClosable(toastId, `${error}`)
+              next(error.message)
+            } else {
+              toast.dismiss(toastId)
+              setIsSubmitted(true)
+              onSubmitted()  // call the event that the submit has been done successfully
+              next()
+            }
+          }
         }
-      }
-    )
+      )
+    } else {  // meteor status is not connected, that's not very good, time to alarm the user that something is fishy
+      const errorDisconnected = `The server is currently not able to accept your submission.
+      You can keep the form open and try again later. It is recommended to save your essentials information before closing the window.`
+      next(errorDisconnected)
+    }
   }
 }
 
@@ -231,6 +206,5 @@ export const TaskForm = ({ _id }: { _id: string }) => {
         </>
       )
     }
-    <ConnectionStatusForSubmit task={ task }/>
   </>)
 }
