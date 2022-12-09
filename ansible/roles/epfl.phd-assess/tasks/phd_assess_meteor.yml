@@ -43,6 +43,28 @@
   tags: meteor-build
   register: _phd_assess_meteor_build
 
+- name: "Scale down all pods from test (to free memory)"
+  when:
+    - >-
+      openshift_namespace == phd_assess_build_namespace
+  shell:
+    cmd: |
+      oc scale --replicas=0 $(oc get dc -o name | xargs) -n "{{ openshift_namespace }}"
+  tags:
+    - never
+    - meteor-scale-down
+
+- name: "Scale up some pods from test (useful when build is done)"
+  when:
+    - >-
+      openshift_namespace == phd_assess_build_namespace
+  shell:
+    cmd: |
+      oc scale --replicas=1 $(oc get dc -o name | grep -v simple-monitor  | xargs) -n "{{ openshift_namespace }}"
+  tags:
+    - never
+    - meteor-scale-up
+
 - name: "Rebuild Meteor serving image now"
   when:
     - >-

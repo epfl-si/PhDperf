@@ -99,6 +99,8 @@
     - meteor-rebuild
     - meteor-promote
     - meteor-push
+    - meteor-scale-down
+    - meteor-scale-up
 
 - name: Route tasks
   include_tasks:
