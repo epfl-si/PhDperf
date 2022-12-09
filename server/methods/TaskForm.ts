@@ -36,7 +36,7 @@ Meteor.methods({
       return task[0]
     } else {
       auditLog(`Error: the task that is trying to be edited can not be found or the user has no the correct rights. Task key requested: ${_id}.`)
-      throw new Meteor.Error(404, 'Unknown task or unallowed permission', 'Check the task exist by refreshing your browser')
+      throw new Meteor.Error('404', `The task ID can not be find. It may not exists, or your are not allowed to get it.`)
     }
   },
 

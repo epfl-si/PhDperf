@@ -177,11 +177,11 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
  */
 export const TaskForm = ({ _id }: { _id: string }) => {
   const user = Meteor.user() // don't use accountProvider here, as we don't want to have a resetting form on user connection
-  const toastId = `taskFormToast${_id}`
 
   const [task, setTask] = useState<Task | undefined>()
   const [taskFormLoading, setTaskFormLoading] = useState(true)
   const [taskSubmitted, setTaskSubmitted] = useState(false)
+  const [taskLoadingError, setTaskLoadingError] = useState< Error | Meteor.Error | undefined>()
 
   const onSubmit = () => {
     setTaskSubmitted(true)
@@ -197,7 +197,7 @@ export const TaskForm = ({ _id }: { _id: string }) => {
           if (error) {
             setTask(undefined)
             setTaskFormLoading(false) // to remove
-            toastErrorClosable(toastId, `${error}`)
+            setTaskLoadingError(error)
           } else {
             setTask(result as Task)
             setTaskFormLoading(false)  // to remove
@@ -210,10 +210,22 @@ export const TaskForm = ({ _id }: { _id: string }) => {
   if (!user) return (<Loader message={'Loading your data...'}/>)
   if (taskFormLoading) return (<Loader message={'Loading the task form...'}/>)
 
+  if (taskLoadingError) return (
+    <div>
+      <div className={'h3'}>Oops</div>
+      { taskLoadingError instanceof Meteor.Error && taskLoadingError.reason ?
+        <div>{taskLoadingError.reason}</div> :
+        <div>{taskLoadingError.message}</div>
+      }
+        <br/>
+        <div>Please try again or go <Link to={`/`}>back to the task list</Link></div>
+    </div>
+  )
+
   return (<>
     { task ? (
         <div>
-          {!taskSubmitted &&
+          { !taskSubmitted &&
             <TaskMonitor task={task}/>
           }
           { user?.isAdmin &&
