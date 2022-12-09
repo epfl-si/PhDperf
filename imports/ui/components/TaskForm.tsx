@@ -53,7 +53,7 @@ const ConnectionStatusForSubmit = ({ task }: { task?: Task }) => {
 }
 
 /**
- * Component to monitor the task, to manage when the task was loaded but is not anymore later.
+ * Monitor the task, to reflect to the UI when the task was loaded but is not anymore later.
  * It can happen when multiple assignee are working on the same time on a task
  */
 const TaskMonitor = ({ task }: { task: Task }) => {
@@ -65,7 +65,7 @@ const TaskMonitor = ({ task }: { task: Task }) => {
   const taskMonitored = useTracker(() => Tasks.findOne({ '_id': task._id}), [task])
   const toastId = `toast-${taskMonitored?._id}`
 
-  if (!taskSubscriptionLoading && !task) {
+  if (!taskSubscriptionLoading && !taskMonitored) {
     toastErrorClosable(toastId,
       `The form has been submitted elsewhere or does not exist anymore.
        If needed, please take the appropriate actions to save your current form data.`)
