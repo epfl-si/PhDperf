@@ -16,7 +16,6 @@ export default function Main() {
   const mainPanelBackgroundColor: CSSProperties = Meteor.settings.public.isTest ? {backgroundColor: 'Cornsilk'} : {}
 
   const error:any = useRouteError();
-  console.error(error);
 
   return (
     <>
