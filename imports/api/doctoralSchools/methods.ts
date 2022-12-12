@@ -21,7 +21,7 @@ export const insertDoctoralSchool = new ValidatedMethod({
   },
 
   run(newDoctoralSchool: DoctoralSchool) {
-    if (!canCreateDoctoralSchool()) {
+    if (!canCreateDoctoralSchool(Meteor.user())) {
       if (Meteor.isServer) {
         const auditLog = auditLogConsoleOut.extend('server/methods')
         auditLog(`Unallowed user trying to add a doctoral school`)
@@ -66,7 +66,7 @@ export const updateDoctoralSchool = new ValidatedMethod({
         'Cannot find a doctoral schools to update.');
     }
 
-    if (!canEditDoctoralSchool(doctoralSchool)) {
+    if (!canEditDoctoralSchool(Meteor.user(), doctoralSchool)) {
         if (Meteor.isServer) {
           const auditLog = auditLogConsoleOut.extend('server/methods')
           auditLog(`Unallowed user trying to edit a doctoral school`)
