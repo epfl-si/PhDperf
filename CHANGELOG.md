@@ -1,5 +1,8 @@
 # CHANGELOG
 
+*1.15.0* (2022-12-12)
+- Set sticky header on the dashboard
+
 *1.14.0* (2022-12-09)
 - Redo the form edition, giving a better flow when things go wrong
 
