@@ -2,7 +2,7 @@ import {useTracker} from "meteor/react-meteor-data"
 import {Meteor} from "meteor/meteor"
 import {Tasks} from "/imports/model/tasks";
 import _ from "lodash"
-import React from "react"
+import React, {CSSProperties} from "react"
 import {Loader} from "@epfl/epfl-sti-react-library";
 import {ParticipantDetail} from "/imports/model/participants";
 import {ITaskDashboard} from "/imports/policy/dashboard/type";
@@ -182,6 +182,8 @@ export function Dashboard() {
 
   if (!account?.isLoggedIn) return (<Loader message={'Loading your data...'}/>)
 
+  const backgroundColor: CSSProperties = Meteor.settings.public.isTest ? {backgroundColor: 'Cornsilk'} : {}
+
   return (
     <>
       {listLoading ? (
@@ -191,7 +193,11 @@ export function Dashboard() {
           <div>There is currently no task</div>
           ) : (
           <div className="container small dashboard">
-            <div className="row" key={ `dashboard_title_row` }>
+            <div
+              className="dashboard-title row flex-nowrap"
+              key={ `dashboard_title_row` }
+              style={ backgroundColor ?? {} }
+            >
               <div className="dashboard-header dashboard-header-phdStudentName col-2 m-1 p-2 text-black align-self-end">Name</div>
               <div className="dashboard-header dashboard-header-doctoralProgramName col m-1 p-2 text-black align-self-end">Program</div>
               {

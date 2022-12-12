@@ -123,3 +123,11 @@ div[id^=error-list].alert-success {
   max-height: 3em;
   min-height: 3em;
 }
+
+.dashboard-title {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: white;
+}
+
