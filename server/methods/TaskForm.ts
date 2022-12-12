@@ -118,9 +118,8 @@ Meteor.methods({
 
     formData.activityLogs = encrypt(JSON.stringify(jobURLs))
 
-    auditLog(`Sending success: job ${task._id} of process instance ${task.processInstanceKey} with data ${JSON.stringify(formData)}`)
     await WorkersClient.success(task._id!, formData)
+    auditLog(`Sending success: job ${task._id} of process instance ${task.processInstanceKey} with data ${JSON.stringify(formData)}`)
     Tasks.markAsSubmitted(task._id!)
-    auditLog(`Successfully submitted form for task id ${task._id}.`)
   },
 })
