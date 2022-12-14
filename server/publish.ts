@@ -8,8 +8,9 @@ import {getUserPermittedTasksForDashboard} from "/imports/policy/dashboard/tasks
 import {getUserPermittedTasksForList} from "/imports/policy/tasksList/tasks";
 import {canEditAtLeastOneDoctoralSchool, canEditDoctoralSchool} from "/imports/policy/doctoralSchools";
 import {canImportScipersFromISA} from "/imports/policy/importScipers";
-import {Task, Tasks} from "/imports/model/tasks";
+import {Task, Tasks, isObsolete} from "/imports/model/tasks";
 import {refreshAlreadyStartedImportScipersList} from "/imports/api/importScipers/helpers";
+import _ from "lodash";
 
 
 Meteor.publish('taskDetailed', function (args: [string]) {
@@ -21,10 +22,36 @@ Meteor.publish('taskDetailed', function (args: [string]) {
   }
 })
 
-Meteor.publish('tasks', function () {
+Meteor.publish('tasksList', function () {
   if (this.userId) {
     const user = Meteor.users.findOne({ _id: this.userId }) ?? null
-    return getUserPermittedTasksForList(user)
+
+    // we do not send directly the journal.lastSeen on tasks list, as it trigger updates all the time.
+    // Instead we provide a new boolean attribute 'isObsolete' that changes only when his time as come
+    const tasksList = getUserPermittedTasksForList(user)
+
+    if (!tasksList) {
+      this.ready()
+    } else {
+      const handle = tasksList.observeChanges({
+        added: (id, fields) => {
+          this.added('tasks',  id,{
+            isObsolete: isObsolete(fields.journal?.lastSeen),
+            ..._.omit(fields, 'journal.lastSeen')
+          })
+        },
+        changed: (id, fields) => {
+          this.changed('tasks', id,{
+            isObsolete: isObsolete(fields.journal?.lastSeen),
+            ..._.omit(fields, 'journal.lastSeen')
+          })
+        },
+      })
+
+      this.ready()
+
+      if (handle) this.onStop(() => handle.stop());
+    }
   } else {
     this.ready()
   }

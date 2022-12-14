@@ -40,6 +40,8 @@ export class Task implements TaskInterface {
   declare retries: number;
   declare deadline: string;
   declare journal: TaskJournal;
+  // To tell admins if the task not too old from the date in lastSeen
+  declare isObsolete: boolean;
 
   assigneeScipers?: Sciper[]
   participants?: ParticipantList
@@ -74,21 +76,18 @@ export class Task implements TaskInterface {
       `http://${Meteor.settings.public.monitor_address}/views/instances/${this.processInstanceKey}` :
       undefined
   }
+}
 
-  /*
-   * as admins can have the lastSeen info, check here if the task is obsolete, or return undefined if the value can't be seen
-   */
-  get isObsolete(): boolean | undefined {
-    if (this.journal?.lastSeen) {
-      const yesterday = dayjs().subtract(1, 'day')
-      const lastSeen = dayjs(this.journal.lastSeen)
 
-      if (lastSeen <= yesterday) {
-        return true
-      } else {
-        return false
-      }
-    }
+/**
+ * Check a date to see if this is, in our opinion, an obsolete one
+ */
+export const isObsolete = (lastSeen:  Date | undefined) => {
+  if (lastSeen) {
+    const yesterdayDate = dayjs().subtract(1, 'day')
+    const lastSeenDate = dayjs(lastSeen)
+
+    return lastSeenDate <= yesterdayDate
   }
 }
 

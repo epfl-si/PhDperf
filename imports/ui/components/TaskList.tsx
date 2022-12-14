@@ -129,7 +129,7 @@ export default function TaskList() {
   const listLoading = useTracker(() => {
     // Note that this subscription will get cleaned up
     // when your component is unmounted or deps change.
-    const handle = Meteor.subscribe('tasks');
+    const handle = Meteor.subscribe('tasksList');
     return !handle.ready();
   }, []);
 

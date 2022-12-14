@@ -1,5 +1,8 @@
 # CHANGELOG
 
+*1.16.0* (2022-12-14)
+- Remove journal.lastSeen published value for admin and use the new attribute isObsolete
+
 *1.15.0* (2022-12-12)
 - Set sticky header on the dashboard
 
