@@ -327,8 +327,10 @@
             - name: zeebe-db-monitor
               image: "{{ openshift_local_images_base }}/zeebe-db-monitor"
               env:
-                - name: 'ZEEBE_DATA_PATH'
+                - name: 'ZEEBE_DATA_RO_PATH'
                   value: '/zeebe-data-ro'
+                - name: 'ZEEBE_DATA_RW_BASE_PATH'
+                  value: '/zeebe-data-rw'
                 - name: 'ZDB_READ_CACHE_TIMEOUT'
                   value: '120000'
               volumeMounts:
