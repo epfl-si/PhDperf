@@ -149,6 +149,19 @@ const DrawProgress = ({tasks}: { tasks: ITaskDashboard[] }) => {
   }
 }
 
+const DashboardRow = ({ workflowInstanceTasks } : { workflowInstanceTasks:ITaskDashboard[] }) => (
+  <div className="row" key={ `${workflowInstanceTasks[0]._id}_main_div` }>
+    <div className="dashboard-phdStudentName col-2 m-1 p-2 text-black" key={ `${workflowInstanceTasks[0]._id}_phdStudentSciper` } >
+      <a href={`https://people.epfl.ch/${workflowInstanceTasks[0].variables.phdStudentSciper}`} target={'_blank'}>{ workflowInstanceTasks[0].variables.phdStudentName }</a> ({ workflowInstanceTasks[0].variables.phdStudentSciper })
+    </div>
+    <div className="dashboard-doctoralProgramName col m-1 p-2 text-black" key={ `${workflowInstanceTasks[0]._id}_doctoralProgramName` } >
+      { workflowInstanceTasks[0].variables.doctoralProgramName }
+    </div>
+    <DrawProgress tasks={ workflowInstanceTasks } key={ workflowInstanceTasks[0]._id } />
+  </div>
+)
+
+
 export function Dashboard() {
   const account = useAccountContext()
 
@@ -205,20 +218,9 @@ export function Dashboard() {
               }
             </div>
             {
-              Object.keys(groupByWorkflowInstanceTasks).map((taskGrouper: string) => {
-                const workflowInstanceTasks = groupByWorkflowInstanceTasks[taskGrouper]
-                return (
-                  <div className="row" key={ `${workflowInstanceTasks[0]._id}_main_div` }>
-                    <div className="dashboard-phdStudentName col-2 m-1 p-2 text-black" key={ `${workflowInstanceTasks[0]._id}_phdStudentSciper` } >
-                      <a href={`https://people.epfl.ch/${workflowInstanceTasks[0].variables.phdStudentSciper}`} target={'_blank'}>{ workflowInstanceTasks[0].variables.phdStudentName }</a> ({ workflowInstanceTasks[0].variables.phdStudentSciper })
-                    </div>
-                    <div className="dashboard-doctoralProgramName col m-1 p-2 text-black" key={ `${workflowInstanceTasks[0]._id}_doctoralProgramName` } >
-                      { workflowInstanceTasks[0].variables.doctoralProgramName }
-                    </div>
-                    <DrawProgress tasks={ workflowInstanceTasks }  key={ workflowInstanceTasks[0]._id } />
-                  </div>
-                )
-              })
+              Object.keys(groupByWorkflowInstanceTasks).map(
+                (taskGrouper: string) => <DashboardRow workflowInstanceTasks={ groupByWorkflowInstanceTasks[taskGrouper] }/>
+             )
             }
           </div>)
       )}
