@@ -2,7 +2,8 @@ import {useTracker} from "meteor/react-meteor-data"
 import {Meteor} from "meteor/meteor"
 import {Tasks} from "/imports/model/tasks";
 import _ from "lodash"
-import React, {CSSProperties} from "react"
+import React, {CSSProperties, useState} from "react"
+import Select from 'react-select'
 import {Loader} from "@epfl/epfl-sti-react-library";
 import {ParticipantDetail} from "/imports/model/participants";
 import {ITaskDashboard} from "/imports/policy/dashboard/type";
@@ -13,6 +14,8 @@ import {useAccountContext} from "/imports/ui/contexts/Account";
  * TODO: manage unknown steps, it can happens in the future if we had a step without extending phdAssessSteps
  * TODO: load directly from bpmn ?
  */
+
+type progressFormat = 'thin' | 'full'
 
 /*
  * Define every step, like in the bpmn. If there are parallel steps, put them inside an array
@@ -70,11 +73,19 @@ const phdAssesSteps = [
  */
 // here we can get multiple task, as they should be grouped by workflow instance id
 // if they are multiple, that means we are waiting for two steps = 2 blue color
-const StepNotDone = () => <div className="dashboard-step dashboard-step-not-done border col m-1 p-2 text-white"/>
+const StepNotDone = ({ format } : { format : progressFormat }) => <div className={
+  format === 'thin' ?
+    "dashboard-step-not-done border col m-1 p-2 text-white" :
+    "dashboard-step dashboard-step-not-done border col m-1 p-2 text-white"
+}/>
 
-const StepDone = () => <div className="dashboard-step dashboard-step-done border col m-1 p-2 bg-success text-white"/>
+const StepDone = ({ format } : { format : progressFormat }) => <div className={
+  format === 'thin' ?
+    "dashboard-step-done border col m-1 p-2 bg-success text-white" :
+    "dashboard-step dashboard-step-done border col m-1 p-2 bg-success text-white"
+}/>
 
-const StepPending = ({task}: {task: ITaskDashboard}) => {
+const StepPending = ({ task, format }: { task: ITaskDashboard, format : progressFormat }) => {
   let assignees: ParticipantDetail[] | undefined = task.assigneeScipers && Object.values(task.participants).filter((participant: ParticipantDetail) => task.assigneeScipers!.includes(participant.sciper))
 
   assignees = (assignees && assignees.length > 1) ? _.uniqWith(assignees, _.isEqual) : assignees  // make it uniqu if we have multiple roles
@@ -92,13 +103,17 @@ const StepPending = ({task}: {task: ITaskDashboard}) => {
   })}`
 
   return (
-    <div className="dashboard-step dashboard-step-pending border col m-1 p-2 bg-awaiting text-white"
+    <div className={
+      format === 'thin' ?
+        "dashboard-step-pending border col m-1 p-2 bg-awaiting text-white" :
+        "dashboard-step dashboard-step-pending border col m-1 p-2 bg-awaiting text-white"
+    }
      data-toggle="tooltip"
      title={ onHoverInfo } />
   )
 }
 
-const DrawProgress = ({tasks}: { tasks: ITaskDashboard[] }) => {
+const CurrentProgress = ({ tasks, format }: { tasks: ITaskDashboard[], format: progressFormat }) => {
 
   let pendingDone = false
   let parallelPendingDone = false
@@ -113,12 +128,12 @@ const DrawProgress = ({tasks}: { tasks: ITaskDashboard[] }) => {
           const task = tasks.find(t => t.elementId === y.id)
           const taskKey = `${task?._id}_${i}_${j}`
           if (pendingDone) {
-            return <StepNotDone key={ taskKey } />
+            return <StepNotDone key={ taskKey } format={ format } />
           } else if (pendingTasksIds.includes(y.id)) {
             parallelPendingDone = true
-            return <StepPending key={ taskKey } task={ task! } />
+            return <StepPending key={ taskKey } task={ task! } format={ format } />
           } else {
-            return <StepDone key={ taskKey } />
+            return <StepDone key={ taskKey } format={ format } />
           }
         })
 
@@ -130,12 +145,12 @@ const DrawProgress = ({tasks}: { tasks: ITaskDashboard[] }) => {
         const taskKey = `${task?._id}_${i}`
         if (pendingTasksIds.includes(x.id)) {
           pendingDone = true
-          return <StepPending key={ taskKey } task={ task! } />
+          return <StepPending key={ taskKey } task={ task! } format={ format } />
         } else if (pendingDone) {
-          return <StepNotDone key={ taskKey } />
+          return <StepNotDone key={ taskKey } format={ format } />
         }
         else {
-          return <StepDone key={ taskKey } />
+          return <StepDone key={ taskKey } format={ format } />
         }
       }
     })
@@ -149,18 +164,134 @@ const DrawProgress = ({tasks}: { tasks: ITaskDashboard[] }) => {
   }
 }
 
-const DashboardRow = ({ workflowInstanceTasks } : { workflowInstanceTasks:ITaskDashboard[] }) => (
-  <div className="row" key={ `${workflowInstanceTasks[0]._id}_main_div` }>
-    <div className="dashboard-phdStudentName col-2 m-1 p-2 text-black" key={ `${workflowInstanceTasks[0]._id}_phdStudentSciper` } >
-      <a href={`https://people.epfl.ch/${workflowInstanceTasks[0].variables.phdStudentSciper}`} target={'_blank'}>{ workflowInstanceTasks[0].variables.phdStudentName }</a> ({ workflowInstanceTasks[0].variables.phdStudentSciper })
+const StepsAsHeader = () => {
+  const backgroundColor: CSSProperties = Meteor.settings.public.isTest ? {backgroundColor: 'Cornsilk'} : {}
+  return (
+    <div
+      className="dashboard-title row flex-nowrap"
+      key={ `dashboard_title_row` }
+      style={ backgroundColor ?? {} }
+    >
+      {
+        _.flatten(phdAssesSteps).map((step) => <div className="dashboard-header col mx-1 mt-1 px-2 pt-2 text-black align-self-end" key={step.id}>{step.label}</div>)
+      }
     </div>
-    <div className="dashboard-doctoralProgramName col m-1 p-2 text-black" key={ `${workflowInstanceTasks[0]._id}_doctoralProgramName` } >
-      { workflowInstanceTasks[0].variables.doctoralProgramName }
-    </div>
-    <DrawProgress tasks={ workflowInstanceTasks } key={ workflowInstanceTasks[0]._id } />
-  </div>
-)
+)}
 
+const Row = ({ workflowInstanceTasks } : { workflowInstanceTasks:ITaskDashboard[] }) => {
+  const [showDetail, setShowDetail] = useState(false)
+
+  const task = workflowInstanceTasks[0]  // from the stack of instances, the one should do the job
+
+  return (<>
+  <div className='dropdown-divider'></div>
+    <div className="row" key={ `${task._id}_main_div` }>
+      <div className="col-12">
+        <div className='row'>
+          <div className="dashboard-phdStudentName col m-1 p-2 text-black" key={ `${task._id}_phdStudentSciper` } >
+            <a href={`https://people.epfl.ch/${task.variables.phdStudentSciper}`} target={'_blank'}>{ task.variables.phdStudentName }</a> ({ task.variables.phdStudentSciper })
+          </div>
+          <div className="dashboard-doctoralProgramName col m-1 p-2 text-black" key={ `${task._id}_doctoralProgramName` } >
+            { task.variables.doctoralProgramName }
+          </div>
+          <div className="dashboard-updated_at col m-1 p-2 text-black" key={ `${task._id}_updated_at` } >
+            { task.updated_at?.toLocaleString('fr-CH') }
+          </div>
+          <div className="dashboard-updated_at col-4 m-1 p-2 text-black" key={ `${task._id}_updated_at` } >
+            { !showDetail &&
+              <>
+                <div className={'row'}>
+                  <CurrentProgress tasks={workflowInstanceTasks} key={task._id} format={'thin'}/>
+                  <a href={"#"} onClick={() => setShowDetail(true)}>Detail</a>
+                </div>
+              </>
+            }
+          </div>
+        </div>
+        { showDetail &&
+          <>
+            <div className={'row'}>
+              <StepsAsHeader/>
+            </div>
+            <div className='row'>
+              <CurrentProgress tasks={workflowInstanceTasks} key={task._id} format={'full'}/>
+            </div>
+            <div className={'row'}>
+            <a href={"#"} onClick={() => setShowDetail(false)}>Hide detail</a>
+            </div>
+          </>
+        }
+      </div>
+    </div>
+  </>)
+}
+
+const ProgramSelector = () => {
+  return (
+    <>
+      <div className={'h5'}>Doctoral programs</div>
+      <Select
+        placeholder={ 'Select doctoral programs...' }
+        defaultValue={ 'all' }
+        defaultMenuIsOpen={ false }
+        isMulti={ false }
+        options={ [
+          // @ts-ignore
+          { value: 'EDAM', label: 'EDAM'},
+          // @ts-ignore
+          { value: 'EDEY', label: 'EDEY'},
+          // @ts-ignore
+          { value: 'all', label: 'All'},
+        ]
+        }
+        menuPlacement={'top'}
+      />
+    </>
+  );
+}
+
+const FilterByParticipants = () => {
+  return (
+    <div className={'my-2 border-bottom border-top'}>
+      <div className={'h5'}>Filter by participants</div>
+      <div>
+        <label>
+          Name or sciper: &nbsp;
+          <input type="text" name="name" />
+        </label>
+      </div>
+      <div>
+        <label>
+          Role: &nbsp;
+          <input type="text" name="name" />
+        </label>
+      </div>
+    </div>
+)}
+
+const FilterBySteps = () => {
+  return (
+    <>
+      <div className={'h5'}>Steps</div>
+      <Select
+        placeholder={ 'Select step...' }
+        defaultValue={ 'all' }
+        defaultMenuIsOpen={ false }
+        isMulti={ false }
+        menuPlacement={'top'}
+        options={ [
+          // @ts-ignore
+          { value: 'Phd fills annual report', label: 'Phd fills annual report'},
+          // @ts-ignore
+          { value: 'PhD signature', label: 'PhD signature'},
+          // @ts-ignore
+          { value: 'all', label: 'All'},
+        ]
+        }
+      />
+    </>
+  );
+}
 
 export function Dashboard() {
   const account = useAccountContext()
@@ -195,35 +326,27 @@ export function Dashboard() {
 
   if (!account?.isLoggedIn) return (<Loader message={'Loading your data...'}/>)
 
-  const backgroundColor: CSSProperties = Meteor.settings.public.isTest ? {backgroundColor: 'Cornsilk'} : {}
 
-  return (
-    <>
-      {listLoading ? (
-        <Loader message={'Fetching tasks...'}/>
-      ) : (
-        allTasks.length === 0 ? (
-          <div>There is currently no task</div>
-          ) : (
-          <div className="container small dashboard">
-            <div
-              className="dashboard-title row flex-nowrap"
-              key={ `dashboard_title_row` }
-              style={ backgroundColor ?? {} }
-            >
-              <div className="dashboard-header dashboard-header-phdStudentName col-2 m-1 p-2 text-black align-self-end">Name</div>
-              <div className="dashboard-header dashboard-header-doctoralProgramName col m-1 p-2 text-black align-self-end">Program</div>
-              {
-                _.flatten(phdAssesSteps).map((step) => <div className="dashboard-header col m-1 p-2 text-black align-self-end" key={step.id}>{step.label}</div>)
-              }
-            </div>
-            {
-              Object.keys(groupByWorkflowInstanceTasks).map(
-                (taskGrouper: string) => <DashboardRow workflowInstanceTasks={ groupByWorkflowInstanceTasks[taskGrouper] }/>
-             )
-            }
-          </div>)
-      )}
-    </>
-  )
+  if (listLoading) return (<Loader message={'Fetching tasks...'}/>)
+
+  if (allTasks.length === 0) return (<div>There is currently no task</div>)
+
+  return (<>
+    <div className='small mb-3'>
+      <ProgramSelector/>
+      <FilterByParticipants/>
+      <FilterBySteps/>
+    </div>
+    <div className="container-fluid small dashboard">
+      {
+        Object.keys(groupByWorkflowInstanceTasks).map(
+          (taskGrouper: string) =>
+            <Row
+              workflowInstanceTasks={ groupByWorkflowInstanceTasks[taskGrouper] }
+              key={ groupByWorkflowInstanceTasks[taskGrouper][0]._id }
+            />
+       )
+      }
+    </div>
+  </>)
 }

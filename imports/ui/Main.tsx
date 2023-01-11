@@ -24,7 +24,7 @@ export default function Main() {
       <PhDBreadcrumb/>
       <div className={ 'main nav-toggle-layout nav-aside-layout' }>
         <AsideMenu/>
-        <div className="container" style={ mainPanelBackgroundColor }>
+        <div className="container-fluid" style={ mainPanelBackgroundColor }>
           { Meteor.settings.public.isTest &&
             <div className={'alert alert-info'} role={'alert'}><strong>Testing</strong> You are on the testing environment.</div>
           }
