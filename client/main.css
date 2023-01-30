@@ -131,3 +131,7 @@ div[id^=error-list].alert-success {
   background: white;
 }
 
+/* fix the formio input checkbox being invisible because of some strange filter on safari */
+.form-check input[type='checkbox'] {
+  filter: none;
+}

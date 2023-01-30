@@ -1,5 +1,8 @@
 # CHANGELOG
 
+*1.16.1* (2023-01-30)
+- Fix FormIO checkbox being invisible on safari
+
 *1.16.0* (2022-12-14)
 - Remove journal.lastSeen published value for admin and use the new attribute isObsolete
 
