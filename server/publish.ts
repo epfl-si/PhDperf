@@ -46,6 +46,9 @@ Meteor.publish('tasksList', function () {
             ..._.omit(fields, 'journal.lastSeen')
           })
         },
+        removed: (id: string) => {
+          this.removed('tasks', id)
+        }
       })
 
       this.ready()

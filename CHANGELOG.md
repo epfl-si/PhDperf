@@ -1,5 +1,8 @@
 # CHANGELOG
 
+*1.16.1* (2023-01-31)
+- Fix not being able to sync removed tasks on the list
+
 *1.16.1* (2023-01-30)
 - Fix FormIO checkbox being invisible on safari
 
