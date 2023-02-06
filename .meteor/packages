@@ -27,3 +27,6 @@ dev-error-overlay@0.1.1
 service-configuration@1.3.1
 mdg:validated-method
 aldeed:schema-index
+meteortesting:mocha
+xolvio:cleaner
+dburles:factory

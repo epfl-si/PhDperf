@@ -82,3 +82,17 @@ docker push os-docker-registry.epfl.ch/phd-assess-test/zeebe:1.3.9-SNAPSHOT
 
 phdsible -e zeebe_debug_build=1 -t zeebe
 ```
+
+## Test
+
+Run
+```
+meteor test --driver-package meteortesting:mocha --port 3100
+```
+
+Add --full-app or --once if needed
+
+Choose only server or client with env TEST_SERVER=0 TEST_CLIENT=0:
+```
+TEST_SERVER=0 meteor test --driver-package meteortesting:mocha --port 3100
+```
