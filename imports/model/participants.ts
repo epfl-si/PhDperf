@@ -10,6 +10,8 @@ type ZeebeParticipantsVariablesBase = {
   phdStudentSciper: Sciper
   phdStudentEmail: string
   phdStudentName: string
+  phdStudentFirstName: string
+  phdStudentLastName: string
 
   thesisDirectorSciper: Sciper
   thesisDirectorEmail: string
