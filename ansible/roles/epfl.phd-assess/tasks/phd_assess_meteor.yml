@@ -36,6 +36,7 @@
     from: "{{ openshift_local_images_base }}/node-base"
     git:
       repository: "https://github.com/epfl-si/PhDAssess"
+      path: apps/fillForm
     spec:
       resources:
         limits:
