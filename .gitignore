@@ -1,8 +1,7 @@
-node_modules/
-.env
+/ansible/ansible-deps-cache
+/apps/fillForm/node_modules/
+/apps/fillForm/.env
+/apps/fillForm/tsconfig.tsbuildinfo
 /docker/zeebe-hazelcast/*.jar
 /docker/simple-monitor/*.jar
 /docker/volumes
-tsconfig.tsbuildinfo
-dist
-ansible/ansible-deps-cache

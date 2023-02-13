@@ -104,7 +104,7 @@
   shell: |
     set -e -x
     oc whoami -t | docker login {{ openshift_image_registry }} -u unused --password-stdin
-    docker build -t {{ phd_assess_meteor_image_tag }} ..
+    docker build -t {{ phd_assess_meteor_image_tag }} ../apps/fillForm
     docker push {{ phd_assess_meteor_image_tag }}
   register: output_push_image
   delegate_to: localhost
