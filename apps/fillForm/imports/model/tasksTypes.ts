@@ -1,6 +1,6 @@
 import {ICustomHeaders, IInputVariables, Job} from "zeebe-node";
-import {ZeebeParticipantsVariables} from "./participants";
 import {Sciper} from "../api/datatypes";
+import {PhDAssessVariables} from "phd-assess-meta/types/variables";
 
 export class PhDCustomHeaderShape implements ICustomHeaders {
   groups?: string[]  // manage permission groupwise
@@ -9,7 +9,7 @@ export class PhDCustomHeaderShape implements ICustomHeaders {
   [key: string]: any  // the others var
 }
 
-// Log what happens on every steps
+// What the FormIO metadata provides us with
 export interface FormioActivityLog {
   timezone?: string;
   offset?: number;
@@ -17,7 +17,7 @@ export interface FormioActivityLog {
   referrer?: string;
   browserName?: string;
   userAgent?: string;
-  pathName?: string;
+  pathName?: string;  // the only one we are interested in
   onLine?: boolean;
 }
 
@@ -25,12 +25,8 @@ export interface FormioActivityLog {
 // we will need through the code.
 // Why a class instead an interface here ? To be able to read the
 // keys later in the process. See https://stackoverflow.com/a/59806829
-export interface PhDInputVariables extends ZeebeParticipantsVariables, IInputVariables {
+export interface PhDInputVariables extends PhDAssessVariables, IInputVariables {
   assigneeSciper?: Sciper | Sciper[]
-  created_by?: Sciper
-  created_at?: string  // JSON date
-  updated_at?: string  // JSON date
-  activityLogs?: string
   //[key: string]: any  // the others var
 }
 

@@ -2,37 +2,6 @@ import {Sciper} from "/imports/api/datatypes";
 import {PhDInputVariables} from "/imports/model/tasksTypes";
 
 
-type ZeebeParticipantsVariablesBase = {
-  programAssistantSciper: Sciper
-  programAssistantEmail: string
-  programAssistantName: string
-
-  phdStudentSciper: Sciper
-  phdStudentEmail: string
-  phdStudentName: string
-  phdStudentFirstName: string
-  phdStudentLastName: string
-
-  thesisDirectorSciper: Sciper
-  thesisDirectorEmail: string
-  thesisDirectorName: string
-
-  thesisCoDirectorSciper: Sciper
-  thesisCoDirectorEmail: string
-  thesisCoDirectorName: string
-
-  programDirectorSciper: Sciper
-  programDirectorEmail: string
-  programDirectorName: string
-
-  mentorSciper: Sciper
-  mentorEmail: string
-  mentorName: string
-}
-
-// make everything optional, check is done in runtime, as we are not here to reflect what is needed in business
-export type ZeebeParticipantsVariables = Partial<ZeebeParticipantsVariablesBase>
-
 export const ParticipantIDs: ParticipantRoles[] = [
   "programAssistant" ,
   "phdStudent" ,

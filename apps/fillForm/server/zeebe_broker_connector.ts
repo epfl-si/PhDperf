@@ -33,10 +33,8 @@ interface PhDZeebeJob<WorkerInputVariables = PhDInputVariables, CustomHeaderShap
 export let zBClient: ZeebeSpreadingClient | null = null
 
 function zeebeJobToTask(job: PhDZeebeJob): Task {
-  // decrypt the variables before saving into memory (keep the typed values too)
-  // Typescript hack with the "any" : make it writable by bypassing typescript. Well know it's bad,
-  // but still, better than rebuilding the whole Zeebe interfaces to get it writeable
-  const decryptedVariables: PhDInputVariables = {}
+  // decrypt the variables before saving into memory
+  const decryptedVariables: any = {}
   let undecryptableVariablesKey: string[] = []
 
   Object.keys(job.variables).map((key) => {
@@ -65,7 +63,7 @@ function zeebeJobToTask(job: PhDZeebeJob): Task {
   // we are ok to make it to a task now
   const task = job as unknown as Task
   task._id = job.key
-  task.variables = decryptedVariables
+  task.variables = decryptedVariables as PhDInputVariables
 
   return task
 }
