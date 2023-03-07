@@ -303,6 +303,23 @@
         app: zeebe-observability
 
 
+- name: Log into the Openshift docker repository and push the zeebe-db-monitor image (pretending you already have built it)
+  when: openshift_namespace == phd_assess_build_namespace
+  tags:
+    - monitoring.zeebe-db-monitor.push
+    - never
+  shell: |
+    set -e -x
+    oc whoami -t | docker login {{ openshift_image_registry }} -u unused --password-stdin
+    docker image tag zeebe-db-monitor:latest {{ openshift_image_registry }}/{{ openshift_namespace }}/zeebe-db-monitor:latest
+    docker push {{ openshift_image_registry }}/{{ openshift_namespace }}/zeebe-db-monitor:latest
+  register: output_push_image
+  delegate_to: localhost
+- debug: var=output_push_image.stdout_lines
+  tags:
+    - monitoring.zeebe-db-monitor.push
+    - never
+
 - name: "zeebe-db-monitor DeploymentConfig"
   tags: monitoring.zeebe-db-monitor
   openshift:
@@ -329,10 +346,6 @@
               env:
                 - name: 'ZEEBE_DATA_RO_PATH'
                   value: '/zeebe-data-ro'
-                - name: 'ZEEBE_DATA_RW_BASE_PATH'
-                  value: '/zeebe-data-rw'
-                - name: 'ZDB_READ_CACHE_TIMEOUT'
-                  value: '120000'
               volumeMounts:
                 - mountPath: /zeebe-data-ro
                   name: zeebe-data
@@ -383,6 +396,7 @@
           port: 8080
       selector:
         app: zeebe-db-monitor
+
 
 - name: "Promote zeebe-db-monitor image from {{ phd_assess_build_namespace }} to production"
   when:
