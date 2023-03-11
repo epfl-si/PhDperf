@@ -1,7 +1,9 @@
-- name: Deploy the local bpmn to Zeebe
+- name: Download and deploy the latest bpmn to Zeebe
   throttle: 1   # There is only one port available locally for `oc port-forward`
   shell: |
     set -e -x
+    curl https://raw.githubusercontent.com/epfl-si/PhDAssess-meta/main/bpmn/phdAssessProcess.bpmn -o ../bpmn-model/phdAssessProcess.bpmn
+    if ! (diff "../bpmn-model/phdAssessProcess.bpmn" <(curl "https://raw.githubusercontent.com/epfl-si/PhDAssess-meta/main/bpmn/phdAssessProcess.bpmn")); then exit 2; fi;
     oc -n {{ openshift_namespace }} port-forward service/{{ zeebe_gateway_servicename }} {{ zeebe_ports.api }} &
     OCPID=$!
 
