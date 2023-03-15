@@ -2,6 +2,7 @@
 /apps/fillForm/node_modules/
 /apps/fillForm/.env
 /apps/fillForm/tsconfig.tsbuildinfo
+/apps/fillForm/packages/
 /docker/zeebe-hazelcast/*.jar
 /docker/simple-monitor/*.jar
 /docker/volumes
