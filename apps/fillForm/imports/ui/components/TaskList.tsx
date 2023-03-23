@@ -1,7 +1,7 @@
 import {global_Error, Meteor} from "meteor/meteor"
 import React from "react"
 import _ from "lodash"
-import {useTracker} from 'meteor/react-meteor-data'
+import {useFind, useSubscribe} from 'meteor/react-meteor-data'
 import {Tasks} from "/imports/model/tasks";
 import {WorkflowStarter} from './workflowStarter'
 import {Button, Loader} from "@epfl/epfl-sti-react-library"
@@ -126,15 +126,9 @@ function TaskRow({ task }: { task: ITaskList }) {
 export default function TaskList() {
   const account = useAccountContext()
 
-  const listLoading = useTracker(() => {
-    // Note that this subscription will get cleaned up
-    // when your component is unmounted or deps change.
-    const handle = Meteor.subscribe('tasksList');
-    return !handle.ready();
-  }, []);
-
-  const tasks = useTracker(() => Tasks.find({}).fetch() as ITaskList[])
-  const groupByTasks = _.groupBy(tasks, 'customHeaders.title')
+  const isLoading = useSubscribe('tasksList');
+  const tasks = useFind(() => Tasks.find({})) as ITaskList[];
+  const groupByTasks = !isLoading() ? _.groupBy(tasks, 'customHeaders.title') : {}
 
   if (!account || !account.isLoggedIn) return (<Loader message={'Loading your data...'}/>)
 
@@ -142,7 +136,7 @@ export default function TaskList() {
     <>
       <WorkflowStarter/>
 
-      {listLoading ? (
+      {isLoading() ? (
         <Loader message={'Fetching tasks...'}/>
       ) : (
         <>
