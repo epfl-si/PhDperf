@@ -1,12 +1,12 @@
 import {Tasks} from "/imports/model/tasks";
 import {faker} from "/tests/factories/faker";
-import {ParticipantIDs, ZeebeParticipantsVariables} from "/imports/model/participants";
+import {ParticipantIDs} from "/imports/model/participants";
+import {ParticipantsVariables} from "phd-assess-meta/types/participants";
 
 const _dburlesFactory = require("meteor/dburles:factory")
 
 const generateParticipants = (hasThesisCoDirector= true) => {
-
-  const participants:ZeebeParticipantsVariables = {}
+  const participants: Partial<ParticipantsVariables> = {}
 
   ParticipantIDs.forEach((role) => {
     if (role === 'thesisCoDirector' && !hasThesisCoDirector) return
