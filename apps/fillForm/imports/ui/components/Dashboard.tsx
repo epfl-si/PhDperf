@@ -165,7 +165,9 @@ export function Dashboard() {
   const account = useAccountContext()
 
   const isLoading = useSubscribe('tasksDashboard');
-  let allTasks = (useFind(() => Tasks.find({})) as ITaskDashboard[]).filter((task) => task.elementId !== 'Activity_Program_Assistant_Assigns_Participants');
+  let allTasks = (useFind(() => Tasks.find(
+    {"elementId": {$ne: "Activity_Program_Assistant_Assigns_Participants"}}
+  )) as ITaskDashboard[])
 
   // sort by second part of email address, that's the best way to get the name at this point
   allTasks = _.sortBy(
