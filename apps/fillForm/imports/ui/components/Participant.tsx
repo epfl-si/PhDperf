@@ -12,7 +12,7 @@ export type ParticipantsInfo = {
 
 const camelCaseToLabel = (text: string) => text.replace(/([A-Z])/g, ' $1').replace(/^./, function(str: string){ return str.toUpperCase(); })
 
-export const Participant = ({role, info, isAssignee}: ParticipantsInfo) =>
+export const Participant = React.memo(({role, info, isAssignee}: ParticipantsInfo) =>
   <>
     {info &&
     <div className={`participant border col m-1 p-2 ${isAssignee ? awaitingBoxColor : allGoodBoxColor}`}>
@@ -21,3 +21,4 @@ export const Participant = ({role, info, isAssignee}: ParticipantsInfo) =>
     </div>
     }
   </>
+)
