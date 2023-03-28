@@ -172,9 +172,8 @@ export function Dashboard() {
   }, []);
 
   let allTasks = useTracker(
-    () => Tasks.find({})
+    () => Tasks.find({"elementId": {$ne: "Activity_Program_Assistant_Assigns_Participants"}})
       .fetch() as ITaskDashboard[])
-      .filter((task) => task.elementId !== 'Activity_Program_Assistant_Assigns_Participants')
 
   // sort by second part of email address, that's the best way to get the name at this point
   allTasks = _.sortBy(
