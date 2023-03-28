@@ -45,7 +45,7 @@
     "simpl-schema": "^1.12.0",
     "supports-color": "9.2.3",
     "timed-memoize": "^2.4.2",
-    "zeebe-node": "^2.4.0"
+    "zeebe-node": "^8.1.8"
   },
   "devDependencies": {
     "@faker-js/faker": "^7.6.0",
