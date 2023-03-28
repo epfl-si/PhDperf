@@ -1,4 +1,4 @@
-import {useFind, useSubscribe} from "meteor/react-meteor-data"
+import {useTracker} from "meteor/react-meteor-data"
 import {Meteor} from "meteor/meteor"
 import {Tasks} from "/imports/model/tasks";
 import _ from "lodash"
@@ -164,10 +164,17 @@ const DashboardRow = ({ workflowInstanceTasks } : { workflowInstanceTasks:ITaskD
 export function Dashboard() {
   const account = useAccountContext()
 
-  const isLoading = useSubscribe('tasksDashboard');
-  let allTasks = (useFind(() => Tasks.find(
-    {"elementId": {$ne: "Activity_Program_Assistant_Assigns_Participants"}}
-  )) as ITaskDashboard[])
+  const listLoading = useTracker(() => {
+    // Note that this subscription will get cleaned up
+    // when your component is unmounted or deps change.
+    const handle = Meteor.subscribe('tasksDashboard');
+    return !handle.ready();
+  }, []);
+
+  let allTasks = useTracker(
+    () => Tasks.find({})
+      .fetch() as ITaskDashboard[])
+      .filter((task) => task.elementId !== 'Activity_Program_Assistant_Assigns_Participants')
 
   // sort by second part of email address, that's the best way to get the name at this point
   allTasks = _.sortBy(
@@ -185,30 +192,37 @@ export function Dashboard() {
 
   const groupByWorkflowInstanceTasks = _.groupBy(allTasks, 'workflowInstanceKey')
 
-  if (!account?.isLoggedIn) return ( <Loader message={'Loading your data...'}/> )
-  if (isLoading()) return ( <Loader message={'Fetching tasks...'}/> )
-  if (allTasks.length === 0) return ( <div>There is currently no task</div> )
+  if (!account?.isLoggedIn) return (<Loader message={'Loading your data...'}/>)
 
   const backgroundColor: CSSProperties = Meteor.settings.public.isTest ? {backgroundColor: 'Cornsilk'} : {}
 
   return (
-    <div className="container small dashboard">
-      <div
-        className="dashboard-title row flex-nowrap"
-        key={ `dashboard_title_row` }
-        style={ backgroundColor ?? {} }
-      >
-        <div className="dashboard-header dashboard-header-phdStudentName col-2 m-1 p-2 text-black align-self-end">Name</div>
-        <div className="dashboard-header dashboard-header-doctoralProgramName col m-1 p-2 text-black align-self-end">Program</div>
-        {
-          _.flatten(phdAssesSteps).map((step) => <div className="dashboard-header col m-1 p-2 text-black align-self-end" key={step.id}>{step.label}</div>)
-        }
-      </div>
-      {
-        Object.keys(groupByWorkflowInstanceTasks).map(
-          (taskGrouper: string) => <DashboardRow workflowInstanceTasks={ groupByWorkflowInstanceTasks[taskGrouper] }/>
-       )
-      }
-    </div>
+    <>
+      {listLoading ? (
+        <Loader message={'Fetching tasks...'}/>
+      ) : (
+        allTasks.length === 0 ? (
+          <div>There is currently no task</div>
+          ) : (
+          <div className="container small dashboard">
+            <div
+              className="dashboard-title row flex-nowrap"
+              key={ `dashboard_title_row` }
+              style={ backgroundColor ?? {} }
+            >
+              <div className="dashboard-header dashboard-header-phdStudentName col-2 m-1 p-2 text-black align-self-end">Name</div>
+              <div className="dashboard-header dashboard-header-doctoralProgramName col m-1 p-2 text-black align-self-end">Program</div>
+              {
+                _.flatten(phdAssesSteps).map((step) => <div className="dashboard-header col m-1 p-2 text-black align-self-end" key={step.id}>{step.label}</div>)
+              }
+            </div>
+            {
+              Object.keys(groupByWorkflowInstanceTasks).map(
+                (taskGrouper: string) => <DashboardRow workflowInstanceTasks={ groupByWorkflowInstanceTasks[taskGrouper] }/>
+             )
+            }
+          </div>)
+      )}
+    </>
   )
 }
