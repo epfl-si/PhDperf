@@ -303,7 +303,7 @@
         app: zeebe-observability
 
 
-- name: Log into the Openshift docker repository and push the zeebe-db-monitor image (pretending you already have built it)
+- name: Log into the Openshift docker repository and push the zeebe-db-monitor image (assuming you have already built it with the tag 'zeebe-db-monitor:latest')
   when: openshift_namespace == phd_assess_build_namespace
   tags:
     - monitoring.zeebe-db-monitor.push
