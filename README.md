@@ -1,6 +1,6 @@
 # PhD Assess
 
-This is an apps stack to allow students to fulfil their the PhD assessment process.
+This is an apps stack to allow students to fulfil their PhD assessment process.
 
 ## Structure
 
@@ -8,15 +8,15 @@ The stack is composed of:
 
 ### Operative tools
 
-./ansible, to deploy  
-./scripts, to work  
+./ansible, to deploy
+./scripts, to work
 
 ### Backends
 
 - the Zeebe stack
     - a solo Zeebe in dev, a raft in prod
     - the BPMN
-      - You can take a look at the process by installing the [BPMN Modeler](https://camunda.com/download/modeler/) and by opening [the process definition](bpmn-model/phdAssessProcess.bpmn).
+      - You can take a look at the process by installing the [BPMN Modeler](https://camunda.com/download/modeler/) and by opening [the process definition](https://github.com/epfl-si/PhDAssess-meta/blob/main/bpmn/phdAssessProcess.bpmn).
 - the GED uploader
 - the email sender
 - the pdf file builder
