@@ -1,6 +1,6 @@
 {
   "name": "phd-assess",
-  "version": "1.17.0",
+  "version": "1.18.0",
   "private": true,
   "scripts": {
     "start": "meteor --settings settings.json",
@@ -14,7 +14,7 @@
     "@babel/runtime": "^7.19.4",
     "@babel/core": "^7.19.3",
     "@epfl/epfl-sti-react-library": "^4.5.1",
-    "@formio/react": "^5.2.3",
+    "@formio/react": "^5.2.4-rc.2",
     "@fortawesome/fontawesome-svg-core": "^6.2.0",
     "@fortawesome/free-solid-svg-icons": "^6.2.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
@@ -36,12 +36,12 @@
     "meteor-node-stubs": "^1.2.5",
     "plotly.js": "^2.6.1",
     "prom-client": "^14.1.0",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-hot-toast": "^2.4.0",
     "react-popover": "^0.5.10",
     "react-popper": "^2.3.0",
-    "react-router-dom": "^6.4.4",
+    "react-router-dom": "^6.10.0",
     "simpl-schema": "^1.12.0",
     "supports-color": "9.2.3",
     "timed-memoize": "^2.4.2",
@@ -55,15 +55,15 @@
     "@types/meteor": "^2.8.1",
     "@types/meteor-mdg-validated-method": "^1.2.5",
     "@types/mocha": "^10.0.0",
-    "@types/react": "^17.0.50",
-    "@types/react-dom": "^17.0.17",
+    "@types/react": "^18.0.31",
+    "@types/react-dom": "^18.0.11",
     "@types/simpl-schema": "^1.12.3",
     "bpmnlint": "^8.1.1",
     "chai": "^4.3.7",
     "patch-package": "^6.4.7",
     "phd-assess-meta": "git+https://github.com/epfl-si/PhDAssess-meta.git",
     "ts-node": "^10.9.1",
-    "typescript": "^4.8.4"
+    "typescript": "^5.0.2"
   },
   "meteor": {
     "mainModule": {
