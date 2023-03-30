@@ -15,114 +15,6 @@ import {toastErrorClosable} from "/imports/ui/components/Toasters";
 import {ITaskList} from "/imports/policy/tasksList/type";
 import {useAccountContext} from "/imports/ui/contexts/Account";
 
-
-function TaskRow({ task }: { task: ITaskList }) {
-  const toastId = `toast-${task._id}`
-  const account = useAccountContext()
-  const user = account?.user
-
-  return (
-    <div className={'border-top p-2'} style={ {
-      ...((user && user.isAdmin && task.isObsolete) && {backgroundColor: 'WhiteSmoke'})
-      } }>
-      <details>
-        <summary className={'d-flex align-items-center'}>
-          <span className={'mr-auto'}>
-            <div className={'mr-2'}>{ task.variables.phdStudentName } {task.variables.phdStudentSciper ? `( ${task.variables.phdStudentSciper} )` : '' }</div>
-          {task.created_at &&
-            <span className={'mr-2 small'}>Created {task.created_at.toLocaleString('fr-CH')}</span>
-          }
-          {task.updated_at &&
-            <span className={'small'}>Updated {task.updated_at.toLocaleString('fr-CH')}</span>
-          }
-          { user && user.isAdmin && task.isObsolete &&
-            <span className={'small ml-2'}>Task is obsolete</span>
-          }
-          </span>
-          <span className={'small'}>
-            { task.monitorUri &&
-              <a href={task.monitorUri} target="_blank" className={'pr-3'}>on Monitor <span
-                className={"fa fa-external-link"}/></a>
-            }
-            { user && canDeleteProcessInstance(user) &&
-              <span className={"mr-2"}>
-                <Button
-                  label={'Cancel process'}
-                  onClickFn={(event: React.FormEvent<HTMLButtonElement>) => {
-                      event.preventDefault();
-                      if (window.confirm('Delete the process instance?')) {
-                        Meteor.apply(
-                          // @ts-ignore, because doc is saying noRetry exists
-                          "deleteProcessInstance", [task.processInstanceKey], { wait: true, noRetry: true },
-                          (error: global_Error | Meteor.Error | undefined) => {
-                            if (error) {
-                              toastErrorClosable(toastId, `${error}`)
-                            } else {
-                              toast.success(`Successfully removed the process instance`)
-                            }
-                          }
-                        )
-                      }
-                    }
-                  }
-                />
-              </span>
-            }
-            { user && canRefreshProcessInstance(user) &&
-            <span className={"mr-2"}>
-                <Button
-                  label={'Refresh'}
-                  onClickFn={(event: React.FormEvent<HTMLButtonElement>) => {
-                    event.preventDefault();
-                    if (window.confirm('Remove the process instance so it is refreshed after max 2 minutes ?')) {
-                      Meteor.apply(
-                        // @ts-ignore, because doc is saying noRetry exists
-                        "refreshProcessInstance", [task.processInstanceKey], { wait: true, noRetry: true },
-                        (error: global_Error | Meteor.Error | undefined) => {
-                          if (error) {
-                            toastErrorClosable(toastId, `${error}`)
-                          } else {
-                            toast.success(`Successfully refreshed the process instance by removing it from the app`)
-                          }
-                        }
-                      )
-                    }
-                  }
-                  }
-                />
-              </span>
-            }
-            <Link className={''} to={`tasks/${task._id}`}>
-              <Button
-                label={'Proceed'}
-                onClickFn={() => void 0}
-              />
-            </Link>
-          </span>
-        </summary>
-        <pre><code>{task.detail}</code></pre>
-        { user &&
-        <div className={'container'}>
-          <div className="row">
-            {task.participants &&
-            Object.entries(task.participants).map(([role, info]) =>
-              <Participant
-                key={`${task._id}-${role}`}
-                role={role}
-                info={info}
-                isAssignee={task.assigneeScipers?.includes(info?.sciper)}
-              />
-            )
-            }
-          </div>
-        </div>
-        }
-
-      </details>
-    </div>
-  )
-}
-
 export default function TaskList() {
   const account = useAccountContext()
 
@@ -136,7 +28,7 @@ export default function TaskList() {
   const tasks = useTracker(() => Tasks.find({}).fetch() as ITaskList[])
   const groupByTasks = _.groupBy(tasks, 'customHeaders.title')
 
-  if (!account || !account.isLoggedIn) return (<Loader message={'Loading your data...'}/>)
+  if (!account || !account.isLoggedIn || !account.user) return (<Loader message={'Loading your data...'}/>)
 
   return (
     <>
@@ -152,7 +44,7 @@ export default function TaskList() {
                 <h3 className={'mt-5'}>{taskGrouper}</h3>
                 {
                   groupByTasks[taskGrouper].map((task) =>
-                    <TaskRow key={task._id} task={task}/>
+                    <TaskRow key={task._id} task={task} user={ account.user! }/>
                   )
                 }
               </div>
@@ -165,3 +57,114 @@ export default function TaskList() {
     </>
   )
 }
+
+const TaskRow = ({ task, user }: { task: ITaskList, user: Meteor.User }) => {
+  const toastId = `toast-${task._id}`
+
+  return (
+    <div className={'border-top p-2'} style={ {
+      ...((user && user.isAdmin && task.isObsolete) && {backgroundColor: 'WhiteSmoke'})
+    } }>
+      <details>
+        <summary className={'d-flex align-items-center'}>
+          <span className={'mr-auto'}>
+            <div className={'mr-2'}>{ task.variables.phdStudentName } {task.variables.phdStudentSciper ? `( ${task.variables.phdStudentSciper} )` : '' }</div>
+            {task.created_at &&
+              <span className={'mr-2 small'}>Created {task.created_at.toLocaleString('fr-CH')}</span>
+            }
+            {task.updated_at &&
+              <span className={'small'}>Updated {task.updated_at.toLocaleString('fr-CH')}</span>
+            }
+            { user && user.isAdmin && task.isObsolete &&
+              <span className={'small ml-2'}>Task is obsolete</span>
+            }
+          </span>
+          <span className={'small'}>
+            { task.monitorUri &&
+              <a href={task.monitorUri} target="_blank" className={'pr-3'}>on Monitor <span
+                className={"fa fa-external-link"}/></a>
+            }
+            { user && canDeleteProcessInstance(user) &&
+              <span className={"mr-2"}>
+                <CancelProcessButton processInstanceKey={ task.processInstanceKey } toastId={ toastId }/>
+              </span>
+            }
+            { user && canRefreshProcessInstance(user) &&
+              <span className={"mr-2"}>
+                <RefreshProcessButton processInstanceKey={ task.processInstanceKey } toastId={ toastId }/>
+              </span>
+            }
+            <Link className={''} to={`tasks/${task._id}`}>
+              <Button
+                label={'Proceed'}
+                onClickFn={() => void 0}
+              />
+            </Link>
+          </span>
+        </summary>
+        <pre><code>{task.detail}</code></pre>
+        { user &&
+          <div className={'container'}>
+            <div className="row">
+              {task.participants &&
+                Object.entries(task.participants).map(([role, info]) =>
+                  <Participant
+                    key={`${task._id}-${role}`}
+                    role={role}
+                    info={info}
+                    isAssignee={task.assigneeScipers?.includes(info?.sciper)}
+                  />
+                )
+              }
+            </div>
+          </div>
+        }
+
+      </details>
+    </div>
+  )
+}
+
+const CancelProcessButton = ({ processInstanceKey, toastId }: { processInstanceKey: string, toastId: string } ) => (
+  <Button
+    label={'Cancel process'}
+    onClickFn={(event: React.FormEvent<HTMLButtonElement>) => {
+      event.preventDefault();
+      window.confirm('Delete the process instance?') &&
+        Meteor.apply(
+          // @ts-ignore, because doc is saying noRetry exists
+          "deleteProcessInstance", [processInstanceKey], { wait: true, noRetry: true },
+          (error: global_Error | Meteor.Error | undefined) => {
+            if (error) {
+              toastErrorClosable(toastId, `${error}`)
+            } else {
+              toast.success(`Successfully removed the process instance`)
+            }
+          }
+        )
+      }
+    }
+  />
+)
+
+const RefreshProcessButton = ({ processInstanceKey, toastId }: { processInstanceKey: string, toastId: string } ) => (
+  <Button
+    label={'Refresh'}
+    onClickFn={(event: React.FormEvent<HTMLButtonElement>) => {
+      event.preventDefault();
+      window.confirm('Remove the process instance so it is refreshed after max 2 minutes ?') &&
+        Meteor.apply(
+          // @ts-ignore, because doc is saying noRetry exists
+          "refreshProcessInstance", [processInstanceKey], { wait: true, noRetry: true },
+          (error: global_Error | Meteor.Error | undefined) => {
+            if (error) {
+              toastErrorClosable(toastId, `${error}`)
+            } else {
+              toast.success(`Successfully refreshed the process instance by removing it from the app`)
+            }
+          }
+        )
+      }
+    }
+  />
+)
