@@ -1,11 +1,12 @@
-import {DoctoralSchools} from "/imports/api/doctoralSchools/schema";
+import { Factory } from 'meteor/dburles:factory';
 import {faker} from "/tests/factories/faker";
 
-const _dburlesFactory = require("meteor/dburles:factory")
+import {DoctoralSchools} from "/imports/api/doctoralSchools/schema";
+
 
 // currently not in used, as the default loading ones are enough.
 // keeping it as a ref, "just in case"
-_dburlesFactory.Factory.define('doctoralSchool', DoctoralSchools, {
+Factory.define('doctoralSchool', DoctoralSchools, {
   acronym: () => faker.lorem.word({ length: { min: 3, max: 7 }, strategy: "closest" }),
   label: () => faker.lorem.words(4),
   helpUrl: () => faker.internet.url(),

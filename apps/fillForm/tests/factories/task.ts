@@ -1,9 +1,9 @@
-import {Tasks} from "/imports/model/tasks";
+import { Factory } from 'meteor/dburles:factory';
 import {faker} from "/tests/factories/faker";
+import {Tasks} from "/imports/model/tasks";
 import {ParticipantIDs} from "/imports/model/participants";
 import {ParticipantsVariables} from "phd-assess-meta/types/participants";
 
-const _dburlesFactory = require("meteor/dburles:factory")
 
 const generateParticipants = (hasThesisCoDirector= true) => {
   const participants: Partial<ParticipantsVariables> = {}
@@ -75,4 +75,4 @@ const aGoodTask = {
     min: 1000000000000000, max: 9999999999999999}),
 }
 
-_dburlesFactory.Factory.define('task', Tasks, aGoodTask );
+Factory.define('task', Tasks, aGoodTask );
