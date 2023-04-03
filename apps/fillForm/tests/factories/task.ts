@@ -58,7 +58,7 @@ const aGoodTask = {
     ...generateParticipants(),
     // FIXME: assigneSciper is a import value,
     // FIXME: it should be a well-known sciper, to have clients tests
-    "assigneeSciper": () => faker.sciper(),
+    "assigneeSciper": '1',
     "created_at": "2022-12-12T14:16:44.822Z",
     "created_by": () => faker.sciper(),
     "updated_at": "2022-12-12T14:17:01.951Z",

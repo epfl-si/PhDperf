@@ -58,11 +58,14 @@
     "@types/react": "^18.0.31",
     "@types/react-dom": "^18.0.11",
     "@types/simpl-schema": "^1.12.3",
+    "@types/sinon": "^10.0.13",
     "bpmnlint": "^8.1.1",
     "chai": "^4.3.7",
     "patch-package": "^6.4.7",
     "phd-assess-meta": "git+https://github.com/epfl-si/PhDAssess-meta.git",
+    "sinon": "^15.0.3",
     "ts-node": "^10.9.1",
+    "ts-sinon": "^2.0.2",
     "typescript": "^5.0.2"
   },
   "meteor": {
