@@ -29,4 +29,5 @@ mdg:validated-method
 aldeed:schema-index
 meteortesting:mocha
 xolvio:cleaner
+adriancbo:chalk
 dburles:factory
