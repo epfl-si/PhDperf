@@ -2,6 +2,7 @@ import {faker} from "/tests/factories/faker";
 import {Tasks} from "/imports/model/tasks";
 import {ParticipantIDs} from "/imports/model/participants";
 import {ParticipantsVariables} from "phd-assess-meta/types/participants";
+import dayjs from "dayjs";
 
 const _dburlesFactory = require("meteor/dburles:factory")
 
@@ -29,9 +30,9 @@ const generateParticipants = (hasThesisCoDirector= true) => {
   return participants
 }
 
-const aGoodTask = {
+const aTaskAttributes = {
   "journal": {
-    "lastSeen": {"date": "2023-02-06T12:40:02.725Z"},
+    "lastSeen": () => dayjs().subtract(15, 'minutes').toISOString(),
     "seenCount": faker.datatype.number(9999),
   },
   "bpmnProcessId": "phdAssessProcess",
@@ -56,9 +57,7 @@ const aGoodTask = {
   "type": "phdAssessFillForm",
   "variables": {
     ...generateParticipants(),
-    // FIXME: assigneSciper is a import value,
-    // FIXME: it should be a well-known sciper, to have clients tests
-    "assigneeSciper": '1',
+    "assigneeSciper": faker.sciper(),
     "created_at": "2022-12-12T14:16:44.822Z",
     "created_by": () => faker.sciper(),
     "updated_at": "2022-12-12T14:17:01.951Z",
@@ -76,4 +75,4 @@ const aGoodTask = {
     min: 1000000000000000, max: 9999999999999999}),
 }
 
-_dburlesFactory.Factory.define('task', Tasks, aGoodTask );
+_dburlesFactory.Factory.define('task', Tasks, aTaskAttributes )

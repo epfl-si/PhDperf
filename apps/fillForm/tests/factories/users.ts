@@ -1,6 +1,5 @@
 import {faker} from "/tests/factories/faker";
-
-const _dburlesFactory = require("meteor/dburles:factory")
+const Factory = require("meteor/dburles:factory").Factory
 
 const groupsAll = [
   "PhDAssess-Activity_Specify_Participants-Test",
@@ -13,29 +12,44 @@ const groupsAll = [
   "PhD-annual-report-admin"
 ]
 
+const createRandomUser = () => {
+  const sciper = faker.sciper();
+  const sex = faker.name.sexType();
+  const firstName = faker.name.firstName(sex);
+  const lastName = faker.name.lastName(sex);
+  const email = faker.helpers.unique(faker.internet.email, [
+    firstName.toLowerCase(),
+    lastName.toLowerCase(),
+  ]);
 
-const adminUserFirstName = faker.name.firstName()
-const adminUserName = faker.name.lastName()
-
-const TequilaAdminUser = {
-  "firstname": adminUserFirstName,
-  "email": faker.internet.email(adminUserFirstName),
-  "name": adminUserName,
-  "displayname": `${adminUserFirstName} ${adminUserName}`,
-  "username": adminUserName.toLowerCase()
+  return {
+    "_id": sciper,
+    "tequila": {
+      "firstname": firstName,
+      "provider": "",
+      "email": email,
+      "group": groupsAll,
+      "user": lastName.toLowerCase(),
+      "org": "EPFL",
+      "name": lastName,
+      "uniqueid": sciper,
+      "username": lastName.toLowerCase(),
+      "displayname": `${ firstName } ${ lastName }`,
+      "personaltitle": sex === 'female' ? 'Madame' : 'Monsieur',
+    }
+  };
 }
 
-_dburlesFactory.Factory.define('user', Meteor.users, {
-  "_id": "1",
-  "tequila": {
-    "provider": "",
-    "group": groupsAll,
-    "user": "Username",
-    "org": "EPFL",
-    "uniqueid": "1",
-    "personaltitle": "Monsieur",
-    ...TequilaAdminUser
-  },
-  "isAdmin": true,
-  "isUberProgramAssistant": true
-});
+Factory.define('user', Meteor.users, createRandomUser());
+
+Factory.define('userAssistant', Meteor.users,
+  Factory.extend("user", {
+    "isUberProgramAssistant": true
+  })
+);
+
+Factory.define('userAdmin', Meteor.users,
+  Factory.extend("user", {
+    "isAdmin": true,
+  })
+);
