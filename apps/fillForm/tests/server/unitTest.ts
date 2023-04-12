@@ -34,7 +34,7 @@ describe('Unit tests Tasks', function () {
   // testing the test engine about dates, and how we are able to filter it with Mongo
   it('should be able to read and write dates', function () {
     Factory.create("task", {
-        "journal.lastSeen": dayjs().subtract(15, 'days').toISOString(),
+        "journal.lastSeen": dayjs().subtract(15, 'days').toDate(),
       }
     )
 
@@ -49,10 +49,10 @@ describe('Unit tests Tasks', function () {
 
     // can we find the obsolete one ?
     const obsoleteTasks = Tasks.find({
-      "journal.lastSeen": { $lte: dayjs().subtract(1, 'day').toISOString() },
+      "journal.lastSeen": { $lte: dayjs().subtract(1, 'day').toDate() },
     }).fetch()
     const notObsoleteTasks = Tasks.find({
-      "journal.lastSeen": { $gte: dayjs().subtract(1, 'day').toISOString() },
+      "journal.lastSeen": { $gte: dayjs().subtract(1, 'day').toDate() },
     }).fetch()
 
     assert.lengthOf(obsoleteTasks, 1)

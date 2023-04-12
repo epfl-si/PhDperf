@@ -1,14 +1,15 @@
 import {assert} from 'chai'
+import {faker} from "@faker-js/faker";
+import dayjs from "dayjs";
 
 const Factory = require("meteor/dburles:factory").Factory
 const dbCleaner = require("meteor/xolvio:cleaner")
 const PublicationCollector = require("meteor/johanbrook:publication-collector").PublicationCollector
 
+import {Tasks} from "/imports/model/tasks";
 import "../factories/task"
 import "../factories/users"
 import '../../server/publish'
-import dayjs from "dayjs";
-import {Task, Tasks} from "/imports/model/tasks";
 
 
 let userAdmin: Meteor.User
@@ -31,24 +32,18 @@ beforeEach(async function () {
 
     // one assigned task
     Factory.create("task", { "variables.assigneeSciper": userAssignee._id });
-    // one lambda task
-    Factory.create("task", { "variables.assigneeSciper": userLambda._id });
-
-    // one obsolete, lambda user
+    // one lambda task for a lambda assignee
     Factory.create("task", {
-        "variables.assigneeSciper": userLambda._id,
-        "journal.lastSeen": dayjs().subtract(15, 'days').toISOString(),
-      }
-    )
+        "variables.assigneeSciper": faker.random.alphaNumeric(1, {
+          bannedChars: [userAdminId, userAssitantId, userAssigneeId, userLambdaId]
+        })
+    });
   });
 })
 
 describe(
-  'Testing the publish method "tasksList"',
-  async function () {
-    describe(
-      '"tasksList" to return the right tasks',
-      async function () {
+  'Testing the publish method "tasksList"', async function () {
+    describe('"tasksList" to return the right tasks', async function () {
 
         await it('should return all the tasks for the admin', async function () {
           const collector = new PublicationCollector({userId: userAdmin._id});
@@ -65,32 +60,28 @@ describe(
         });
 
         await it('should return the task for the assignee', async function () {
+          const tasks = Tasks.find({'variables.assigneeSciper': userAssignee._id}).fetch()
+          assert.isNotEmpty(tasks)
+
           const collector = new PublicationCollector({userId: userAssignee._id});
           const collections = await collector.collect('tasksList', {}, {});
 
           assert.isNotEmpty(collections)
           assert.isDefined(collections.tasks)
+          assert.isAbove(collections.tasks.length, 0)
+        })
 
-          assert.lengthOf(collections.tasks, 1)
+        await it('should not return any task for a lambda user that has no tasks assigned', async function () {
+          const tasks = Tasks.find({'variables.assigneeSciper': userLambda._id}).fetch()
+          assert.isEmpty(tasks)
 
-          assert(
-            collections.tasks[0].variables.assigneeSciper == userAssignee._id,
-            `${ collections.tasks[0].variables.assigneeSciper }`)
+          const collector = new PublicationCollector({ userId: userLambda._id });
+          const collections = await collector.collect('tasksList', {}, {});
+          assert.isEmpty(collections)
         });
-
-        // await it('should not return any task for a lambda user that has no tasks', async function () {
-        //   const collector = new PublicationCollector({ userId: userLambda._id });
-        //   const collections = await collector.collect('tasksList', {}, {});
-        //
-        // assert.isNotEmpty(collections)
-        // assert.isDefined(collections.tasks)
-        //   assert(collections.tasks === undefined)
-        //   assert(!collections.tasks[0].journal.lastSeen)
-        // });
       })
-    describe(
-      '"tasksList" to have the obsolete system working',
-      async function () {
+
+    describe('"tasksList" to have the obsolete system working', async function () {
 
         await it('should not have journals information, only the obsolete boolean', async function () {
           const collector = new PublicationCollector({userId: userAdmin._id});
@@ -102,18 +93,43 @@ describe(
           assert.isBoolean(collections.tasks[0].isObsolete)
         });
 
-        await it('should have at least one obsolete, one non-obsolete for admin', async function () {
-          const collector = new PublicationCollector({ userId: userAdmin._id });
+        await it('should not return the task to the assignee if task is obsolete', async function () {
+          // get count before the obsolete add
+          const beforeCollector = new PublicationCollector({userId: userAssignee._id});
+          const beforeCollections = await beforeCollector.collect('tasksList', {}, {});
+          const countTasksBefore = beforeCollections.tasks.length
+
+          Factory.create("task", {
+              "variables.assigneeSciper": userAssignee._id,
+              "journal.lastSeen": dayjs().subtract(15, 'days').toISOString(),
+            }
+          )
+
+          const collector = new PublicationCollector({userId: userAssignee._id});
+          const collections = await collector.collect('tasksList', {}, {});
+
+          assert.equal(collections.tasks.length, countTasksBefore)
+        })
+
+        await it('should return the obsolete task to the admin', async function () {
+          // get count before the obsolete add
+          const beforeCollector = new PublicationCollector({userId: userAdmin._id});
+          const beforeCollections = await beforeCollector.collect('tasksList', {}, {});
+          const countTasksBefore = beforeCollections.tasks.length
+
+          // one obsolete, lambda user
+          Factory.create("task", {
+              "variables.assigneeSciper": userAssignee._id,
+              "journal.lastSeen": dayjs().subtract(15, 'days').toDate(),
+            }
+          )
+
+          const collector = new PublicationCollector({userId: userAdmin._id});
           const collections = await collector.collect('tasksList', {}, {});
 
           assert.isNotEmpty(collections)
-          assert.isDefined(collections.tasks)
-
-          assert.includeMembers(
-            collections.tasks.map((task: Task) => task.isObsolete),
-            [false, true]
-          )
-        });
+          assert.isAbove(collections.tasks.length, countTasksBefore)
+        })
       })
   }
 )

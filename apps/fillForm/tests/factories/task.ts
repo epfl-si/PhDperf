@@ -32,7 +32,7 @@ const generateParticipants = (hasThesisCoDirector= true) => {
 
 const aTaskAttributes = {
   "journal": {
-    "lastSeen": () => dayjs().subtract(15, 'minutes').toISOString(),
+    "lastSeen": () => dayjs().subtract(15, 'minutes').toDate(),
     "seenCount": faker.datatype.number(9999),
   },
   "bpmnProcessId": "phdAssessProcess",
