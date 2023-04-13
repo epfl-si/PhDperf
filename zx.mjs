@@ -1,4 +1,6 @@
 #!/usr/bin/env -S npm exec --yes --package=zx@latest zx --
+import deployProcess from './scripts/deployProcess.mjs'
+
 $.verbose = false
 
 if (!argv._[0]) {
@@ -11,6 +13,8 @@ if (argv.help || argv._[0] === 'help') {
   await run(...argv._.slice(1));
 } else if (argv._[0] === 'clean') {
   await clean(...argv._.slice(1));
+} else if (argv._[0] === 'deploy-bpmn') {
+  await deployProcess();
 } else {
   await help(...argv._);
 }

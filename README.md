@@ -34,7 +34,9 @@ How about launching the app locally ?
 
 First launch the Zeebe server with:
 `cd docker && docker-compose up zeebe_node_0 zeebe_node_1 zeebe_node_2`.
-Once it is running, prepare the first start the meteor app:
+Once Zeebe is running (`watch zbctl status --insecure --port 26501`, deploy the bpmn on it, if needed, with:
+`./zx.mjs deploy-bpmn`
+Now prepare the first start the meteor app:
 `cd apps/fillForm`
 `cp .env.sample .env` and start editing the .env
 `meteor npm i`
