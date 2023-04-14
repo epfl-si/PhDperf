@@ -117,7 +117,7 @@ describe(
           const beforeCollections = await beforeCollector.collect('tasksList', {}, {});
           const countTasksBefore = beforeCollections.tasks.length
 
-          // one obsolete, lambda user
+          // one obsolete, assignee user
           Factory.create("task", {
               "variables.assigneeSciper": userAssignee._id,
               "journal.lastSeen": dayjs().subtract(15, 'days').toDate(),
@@ -131,5 +131,27 @@ describe(
           assert.isAbove(collections.tasks.length, countTasksBefore)
         })
       })
+
+    describe('"tasksList" to have the already submitted system working', async function () {
+      await it('should not return a submitted task to the assignee', async function () {
+        // get count before the obsolete add
+        const beforeCollector = new PublicationCollector({userId: userAssignee._id});
+        const beforeCollections = await beforeCollector.collect('tasksList', {}, {});
+        const countTasksBefore = beforeCollections.tasks.length
+
+        // one submitted, assignee user
+        Factory.create("task", {
+            "variables.assigneeSciper": userAssignee._id,
+            "journal.submittedAt": dayjs().subtract(3, 'minutes').toDate(),
+          }
+        )
+
+        const collector = new PublicationCollector({userId: userAssignee._id});
+        const collections = await collector.collect('tasksList', {}, {});
+
+        assert.isNotEmpty(collections)
+        assert.equal(collections.tasks.length, countTasksBefore)
+      });
+    })
   }
 )
