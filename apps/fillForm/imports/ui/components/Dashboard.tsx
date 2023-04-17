@@ -217,7 +217,7 @@ export function Dashboard() {
             </div>
             {
               Object.keys(groupByWorkflowInstanceTasks).map(
-                (taskGrouper: string) => <DashboardRow workflowInstanceTasks={ groupByWorkflowInstanceTasks[taskGrouper] }/>
+                (taskGrouper: string) => <DashboardRow key={ taskGrouper } workflowInstanceTasks={ groupByWorkflowInstanceTasks[taskGrouper] }/>
              )
             }
           </div>)
