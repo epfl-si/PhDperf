@@ -6,11 +6,9 @@ import {ConnectionStatusProvider} from "/imports/ui/contexts/ConnectionStatus";
 
 
 export const App = () => (
-  <React.StrictMode>
-    <ConnectionStatusProvider>
-      <AccountProvider>
-        <RouterProvider router={router}/>
-      </AccountProvider>
-    </ConnectionStatusProvider>
-  </React.StrictMode>
+  <ConnectionStatusProvider>
+    <AccountProvider>
+      <RouterProvider router={router}/>
+    </AccountProvider>
+  </ConnectionStatusProvider>
 )
