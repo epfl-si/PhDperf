@@ -46,7 +46,7 @@ Meteor.methods({
         assigneeSciper: encrypt(user._id),
       }))
       auditLog(`created new instance ${diagramProcessId}, response: ${JSON.stringify(createProcessInstanceResponse)}`)
-      return createProcessInstanceResponse?.processKey
+      return createProcessInstanceResponse?.processInstanceKey
     } catch (e) {
       auditLog(`Error: Unable to create a new workflow instance. ${e}`)
       throw new Meteor.Error(500, `Unable to start a new workflow. Please contact the admin to verify the server. ${e}`)
