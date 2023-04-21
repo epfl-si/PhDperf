@@ -17,18 +17,16 @@ export const WorkflowStarter = () => {
 
   const toastId = `toast-workflowstarter`
 
-  const onClick = () => {
+  const callStartWorkflow = async () => {
     setIsWaiting(true)
-    Meteor.call(
-      "startWorkflow",  {}, (error: global_Error | Meteor.Error | undefined, result: any) => {
-        if (error) {
-          toastErrorClosable(toastId, `${error}`)
-        } else {
-          toast.success(`New workflow instance created (id: ${result})`)
-        }
-        setIsWaiting(false)
-      }
-    )
+    try {
+      const result = await Meteor.callAsync("startWorkflow", {})
+      toast.success(`New workflow instance created (id: ${ result })`)
+    } catch (error: any) {
+      toastErrorClosable(toastId, `${ error as global_Error | Meteor.Error }`)
+    } finally {
+      setIsWaiting(false)
+    }
   }
 
   if (isLoading() || !account || !account.user) return <></>
@@ -44,7 +42,7 @@ export const WorkflowStarter = () => {
             </button>
             }
             {!isWaiting &&
-            <button className="btn btn-secondary" onClick={() => onClick()}>
+            <button className="btn btn-secondary" onClick={() => callStartWorkflow()}>
               <i className="fa fa-plus"/>&nbsp;&nbsp;New annual report process
             </button>
             }
