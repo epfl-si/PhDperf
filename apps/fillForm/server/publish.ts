@@ -30,7 +30,7 @@ Meteor.publish('tasksList', function () {
     // Instead, we provide a new boolean attribute 'isObsolete' that changes only when his time as come
     const tasksList = getUserPermittedTasksForList(user)
 
-    if (!tasksList) {
+    if (!user || !tasksList) {
       this.ready()
     } else {
       const handle = tasksList.observeChanges({
