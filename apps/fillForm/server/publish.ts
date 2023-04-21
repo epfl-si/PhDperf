@@ -27,7 +27,7 @@ Meteor.publish('tasksList', function () {
     const user = Meteor.users.findOne({ _id: this.userId }) ?? null
 
     // we do not send directly the journal.lastSeen on tasks list, as it trigger updates all the time.
-    // Instead we provide a new boolean attribute 'isObsolete' that changes only when his time as come
+    // Instead, we provide a new boolean attribute 'isObsolete' that changes only when his time as come
     const tasksList = getUserPermittedTasksForList(user)
 
     if (!tasksList) {
