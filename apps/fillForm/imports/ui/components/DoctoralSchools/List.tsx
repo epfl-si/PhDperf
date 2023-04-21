@@ -1,29 +1,21 @@
-import React, {useState} from "react"
-import {useTracker} from "meteor/react-meteor-data";
-import {Meteor} from "meteor/meteor";
+import React, {useContext, useState} from "react"
 import {canEditAtLeastOneDoctoralSchool} from "/imports/policy/doctoralSchools";
 import {Loader} from "@epfl/epfl-sti-react-library";
-import {DoctoralSchool, DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 import {CreateForm} from './Create'
 import {InlineEdit} from './Edit'
 import {useAccountContext} from "/imports/ui/contexts/Account";
+import {DataAppContext} from "/imports/ui/contexts/Tasks";
+import {DoctoralSchool} from "/imports/api/doctoralSchools/schema";
 
 
 export function DoctoralSchoolsList() {
   const account = useAccountContext()
+  const appData = useContext(DataAppContext);
 
   const [showAdd, setShowAdd] = useState(false)
 
-  const doctoralSchoolsLoading = useTracker(() => {
-    // Note that this subscription will get cleaned up
-    // when your component is unmounted or deps change.
-    const handle = Meteor.subscribe('doctoralSchools');
-    return !handle.ready();
-  }, []);
-
-  const doctoralSchools = useTracker(
-    () => DoctoralSchools.find({}, { sort: { 'acronym': 1 } }).fetch() as Array<DoctoralSchool & {readonly:boolean}>
-  , [])
+  const doctoralSchoolsLoading = appData.isDoctoralSchoolsLoading
+  const doctoralSchools = appData.doctoralSchools as Array<DoctoralSchool & {readonly:boolean}>
 
   if (!account || !account.isLoggedIn) return (<Loader message={'Loading your data...'}/>)
 
