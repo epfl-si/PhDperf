@@ -1,17 +1,18 @@
 import {global_Error, Meteor} from "meteor/meteor";
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {useTracker} from "meteor/react-meteor-data";
 import {useNavigate, useParams, Link} from "react-router-dom";
 import {Alert, Loader} from "@epfl/epfl-sti-react-library";
 import {ImportScipersList} from "/imports/api/importScipers/schema";
 import StartButton from '/imports/ui/components/ImportSciper/StartButton';
 import {HeaderRow, Row} from "/imports/ui/components/ImportSciper/Row";
-import {DoctoralSchool, DoctoralSchools} from "/imports/api/doctoralSchools/schema";
+import {DoctoralSchool} from "/imports/api/doctoralSchools/schema";
 import {DoctoralSchoolInfo} from "/imports/ui/components/ImportSciper/DoctoralSchoolInfo";
 import toast from "react-hot-toast";
 import _ from "lodash";
 import {useAccountContext} from "/imports/ui/contexts/Account";
 import {canImportScipersFromISA} from "/imports/policy/importScipers";
+import {DataAppContext} from "/imports/ui/contexts/Tasks";
 
 
 export const ImportScipersSchoolSelector = () => {
@@ -153,17 +154,14 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
 
 export function ImportSciperLoader({doctoralSchoolAcronym}: {doctoralSchoolAcronym?: string}) {
   const account = useAccountContext()
+  const appData = useContext(DataAppContext);
 
-  const doctoralSchoolsLoading = useTracker(() => {
-    // Note that this subscription will get cleaned up
-    // when your component is unmounted or deps change.
-    const handle = Meteor.subscribe('doctoralSchools');
-    return !handle.ready();
-  }, []);
+  const doctoralSchoolsLoading = appData.isDoctoralSchoolsLoading
 
-  const currentDoctoralSchool = useTracker(
-    () => DoctoralSchools.findOne({ acronym: doctoralSchoolAcronym }),
-    [])
+  // const currentDoctoralSchool = useTracker(
+  //   () => DoctoralSchools.findOne({ acronym: doctoralSchoolAcronym }),
+  //   [])
+  const currentDoctoralSchool = appData.doctoralSchools.find(ds => ds.acronym === doctoralSchoolAcronym)
 
   if (!account || !account.isLoggedIn) return (<Loader message={'Loading your data...'}/>)
 

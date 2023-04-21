@@ -1,12 +1,11 @@
-import {useTracker} from "meteor/react-meteor-data"
 import {Meteor} from "meteor/meteor"
-import {Tasks} from "/imports/model/tasks";
 import _ from "lodash"
-import React, {CSSProperties} from "react"
+import React, {CSSProperties, useContext} from "react"
 import {Loader} from "@epfl/epfl-sti-react-library";
 import {ParticipantDetail} from "/imports/model/participants";
 import {ITaskDashboard} from "/imports/policy/dashboard/type";
 import {useAccountContext} from "/imports/ui/contexts/Account";
+import {DataAppContext} from "/imports/ui/contexts/Tasks";
 
 
 /*
@@ -163,17 +162,11 @@ const DashboardRow = ({ workflowInstanceTasks } : { workflowInstanceTasks:ITaskD
 
 export function Dashboard() {
   const account = useAccountContext()
+  const appData = useContext(DataAppContext);
 
-  const listLoading = useTracker(() => {
-    // Note that this subscription will get cleaned up
-    // when your component is unmounted or deps change.
-    const handle = Meteor.subscribe('tasksDashboard');
-    return !handle.ready();
-  }, []);
+  const listLoading = appData.isTasksDashboardLoading
 
-  let allTasks = useTracker(
-    () => Tasks.find({"elementId": {$ne: "Activity_Program_Assistant_Assigns_Participants"}})
-      .fetch() as ITaskDashboard[])
+  let allTasks = appData.tasksDashboard
 
   // sort by second part of email address, that's the best way to get the name at this point
   allTasks = _.sortBy(
@@ -217,7 +210,7 @@ export function Dashboard() {
             </div>
             {
               Object.keys(groupByWorkflowInstanceTasks).map(
-                (taskGrouper: string) => <DashboardRow workflowInstanceTasks={ groupByWorkflowInstanceTasks[taskGrouper] }/>
+                (taskGrouper: string) => <DashboardRow key={ taskGrouper } workflowInstanceTasks={ groupByWorkflowInstanceTasks[taskGrouper] }/>
              )
             }
           </div>)

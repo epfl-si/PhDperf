@@ -1,8 +1,6 @@
 import {global_Error, Meteor} from "meteor/meteor"
-import React from "react"
+import React, {useContext} from "react"
 import _ from "lodash"
-import {useTracker} from 'meteor/react-meteor-data'
-import {Tasks} from "/imports/model/tasks";
 import {WorkflowStarter} from './workflowStarter'
 import {Button, Loader} from "@epfl/epfl-sti-react-library"
 import {Link} from "react-router-dom"
@@ -14,19 +12,14 @@ import {
 import {toastErrorClosable} from "/imports/ui/components/Toasters";
 import {ITaskList} from "/imports/policy/tasksList/type";
 import {useAccountContext} from "/imports/ui/contexts/Account";
+import {DataAppContext} from "/imports/ui/contexts/Tasks";
 
 export default function TaskList() {
+
   const account = useAccountContext()
+  const appData = useContext(DataAppContext);
 
-  const listLoading = useTracker(() => {
-    // Note that this subscription will get cleaned up
-    // when your component is unmounted or deps change.
-    const handle = Meteor.subscribe('tasksList');
-    return !handle.ready();
-  }, []);
-
-  const tasks = useTracker(() => Tasks.find({}).fetch() as ITaskList[])
-  const groupByTasks = _.groupBy(tasks, 'customHeaders.title')
+  const groupByTasks = _.groupBy(appData.tasksList, 'customHeaders.title')
 
   if (!account || !account.isLoggedIn || !account.user) return (<Loader message={'Loading your data...'}/>)
 
@@ -34,11 +27,15 @@ export default function TaskList() {
     <>
       <WorkflowStarter/>
 
-      {listLoading ? (
-        <Loader message={'Fetching tasks...'}/>
+      { appData.isTasksListLoading ? (
+        <>
+          <Loader message={'Fetching tasks...'}/>
+          <button onClick={ () => appData.setIsTasksListNeeded(true) }>clickme</button>
+        </>
+
       ) : (
         <>
-          {tasks.length > 0 ?
+          {appData.tasksList.length > 0 ?
             Object.keys(groupByTasks).map((taskGrouper: string) => (
               <div key={taskGrouper}>
                 <h3 className={'mt-5'}>{taskGrouper}</h3>
