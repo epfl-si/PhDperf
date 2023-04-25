@@ -44,8 +44,8 @@ async function readSnapshot(args) {
   const snapshotPath = await question('Path to snapshot ? (should have the CURRENT file inside) ')
   const outputFilePath = await question('Full path of the destination file: ')
 
-  if (!outputFilePath) {
-    console.log('Aborting, no path were given for the output file')
+  if (!snapshotPath || !outputFilePath) {
+    console.log('Aborting, no all paths were given for the output file')
   } else {
     await spinner(
       'decompressing the snapshot...', () =>
