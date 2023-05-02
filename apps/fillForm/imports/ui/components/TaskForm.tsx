@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import {global_Error, Meteor} from 'meteor/meteor'
 import {useTracker} from "meteor/react-meteor-data";
 import {Errors, Form} from '@formio/react'
@@ -57,6 +57,7 @@ const TaskAdminInfo = ({ taskId }: { taskId: string }) => {
 }
 
 const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => void }) => {
+  const isSubmitting = useRef<boolean>(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
 
   const toastId = `toast-${task._id}`
@@ -93,6 +94,9 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
   )
 
   function beforeSubmitHook(this: any, formData: { data: any, metadata: any }, next: any) {
+    // cancel any double submit
+    if (isSubmitting.current) return
+
     // get meteor status, if we are connected, submnit is good, otherwise, well, open the toaster about it and leave the UI ready to be saved
     if (Meteor.status()?.status === "connected") {
       toast.loading("Submitting...",
@@ -105,6 +109,7 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
       // we remove the "disabled" one, so we can control
       // the workflow variables with only the needed values
       const formDataPicked = _.omit(formData.data, findDisabledFields(this))
+      isSubmitting.current = true
 
       Meteor.apply(
         'submit',
