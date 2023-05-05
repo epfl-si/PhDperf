@@ -3,14 +3,14 @@ import deployProcess from './scripts/deployProcess.mjs'
 
 $.verbose = false
 
-if (!argv._[0]) {
-  argv._ = ['run'];
-}
-
 if (argv.help || argv._[0] === 'help') {
-  argv._[0] === 'help' ? await help(...argv._slice(1)) : await help(...argv._)
+  argv._[0] === 'help' && argv._[1] && await help(...argv._.slice(1))  // called with help + something
+  argv._[0] === 'help' && !argv._[1] && await help()  // called with help only
+  argv._[0] !== 'help' && !argv._[1] && await help(...argv._)  // called with --help
 } else if (argv._[0] === 'run') {
   await run(...argv._.slice(1));
+} else if (argv._[0] === 'test') {
+  await test(...argv._.slice(1));
 } else if (argv._[0] === 'clean') {
   await clean(...argv._.slice(1));
 } else if (argv._[0] === 'deploy-bpmn') {
@@ -30,6 +30,16 @@ async function run(args) {
 }
 
 async function clean(args) {
+}
+
+async function test(args) {
+  $.verbose = true
+
+  const testServer = process.env.TEST_SERVER ?? '1'
+  const testClient = process.env.TEST_CLIENT ?? '0'
+
+  await cd('./apps/fillForm');
+  await $`TEST_SERVER=${testServer} TEST_CLIENT=${testClient} meteor test --driver-package meteortesting:mocha --port 3100`;
 }
 
 async function readSnapshot(args) {
