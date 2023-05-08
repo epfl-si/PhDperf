@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react'
+import React, {useEffect, useState, useRef} from 'react'
 import {global_Error, Meteor} from 'meteor/meteor'
 import {useTracker} from "meteor/react-meteor-data";
 import {Errors, Form} from '@formio/react'
@@ -9,7 +9,6 @@ import {Button, Loader} from "@epfl/epfl-sti-react-library"
 import toast from 'react-hot-toast';
 
 import {toastErrorClosable} from "/imports/ui/components/Toasters";
-import {findDisabledFields} from "/imports/lib/formIOUtils";
 import {customEvent} from '/imports/ui/model/formIo'
 import {Task, Tasks} from "/imports/model/tasks";
 
@@ -50,15 +49,22 @@ const TaskAdminInfo = ({ taskId }: { taskId: string }) => {
   if (!task) return <></>
 
   return (
-    <div>
+    <div className={ 'mb-4' }>
       <div>Task last seen on Zeebe at { task.journal.lastSeen?.toLocaleString('fr-CH') }, { task.journal.seenCount }x</div>
     </div>
   )
 }
 
+/*
+ * Here is the React component that manage the form. It can
+ *  - show and submit the form
+ *  - automatically save an unfinished form. Unfinished form are created as blur event on inputs.
+ *  - retrieve unfinished form on load.
+ */
 const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => void }) => {
-  const isSubmitting = useRef<boolean>(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [unFinishedTask, setUnfinishedTask] = useState<undefined | any | null>()
+  const localFormData = useRef({})
 
   const toastId = `toast-${task._id}`
   const navigate = useNavigate()
@@ -67,6 +73,63 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
   useEffect(() => {
     toast.dismiss(toastId)
   });
+
+  useEffect(() => {
+    // load any unfinished session for this form, if any
+    const getUnfinishedTask = async () => {
+      const findingUnfinishedTask = await Meteor.callAsync('getUnfinishedTask', task._id) ?? null
+      setUnfinishedTask(
+        findingUnfinishedTask
+      )
+
+      if (Meteor.isDevelopment) {
+        console.log("found a unfinsihed task : %j", findingUnfinishedTask)
+        console.log("Compare it with task variables: %j", task.variables)
+      }
+    }
+    getUnfinishedTask().catch(console.error)
+  }, [task._id]);
+
+  const onBlur = async (event: any) => {
+    await saveAsUnfinishedTask(event._data)
+  }
+
+  const onChange = async (event: any) => {
+    // keep only changed event, not all others changes
+    if (!event.changed ) return
+
+    // filter out the changes coming from TextAreaComponent.
+    // The onBlur is better at it, as it does not trigger on every keyboard input.
+    if (event.changed.component?.inputType === 'text') return
+
+    // ok, we good for a save
+    await saveAsUnfinishedTask(event.data)
+  }
+
+  const saveAsUnfinishedTask = async (data: any) => {
+    // keep only interesting data
+    const eventDataChanged = _.omit(data, [
+      ...findDisabledFields(JSON.parse(task.customHeaders.formIO!)),
+      'assigneeSciper',
+      'submit',
+      'cancel',
+      'created_by',
+      'created_at',
+      'updated_at',
+      ]
+    )
+
+    // only call server if something actually changed
+    if (!_.isEqual(eventDataChanged, localFormData.current)) {
+      if (Meteor.isDevelopment) {
+        console.log("Calling server for change: %j", localFormData)
+      }
+
+      await Meteor.callAsync('saveAsUnfinishedTask', task._id, eventDataChanged)
+      // once sent to server, keep a local value up to date too (for comparaisons)
+      localFormData.current =_.cloneDeep(eventDataChanged)
+    }
+  };
 
   if (isSubmitted) return (
     <>
@@ -81,23 +144,35 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
     </div>
   )
 
+  // check for undefined specifically, as it is null once loaded but without any value
+  if (unFinishedTask === undefined)
+    return (<Loader message={'Loading previous session if any...'}/>)
+
   return (
     <>
-      <h1 className={'h2'}>{task.customHeaders.title || `Task ${task._id}`}</h1>
+      <div className={ 'alert alert-info' }>Data is automatically saved each time a field is filled in</div>
+      <h1 className={ 'h2 mt-4 mb-3' }>{task.customHeaders.title || `Task ${task._id}`}</h1>
       <Errors/>
-      <Form form={ JSON.parse(task.customHeaders.formIO) }
-        submission={ {data: task.variables} }
+      <Form
+        form={ JSON.parse(task.customHeaders.formIO) }
+        submission={
+          // merge has to be best thought, it may be tricky with
+          // what we change in zeebe and unfinished one that want to be the truth
+          { data: _.merge( task.variables, unFinishedTask?.inputJSON ) }
+        }
+        onBlur={ onBlur }
+        onChange={ onChange }
         onCustomEvent={ (event: customEvent) => event.type == 'cancelClicked' && navigate('/') }
         options={ { hooks: { beforeSubmit: beforeSubmitHook,} } }
       />
     </>
   )
 
+  /*
+   * Before submitting, assert we are connected, or raise an error, asking for a retry
+   */
   function beforeSubmitHook(this: any, formData: { data: any, metadata: any }, next: any) {
-    // cancel any double submit
-    if (isSubmitting.current) return
-
-    // get meteor status, if we are connected, submnit is good, otherwise, well, open the toaster about it and leave the UI ready to be saved
+    // get meteor status, if we are connected, submit is good, otherwise, well, open the toaster about it and leave the UI ready to be saved
     if (Meteor.status()?.status === "connected") {
       toast.loading("Submitting...",
         {
@@ -109,7 +184,6 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
       // we remove the "disabled" one, so we can control
       // the workflow variables with only the needed values
       const formDataPicked = _.omit(formData.data, findDisabledFields(this))
-      isSubmitting.current = true
 
       Meteor.apply(
         'submit',
@@ -212,4 +286,31 @@ export const TaskForm = ({ _id }: { _id: string }) => {
       )
     }
   </>)
+}
+
+/*
+ * Get a list of keys of fields that are disabled
+ */
+function findDisabledFields(form: any) {
+  let disabledFieldKeys: string[] = [];
+
+  const rootComponents = form.components;
+
+  const searchForDisabledFields = (components: []) => {
+    components.forEach((element: any) => {
+      if (element.key !== undefined &&
+        element.disabled !== undefined &&
+        element.disabled) {
+        disabledFieldKeys.push(element.key);
+      }
+
+      if (element.components !== undefined) {
+        searchForDisabledFields(element.components);
+      }
+    })
+  };
+
+  searchForDisabledFields(rootComponents);
+
+  return disabledFieldKeys;
 }
