@@ -1,6 +1,6 @@
 import {Meteor} from "meteor/meteor";
 import {encrypt} from "/server/encryption";
-import {Tasks} from "/imports/model/tasks";
+import {Tasks, UnfinishedTasks} from "/imports/model/tasks";
 import {
   canDeleteProcessInstance,
   canStartProcessInstance, canRefreshProcessInstance,
@@ -71,8 +71,19 @@ Meteor.methods({
 
     try {
       await zBClient.cancelProcessInstance(processInstanceKey)
-      // delete in db too
-      Tasks.remove({processInstanceKey: processInstanceKey})
+
+      // get linked tasks
+      const tasksToRemove = Tasks.find(
+        { processInstanceKey: processInstanceKey },
+        { fields: { _id: 1 } }
+      ).fetch()
+
+      for (const task of tasksToRemove) {
+        // delete in db too
+        await Tasks.removeAsync( { processInstanceKey: processInstanceKey })
+        await UnfinishedTasks.removeAsync({ taskId: task._id!})
+      }
+
       auditLog(`Sucessfully deleted a process instance ${processInstanceKey}`)
     } catch (error) {
       auditLog(`Error: Unable to cancel the process instance ${processInstanceKey}. ${error}`)

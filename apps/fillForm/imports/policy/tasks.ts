@@ -1,6 +1,5 @@
 import {Meteor} from "meteor/meteor";
 import {Tasks} from "/imports/model/tasks";
-import {findFieldKeysToSubmit} from "/imports/lib/formIOUtils"
 import _ from "lodash";
 import { Mongo } from 'meteor/mongo';
 import {DoctoralSchool} from "/imports/api/doctoralSchools/schema";
@@ -128,6 +127,33 @@ export const canDeleteProcessInstance = (user: Meteor.User) : boolean => {
 
 export const canRefreshProcessInstance = (user: Meteor.User) : boolean => {
   return !!user?.isAdmin
+}
+
+/*
+ * Get keys that are submittable. (aka not disabled)
+ */
+export function findFieldKeysToSubmit(form: any) {
+  let fieldKeys: string[] = [];
+
+  const rootComponents = form.components;
+
+  const searchForFieldKeys = (components: []) => {
+    components.forEach((element: any) => {
+      if (element.key !== undefined &&
+        !element.disabled &&
+        element.type !== 'panel') {
+        fieldKeys.push(element.key);
+      }
+
+      if (element.components !== undefined) {
+        searchForFieldKeys(element.components);
+      }
+    })
+  };
+
+  searchForFieldKeys(rootComponents);
+
+  return fieldKeys;
 }
 
 /*

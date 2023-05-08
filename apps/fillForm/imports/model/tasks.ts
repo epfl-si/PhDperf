@@ -1,5 +1,7 @@
 import { Meteor } from 'meteor/meteor'
 import { Mongo } from 'meteor/mongo'
+import dayjs from "dayjs";
+import persistentDB from "/imports/db/persistent";
 import {Sciper} from "/imports/api/datatypes";
 import {ParticipantList, participantsFromZeebe} from './participants';
 import _ from 'lodash';
@@ -9,7 +11,6 @@ import {
   TaskInterface,
   TaskJournal
 } from "/imports/model/tasksTypes";
-import dayjs from "dayjs";
 
 
 // historically, assignees can come from multiple ways: as string or as array, from variables.assigneeSciper
@@ -121,4 +122,20 @@ export const Tasks = new TasksCollection('tasks',
   {
     transform: (doc: Task) => new Task(doc),
   }
+)
+
+export interface UnfinishedTask {
+  _id?: string,
+  userId: string,
+  taskId: string,
+  updatedAt: Date,
+  inputJSON: string,
+}
+
+class UnfinishedTasksCollection extends Mongo.Collection<UnfinishedTask> {
+}
+
+export const UnfinishedTasks = new UnfinishedTasksCollection('unfinishedTasks',
+  // @ts-ignore
+  persistentDB && Meteor.isServer ? { _driver : persistentDB } : {}
 )

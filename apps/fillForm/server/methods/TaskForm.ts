@@ -1,6 +1,7 @@
 import {Meteor} from "meteor/meteor";
+import dayjs from "dayjs";
 import {encrypt} from "/server/encryption";
-import {Tasks} from "/imports/model/tasks";
+import {Tasks, UnfinishedTasks} from "/imports/model/tasks";
 import {FormioActivityLog} from "/imports/model/tasksTypes";
 import {
   filterUnsubmittableVars, canSubmit,
@@ -120,6 +121,36 @@ Meteor.methods({
 
     await WorkersClient.success(task._id!, formData)
     auditLog(`Sending success: job ${task._id} of process instance ${task.processInstanceKey} with data ${JSON.stringify(formData)}`)
+    await UnfinishedTasks.removeAsync({ taskId: task._id!, userId: user._id })
     Tasks.markAsSubmitted(task._id!)
+  },
+
+  async saveAsUnfinishedTask(taskId, formData) {
+    let user: Meteor.User | null = null
+    if (this.userId) {
+      user = await Meteor.users.findOneAsync({_id: this.userId}) ?? null
+    }
+
+    if (!user) return
+
+    await UnfinishedTasks.updateAsync(
+      { userId: user._id, taskId: taskId },
+      { $set: {
+          userId: user._id, taskId: taskId, inputJSON: formData, updatedAt: dayjs().toDate()
+        }
+      },
+      { upsert: true}
+    )
+  },
+
+  async getUnfinishedTask(taskId) {
+    let user: Meteor.User | null = null
+    if (this.userId) {
+      user = await Meteor.users.findOneAsync({_id: this.userId}) ?? null
+    }
+
+    if (!user) return
+
+    return await UnfinishedTasks.findOneAsync({ userId: user._id, taskId: taskId })
   },
 })

@@ -5,10 +5,12 @@ import "./factories/task"
 
 
 if (Meteor.isClient) {
+  import("./imports/main")
   import("./client/main")
 }
 
 if (Meteor.isServer) {
+  import("./imports/main")
   import("./server/main")
 }
 

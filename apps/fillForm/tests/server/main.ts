@@ -1,2 +1,3 @@
-import "./publications"
 import "./unitTest"
+import "./publications"
+import "./formIOPolicyTests"
