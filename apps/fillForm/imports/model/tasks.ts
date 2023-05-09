@@ -29,10 +29,7 @@ export class Task implements TaskInterface {
   declare activityLogs?: string
   declare key: string;
   declare type: string;
-  declare workflowInstanceKey: string;
   declare bpmnProcessId: string;
-  declare workflowDefinitionVersion: number;
-  declare workflowKey: string;
   declare processKey: string;
   declare elementId: string;
   declare elementInstanceKey: string;

@@ -189,8 +189,7 @@ export function Dashboard() {
     }]
   )
 
-  const groupByWorkflowInstanceTasks = _.groupBy(allTasks, 'workflowInstanceKey')
-
+  const groupByWorkflowInstanceTasks = _.groupBy(allTasks, 'processInstanceKey')
   if (!account?.isLoggedIn) return (<Loader message={'Loading your data...'}/>)
 
   const backgroundColor: CSSProperties = Meteor.settings.public.isTest ? {backgroundColor: 'Cornsilk'} : {}

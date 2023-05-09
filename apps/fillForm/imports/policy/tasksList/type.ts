@@ -6,7 +6,6 @@ import {ParticipantList} from "/imports/model/participants";
 export const taskFieldsNeededForList = {
   '_id': 1,
   'processInstanceKey': 1,
-  'workflowInstanceKey': 1,
   'customHeaders.title': 1,
   'processDefinitionVersion': 1,
   'variables.assigneeSciper': 1,
@@ -49,7 +48,7 @@ export interface ITaskList<WorkerInputVariables = PhDInputVariablesList, CustomH
   created_by?: Sciper  // value built from variables.updated_at, see the Task class for details
   created_at?: Date  // value built from variables.updated_at, see the Task class for details
   updated_at?: Date  // value built from variables.updated_at, see the Task class for details
-  workflowInstanceKey: string
+  processInstanceKey: string
   assigneeScipers?: Sciper[]
   participants: ParticipantList  // values built from participants found in the 'variables' fields, see the Task class for details
   detail: any

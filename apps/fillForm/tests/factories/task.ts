@@ -68,11 +68,6 @@ const aTaskAttributes = {
     "doctoralProgramEmail": "edey@epfl.ch",
   },
   "worker": faker.datatype.uuid(),
-  "workflowDefinitionVersion": faker.datatype.number(50),
-  "workflowInstanceKey": faker.datatype.number({
-    min: 1000000000000000, max: 9999999999999999}),
-  "workflowKey": faker.datatype.number({
-    min: 1000000000000000, max: 9999999999999999}),
 }
 
 _dburlesFactory.Factory.define('task', Tasks, aTaskAttributes )

@@ -11,8 +11,13 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
-    "@babel/runtime": "^7.19.4",
+    "//": [
+      "The formiojs lib version is fixed for a reason: the calendar widget behave differently with the input provided to the custom validate function, ",
+      "mainly because of this line: https://github.com/formio/formio.js/pull/4839/files",
+      "If you want to update it, be sure to check correctly the behavior of the calendar widget."
+    ],
     "@babel/core": "^7.19.3",
+    "@babel/runtime": "^7.19.4",
     "@epfl/epfl-sti-react-library": "^4.5.1",
     "@formio/react": "^5.2.4-rc.2",
     "@fortawesome/fontawesome-svg-core": "^6.2.0",
@@ -26,11 +31,6 @@
     "debug": "^4.3.4",
     "dotenv": "^16.0.3",
     "find-up": "^6.3.0",
-    "//": [
-      "This formiojs version is fixed for a reason: the calendar widget behave differently with the input provided to the custom validate function, ",
-      "mainly because of this line: https://github.com/formio/formio.js/pull/4839/files",
-      "If you want to update it, be sure to check correctly the behavior of the calendar widget."
-    ],
     "formiojs": "4.14.8",
     "lodash": "^4.17.21",
     "meteor-node-stubs": "^1.2.5",
@@ -45,7 +45,7 @@
     "simpl-schema": "^1.12.0",
     "supports-color": "9.2.3",
     "timed-memoize": "^2.4.2",
-    "zeebe-node": "^8.1.8"
+    "zeebe-node": "^8.2.1"
   },
   "devDependencies": {
     "@faker-js/faker": "^7.6.0",
