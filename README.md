@@ -14,12 +14,12 @@ The stack is composed of:
 ### Backends
 
 - the Zeebe stack
-    - a solo Zeebe in dev, a raft in prod
+    - a raft of three Zeebes 
     - the BPMN
       - You can take a look at the process by installing the [BPMN Modeler](https://camunda.com/download/modeler/) and by opening [the process definition](https://github.com/epfl-si/PhDAssess-meta/blob/main/bpmn/phdAssessProcess.bpmn).
 - the GED uploader
-- the email sender
-- the pdf file builder
+- the Email sender
+- the PDF builder
 
 ### Frontend
 
@@ -32,13 +32,16 @@ The stack is composed of:
 
 How about launching the app locally ?
 
-First launch the Zeebe server with:
-`cd docker && docker-compose up zeebe_node_0 zeebe_node_1 zeebe_node_2`.
-Once Zeebe is running (`watch zbctl status --insecure --port 26501`, deploy the bpmn on it, if needed, with:
-`./zx.mjs deploy-bpmn`
-Now prepare the first start the meteor app:
+- Build the docker images:
+`docker compose -f ./docker/docker-compose.yml build    `
+- Launch the Zeebe server with:
+`docker compose -f ./docker/docker-compose.yml up zeebe_node_0 zeebe_node_1 zeebe_node_2`
+- Once Zeebe is running (`watch zbctl status --insecure --port 26501`, you can deploy the bpmn on it.
+  If you want the default one, use:
+`./phd.mjs deploy-bpmn`
+- Now prepare the first start the meteor app:
 `cd apps/fillForm`
 `cp .env.sample .env` and start editing the .env
 `meteor npm i`
-`meteor start --settings settings.json`
-Then, use your browser on `http://localhost:3000/`
+`meteor --settings settings.json`
+- Then, use your browser on `http://localhost:3000/`
