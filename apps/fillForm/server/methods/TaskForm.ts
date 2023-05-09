@@ -88,14 +88,18 @@ Meteor.methods({
 
       formData = {...formData, ...participantsToUpdate}
     } catch (e: any) {
-      if (e.name == 'AbortError') {
-        // Look like the fetching of user info has got a timeout,
-        // make it bad only if we don't have already some data, or ignore it
-        auditLog(`Error: Timeout while fetching scipers.`)
-        if (!task.variables.phdStudentEmail) throw new Meteor.Error(422, 'Unable to get users information, aborting. Please contact the administrator or try again later.')
+      if (Meteor.isDevelopment && Meteor.settings?.skipUsersUpdateOnFail) {  // don't raise an error it optional on dev env.
+        console.log(`skipping the user update for dev env, as there is an error. ${ e }`)
       } else {
-        auditLog(`Error: parsing a participant ${e} has failed. Aborting.`)
-        throw new Meteor.Error(422, `There is a problem with a participant: ${e}`)
+        if (e.name == 'AbortError') {
+          // Look like the fetching of user info has got a timeout,
+          // make it bad only if we don't have already some data, or ignore it
+          auditLog(`Error: Timeout while fetching scipers.`)
+          if (!task.variables.phdStudentEmail) throw new Meteor.Error(422, 'Unable to get users information, aborting. Please contact the administrator or try again later.')
+        } else {
+          auditLog(`Error: parsing a participant ${ e } has failed. Aborting.`)
+          throw new Meteor.Error(422, `There is a problem with a participant: ${ e }`)
+        }
       }
     }
 
