@@ -66,6 +66,7 @@
     "patch-package": "^6.4.7",
     "phd-assess-meta": "git+https://github.com/epfl-si/PhDAssess-meta.git",
     "sinon": "^15.0.3",
+    "styled-components": "^6.0.0-rc.1",
     "ts-node": "^10.9.1",
     "ts-sinon": "^2.0.2",
     "typescript": "^5.0.2"

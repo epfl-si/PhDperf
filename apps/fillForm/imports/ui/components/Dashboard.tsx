@@ -1,5 +1,6 @@
 import {useTracker} from "meteor/react-meteor-data"
 import {Meteor} from "meteor/meteor"
+import styled from 'styled-components'
 import {Tasks} from "/imports/model/tasks";
 import _ from "lodash"
 import React, {CSSProperties} from "react"
@@ -70,9 +71,19 @@ const phdAssesSteps = [
  */
 // here we can get multiple task, as they should be grouped by workflow instance id
 // if they are multiple, that means we are waiting for two steps = 2 blue color
-const StepNotDone = () => <div className="dashboard-step dashboard-step-not-done border col m-1 p-2 text-white"/>
+const StepNotDone = () => <DashboardStep className="border col m-1 p-2 text-white"/>
 
-const StepDone = () => <div className="dashboard-step dashboard-step-done border col m-1 p-2 bg-success text-white"/>
+const StepDone = () => <DashboardStep className="border col m-1 p-2 bg-success text-white"/>
+
+const DashboardStep = styled.div`
+  height: 3em;
+  max-height: 3em;
+  min-height: 3em;
+`;
+
+const BgAwaiting = styled(DashboardStep)`
+  background-color: #ff9933;
+`;
 
 const StepPending = ({task}: {task: ITaskDashboard}) => {
   let assignees: ParticipantDetail[] | undefined = task.assigneeScipers && Object.values(task.participants).filter((participant: ParticipantDetail) => task.assigneeScipers!.includes(participant.sciper))
@@ -92,7 +103,7 @@ const StepPending = ({task}: {task: ITaskDashboard}) => {
   })}`
 
   return (
-    <div className="dashboard-step dashboard-step-pending border col m-1 p-2 bg-awaiting text-white"
+    <BgAwaiting className="border col m-1 p-2 text-white"
      data-toggle="tooltip"
      title={ onHoverInfo } />
   )
@@ -161,6 +172,12 @@ const DashboardRow = ({ workflowInstanceTasks } : { workflowInstanceTasks:ITaskD
   </div>
 )
 
+const DashboardTitleSticky = styled.div`
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+`;
+
 export function Dashboard() {
   const account = useAccountContext()
 
@@ -203,7 +220,7 @@ export function Dashboard() {
           <div>There is currently no task</div>
           ) : (
           <div className="container small dashboard">
-            <div
+            <DashboardTitleSticky
               className="dashboard-title row flex-nowrap"
               key={ `dashboard_title_row` }
               style={ backgroundColor ?? {} }
@@ -213,7 +230,7 @@ export function Dashboard() {
               {
                 _.flatten(phdAssesSteps).map((step) => <div className="dashboard-header col m-1 p-2 text-black align-self-end" key={step.id}>{step.label}</div>)
               }
-            </div>
+            </DashboardTitleSticky>
             {
               Object.keys(groupByWorkflowInstanceTasks).map(
                 (taskGrouper: string) => <DashboardRow key={ taskGrouper } workflowInstanceTasks={ groupByWorkflowInstanceTasks[taskGrouper] }/>
