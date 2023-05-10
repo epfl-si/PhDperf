@@ -7,8 +7,8 @@
   <div id="react-target"></div>
   <script>
     const svgIcons = () => {
-      loadIcons('icons/icons.svg');
-      loadIcons('icons/feather-sprite.svg');
+      loadIcons(`${window.location.origin}/icons/icons.svg`);
+      loadIcons(`${window.location.origin}/icons/feather-sprite.svg`);
     };
 
     function loadIcons (svgPath) {
