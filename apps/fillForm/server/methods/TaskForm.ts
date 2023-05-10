@@ -1,5 +1,6 @@
 import {Meteor} from "meteor/meteor";
 import dayjs from "dayjs";
+
 import {encrypt} from "/server/encryption";
 import {Tasks, UnfinishedTasks} from "/imports/model/tasks";
 import {FormioActivityLog} from "/imports/model/tasksTypes";
@@ -127,6 +128,30 @@ Meteor.methods({
     auditLog(`Sending success: job ${task._id} of process instance ${task.processInstanceKey} with data ${JSON.stringify(formData)}`)
     await UnfinishedTasks.removeAsync({ taskId: task._id!, userId: user._id })
     Tasks.markAsSubmitted(task._id!)
+  },
+
+  /*
+   * For a taskId, return the doctoral help link
+   */
+  async getDoctoralSchoolHelpLink({ taskId }) {
+    let user: Meteor.User | null = null
+    if (this.userId) {
+      user = await Meteor.users.findOneAsync({_id: this.userId}) ?? null
+    }
+
+    if (!user || !taskId) return
+
+    const currentTask = await Tasks.findOneAsync(
+      { _id: taskId },
+      { fields: { 'variables.docLinkAnnualReport' : 1 } }
+    )
+
+    let docURL = currentTask?.variables?.docLinkAnnualReport ?? ''
+
+    // Add the protocol to the URL
+    if (docURL && !docURL.includes('://')) docURL = 'https://' + docURL;
+
+    return docURL
   },
 
   async saveAsUnfinishedTask(taskId, formData) {
