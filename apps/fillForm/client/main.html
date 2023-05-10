@@ -5,4 +5,28 @@
 
 <body>
   <div id="react-target"></div>
+  <script>
+    const svgIcons = () => {
+      loadIcons('icons/icons.svg');
+      loadIcons('icons/feather-sprite.svg');
+    };
+
+    function loadIcons (svgPath) {
+      const ajax = new XMLHttpRequest();
+      ajax.open('GET', svgPath, true);
+      ajax.send();
+      ajax.onload = function (e) {
+        if (e.target.status === 200) {
+          const div = document.createElement('div');
+          div.setAttribute('style', 'display: none');
+          div.innerHTML = ajax.responseText;
+          document.body.insertAdjacentElement('beforeend', div);
+        }
+      };
+    }
+
+    window.addEventListener('load', function() {
+      svgIcons();
+    })
+  </script>
 </body>
