@@ -172,12 +172,6 @@ const DashboardRow = ({ workflowInstanceTasks } : { workflowInstanceTasks:ITaskD
   </div>
 )
 
-const DashboardTitleSticky = styled.div`
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-`;
-
 export function Dashboard() {
   const account = useAccountContext()
 
@@ -220,8 +214,8 @@ export function Dashboard() {
           <div>There is currently no task</div>
           ) : (
           <div className="container small dashboard">
-            <DashboardTitleSticky
-              className="dashboard-title row flex-nowrap"
+            <div
+              className="dashboard-title row flex-nowrap sticky-top"
               key={ `dashboard_title_row` }
               style={ backgroundColor ?? {} }
             >
@@ -230,7 +224,7 @@ export function Dashboard() {
               {
                 _.flatten(phdAssesSteps).map((step) => <div className="dashboard-header col m-1 p-2 text-black align-self-end" key={step.id}>{step.label}</div>)
               }
-            </DashboardTitleSticky>
+            </div>
             {
               Object.keys(groupByWorkflowInstanceTasks).map(
                 (taskGrouper: string) => <DashboardRow key={ taskGrouper } workflowInstanceTasks={ groupByWorkflowInstanceTasks[taskGrouper] }/>
