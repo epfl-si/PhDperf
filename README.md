@@ -33,7 +33,7 @@ The stack is composed of:
 How about launching the app locally ?
 
 - Build the docker images:
-  `docker compose -f ./docker/docker-compose.yml build    `
+  `docker compose -f ./docker/docker-compose.yml build zeebe_node_0 zeebe_node_1 zeebe_node_2`
 - Launch the Zeebe server with:
   `docker compose -f ./docker/docker-compose.yml up zeebe_node_0 zeebe_node_1 zeebe_node_2`
 - Once Zeebe is running (`watch zbctl status --insecure --port 26501`, you can deploy the bpmn on it.
@@ -44,4 +44,6 @@ How about launching the app locally ?
   - `cp .env.sample .env` and start editing the .env
   -  install the libs `meteor npm i`
   - start the app `meteor --settings settings.json`
-- Then, use your browser on `http://localhost:3000/`
+- Then, use your browser on `http://localhost:3000/` and start some workflows.
+- In a later time, if you want the other microservices, clone the services in the parent directory of this project and use:
+  `docker compose -f ./docker/docker-compose.yml up pdf notifier`
