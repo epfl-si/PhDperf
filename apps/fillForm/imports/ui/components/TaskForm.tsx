@@ -107,9 +107,7 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
   }
 
   const saveAsUnfinishedTask = async (data: any) => {
-    if (isSubmitted) return  // too late to save something, no need to continue now
-
-    // keep only interesting data
+    // filter out well known uninteresting data
     const eventDataChanged = _.omit(data, [
       ...findDisabledFields(JSON.parse(task.customHeaders.formIO!)),
       'assigneeSciper',
