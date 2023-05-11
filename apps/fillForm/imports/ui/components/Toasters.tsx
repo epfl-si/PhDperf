@@ -12,6 +12,9 @@ export const ToasterConfig = () => {
         success: {
           duration: 4000,
         },
+        error: {
+          duration: 6000,
+        },
       }}
     />
   )
