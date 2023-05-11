@@ -10,6 +10,10 @@
     "visualize": "meteor --production --extra-packages bundle-visualizer",
     "postinstall": "patch-package"
   },
+  "engineStrict": true,
+  "engines": {
+    "node": "14"
+  },
   "dependencies": {
     "//": [
       "The formiojs lib version is fixed for a reason: the calendar widget behave differently with the input provided to the custom validate function, ",
