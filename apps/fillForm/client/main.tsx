@@ -14,8 +14,9 @@ const root = createRoot(rootElement!);
 Meteor.startup(() => {
   Tequila.start()
   root.render(
-    <React.StrictMode>
+    // Be wise, StrictMode make the form submit having a double submit, one being falsy.
+    //<React.StrictMode>
       <App />
-    </React.StrictMode>
+    //</React.StrictMode>
   );
 })
