@@ -21,6 +21,11 @@
           div.setAttribute('style', 'display: none');
           div.innerHTML = ajax.responseText;
           document.body.insertAdjacentElement('beforeend', div);
+
+          // https://github.com/cristianbote/goober/issues/545
+          // Once the feather icon "target" is loaded, it takes place in window.target, because the svg has the id="target".
+          // by not undefining this var, expect a React crash on Chrome as soon as a Toaster is opening
+          window.target = undefined;
         }
       };
     }
