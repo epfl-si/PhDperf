@@ -7,12 +7,11 @@ This is an apps stack to allow students to fulfil their PhD assessment process.
 The stack is composed of:
 
 ### Operative tools
-
-./ansible, to deploy
-./scripts, to work
+- `./phd.mjs`, to command
+- `./ansible/`, to deploy
+- `./scripts/`, to hack
 
 ### Backends
-
 - the Zeebe stack
     - a raft of three Zeebes 
     - the BPMN
@@ -22,7 +21,6 @@ The stack is composed of:
 - the PDF builder, as a nodeJS worker
 
 ### Frontend
-
 - the task filler
     - Meteor app with two mongo bases
     - see code source at ./apps/fillForm
@@ -32,18 +30,40 @@ The stack is composed of:
 
 How about launching the app locally ?
 
+### Zeebe
+
 - Build the docker images:
-  `docker compose -f ./docker/docker-compose.yml build zeebe_node_0 zeebe_node_1 zeebe_node_2`
+  - `docker compose -f ./docker/docker-compose.yml build zeebe_node_0 zeebe_node_1 zeebe_node_2`
 - Launch the Zeebe server with:
-  `docker compose -f ./docker/docker-compose.yml up zeebe_node_0 zeebe_node_1 zeebe_node_2`
+  - `docker compose -f ./docker/docker-compose.yml up zeebe_node_0 zeebe_node_1 zeebe_node_2`
 - Once Zeebe is running (`watch zbctl status --insecure --port 26501`, you can deploy the bpmn on it.
-  If you want the default one, use:
-  `./phd.mjs deploy-bpmn`
-- Now prepare the first start of the meteor app:
-  - `cd apps/fillForm`
-  - `cp .env.sample .env` and start editing the .env
-  -  install the libs `meteor npm i`
-  - start the app `meteor --settings settings.json`
-- Then, use your browser on `http://localhost:3000/` and start some workflows.
-- In a later time, if you want the other microservices, clone the services in the parent directory of this project and use:
-  `docker compose -f ./docker/docker-compose.yml up pdf notifier`
+  You can use this command to help with the process:
+  - `./phd.mjs deploy-bpmn`
+
+### Micro-services
+
+- In the parent directory of this projet, clone the other services:
+  - `cd ..`
+  - `git clone https://github.com/epfl-si/phdAssess-PDF`
+  - `git clone https://github.com/epfl-si/phdAssess-Notifier`
+- Better skip the GED service for the moment 🤷. If you want the code, at least, do:
+  - `git clone https://github.com/epfl-si/phdAssess-GED`
+- Come back into the projet folder
+  - `cd PhDAssess`
+- Build and start the services
+  - `docker compose -f ./docker/docker-compose.yml build pdf notifier`
+  - `docker compose -f ./docker/docker-compose.yml up pdf notifier`
+
+### Main app
+
+- Start of the meteor app:
+  - `cd ./apps/fillForm`
+  - install the libs with `meteor npm i`
+  - `cp .env.sample .env` and start editing the .env to your taste
+  - start the app with `meteor --settings settings.json` and open your browser on `http://localhost:3000/`
+
+### Workflow map
+- Build and start the service:
+  - `docker compose -f ./docker/docker-compose.yml build simple-monitor`
+  - `docker compose -f ./docker/docker-compose.yml up simple-monitor`
+- Open `http://localhost:8082/`
