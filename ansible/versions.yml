@@ -11,10 +11,6 @@ ssh_tunnel_client_base_image: >-
   | parse_external_docker_tag(mirrored_base=openshift_local_images_base)
   }}
 
-kafka_base_image: >-
-  {{ "confluentinc/cp-kafka:7.0.0"
-  | parse_external_docker_tag(mirrored_base=openshift_local_images_base) }}
-
 # For the small TypeScript utility that monitors disk usage:
 monitoring_node_base_image: >-
   {{ "docker.io/library/node:alpine"

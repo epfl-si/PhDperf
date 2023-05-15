@@ -51,15 +51,6 @@
   tags:
     - zeebe
 
-- name: Kafka and the Confluent suite
-  include_tasks:
-    file: kafka.yml
-    apply:
-      tags: kafka
-  tags:
-    - kafka
-    - kafka-promote
-
 - name: Træfik
   include_role:
     role: epfl_si.traefik.docker_traefik

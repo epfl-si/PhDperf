@@ -43,7 +43,7 @@
         spec:
           containers:
             - name: zeebe-broker
-              image: "{{ openshift_local_images_base }}/zeebe-broker-with-exporters:latest"
+              image: "{{ openshift_local_images_base }}/zeebe-broker:latest"
               env: >-
                 {{ zeebe_broker_env
                 | combine(_ha_env)
@@ -56,8 +56,6 @@
               ports:
                 - name: metrics
                   containerPort: 9600
-                - name: hazelcast
-                  containerPort: 5701
               volumeMounts:
                 - name: zeebe-data
                   mountPath: /usr/local/zeebe/data

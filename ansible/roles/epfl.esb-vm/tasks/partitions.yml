@@ -1,10 +1,10 @@
-- name: Create the logical volume for kafka data and zeebe raft
+- name: Create the logical volume for zeebe raft
   community.general.lvol:
     vg: ubuntu-vg
     lv: persistent
     size: 10g
 
-- name: Create the logical volume for the docker apps (kafka, zeebe, zeebe-exporter, zeeqs, ...)
+- name: Create the logical volume for the Zeebe docker app
   community.general.lvol:
     vg: ubuntu-vg
     lv: docker-apps

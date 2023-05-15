@@ -18,15 +18,12 @@
   openshift_imagestream:
     state: latest
     metadata:
-      name: zeebe-broker-with-exporters
+      name: zeebe-broker
       namespace: "{{ openshift_namespace }}"
     from: "{{ zeebe_build_base_image }}"
     source:
       dockerfile: |
         FROM camunda/zeebe
-        ADD "{{ zeebe_broker_kafka_exporter_jar_url }}" /usr/local/zeebe/lib/zeebe-kafka-exporter-with-dependencies.jar
-        ADD "{{ zeebe_broker_hazelcast_exporter_jar_url }}" /usr/local/zeebe/lib/zeebe-hazelcast-exporter.jar
-        ADD "{{ zeebe_broker_mongodb_exporter_jar_url }}" /usr/local/zeebe/lib/zeebe-mongo-exporter.jar
         RUN chmod 755 /usr/local/zeebe/lib/*jar
     spec:
       resources:
@@ -43,9 +40,9 @@
      ( openshift_namespace == phd_assess_build_namespace )
      and
      ( (_openshift_image_zeebe_broker | default({})) is changed )
-  shell: "oc -n {{openshift_namespace}} start-build --wait zeebe-broker-with-exporters"
+  shell: "oc -n {{openshift_namespace}} start-build --wait zeebe-broker"
 
-- name: "Promote zeebe-broker-with-exporters from {{ phd_assess_build_namespace }} to production"
+- name: "Promote zeebe-broker from {{ phd_assess_build_namespace }} to production"
   when: >-
     (openshift_namespace != phd_assess_build_namespace)
     and
@@ -58,6 +55,6 @@
         - zeebe
         - zeebe-promote
   vars:
-    promote_image_name: zeebe-broker-with-exporters
+    promote_image_name: zeebe-broker
     promote_image_tag: "latest"
     promote_from_namespace: "{{ phd_assess_build_namespace }}"
