@@ -98,7 +98,7 @@
     ( "monitoring-restart" in ansible_run_tags )
   shell:
     cmd: |
-      oc delete pod prometheus-0
+      oc -n {{ openshift_namespace }} delete pod prometheus-0
   tags: monitoring-restart
 
 
