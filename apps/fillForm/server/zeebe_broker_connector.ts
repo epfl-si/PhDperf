@@ -127,6 +127,8 @@ export default {
     debug(`creating Zeebe worker of type "${taskType}"...`);
     zBClient.createWorker({
       taskType: taskType,
+      // Here you have to find the balance between getting to many data for a pipe and not enough tasks
+      // for a full cycle of activating->activated->reactivating
       maxJobsToActivate: process.env.ZEEBE_WORKER_MAX_JOBS_TO_ACTIVATE ?? 500,
       // Set timeout, the same as we will ask yourself if the job is still up
       timeout: process.env.ZEEBE_WORKER_TIMEOUT ?? Duration.seconds.of(20),
