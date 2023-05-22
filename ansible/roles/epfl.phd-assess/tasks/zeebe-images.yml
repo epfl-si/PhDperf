@@ -1,48 +1,29 @@
-- tags: always
-  include_vars: build-vars.yml
-
 # Manage Zeebe broker images (build in test, promote in production)
 
-- name: "Pull upstream {{ zeebe_broker_base_image.qualified }} into {{ zeebe_broker_base_image.mirrored }}"
+- name: "Pull upstream {{ zeebe_base_image.qualified }} into {{ zeebe_base_image.mirrored }}"
   when: openshift_namespace == phd_assess_build_namespace
   openshift_imagestream:
     state: latest
     metadata:
-      name: "{{ zeebe_broker_base_image.shortname }}"
+      name: "{{ zeebe_base_image.shortname }}"
       namespace: "{{ openshift_namespace }}"
-    from: "{{ zeebe_broker_base_image.qualified }}"
-    tag: "{{ zeebe_broker_base_image.tag }}"
+    from: "{{ zeebe_base_image.qualified }}"
+    tag: "{{ zeebe_base_image.tag }}"
 
-- name: "Build custom Zeebe Broker image"
+- name: "Build Zeebe image locally and push it to {{ phd_assess_build_namespace }}"
   when: openshift_namespace == phd_assess_build_namespace
-  openshift_imagestream:
-    state: latest
-    metadata:
-      name: zeebe-broker
-      namespace: "{{ openshift_namespace }}"
-    from: "{{ zeebe_build_base_image }}"
-    source:
-      dockerfile: |
-        FROM camunda/zeebe
-        RUN chmod 755 /usr/local/zeebe/lib/*jar
-    spec:
-      resources:
-        limits:
-          cpu: '100m'
-          memory: 100M
-    strategy:
-      dockerStrategy:
-        forcePull: true
-  register: _openshift_image_zeebe_broker
+  tags:
+    - zeebe-push
+    - never
+  shell: |
+    set -e -x
+    oc whoami -t | docker login {{ openshift_image_registry }} -u unused --password-stdin
+    docker tag -t {{ zeebe_image_tag }}:{{ zeebe_version }} camunda/zeebe:{{ zeebe_version }}
+    docker push {{ phd_assess_meteor_image_tag }}
+  register: output_push_image
+  delegate_to: localhost
 
-- name: "Rebuild custom Zeebe Broker image now"
-  when: |
-     ( openshift_namespace == phd_assess_build_namespace )
-     and
-     ( (_openshift_image_zeebe_broker | default({})) is changed )
-  shell: "oc -n {{openshift_namespace}} start-build --wait zeebe-broker"
-
-- name: "Promote zeebe-broker from {{ phd_assess_build_namespace }} to production"
+- name: "Promote zeebe from {{ phd_assess_build_namespace }} to production"
   when: >-
     (openshift_namespace != phd_assess_build_namespace)
     and
@@ -55,6 +36,6 @@
         - zeebe
         - zeebe-promote
   vars:
-    promote_image_name: zeebe-broker
+    promote_image_name: zeebe
     promote_image_tag: "latest"
     promote_from_namespace: "{{ phd_assess_build_namespace }}"

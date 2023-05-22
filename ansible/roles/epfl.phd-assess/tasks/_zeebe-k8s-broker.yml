@@ -42,10 +42,10 @@
           labels: "{{ _labels }}"
         spec:
           containers:
-            - name: zeebe-broker
-              image: "{{ openshift_local_images_base }}/zeebe-broker:latest"
+            - name: zeebe
+              image: "{{ openshift_local_images_base }}/zeebe:{{ zeebe_version }}"
               env: >-
-                {{ zeebe_broker_env
+                {{ zeebe_env
                 | combine(_ha_env)
                 | combine(env | default({}))
                 | to_k8s_env }}
@@ -64,7 +64,7 @@
               {{ _volume_name | combine(data_volume) }}
   vars:
     _name: >-
-      {{ "zeebe-broker-" + (node_id | string) }}
+      {{ "zeebe-" + (node_id | string) }}
     _quorum_name: "zeebe-quorum-{{ node_id | default('_') }}"
     _volume_name:
       name: zeebe-data

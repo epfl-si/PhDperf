@@ -19,6 +19,8 @@ frontend_fqdn: "{{ frontend_hostname }}.epfl.ch"
 frontend_url: "https://{{ frontend_hostname }}"
 zeebe_gateway_servicename: "zeebe-gateway"
 
+zeebe_image_tag: "{{openshift_image_registry}}/{{openshift_namespace}}/zeebe"
+
 phd_assess_meteor_servicename: "phd-assess-meteor"
 phd_assess_meteor_image_tag: "{{openshift_image_registry}}/{{openshift_namespace}}/{{phd_assess_meteor_servicename}}:latest"
 keybase_secrets_folder: >-
