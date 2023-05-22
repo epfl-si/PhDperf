@@ -50,7 +50,7 @@
       openshift_namespace == phd_assess_build_namespace
   shell:
     cmd: |
-      oc scale --replicas=0 $(oc get dc -o name | xargs) -n "{{ openshift_namespace }}"
+      oc scale --replicas=0 $(oc get dc -o name -n "{{ openshift_namespace }}" | xargs) -n "{{ openshift_namespace }}"
   tags:
     - never
     - meteor-scale-down
@@ -61,7 +61,7 @@
       openshift_namespace == phd_assess_build_namespace
   shell:
     cmd: |
-      oc scale --replicas=1 $(oc get dc -o name | grep -v simple-monitor  | xargs) -n "{{ openshift_namespace }}"
+      oc scale --replicas=1 $(oc get dc -o name -n "{{ openshift_namespace }}" | grep -v simple-monitor  | xargs) -n "{{ openshift_namespace }}"
   tags:
     - never
     - meteor-scale-up
