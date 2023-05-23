@@ -14,6 +14,15 @@
     - zeebe
     - zeebe-promote
 
+- name: Zeebe local images
+  include_tasks:
+    file: zeebe-local-images.yml
+    apply:
+      tags: zeebe
+  tags:
+    - never
+    - zeebe-push
+
 - name: Zeebe 3-way production quorum (Kubernetes side)
   include_tasks:
     file: zeebe-high-availability.yml

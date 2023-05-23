@@ -10,19 +10,6 @@
     from: "{{ zeebe_base_image.qualified }}"
     tag: "{{ zeebe_base_image.tag }}"
 
-- name: "Build Zeebe image locally and push it to {{ phd_assess_build_namespace }}"
-  when: openshift_namespace == phd_assess_build_namespace
-  tags:
-    - zeebe-push
-    - never
-  shell: |
-    set -e -x
-    oc whoami -t | docker login {{ openshift_image_registry }} -u unused --password-stdin
-    docker tag -t {{ zeebe_image_tag }}:{{ zeebe_version }} camunda/zeebe:{{ zeebe_version }}
-    docker push {{ phd_assess_meteor_image_tag }}
-  register: output_push_image
-  delegate_to: localhost
-
 - name: "Promote zeebe from {{ phd_assess_build_namespace }} to production"
   when: >-
     (openshift_namespace != phd_assess_build_namespace)
