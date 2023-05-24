@@ -6,4 +6,5 @@
 /docker/zeebe-hazelcast/*.jar
 /docker/simple-monitor/*.jar
 /docker/volumes
+/docker/.env
 /bpmn-model/*
