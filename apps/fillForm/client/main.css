@@ -132,3 +132,7 @@ div[id^=error-list].alert-success {
 .form-check input[type='checkbox'] {
   filter: none;
 }
+
+.dropdown-toggle:after {
+  display: none !important;
+}
