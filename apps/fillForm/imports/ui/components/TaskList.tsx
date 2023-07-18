@@ -8,12 +8,14 @@ import {Button, Loader} from "@epfl/epfl-sti-react-library"
 import {Link} from "react-router-dom"
 import {Participant} from "/imports/ui/components/Participant";
 import toast from "react-hot-toast";
+import Dropdown from 'react-bootstrap/Dropdown'
 import {
   canDeleteProcessInstance, canRefreshProcessInstance
 } from "/imports/policy/tasks";
 import {toastErrorClosable} from "/imports/ui/components/Toasters";
 import {ITaskList} from "/imports/policy/tasksList/type";
 import {useAccountContext} from "/imports/ui/contexts/Account";
+
 
 export default function TaskList() {
   const account = useAccountContext()
@@ -59,7 +61,8 @@ export default function TaskList() {
 }
 
 const TaskRow = ({ task, user }: { task: ITaskList, user: Meteor.User }) => {
-  const toastId = `toast-${task._id}`
+  const canDelete = user && canDeleteProcessInstance(user)
+  const canRefresh = user && canRefreshProcessInstance(user)
 
   return (
     <div className={'border-top p-2'} style={ {
@@ -80,26 +83,56 @@ const TaskRow = ({ task, user }: { task: ITaskList, user: Meteor.User }) => {
             }
           </span>
           <span className={'small'}>
-            { task.monitorUri &&
-              <a href={task.monitorUri} target="_blank" className={'pr-3'}>on Monitor <span
-                className={"fa fa-external-link"}/></a>
-            }
-            { user && canDeleteProcessInstance(user) &&
-              <span className={"mr-2"}>
-                <CancelProcessButton processInstanceKey={ task.processInstanceKey } toastId={ toastId }/>
-              </span>
-            }
-            { user && canRefreshProcessInstance(user) &&
-              <span className={"mr-2"}>
-                <RefreshProcessButton processInstanceKey={ task.processInstanceKey } toastId={ toastId }/>
-              </span>
-            }
             <Link className={''} to={`tasks/${task._id}`}>
               <Button
                 label={'Proceed'}
                 onClickFn={() => void 0}
               />
             </Link>
+            { (canRefresh || canDelete) &&
+              <span className={"ml-1"}>
+                <Dropdown as="span">
+                  <Dropdown.Toggle
+                    variant="secondary"
+                    id="dropdown-task-row-actions"
+                    style={{
+                      height: '2.5em',
+                      padding: '0',
+                    }}
+                  >⋮
+                  </Dropdown.Toggle>
+
+                  <Dropdown.Menu>
+                    <Dropdown.Header>
+                      <div>Action on</div>
+                      <div className={''}>Job { task._id }</div>
+                      <div className={''}>Process { task.processInstanceKey }</div>
+                      { task.monitorUri &&
+												<a href={task.monitorUri} target="_blank" className={'pr-3'}>on Monitor <span
+													className={"fa fa-external-link"}/></a>
+                      }
+                    </Dropdown.Header>
+                    <Dropdown.Divider/>
+                    { canRefresh &&
+                      <Dropdown.Item
+                        className={'small'}
+                        eventKey={ task.processInstanceKey }
+                        onSelect={ refreshProcessInstance }
+                      >Refresh
+                      </Dropdown.Item>
+                    }
+                    { canDelete &&
+                      <Dropdown.Item
+                        className={'small'}
+                        eventKey={ task.processInstanceKey }
+                        onSelect={ cancelProcessInstance }
+                      >Cancel
+                      </Dropdown.Item>
+                    }
+                  </Dropdown.Menu>
+                </Dropdown>
+              </span>
+            }
           </span>
         </summary>
         <pre><code>{task.detail}</code></pre>
@@ -125,46 +158,33 @@ const TaskRow = ({ task, user }: { task: ITaskList, user: Meteor.User }) => {
   )
 }
 
-const CancelProcessButton = ({ processInstanceKey, toastId }: { processInstanceKey: string, toastId: string } ) => (
-  <Button
-    label={'Cancel process'}
-    onClickFn={(event: React.FormEvent<HTMLButtonElement>) => {
-      event.preventDefault();
-      window.confirm('Delete the process instance?') &&
-        Meteor.apply(
-          // @ts-ignore, because doc is saying noRetry exists
-          "deleteProcessInstance", [processInstanceKey], { wait: true, noRetry: true },
-          (error: global_Error | Meteor.Error | undefined) => {
-            if (error) {
-              toastErrorClosable(toastId, `${error}`)
-            } else {
-              toast.success(`Successfully removed the process instance`)
-            }
-          }
-        )
-      }
-    }
-  />
-)
 
-const RefreshProcessButton = ({ processInstanceKey, toastId }: { processInstanceKey: string, toastId: string } ) => (
-  <Button
-    label={'Refresh'}
-    onClickFn={(event: React.FormEvent<HTMLButtonElement>) => {
-      event.preventDefault();
-      window.confirm('Remove the process instance so it is refreshed after max 2 minutes ?') &&
-        Meteor.apply(
-          // @ts-ignore, because doc is saying noRetry exists
-          "refreshProcessInstance", [processInstanceKey], { wait: true, noRetry: true },
-          (error: global_Error | Meteor.Error | undefined) => {
-            if (error) {
-              toastErrorClosable(toastId, `${error}`)
-            } else {
-              toast.success(`Successfully refreshed the process instance by removing it from the app`)
-            }
-          }
-        )
+const refreshProcessInstance = (eventKey: any) => {
+  window.confirm('Remove the process instance so it is refreshed after max 2 minutes ?') &&
+  Meteor.apply(
+    // @ts-ignore, because doc is saying noRetry exists
+    "refreshProcessInstance", [eventKey], { wait: true, noRetry: true },
+    (error: global_Error | Meteor.Error | undefined) => {
+      if (error) {
+        toastErrorClosable(eventKey, `${error}`)
+      } else {
+        toast.success(`Successfully refreshed the process instance by removing it from the app`)
       }
     }
-  />
-)
+  )
+}
+
+const cancelProcessInstance = (eventKey: any) => {
+  window.confirm('Delete the process instance?') &&
+  Meteor.apply(
+    // @ts-ignore, because doc is saying noRetry exists
+    "deleteProcessInstance", [eventKey], { wait: true, noRetry: true },
+    (error: global_Error | Meteor.Error | undefined) => {
+      if (error) {
+        toastErrorClosable(eventKey, `${error}`)
+      } else {
+        toast.success(`Successfully removed the process instance`)
+      }
+    }
+  )
+}
