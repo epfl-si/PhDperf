@@ -136,3 +136,22 @@ div[id^=error-list].alert-success {
 .dropdown-toggle:after {
   display: none !important;
 }
+
+.nav-aside span {
+  color: #495057;
+  display: block;
+  padding: 0.625rem 3rem;
+  position: relative;
+  text-decoration: none;
+}
+
+.nav-aside span:not(.first-span):before {
+  background: #d5d5d5;
+  content: " ";
+  height: 1px;
+  position: absolute;
+  top: 0;
+  -webkit-transition: background .25s;
+  transition: background .25s;
+  width: calc(100% - 6rem);
+}

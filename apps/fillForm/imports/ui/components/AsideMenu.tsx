@@ -29,9 +29,7 @@ const DoctoralSchoolHelpLinkMenuEntry = ({ taskId }: {taskId: string }) => {
 
   return (
     <li>
-      <a href="#">
-        Support
-      </a>
+      <span>Support</span>
       <ul>
         <li>
           <a href={ doctoralSchoolHelpLink } target="_blank">
@@ -60,7 +58,7 @@ export const AsideMenu = () => {
           <ul>
             { canEditAtLeastOneDoctoralSchool(account.user) &&
               <li>
-                <a href="#">Doctoral Programs</a>
+                <span className="first-span">Doctoral Programs</span>
                 <ul>
                   <li className={matchPath("/doctoral-programs", pathname) ? 'active' : undefined}>
                     <Link to={`/doctoral-programs`}>Administration</Link>
@@ -69,9 +67,7 @@ export const AsideMenu = () => {
               </li>
             }
             <li>
-              <a href="#">
-                Tasks
-              </a>
+              <span>Tasks</span>
               <ul>
                 <li className={matchPath("/", pathname) ? 'active' : undefined}>
                   <Link to={`/`}>List</Link>
