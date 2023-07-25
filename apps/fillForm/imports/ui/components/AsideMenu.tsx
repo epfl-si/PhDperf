@@ -33,7 +33,7 @@ const DoctoralSchoolHelpLinkMenuEntry = ({ taskId }: {taskId: string }) => {
       <ul>
         <li>
           <a href={ doctoralSchoolHelpLink } target="_blank">
-            Documentation&nbsp;
+            User manual&nbsp;
             <svg className="icon feather" style={ { paddingBottom: 2 } } aria-hidden="true">
               <use xlinkHref="#external-link"></use>
             </svg>
