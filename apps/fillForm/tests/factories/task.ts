@@ -30,7 +30,9 @@ const generateParticipants = (hasThesisCoDirector= true) => {
   return participants
 }
 
-const aTaskAttributes = {
+const participant = generateParticipants()
+
+export const aTaskAttributes = {
   "journal": {
     "lastSeen": () => dayjs().subtract(15, 'minutes').toDate(),
     "seenCount": faker.datatype.number(9999),
@@ -56,8 +58,8 @@ const aTaskAttributes = {
   "retries": 0,
   "type": "phdAssessFillForm",
   "variables": {
-    ...generateParticipants(),
-    "assigneeSciper": faker.sciper(),
+    ...participant,
+    "assigneeSciper": participant.phdStudentSciper,
     "created_at": "2022-12-12T14:16:44.822Z",
     "created_by": () => faker.sciper(),
     "updated_at": "2022-12-12T14:17:01.951Z",

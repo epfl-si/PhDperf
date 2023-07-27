@@ -15,6 +15,12 @@ require("dotenv").config({path: findUpSync(".env")})
 
 
 Meteor.startup(() => {
+
+  // add custom methods for the devs
+  if (Meteor.isDevelopment) {
+    import('./methods/Fixtures');
+  }
+
   WorkersClient.start()
   Tequila.start({
     getUserId: (tequila: any) => {
