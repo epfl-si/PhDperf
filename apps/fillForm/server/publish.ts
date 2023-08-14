@@ -70,7 +70,8 @@ Meteor.publish('tasksDashboard', function () {
   // Set a custom handler for users, as we don't want to show the AssigneeSciper when the mentor task is going on
   const handle = getUserPermittedTasksForDashboard(user, DoctoralSchools.find({}).fetch())?.observeChanges({
     added: (id, task) => {
-      // remove assigneeSciper for mentor task if
+      // remove/hide the assigneeSciper for mentor's task if
+      //   - user is not an admin
       //   - task is currently on the mentor task
       //   - assigneeSciper is not the mentor, nor the students, as they are allowed to know each other
       if (!user.isAdmin) {
