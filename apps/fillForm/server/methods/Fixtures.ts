@@ -2,7 +2,8 @@
  * offering to the devs a happy place with some datas to work on
  **/
 import {Meteor} from "meteor/meteor";
-const Factory = require("meteor/dburles:factory").Factory
+import {createTasksForDashboardFixtures} from "/tests/factories/dashboard/tasksV1";
+import {createTasksForDashboardV2Fixtures} from "/tests/factories/dashboard/tasksV2";
 
 
 Meteor.methods({
@@ -16,7 +17,8 @@ Meteor.methods({
 
     await import('/tests/factories/task');
 
-    Factory.create("task");
+    createTasksForDashboardFixtures();
+    createTasksForDashboardV2Fixtures();
 
     return "ok !";
   }
