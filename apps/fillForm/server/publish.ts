@@ -95,6 +95,9 @@ Meteor.publish('tasksDashboard', function () {
 
       this.added('tasks', id, task);
     },
+    removed: (id) => {
+      this.removed('tasks', id)
+    }
   })
 
   this.ready()
