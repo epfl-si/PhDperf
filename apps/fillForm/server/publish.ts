@@ -67,29 +67,28 @@ Meteor.publish('tasksDashboard', function () {
 
   if (!user) return this.ready()
 
-  // no additionnal filter when admin, get raw tasks
-  if (user.isAdmin) return getUserPermittedTasksForDashboard(user, DoctoralSchools.find({}).fetch())
-
   // Set a custom handler for users, as we don't want to show the AssigneeSciper when the mentor task is going on
   const handle = getUserPermittedTasksForDashboard(user, DoctoralSchools.find({}).fetch())?.observeChanges({
     added: (id, task) => {
       // remove assigneeSciper for mentor task if
       //   - task is currently on the mentor task
       //   - assigneeSciper is not the mentor, nor the students, as they are allowed to know each other
-      if (task.elementId === 'Activity_Post_Mentor_Meeting_Mentor_Signs' &&
+      if (!user.isAdmin) {
+        if (task.elementId === 'Activity_Post_Mentor_Meeting_Mentor_Signs' &&
           task.variables?.assigneeSciper
-      ) {
+        ) {
 
-        const isCurrentUserTheStudentOrTheMentor = (task: Partial<Task>) => {
-          return (
-            user._id === task.variables!.phdStudentSciper ||
-            user._id === task.variables!.mentorSciper
-          )
-        }
+          const isCurrentUserTheStudentOrTheMentor = (task: Partial<Task>) => {
+            return (
+              user._id === task.variables!.phdStudentSciper ||
+              user._id === task.variables!.mentorSciper
+            )
+          }
 
-        if (!isCurrentUserTheStudentOrTheMentor(task)) {
-          task.variables.assigneeSciper = ''
-          task.assigneeScipers = []
+          if (!isCurrentUserTheStudentOrTheMentor(task)) {
+            task.variables.assigneeSciper = ''
+            task.assigneeScipers = []
+          }
         }
       }
 
