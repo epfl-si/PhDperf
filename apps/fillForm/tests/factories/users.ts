@@ -20,7 +20,7 @@ const createRandomUser = () => {
   const email = faker.helpers.unique(faker.internet.email, [
     firstName.toLowerCase(),
     lastName.toLowerCase(),
-  ]);
+  ], { maxRetries: 50000, maxTime: 50000 });
 
   return {
     "_id": sciper,
