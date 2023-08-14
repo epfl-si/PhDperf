@@ -7,6 +7,7 @@ export const taskFieldsNeededForDashboard = {
   '_id': 1,
   'elementId': 1,
   'processInstanceKey': 1,
+  'variables.dashboardDefinition': 1,
   'variables.assigneeSciper': 1,
   'variables.updated_at': 1,
   'variables.phdStudentSciper': 1,
