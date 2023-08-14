@@ -2,12 +2,12 @@ import chai, {assert} from 'chai'
 import chaiDateTime from "chai-datetime";
 chai.use(chaiDateTime);
 
-import {Meteor} from "meteor/meteor";
-
-import {Tasks} from "/imports/model/tasks";
-import {DoctoralSchools} from "/imports/api/doctoralSchools/schema";
-import {initialEcolesDoctorales} from "/server/fixtures/doctoralSchools";
+import {Task, Tasks} from "/imports/model/tasks";
 import dayjs from "dayjs";
+import {
+  RethinkedStepsDefinitionDefault,
+  RethinkedStepsDefinitionV2
+} from "/imports/ui/components/Dashboard/DefaultDefinition";
 
 const dbCleaner = require("meteor/xolvio:cleaner");
 const Factory = require("meteor/dburles:factory").Factory
@@ -29,7 +29,7 @@ describe('Unit tests Tasks', function () {
     //   const { customHeaders, variables, ...taskLight } = t
     //   console.log(taskLight)
     // })
-    });
+  });
 
   // testing the test engine about dates, and how we are able to filter it with Mongo
   it('should be able to read and write dates', function () {
@@ -60,21 +60,38 @@ describe('Unit tests Tasks', function () {
   });
 });
 
-describe('Unit tests DoctoralSchools', function () {
+
+describe('Unit tests Tasks dashboard definition', function () {
+  let taskWithoutDefinition: Task | undefined
+  let tasksWithDefinition: Task[]
+
   beforeEach(function () {
-    if ( DoctoralSchools.find({}).count() === 0 ) {
-      initialEcolesDoctorales.forEach((doctoralSchool) => {
-        DoctoralSchools.insert(doctoralSchool);
+    dbCleaner.resetDatabase({}, () => {
+      Factory.create("task", {
+        "variables.dashboardDefinition": undefined
       });
-    }
+      Factory.create("task", {
+        "variables.dashboardDefinition": RethinkedStepsDefinitionDefault
+      });
+      Factory.create("task", {
+        "variables.dashboardDefinition": RethinkedStepsDefinitionV2
+      });
+    });
   });
 
-  if (Meteor.isServer) {
-    it('should have doctoral schools data', function () {
-      // _dburlesFactory.Factory.create("doctoralSchool");
+  it('should have a dashboard definition', function () {
+    taskWithoutDefinition = Tasks.findOne({ 'variables.dashboardDefinition': { $exists: false } })
+    tasksWithDefinition = Tasks.find({ 'variables.dashboardDefinition': { $exists: true } }).fetch()
 
-      const ds = DoctoralSchools.find({})
-      assert.notStrictEqual(ds.count(), 0)
-    });
-  }
+    assert.isUndefined(taskWithoutDefinition?.variables.dashboardDefinition)
+
+    tasksWithDefinition.forEach(
+      (task) => {
+        assert.isDefined(task.variables.dashboardDefinition)
+
+        const definition = task.variables.dashboardDefinition
+        assert(JSON.parse(JSON.stringify(definition)))  // test that it is some valid json
+      }
+    )
+  });
 });
