@@ -132,6 +132,7 @@ export default {
       maxJobsToActivate: process.env.ZEEBE_WORKER_MAX_JOBS_TO_ACTIVATE ?? 500,
       // Set timeout, the same as we will ask yourself if the job is still up
       timeout: process.env.ZEEBE_WORKER_TIMEOUT ?? Duration.seconds.of(20),
+      pollInterval: Meteor.isDevelopment && Duration.seconds.of(30),
       // load every job into the in-memory server db
       taskHandler:
         Meteor.bindEnvironment(      // therefore, Fiber'd
