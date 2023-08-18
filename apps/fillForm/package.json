@@ -22,6 +22,7 @@
     ],
     "@babel/core": "^7.19.3",
     "@babel/runtime": "^7.19.4",
+    "@dagrejs/graphlib": "^2.1.13",
     "@epfl/epfl-sti-react-library": "^4.5.1",
     "@faker-js/faker": "^7.6.0",
     "@formio/react": "^5.2.4-rc.2",
@@ -54,6 +55,7 @@
     "zeebe-node": "^8.2.1"
   },
   "devDependencies": {
+    "@testing-library/react": "^14.0.0",
     "@types/chai-datetime": "^0.0.37",
     "@types/crypto-js": "^4.1.1",
     "@types/debug": "^4.1.7",

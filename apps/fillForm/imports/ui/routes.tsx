@@ -1,3 +1,4 @@
+import React from "react";
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -7,13 +8,11 @@ import {
 } from "react-router-dom";
 
 import {DoctoralSchoolsList} from "/imports/ui/components/DoctoralSchools/List";
-import {Dashboard} from "/imports/ui/components/Dashboard";
-
 import {ImportScipersForSchool, ImportScipersSchoolSelector} from "/imports/ui/components/ImportSciper/List";
 import TaskList from "/imports/ui/components/TaskList";
-import React from "react";
-
 import {TaskForm} from "/imports/ui/components/TaskForm";
+import {Dashboard} from "/imports/ui/components/Dashboard/Dashboard";
+
 import Main from "/imports/ui/Main";
 
 
