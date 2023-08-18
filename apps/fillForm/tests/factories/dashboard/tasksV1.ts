@@ -167,6 +167,11 @@ export const setProgramDirectorSignsAttributes = (taskAttributes: any = generate
 })
 
 export const createTasksForDashboardFixtures = () => {
+  // remove the coDirector, as the default definition depends on it
+  const oneInstanceWithoutCoDirector= generateAGenericTaskAttributes( false)
+  // create a task that is nothing to do with the codirector
+  Factory.create('task', setPHDFillsAttributes(oneInstanceWithoutCoDirector));
+
   Factory.create('task', setPHDFillsAttributes());
   Factory.create('task', setCoDirectorFillsAttributes());
   Factory.create('task', setDirectorFillsAttributes());

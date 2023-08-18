@@ -35,8 +35,8 @@ const generateParticipants = (hasThesisCoDirector= true) => {
   return participants
 }
 
-export const generateAGenericTaskAttributes = () => {
-  const participant = generateParticipants()
+export const generateAGenericTaskAttributes = (hasThesisCoDirector = true) => {
+  const participant = generateParticipants(hasThesisCoDirector)
 
   return {
     "journal": {
