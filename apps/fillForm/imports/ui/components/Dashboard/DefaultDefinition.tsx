@@ -1,7 +1,6 @@
 import {StepsDefinition} from "phd-assess-meta/types/dashboards";
 
 
-//TODO: rename without the Rethinked, once it's ready
 // Historically, before it was saved into the bpmn, it was a static list. Now this definitions should be into the bpmn.
 // Keep this one, as it is the original, not saved into an bpmn
 export const StepsDefinitionDefault: StepsDefinition = [
@@ -71,7 +70,10 @@ export const StepsDefinitionDefault: StepsDefinition = [
 ]
 
 //TODO: move this into the bpmn, as output of the instance creation
-//TODO: rename without the Rethinked, once it's ready
+//TODO: move this into the tests folder
+// this definition should be into the bpmn.
+// To remove any confusion, it does not represent what is going on on any bpmn.
+// It is kept here as a copy, for testing purposes only.
 export const StepsDefinitionV2: StepsDefinition = [
   {
     id: 'Activity_PHD_fills_annual_report_1',
