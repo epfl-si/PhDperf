@@ -60,7 +60,9 @@ export const getContainerV2 = async () => {
   const allProcessInstanceTasks =
     await Tasks.find({'variables.dashboardDefinition': { $exists:true }}).fetchAsync() as ITaskDashboard[]
 
-  assert.isNotEmpty(allProcessInstanceTasks, `${JSON.stringify(allProcessInstanceTasks)}`)
+  assert.isNotEmpty(
+    allProcessInstanceTasks, `There is no task with a dashboardDefinition (aka V2)`
+  )
 
   return getAndCheckDashboardContainer(allProcessInstanceTasks, StepsDefinitionV2)
 }

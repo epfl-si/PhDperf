@@ -81,6 +81,10 @@ const DashboardHeader = ({ definition, headerKey }: { definition: DashboardGraph
         // using the default configuration here, as it match for all versions at the moment.
         definition.nodes().map((node) => {
           const step = definition.node(node) as Step
+
+          // if the step has a twin, it means we should have already done the twin.
+          if (step.twins) return
+
           return <div
             className="dashboard-header col m-1 p-2 text-black align-self-end text-small"
             key={ `${ headerKey}-${ step.id }` }

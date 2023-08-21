@@ -78,25 +78,34 @@ const StepPending = ({step, task }: {step: Step, task: ITaskDashboard }) => {
 export const DashboardRenderedStep = (
   { step, workflowInstanceTasks, stepDefinition }: { step: Step, workflowInstanceTasks: ITaskDashboard[], stepDefinition: Graph }
 ) => {
-  // is this a step depending on a specific field ?
-  if (step.dependsOn?.field && !workflowInstanceTasks[0].variables[step.dependsOn.field])
-    return <StepFixedContent step={ step }>{ step.dependsOn.contentOnFail }</StepFixedContent>
-
   // two main cases to manage: this is a step which a task exist, or one without a task
   // get the task concerned by the current step
   const task = workflowInstanceTasks.find(t => t.elementId === step.id)
 
   if (task) {  // task exists. It can only be a pending then
     return <StepPending step={ step } task={ task }/>
-  } else {
+  } else {  // no task cases. Let's find if it is done, not-done, or with a custom content
+    // dependsOn cases. Is this a step depending on a specific field ?
+    if (step.dependsOn?.field) {
+      // yep, two cases now:
+      // 1. we want a custom content if the field is missing
+      if (step.dependsOn.contentOnFail &&
+        !workflowInstanceTasks[0].variables[step.dependsOn.field])
+        return <StepFixedContent step={ step }>{ step.dependsOn.contentOnFail }</StepFixedContent>
 
+      // 2. we want a done / not-done if the field is missing
+      if (!step.dependsOn.contentOnFail) {
+        if (workflowInstanceTasks[0].variables[step.dependsOn.field]) {
+          return <StepDone step={ step }/>
+        } else {
+          return <StepNotDone step={ step }/>
+        }
+      }
+    }
 
-    // as there is no task, let's define if we are before the pending(s) (meaning we are 'done') or after (meaning 'not-done')
+    // Now, as there is no task and we don't depends on any field
+    // let's define if we are before the pending(s) (meaning we are 'done') or after (meaning 'not-done')
     const listPendingSteps = workflowInstanceTasks.map(t => t.elementId);
-
-    //TODO: trash this
-    // @ts-ignore
-    const debugMe = graphlib.json.write(stepDefinition)
 
     let listActivitiesBeforeThePendingOnes: string[] = []
     listPendingSteps.forEach((pendingStepId) => {
@@ -124,26 +133,7 @@ export const DashboardRenderedStep = (
       return <StepDone step={ step }/>
     }
 
-    // TODO: for V1 manage dependsOn field
-    // TODO: for V2 manage twin cases, multiple IDs per step
-
-    //   // does this need a field to go green ?
-    //   if (step.dependsOn?.field && step.dependsOn?.contentOnFail === undefined) {
-    //     if (task!.variables[step.dependsOn!.field]) {
-    //       return <StepDone step={ step }/>
-    //     } else {
-    //       return <StepPending step={ step } task={ task! }/>
-    //     }
-    //   }
-    //
-    //   // does this need a field to go with a custom content ?
-    //   if (step.dependsOn?.field && step.dependsOn?.contentOnFail) {
-    //     if (task!.variables[step.dependsOn!.field]) {
-    //       return <StepFixedContent step={ step }>{ step.dependsOn!.contentOnFail }</StepFixedContent>
-    //     } else {
-    //       return <StepPending step={ step } task={ task! }/>
-    //     }
-    //   }
+    // TODO: for V2 manage twin cases
 
     return <StepFixedContent step={ step }>Soon</StepFixedContent>
   }

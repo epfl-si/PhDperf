@@ -76,15 +76,14 @@ export const StepsDefinitionDefault: StepsDefinition = [
 // It is kept here as a copy, for testing purposes only.
 export const StepsDefinitionV2: StepsDefinition = [
   {
-    id: 'Activity_PHD_fills_annual_report_1',
+    id: 'Activity_PHD_fills_annual_report',
     label: 'Phd fills annual report',
-    twins: ['Activity_PHD_fills_annual_report_2'],
     parents: [],  // first step
   },
   {
     id: 'Activity_PHD_fills_annual_report_2',
     label: 'Phd fills annual report',
-    twins: ['Activity_PHD_fills_annual_report_1'],
+    twins: ['Activity_PHD_fills_annual_report'],
     parents: [],  // first step
   },
   {
@@ -103,7 +102,7 @@ export const StepsDefinitionV2: StepsDefinition = [
   },
   {
     id: 'Activity_Thesis_Director_Collaborative_Review_Signs',
-    label: 'Collab. review',
+    label: 'Collaborative review',
     parents: [
       'Activity_PHD_fills_annual_report_2',
       'Activity_Thesis_Co_Director_fills_annual_report',

@@ -5,7 +5,7 @@ const Factory = require("meteor/dburles:factory").Factory
 
 import {getContainerV2} from "/tests/client/dashboard/utils";
 import {
-  setCoDirectorFillsAttributes, setDirectorFillsAttributes,
+  setCoDirectorFillsAttributes, setCollabReviewAttributes, setDirectorFillsAttributes,
   setMentorSignsAttributes,
   setPHDFills1Attributes,
   setPHDFills2Attributes
@@ -40,6 +40,9 @@ describe('Dashboard Steps render V2', function (){
     assert.isNotTrue(StepsDefinitionV2.filter(
       s => s.id === 'Activity_Post_Mentor_Meeting_Mentor_Signs'
     )[0].parents)
+
+    // get any, it does not matter while it's not a floating
+    Factory.create('task', setCollabReviewAttributes());
 
     const container = await getContainerV2()
 
