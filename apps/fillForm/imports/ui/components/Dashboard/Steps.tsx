@@ -25,7 +25,7 @@ const StepDone = ({ step }: { step: Step }) =>
 
 const StepFixedContent = ({ step, children }: {step: Step, children: React.ReactNode }) =>
   <DashboardCustomContent
-    className="border col m-1 p-2 text-center"
+    className="border col m-1 p-2 text-center small"
     data-step={ step.id }
     data-step-status={ 'custom-content' }
   >
@@ -33,9 +33,9 @@ const StepFixedContent = ({ step, children }: {step: Step, children: React.React
   </DashboardCustomContent>
 
 const DashboardStep = styled.div`
-  height: 3em;
-  max-height: 3em;
-  min-height: 3em;
+  height: 2.35rem;
+  max-height: 2.35rem;
+  min-height: 2.35rem;
 `;
 
 const BgAwaiting = styled(DashboardStep)`
@@ -44,6 +44,8 @@ const BgAwaiting = styled(DashboardStep)`
 
 const DashboardCustomContent = styled(DashboardStep)`
   background-color: #E6E6E6;
+  padding-top: 0.65rem !important;
+  font-size: 0.7rem;
 `;
 
 const StepPending = ({step, task }: {step: Step, task: ITaskDashboard }) => {
@@ -135,6 +137,6 @@ export const DashboardRenderedStep = (
 
     // TODO: for V2 manage twin cases
 
-    return <StepFixedContent step={ step }>Soon</StepFixedContent>
+    return <StepFixedContent step={ step }>Undefined</StepFixedContent>
   }
 }
