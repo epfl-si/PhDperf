@@ -159,7 +159,7 @@ export function Dashboard() {
   // having a graph for the dashboard definition is easier to process
   const definitionGraph = convertDefinitionToGraph(StepsDefinitionDefault)
   // use the name of the variable as key
-  const definitionKey = Object.keys({RethinkedStepsDefinitionDefault: StepsDefinitionDefault})[0]
+  const definitionKey = Object.keys({StepsDefinitionDefault: StepsDefinitionDefault})[0]
 
   return (
     <DashboardContent
