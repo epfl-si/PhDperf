@@ -126,7 +126,7 @@ export const setMentorSignsAttributes = (taskAttributes: any = generateAGenericT
   },
   'variables': {
     ...taskAttributes.variables,
-    'assigneeSciper': taskAttributes.variables.thesisDirectorSciper,
+    'assigneeSciper': taskAttributes.variables.mentorSciper,
     'dashboardDefinition': undefined,
   },
   'elementId': faker.helpers.arrayElement([
