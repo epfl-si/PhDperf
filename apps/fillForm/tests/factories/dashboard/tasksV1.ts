@@ -16,6 +16,7 @@ export const setPHDFillsAttributes = (taskAttributes: any = generateAGenericTask
     ...taskAttributes.variables,
     'assigneeSciper': taskAttributes.variables!.thesisCoDirectorSciper,
     'dashboardDefinition': undefined,
+    'doctoralProgramName': 'V1',
   },
   'elementId': faker.helpers.arrayElement([
     'Activity_PHD_fills_annual_report',
@@ -32,6 +33,7 @@ export const setCoDirectorFillsAttributes =  (taskAttributes: any = generateAGen
     ...taskAttributes.variables,
     'assigneeSciper': taskAttributes.variables.thesisCoDirectorSciper,
     'dashboardDefinition': undefined,
+    'doctoralProgramName': 'V1',
   },
   'elementId': faker.helpers.arrayElement([
     'Activity_Thesis_Co_Director_fills_annual_report',
@@ -48,6 +50,7 @@ export const setDirectorFillsAttributes = (taskAttributes: any = generateAGeneri
     ...taskAttributes.variables,
     'assigneeSciper': taskAttributes.variables.thesisDirectorSciper,
     'dashboardDefinition': undefined,
+    'doctoralProgramName': 'V1',
   },
   'elementId': faker.helpers.arrayElement([
     'Activity_Thesis_Director_fills_annual_report',
@@ -64,6 +67,7 @@ export const setCollabReviewAttributes = (taskAttributes: any = generateAGeneric
     ...taskAttributes.variables,
     'assigneeSciper': taskAttributes.variables.thesisDirectorSciper,
     'dashboardDefinition': undefined,
+    'doctoralProgramName': 'V1',
   },
   'elementId': faker.helpers.arrayElement([
     'Activity_Thesis_Director_Collaborative_Review_Signs',
@@ -80,6 +84,7 @@ export const setDirectorCollabSignAttributes = (taskAttributes: any = generateAG
     ...taskAttributes.variables,
     'assigneeSciper': taskAttributes.variables.thesisCoDirectorSciper,
     'dashboardDefinition': undefined,
+    'doctoralProgramName': 'V1',
   },
   'elementId': faker.helpers.arrayElement([
     'Activity_Thesis_Co_Director_Signs',
@@ -96,6 +101,7 @@ export const setDirectorSignsAttributes = (taskAttributes: any = generateAGeneri
     ...taskAttributes.variables,
     'assigneeSciper': taskAttributes.variables.thesisDirectorSciper,
     'dashboardDefinition': undefined,
+    'doctoralProgramName': 'V1',
   },
   'elementId': faker.helpers.arrayElement([
     'Activity_Thesis_Director_Signs',
@@ -112,6 +118,7 @@ export const setPHDSignsAttributes = (taskAttributes: any = generateAGenericTask
     ...taskAttributes.variables,
     'assigneeSciper': taskAttributes.variables.thesisDirectorSciper,
     'dashboardDefinition': undefined,
+    'doctoralProgramName': 'V1',
   },
   'elementId': faker.helpers.arrayElement([
     'Activity_PHD_Signs',
@@ -128,6 +135,7 @@ export const setMentorSignsAttributes = (taskAttributes: any = generateAGenericT
     ...taskAttributes.variables,
     'assigneeSciper': taskAttributes.variables.mentorSciper,
     'dashboardDefinition': undefined,
+    'doctoralProgramName': 'V1',
   },
   'elementId': faker.helpers.arrayElement([
     'Activity_Post_Mentor_Meeting_Mentor_Signs',
@@ -144,6 +152,7 @@ export const setPostMentorPHDSignsAttributes = (taskAttributes: any = generateAG
     ...taskAttributes.variables,
     'assigneeSciper': taskAttributes.variables.thesisDirectorSciper,
     'dashboardDefinition': undefined,
+    'doctoralProgramName': 'V1',
   },
   'elementId': faker.helpers.arrayElement([
     'Activity_Post_Mentor_Meeting_PHD_Signs',
@@ -160,6 +169,7 @@ export const setProgramDirectorSignsAttributes = (taskAttributes: any = generate
     ...taskAttributes.variables,
     'assigneeSciper': taskAttributes.variables.thesisDirectorSciper,
     'dashboardDefinition': undefined,
+    'doctoralProgramName': 'V1',
   },
   'elementId': faker.helpers.arrayElement([
     'Activity_Program_Director_Signs',
