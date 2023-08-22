@@ -9,7 +9,7 @@ const Factory = require("meteor/dburles:factory").Factory
 import {generateAGenericTaskAttributes} from "/tests/factories/task";
 import {
   setCoDirectorFillsAttributes, setCollabReviewAttributes, setDirectorFillsAttributes, setPHDFillsAttributes,
-  setPHDFillsAttributes as setPHDFillsAttributesV1
+  setPHDFillsAttributes as setPHDFillsAttributesV1, setPHDSignsAttributes
 } from "/tests/factories/dashboard/tasksV1";
 
 import {StepsDefinitionDefault} from "/imports/ui/components/Dashboard/DefaultDefinition";
@@ -20,7 +20,7 @@ beforeEach(async function () {
   await dbCleaner.resetDatabase();
 });
 
-describe('Dashboard Steps render V1', function (){
+describe('Dashboard Steps render V1 steps', function (){
 
   it('should render the first step as awaiting', async function (){
     Factory.create('task', setPHDFillsAttributesV1());
@@ -174,6 +174,32 @@ describe('Dashboard Steps render V1', function (){
   });
 
   it('should render a custom content if a field is missing (dependsOn case)', async function (){
+    // remove the coDirector, as the default definition depends on it
+    const oneInstance= generateAGenericTaskAttributes( false)
+    // create a task that is nothing to do with the co-director
+    Factory.create('task', setPHDSignsAttributes(oneInstance));
+
+    const container = await getContainerV1()
+
+    // first should be 'awaiting'
+    assert.lengthOf(
+      container.querySelectorAll('[data-step="Activity_PHD_Signs"][data-step-status="awaiting"]'),
+      1,
+      `${ container.innerHTML }`);
+    // some should be custom-content
+    assert.isAbove(
+      container.querySelectorAll('[data-step-status="custom-content"]').length,
+      0
+    )
+    // the others not-done
+    assert.isAbove(
+      container.querySelectorAll('[data-step-status="not-done"]').length,
+      0
+    )
+  });
+
+  it('should not render a custom content if a field is missing but' +
+    ' we are still not at this step (dependsOn case)', async function (){
     // remove the coDirector, as the default definition depends on it
     const oneInstance= generateAGenericTaskAttributes( false)
     // create a task that is nothing to do with the codirector

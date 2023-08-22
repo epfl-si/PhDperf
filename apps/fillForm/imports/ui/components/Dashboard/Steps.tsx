@@ -1,11 +1,12 @@
 import React from "react";
+import _ from "lodash";
 import styled from "styled-components";
+
 import {ITaskDashboard} from "/imports/policy/dashboard/type";
 import {ParticipantDetail} from "/imports/model/participants";
-import _ from "lodash";
+
 import {StepsDefinitionDefault} from "/imports/ui/components/Dashboard/DefaultDefinition";
 import {Step} from "phd-assess-meta/types/dashboards";
-import graphlib from "@dagrejs/graphlib";
 import {DashboardGraph as Graph} from "/imports/ui/components/Dashboard/DefinitionGraphed";
 
 
@@ -80,14 +81,26 @@ const StepPending = ({step, task }: {step: Step, task: ITaskDashboard }) => {
 export const DashboardRenderedStep = (
   { step, workflowInstanceTasks, stepDefinition }: { step: Step, workflowInstanceTasks: ITaskDashboard[], stepDefinition: Graph }
 ) => {
+  // custom content don't need any logic, go for it directly
+  if (step.content) return <StepFixedContent step={ step }>{ step.content }</StepFixedContent>
+
   // two main cases to manage: this is a step which a task exist, or one without a task
-  // get the task concerned by the current step
-  const task = workflowInstanceTasks.find(t => t.elementId === step.id)
+    // 1. get the task concerned by the current step:
+  const task = workflowInstanceTasks.find(t =>
+    t.elementId === step.id
+  )
 
   if (task) {  // task exists. It can only be a pending then
     return <StepPending step={ step } task={ task }/>
   } else {  // no task cases. Let's find if it is done, not-done, or with a custom content
-    // dependsOn cases. Is this a step depending on a specific field ?
+    // has this step an alias, meaning we have to find another task ?
+    if (step.alias) {
+      const taskAliased = workflowInstanceTasks.find(t =>
+        step.alias!.includes(t.elementId)
+      )
+      if (taskAliased) return <StepPending step={ step } task={ taskAliased }/>
+    }
+
     if (step.dependsOn?.field) {
       // yep, two cases now:
       // 1. we want a custom content if the field is missing
@@ -105,8 +118,11 @@ export const DashboardRenderedStep = (
       }
     }
 
-    // Now, as there is no task and we don't depends on any field
+    // Now, as:
+    // - there is no task
+    // - we do not depend on any field
     // let's define if we are before the pending(s) (meaning we are 'done') or after (meaning 'not-done')
+    // we parse the graph tree of parent-children to get this answer
     const listPendingSteps = workflowInstanceTasks.map(t => t.elementId);
 
     let listActivitiesBeforeThePendingOnes: string[] = []
@@ -127,7 +143,7 @@ export const DashboardRenderedStep = (
 
     if (listActivitiesBeforeThePendingOnes?.includes(step.id)) return <StepDone step={ step }/>
     if (listActivitiesAfterThePendingOnes?.includes(step.id)) return <StepNotDone step={ step }/>
-    // Neither ? -> certainly a sibling / twin / ...
+    // Neither ? -> see if this is a sibling
     const siblingEdges = stepDefinition.getSiblings(step.id)
 
     // check if this is a sibling of a pending
@@ -135,8 +151,7 @@ export const DashboardRenderedStep = (
       return <StepDone step={ step }/>
     }
 
-    // TODO: for V2 manage twin cases
-
-    return <StepFixedContent step={ step }>Undefined</StepFixedContent>
+    // nothing special found, it is certainly a task to be done later
+    return <StepNotDone step={ step }/>
   }
 }

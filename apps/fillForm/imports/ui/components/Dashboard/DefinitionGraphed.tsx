@@ -19,14 +19,14 @@ export const convertDefinitionToGraph = (definition: StepsDefinition) => {
     // set all parents of this node
     step.parents?.forEach(p => graph.setParentEdge(step.id, p))
 
-    // set a link between the twins (aka the "don't go green until the two are done")
-    step.twins?.forEach((twin) => graph.setTwin(step.id, twin))
-
     // set a link between node that have the same parents configuration, as a shortcut, to represent the same level
     // as siblings
     if (step.parents) {
       definition.filter(
-        (cStep) => cStep.id != step.id && cStep.parents && compareArraysValues(cStep.parents, step.parents!)
+        (cStep) =>
+          cStep.id != step.id &&
+          cStep.parents &&
+          compareArraysValues(cStep.parents, step.parents!)
       ).forEach(
         (dStep) => graph.setSibling(step.id, dStep.id)
       )
@@ -36,7 +36,7 @@ export const convertDefinitionToGraph = (definition: StepsDefinition) => {
   return graph;
 }
 
-type EdgeType = 'parent' | 'sibling' | 'twin'
+type EdgeType = 'parent' | 'sibling'
 
 /**
  * Extends @dagrejs/graphlib/Graph to set specific edges, like edgeType
@@ -50,6 +50,10 @@ export class DashboardGraph extends GraphLib {
     this.setEdge(node, stepParentID, 'parent' as EdgeType)
   }
 
+  /**
+   * Get the direct parents in the tree
+   * @param the step id starting point
+   */
   getParents(stepId: string): string[] {
     const parents =
       this.outEdges(stepId)?.filter(e => this.edge(e) === 'parent' as EdgeType)?.map(e => e.w)
@@ -64,6 +68,10 @@ export class DashboardGraph extends GraphLib {
     return _.uniq(_getAllParents(stepId, this))
   }
 
+  /**
+   * Get the direct children in the tree
+   * @param the step id starting point
+   */
   getChildren(stepId: string): string[] {
     const children =
       this.inEdges(stepId)?.filter(e => this.edge(e) === 'parent' as EdgeType)?.map(e => e.v)
@@ -86,16 +94,6 @@ export class DashboardGraph extends GraphLib {
     const siblings =
       this.inEdges(stepId)?.filter(e => this.edge(e) === 'sibling' as EdgeType)?.map(e => e.v)
     return siblings ?? []
-  }
-
-  setTwin(step: string, twin: string): void {
-    this.setEdge(step, twin, 'twin' as EdgeType)
-  }
-
-  getTwins(stepId: string): string[] {
-    const twins =
-      this.inEdges(stepId)?.filter(e => this.edge(e) === 'twin' as EdgeType)?.map(e => e.v)
-    return twins ?? []
   }
 }
 
