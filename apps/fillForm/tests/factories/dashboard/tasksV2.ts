@@ -146,7 +146,6 @@ export const setProgramDirectorSignsAttributes = (taskAttributes: any = generate
 export const createTasksForDashboardV2Fixtures = () => {
   Factory.create('task', setPHDFills1Attributes());
   Factory.create('task', setPHDFills2Attributes());
-  Factory.create('task', setMentorSignsAttributes());
   Factory.create('task', setDirectorFillsAttributes());
   Factory.create('task', setCoDirectorFillsAttributes());
   Factory.create('task', setPHDFills2Attributes());
