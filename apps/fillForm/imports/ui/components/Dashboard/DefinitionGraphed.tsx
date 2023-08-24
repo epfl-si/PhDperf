@@ -101,7 +101,7 @@ const _getAllParents = (stepId: string, stepDefinition: DashboardGraph): string[
   const nodeParents = stepDefinition.getParents(stepId)
   const parents = []
 
-  if (!nodeParents) {
+  if (!Array.isArray(nodeParents) || nodeParents.length == 0) {
     return []
   }
 
@@ -117,7 +117,7 @@ const _getAllChildren = (stepId: string, stepDefinition: DashboardGraph): string
   const nodeChildren = stepDefinition.getChildren(stepId)
   const children = []
 
-  if (!nodeChildren) {
+  if (!Array.isArray(nodeChildren) || nodeChildren.length == 0) {
     return []
   }
 
