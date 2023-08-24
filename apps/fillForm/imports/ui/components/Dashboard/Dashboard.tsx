@@ -7,8 +7,7 @@ import {Loader} from "@epfl/epfl-sti-react-library";
 import {ITaskDashboard} from "../../../policy/dashboard/type";
 import {useAccountContext} from "../../contexts/Account";
 import {
-  StepsDefinitionDefault,
-  //StepsDefinitionV2 -> will be in bpmn
+  stepsDefinitionDefault,
 } from "./DefaultDefinition";
 import {Step} from "phd-assess-meta/types/dashboards";
 import {DashboardRenderedStep} from "/imports/ui/components/Dashboard/Steps";
@@ -43,7 +42,7 @@ const DrawProgress =
 export const DashboardRow = ({ workflowInstanceTasks } : { workflowInstanceTasks:ITaskDashboard[] }) => {
   // generate the good dashboard definition for this row
   const definition: DashboardGraph = convertDefinitionToGraph(
-    workflowInstanceTasks[0].variables.dashboardDefinition ?? StepsDefinitionDefault
+    workflowInstanceTasks[0].variables.dashboardDefinition ?? stepsDefinitionDefault
   )
 
   // find the configuration directly into the bpmn, or use the default
@@ -157,9 +156,9 @@ export function Dashboard() {
   if (allTasks.length === 0) return <div>There is currently no task</div>
 
   // having a graph for the dashboard definition is easier to process
-  const definitionGraph = convertDefinitionToGraph(StepsDefinitionDefault)
+  const definitionGraph = convertDefinitionToGraph(stepsDefinitionDefault)
   // use the name of the variable as key
-  const definitionKey = Object.keys({StepsDefinitionDefault: StepsDefinitionDefault})[0]
+  const definitionKey = Object.keys({StepsDefinitionDefault: stepsDefinitionDefault})[0]
 
   return (
     <DashboardContent

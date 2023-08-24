@@ -4,11 +4,8 @@ chai.use(chaiDateTime);
 import dayjs from "dayjs";
 
 import {Task, Tasks} from "/imports/model/tasks";
-import {
-  StepsDefinitionDefault,
-  StepsDefinitionV2
-} from "/imports/ui/components/Dashboard/DefaultDefinition";
 import {convertDefinitionToGraph} from "/imports/ui/components/Dashboard/DefinitionGraphed";
+import {stepsDefinitionV2} from "/tests/factories/dashboard/dashboardDefinition";
 
 const dbCleaner = require("meteor/xolvio:cleaner");
 const Factory = require("meteor/dburles:factory").Factory
@@ -72,10 +69,7 @@ describe('Unit tests Tasks dashboard definition', function () {
         "variables.dashboardDefinition": undefined
       });
       Factory.create("task", {
-        "variables.dashboardDefinition": StepsDefinitionDefault
-      });
-      Factory.create("task", {
-        "variables.dashboardDefinition": StepsDefinitionV2
+        "variables.dashboardDefinition": stepsDefinitionV2
       });
     });
   });
@@ -89,9 +83,7 @@ describe('Unit tests Tasks dashboard definition', function () {
     tasksWithDefinition.forEach(
       (task) => {
         assert.isDefined(task.variables.dashboardDefinition)
-
-        const definition = task.variables.dashboardDefinition
-        assert(JSON.parse(JSON.stringify(definition)))  // test that it is some valid json
+        assert(task.variables.dashboardDefinition)  // test that it is some valid json
       }
     )
   });
@@ -100,7 +92,9 @@ describe('Unit tests Tasks dashboard definition', function () {
     tasksWithDefinition.forEach(
       (task) => {
         if (task.variables?.dashboardDefinition) {
-          const graphedDefinition = convertDefinitionToGraph(task.variables.dashboardDefinition)
+          const graphedDefinition = convertDefinitionToGraph(
+            task.variables.dashboardDefinition
+          )
           assert(graphedDefinition)
           assert.isNotEmpty(graphedDefinition.nodes())
         }

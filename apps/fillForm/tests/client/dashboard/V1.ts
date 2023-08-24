@@ -12,7 +12,7 @@ import {
   setPHDFillsAttributes as setPHDFillsAttributesV1, setPHDSignsAttributes
 } from "/tests/factories/dashboard/tasksV1";
 
-import {StepsDefinitionDefault} from "/imports/ui/components/Dashboard/DefaultDefinition";
+import {stepsDefinitionDefault} from "/imports/ui/components/Dashboard/DefaultDefinition";
 import {getContainerV1} from "/tests/client/dashboard/utils";
 
 
@@ -35,7 +35,7 @@ describe('Dashboard Steps render V1 steps', function (){
     // the others not-done
     assert.lengthOf(
       container.querySelectorAll('[data-step-status="not-done"]'),
-      StepsDefinitionDefault.length - 1,
+      stepsDefinitionDefault.length - 1,
       `${ container.innerHTML }`
     );
   });
@@ -63,7 +63,7 @@ describe('Dashboard Steps render V1 steps', function (){
     // the others not-done
     assert.lengthOf(
       container.querySelectorAll('[data-step-status="not-done"]'),
-      StepsDefinitionDefault.length - 3,
+      stepsDefinitionDefault.length - 3,
       `${ container.innerHTML }`
     );
   });
@@ -91,7 +91,7 @@ describe('Dashboard Steps render V1 steps', function (){
     // the others not-done
     assert.lengthOf(
       container.querySelectorAll('[data-step-status="not-done"]'),
-      StepsDefinitionDefault.length - 3,
+      stepsDefinitionDefault.length - 3,
       `${ container.innerHTML }`
     );
   });
@@ -140,7 +140,7 @@ describe('Dashboard Steps render V1 steps', function (){
     // the others not-done
     assert.lengthOf(
       container.querySelectorAll('[data-step-status="not-done"]'),
-      StepsDefinitionDefault.length - 3,
+      stepsDefinitionDefault.length - 3,
       `${ container.innerHTML }`
     );
   });
@@ -168,7 +168,7 @@ describe('Dashboard Steps render V1 steps', function (){
     // the others not-done
     assert.lengthOf(
       container.querySelectorAll('[data-step-status="not-done"]'),
-      StepsDefinitionDefault.length - 4,
+      stepsDefinitionDefault.length - 4,
       `${ container.innerHTML }`
     );
   });

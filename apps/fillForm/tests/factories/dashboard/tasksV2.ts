@@ -4,7 +4,7 @@
 import {faker} from "../../factories/faker";
 const Factory = require("meteor/dburles:factory").Factory
 import {generateAGenericTaskAttributes} from "../task";
-import {StepsDefinitionV2} from "/imports/ui/components/Dashboard/DefaultDefinition";
+import {stepsDefinitionV2} from "/tests/factories/dashboard/dashboardDefinition";
 
 
 export const setPHDFills1Attributes = (taskAttributes: any = generateAGenericTaskAttributes()) => ({
@@ -16,7 +16,7 @@ export const setPHDFills1Attributes = (taskAttributes: any = generateAGenericTas
   'variables': {
     ...taskAttributes.variables,
     'assigneeSciper': taskAttributes.variables.thesisCoDirectorSciper,
-    'dashboardDefinition': StepsDefinitionV2,
+    'dashboardDefinition': stepsDefinitionV2,
     'doctoralProgramName': 'V2',
   },
   'elementId': faker.helpers.arrayElement([
@@ -33,7 +33,7 @@ export const setMentorSignsAttributes = (taskAttributes: any = generateAGenericT
   'variables': {
     ...taskAttributes.variables,
     'assigneeSciper': taskAttributes.variables.thesisDirectorSciper,
-    'dashboardDefinition': StepsDefinitionV2,
+    'dashboardDefinition': stepsDefinitionV2,
     'doctoralProgramName': 'V2',
   },
   'elementId': faker.helpers.arrayElement([
@@ -50,7 +50,7 @@ export const setDirectorFillsAttributes = (taskAttributes: any = generateAGeneri
   'variables': {
     ...taskAttributes.variables,
     'assigneeSciper': taskAttributes.variables.thesisDirectorSciper,
-    'dashboardDefinition': StepsDefinitionV2,
+    'dashboardDefinition': stepsDefinitionV2,
     'doctoralProgramName': 'V2',
   },
   'elementId': faker.helpers.arrayElement([
@@ -67,7 +67,7 @@ export const setCoDirectorFillsAttributes = (taskAttributes: any = generateAGene
   'variables': {
     ...taskAttributes.variables,
     'assigneeSciper': taskAttributes.variables.thesisCoDirectorSciper,
-    'dashboardDefinition': StepsDefinitionV2,
+    'dashboardDefinition': stepsDefinitionV2,
     'doctoralProgramName': 'V2',
   },
   'elementId': faker.helpers.arrayElement([
@@ -84,7 +84,7 @@ export const setPHDFills2Attributes = (taskAttributes: any = generateAGenericTas
   'variables': {
     ...taskAttributes.variables,
     'assigneeSciper': taskAttributes.variables.thesisCoDirectorSciper,
-    'dashboardDefinition': StepsDefinitionV2,
+    'dashboardDefinition': stepsDefinitionV2,
     'doctoralProgramName': 'V2',
   },
   'elementId': faker.helpers.arrayElement([
@@ -101,7 +101,7 @@ export const setCollabReviewAttributes = (taskAttributes: any = generateAGeneric
   'variables': {
     ...taskAttributes.variables,
     'assigneeSciper': taskAttributes.variables.thesisDirectorSciper,
-    'dashboardDefinition': StepsDefinitionV2,
+    'dashboardDefinition': stepsDefinitionV2,
     'doctoralProgramName': 'V2',
   },
   'elementId': faker.helpers.arrayElement([
@@ -118,7 +118,7 @@ export const setPHDSignsAttributes = (taskAttributes: any = generateAGenericTask
   'variables': {
     ...taskAttributes.variables,
     'assigneeSciper': taskAttributes.variables.thesisDirectorSciper,
-    'dashboardDefinition': StepsDefinitionV2,
+    'dashboardDefinition': stepsDefinitionV2,
     'doctoralProgramName': 'V2',
   },
   'elementId': faker.helpers.arrayElement([
@@ -135,7 +135,7 @@ export const setProgramDirectorSignsAttributes = (taskAttributes: any = generate
   'variables': {
     ...taskAttributes.variables,
     'assigneeSciper': taskAttributes.variables.thesisDirectorSciper,
-    'dashboardDefinition': StepsDefinitionV2,
+    'dashboardDefinition': stepsDefinitionV2,
     'doctoralProgramName': 'V2',
   },
   'elementId': faker.helpers.arrayElement([

@@ -3,7 +3,7 @@ import {Tasks} from "/imports/model/tasks";
 import {ParticipantIDs} from "/imports/model/participants";
 import {ParticipantsVariables} from "phd-assess-meta/types/participants";
 import dayjs from "dayjs";
-import {StepsDefinitionV2} from "/imports/ui/components/Dashboard/DefaultDefinition";
+import {stepsDefinitionV2} from "/tests/factories/dashboard/dashboardDefinition";
 
 const Factory = require("meteor/dburles:factory").Factory
 
@@ -79,7 +79,7 @@ export const generateAGenericTaskAttributes = (hasThesisCoDirector = true) => {
       "doctoralProgramName": "EDEY",
       "doctoralProgramEmail": "edey@epfl.ch",
       "dashboardDefinition": faker.helpers.maybe(  // can be empty, can have V2
-        () => StepsDefinitionV2, { probability: 0.4 }
+        () => stepsDefinitionV2, { probability: 0.4 }
       ),
     },
     "worker": faker.datatype.uuid(),

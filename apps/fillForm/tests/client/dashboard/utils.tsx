@@ -6,10 +6,7 @@ import {Tasks} from "/imports/model/tasks";
 import {ITaskDashboard} from "/imports/policy/dashboard/type";
 import {StepsDefinition} from "phd-assess-meta/types/dashboards";
 
-import {
-  StepsDefinitionDefault,
-  StepsDefinitionV2
-} from "/imports/ui/components/Dashboard/DefaultDefinition";
+import {stepsDefinitionDefault} from "/imports/ui/components/Dashboard/DefaultDefinition";
 import {convertDefinitionToGraph} from "/imports/ui/components/Dashboard/DefinitionGraphed";
 import {DashboardContent} from "/imports/ui/components/Dashboard/Dashboard";
 
@@ -22,8 +19,8 @@ export const getAndCheckDashboardContainer = (tasks: ITaskDashboard[], dashboard
 
   const { container } = render(
     <DashboardContent
-      key={ Object.keys({stepsDefinitionDefault: StepsDefinitionDefault})[0] }
-      headerKey={ Object.keys({stepsDefinitionDefault: StepsDefinitionDefault})[0] }
+      key={ Object.keys({stepsDefinitionDefault: stepsDefinitionDefault})[0] }
+      headerKey={ Object.keys({stepsDefinitionDefault: stepsDefinitionDefault})[0] }
       definitionForHeader={ definitionGraph }
       tasks={ tasks }
     />
@@ -50,7 +47,7 @@ export const getContainerV1 = async () => {
 
   assert.isNotEmpty(allProcessInstanceTasks, `${JSON.stringify(allProcessInstanceTasks)}`)
 
-  return getAndCheckDashboardContainer(allProcessInstanceTasks, StepsDefinitionDefault)
+  return getAndCheckDashboardContainer(allProcessInstanceTasks, stepsDefinitionDefault)
 }
 
 /*
@@ -64,5 +61,5 @@ export const getContainerV2 = async () => {
     allProcessInstanceTasks, `There is no task with a dashboardDefinition (aka V2)`
   )
 
-  return getAndCheckDashboardContainer(allProcessInstanceTasks, StepsDefinitionV2)
+  return getAndCheckDashboardContainer(allProcessInstanceTasks, allProcessInstanceTasks[0].variables.dashboardDefinition)
 }

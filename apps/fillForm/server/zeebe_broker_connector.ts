@@ -30,6 +30,11 @@ interface OutputVariables {
 interface PhDZeebeJob<WorkerInputVariables = PhDInputVariables, CustomHeaderShape = PhDCustomHeaderShape, WorkerOutputVariables = IOutputVariables> extends Job<WorkerInputVariables, CustomHeaderShape>, JobCompletionInterface<WorkerOutputVariables> {
 }
 
+// list which variables are not encrypted.
+const nonEncryptedVariables = [
+  'dashboardDefinition',
+]
+
 export let zBClient: ZeebeSpreadingClient | null = null
 
 function zeebeJobToTask(job: PhDZeebeJob): Task {
@@ -39,7 +44,9 @@ function zeebeJobToTask(job: PhDZeebeJob): Task {
 
   Object.keys(job.variables).map((key) => {
     try {
-      if (job.variables[key] == null) {  // null is a "defined" valid json entry
+      if (nonEncryptedVariables.includes(key)) {
+        decryptedVariables[key] = job.variables[key]
+      } else if (job.variables[key] == null) {  // null is a "defined" valid json entry
         decryptedVariables[key] = null
       } else if (Array.isArray(job.variables[key])) {
         decryptedVariables[key] = job.variables[key].reduce((acc: string[], item: string) => {

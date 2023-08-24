@@ -10,7 +10,7 @@ import {
   setPHDFills1Attributes,
   setPHDFills2Attributes
 } from "/tests/factories/dashboard/tasksV2";
-import {StepsDefinitionV2} from "/imports/ui/components/Dashboard/DefaultDefinition";
+import {stepsDefinitionV2} from "/tests/factories/dashboard/dashboardDefinition";
 import {generateAGenericTaskAttributes} from "/tests/factories/task";
 
 
@@ -21,7 +21,7 @@ beforeEach(async function () {
 describe('Dashboard Steps render V2 steps', function (){
   it('should render custom content (content case)', async function (){
     // for the test to do well, the step need an empty parent
-    assert.isDefined(StepsDefinitionV2.filter(
+    assert.isDefined(stepsDefinitionV2.filter(
       s => s.id === 'Activity_Thesis_Co_Director_Signs'
     )[0].content)
 
@@ -39,7 +39,7 @@ describe('Dashboard Steps render V2 steps', function (){
 
   it('should render the floating case step as awaiting, others can be anything (floating case)', async function (){
     // for the test to do well, the step need an empty parent
-    assert.isNotTrue(StepsDefinitionV2.filter(
+    assert.isNotTrue(stepsDefinitionV2.filter(
       s => s.id === 'Activity_Post_Mentor_Meeting_Mentor_Signs'
     )[0].parents)
 
@@ -55,7 +55,7 @@ describe('Dashboard Steps render V2 steps', function (){
 
   it('should render the floating case step as done, others can be anything (floating case)', async function (){
     // for the test to do well, the step need an empty parent
-    assert.isNotTrue(StepsDefinitionV2.filter(
+    assert.isNotTrue(stepsDefinitionV2.filter(
       s => s.id === 'Activity_Post_Mentor_Meeting_Mentor_Signs'
     )[0].parents)
 
@@ -90,7 +90,7 @@ describe('Dashboard Steps render V2 steps', function (){
     ' for the step being aliased (alias case)', async function (){
 
     // assert aliases are set
-    assert.isNotEmpty(StepsDefinitionV2.filter(
+    assert.isNotEmpty(stepsDefinitionV2.filter(
       s => s.id === 'Activity_PHD_fills_annual_report_1' &&
         s.alias
     ))

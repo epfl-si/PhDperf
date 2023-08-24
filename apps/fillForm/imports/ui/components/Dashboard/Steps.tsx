@@ -5,7 +5,7 @@ import styled from "styled-components";
 import {ITaskDashboard} from "/imports/policy/dashboard/type";
 import {ParticipantDetail} from "/imports/model/participants";
 
-import {StepsDefinitionDefault} from "/imports/ui/components/Dashboard/DefaultDefinition";
+import {stepsDefinitionDefault} from "/imports/ui/components/Dashboard/DefaultDefinition";
 import {Step} from "phd-assess-meta/types/dashboards";
 import {DashboardGraph as Graph} from "/imports/ui/components/Dashboard/DefinitionGraphed";
 
@@ -55,7 +55,7 @@ const StepPending = ({step, task }: {step: Step, task: ITaskDashboard }) => {
   assignees = (assignees && assignees.length > 1) ? _.uniqWith(assignees, _.isEqual) : assignees  // make it uniqu if we have multiple roles
   let onHoverInfo = ``
 
-  const currentStepLabel = _.flatten(StepsDefinitionDefault).find((step) => step.id === task!.elementId)
+  const currentStepLabel = _.flatten(stepsDefinitionDefault).find((step) => step.id === task!.elementId)
   if (currentStepLabel) onHoverInfo += `Step: ${currentStepLabel?.label}\n`
 
   const assigneesLabel = assignees?.map((assignee: ParticipantDetail) => ` ${assignee.name} (${assignee.sciper})`).join(',') ?? ''
