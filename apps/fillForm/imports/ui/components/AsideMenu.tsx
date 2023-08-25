@@ -52,9 +52,9 @@ export const AsideMenu = () => {
 
   return (
     <aside className="nav-aside-wrapper">
-      <nav id="nav-aside" className="nav-aside sticky-top" role="navigation" aria-describedby="nav-aside-title">
-        { (!account || !account.user) ?
-          <Loader/> :
+      { (!account || !account.user) ?
+        <Loader/> :
+        <nav id="nav-aside" className="nav-aside sticky-top" role="navigation" aria-describedby="nav-aside-title">
           <ul>
             { canEditAtLeastOneDoctoralSchool(account.user) &&
               <li>
@@ -86,8 +86,8 @@ export const AsideMenu = () => {
               <DoctoralSchoolHelpLinkMenuEntry taskId={ taskFillingPath.params.id }/>
             }
           </ul>
-        }
-      </nav>
+        </nav>
+      }
     </aside>
   )
 }
