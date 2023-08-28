@@ -38,12 +38,12 @@ export const stepsDefinitionV2: StepsDefinition = [
   {
     id: 'Activity_Thesis_Co_Director_Signs',
     label: 'Co-Dir signature',
-    content: 'N/A for V2',
+    content: 'n/a',
   },
   {
     id: 'Activity_Thesis_Director_Signs',
     label: 'Thesis Dir signature',
-    content: 'N/A for V2',
+    content: 'n/a',
   },
   {
     id: 'Activity_PHD_Signs',
@@ -62,7 +62,7 @@ export const stepsDefinitionV2: StepsDefinition = [
     id: 'Activity_Post_Mentor_Meeting_PHD_Signs',
     label: 'PhD signature after mentor',
     parents: ['Activity_PHD_Signs'],
-    content: 'N/A for V2',
+    content: 'n/a',
   },
   {
     id: 'Activity_Program_Director_Signs',
