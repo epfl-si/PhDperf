@@ -10,7 +10,7 @@ import {generateAGenericTaskAttributes} from "/tests/factories/task";
 import {
   setCoDirectorFillsAttributes, setCollabReviewAttributes, setDirectorFillsAttributes, setPHDFillsAttributes,
   setPHDFillsAttributes as setPHDFillsAttributesV1, setPHDSignsAttributes
-} from "/tests/factories/dashboard/tasksV1";
+} from "/tests/factories/dashboard/tasksFactoryV1";
 
 import {stepsDefinitionDefault} from "/imports/ui/components/Dashboard/DefaultDefinition";
 import {getContainerV1} from "/tests/client/dashboard/utils";

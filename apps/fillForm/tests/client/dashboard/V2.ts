@@ -9,7 +9,7 @@ import {
   setMentorSignsAttributes,
   setPHDFills1Attributes,
   setPHDFills2Attributes
-} from "/tests/factories/dashboard/tasksV2";
+} from "/tests/factories/dashboard/tasksFactoryV2";
 import {stepsDefinitionV2} from "/tests/factories/dashboard/dashboardDefinition";
 import {generateAGenericTaskAttributes} from "/tests/factories/task";
 

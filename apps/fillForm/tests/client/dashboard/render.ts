@@ -6,8 +6,8 @@ const dbCleaner = require("meteor/xolvio:cleaner");
 import {Tasks} from "/imports/model/tasks";
 import {ITaskDashboard} from "/imports/policy/dashboard/type";
 
-import {createTasksForDashboardFixtures} from "/tests/factories/dashboard/tasksV1";
-import {createTasksForDashboardV2Fixtures} from "/tests/factories/dashboard/tasksV2";
+import {createTasksForDashboardFixtures} from "/tests/factories/dashboard/tasksFactoryV1";
+import {createTasksForDashboardV2Fixtures} from "/tests/factories/dashboard/tasksFactoryV2";
 import {
   getContainerV1,
   getContainerV2
