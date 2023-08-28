@@ -8,13 +8,18 @@ import {StepsDefinition} from "phd-assess-meta/types/dashboards";
 
 /**
  * From a StepsDefinition for dashboard, set the parent-children relationship to represent the sequential path
- * of the activities and add edges between twins and activities at the same level
+ * of the activities and add edges between twins and activities at the same level.
+ * All relationships are represented as Edges, only the order is using the parent-child-predecessor-successor feature
+ * of the graph lib.
  */
 export const convertDefinitionToGraph = (definition: StepsDefinition) => {
   const graph = new DashboardGraph();
 
-  definition.forEach((step) => {
+  definition.forEach((step, index) => {
     graph.setNode(step.id, step);
+
+    // set order by setting a parent-child
+    if (index > 0) graph.setParent(step.id, definition[index-1].id)
 
     // set all parents of this node
     step.parents?.forEach(p => graph.setParentEdge(step.id, p))
@@ -43,7 +48,27 @@ type EdgeType = 'parent' | 'sibling'
  */
 export class DashboardGraph extends GraphLib {
   constructor() {
-    super({ compound: false, directed: true, multigraph: false });
+    super({ compound: true, directed: true, multigraph: false });
+  }
+
+  nodesOrdered() {
+    // find the first node
+    let anyNode = this.nodes()[0]  // this should be the first alphabetically
+
+    while(this.parent(anyNode)) {
+      anyNode = this.parent(anyNode)!
+    }
+
+    const orderedNodes: string[] = [anyNode]
+    let anyNodeChildren = this.children(anyNode)
+
+    // build the children list
+    while(anyNodeChildren && anyNodeChildren.length) {
+      orderedNodes.push(anyNodeChildren[0])
+      anyNodeChildren = this.children(anyNodeChildren[0])
+    }
+
+    return orderedNodes
   }
 
   setParentEdge(node: string, stepParentID: string): void  {

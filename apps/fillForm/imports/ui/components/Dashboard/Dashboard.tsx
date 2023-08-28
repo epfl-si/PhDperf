@@ -20,7 +20,7 @@ const DrawProgress =
   const firstTask = workflowInstanceTasks[0]
   const taskKey = `${ firstTask?._id }`
 
-  const progressBarDrawn = stepsDefinition.nodes().reduce((accumulator: JSX.Element[], node: string) => {
+  const progressBarDrawn = stepsDefinition.nodesOrdered().reduce((accumulator: JSX.Element[], node: string) => {
     const step: Step = stepsDefinition.node(node)
 
     // nodes without step data are certainly the aliases. Pass it
@@ -80,8 +80,7 @@ const DashboardHeader = ({ definition, headerKey }: { definition: DashboardGraph
         Program
       </div>
       {
-        // using the default configuration here, as it match for all versions at the moment.
-        definition.nodes().map((node) => {
+        definition.nodesOrdered().map((node) => {
           const step = definition.node(node) as Step
 
           return <div

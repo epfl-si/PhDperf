@@ -56,7 +56,7 @@ export const stepsDefinitionV2: StepsDefinition = [
     dependsOn: {
       field: 'mentorDate',
     },
-    parents: undefined,  // this one is floating all along the process, without parents
+    parents: ['Activity_PHD_fills_annual_report_1'],
   },
   {
     id: 'Activity_Post_Mentor_Meeting_PHD_Signs',
@@ -73,4 +73,3 @@ export const stepsDefinitionV2: StepsDefinition = [
     ],
   },
 ]
-
