@@ -1,5 +1,5 @@
 import {Link, matchPath, useLocation} from "react-router-dom";
-import React, {useEffect, useState} from "react";
+import React from "react";
 
 import {Loader} from "@epfl/epfl-sti-react-library";
 
@@ -8,47 +8,12 @@ import {canEditAtLeastOneDoctoralSchool} from "/imports/policy/doctoralSchools";
 import {canImportScipersFromISA} from "/imports/policy/importScipers";
 
 
-const DoctoralSchoolHelpLinkMenuEntry = ({ taskId }: {taskId: string }) => {
-  const [doctoralSchoolHelpLink, setDoctoralSchoolHelpLink] = useState('')
-
-  useEffect(() => {
-    // call the meteor method to get the link for a specific task
-    const getLink = async () => {
-      const helpLink = await Meteor.callAsync(
-      'getDoctoralSchoolHelpLink',
-        { taskId }
-      )
-      setDoctoralSchoolHelpLink(helpLink)
-    }
-    getLink().catch(console.error)
-
-    return () => setDoctoralSchoolHelpLink('')
-  }, [taskId])
-
-  if (!doctoralSchoolHelpLink) return <></>
-
-  return (
-    <li>
-      <span>Support</span>
-      <ul>
-        <li>
-          <a href={ doctoralSchoolHelpLink } target="_blank">
-            User manual&nbsp;
-            <svg className="icon feather" style={ { paddingBottom: 2 } } aria-hidden="true">
-              <use xlinkHref="#external-link"></use>
-            </svg>
-          </a>
-        </li>
-      </ul>
-    </li>
-  )
-}
-
 export const AsideMenu = () => {
   const account = useAccountContext()
   const { pathname } = useLocation()
 
-  const taskFillingPath = matchPath("/tasks/:id", pathname)
+  const hasDoctoralSchoolEditLink = (account && account.user && canEditAtLeastOneDoctoralSchool(account.user)) ?? false
+  const hasImportSciperLink = (account && account.user && canImportScipersFromISA(account.user)) ?? false
 
   return (
     <aside className="nav-aside-wrapper">
@@ -56,35 +21,39 @@ export const AsideMenu = () => {
         <Loader/> :
         <nav id="nav-aside" className="nav-aside sticky-top" role="navigation" aria-describedby="nav-aside-title">
           <ul>
-            { canEditAtLeastOneDoctoralSchool(account.user) &&
+            { ( hasDoctoralSchoolEditLink || hasImportSciperLink ) &&
               <li>
-                <span className="first-span">Doctoral Programs</span>
-                <ul>
-                  <li className={matchPath("/doctoral-programs", pathname) ? 'active' : undefined}>
-                    <Link to={`/doctoral-programs`}>Administration</Link>
-                  </li>
-                </ul>
+                <span className="first-span">Administration</span>
+                { hasDoctoralSchoolEditLink &&
+                  <ul>
+                    <li className={matchPath("/doctoral-programs", pathname) ? 'active' : undefined}>
+                      <Link to={`/doctoral-programs`}>Doctoral program settings</Link>
+                    </li>
+                  </ul>
+                }
+                { hasImportSciperLink &&
+                  <ul>
+                    <li className={matchPath("/import-scipers", pathname) ? 'active' : undefined}>
+                      <Link to={`/import-scipers`}>Import scipers</Link>
+                    </li>
+                  </ul>
+                }
               </li>
             }
-            <li>
-              <span>Tasks</span>
-              <ul>
-                <li className={matchPath("/", pathname) ? 'active' : undefined}>
-                  <Link to={`/`}>List</Link>
-                </li>
-                <li className={matchPath("/dashboard", pathname) ? 'active' : undefined}>
-                  <Link to={`/dashboard`}>Dashboard</Link>
-                </li>
-                { canImportScipersFromISA(account.user) &&
-                  <li className={matchPath("/import-scipers", pathname) ? 'active' : undefined}>
-                    <Link to={`/import-scipers`}>Import scipers</Link>
-                  </li>
-                }
-              </ul>
+            <li className={matchPath("/", pathname) ? 'active' : undefined}>
+              <Link to={`/`}>Tasks to do</Link>
             </li>
-            { taskFillingPath?.params.id &&
-              <DoctoralSchoolHelpLinkMenuEntry taskId={ taskFillingPath.params.id }/>
-            }
+            <li className={matchPath("/dashboard", pathname) ? 'active' : undefined}>
+              <Link to={`/dashboard`}>Dashboard</Link>
+            </li>
+            <li>
+              <a href={ 'https://www.epfl.ch/education/phd/wp-content/uploads/2021/12/annuel_report_user_manual.pdf' } target="_blank">
+                User manual&nbsp;
+                <svg className="icon feather" style={ { paddingBottom: 2 } } aria-hidden="true">
+                  <use xlinkHref="#external-link"></use>
+                </svg>
+              </a>
+            </li>
           </ul>
         </nav>
       }
