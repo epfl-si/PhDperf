@@ -15,10 +15,7 @@ export const stepsDefinitionV2: StepsDefinition = [
   {
     id: 'Activity_Thesis_Co_Director_fills_annual_report',
     label: 'Co-Dir fills annual report',
-    dependsOn: {
-      field: 'thesisCoDirectorSciper',
-      contentOnFail: 'N/A',
-    },
+    activatedOnField: 'thesisCoDirectorSciper',
     parents: ['Activity_PHD_fills_annual_report_1'],
   },
   {
@@ -38,12 +35,12 @@ export const stepsDefinitionV2: StepsDefinition = [
   {
     id: 'Activity_Thesis_Co_Director_Signs',
     label: 'Co-Dir signature',
-    content: 'n/a',
+    customContent: '',
   },
   {
     id: 'Activity_Thesis_Director_Signs',
     label: 'Thesis Dir signature',
-    content: 'n/a',
+    customContent: '',
   },
   {
     id: 'Activity_PHD_Signs',
@@ -53,16 +50,14 @@ export const stepsDefinitionV2: StepsDefinition = [
   {
     id: 'Activity_Post_Mentor_Meeting_Mentor_Signs',
     label: 'Mentor signature',
-    dependsOn: {
-      field: 'mentorDate',
-    },
+    switchOnField: 'mentorDate',
     parents: ['Activity_PHD_fills_annual_report_1'],
   },
   {
     id: 'Activity_Post_Mentor_Meeting_PHD_Signs',
     label: 'PhD signature after mentor',
     parents: ['Activity_PHD_Signs'],
-    content: 'n/a',
+    customContent: '',
   },
   {
     id: 'Activity_Program_Director_Signs',

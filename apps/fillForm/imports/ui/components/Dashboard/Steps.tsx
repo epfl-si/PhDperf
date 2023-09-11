@@ -82,7 +82,7 @@ export const DashboardRenderedStep = (
   { step, workflowInstanceTasks, stepDefinition }: { step: Step, workflowInstanceTasks: ITaskDashboard[], stepDefinition: Graph }
 ) => {
   // custom content don't need any logic, go for it directly
-  if (step.content) return <StepFixedContent step={ step }>{ step.content }</StepFixedContent>
+  if (step.customContent !== undefined) return <StepFixedContent step={ step }>{ step.customContent }</StepFixedContent>
 
   // two main cases to manage: this is a step which a task exist, or one without a task
     // 1. get the task concerned by the current step:
@@ -101,20 +101,18 @@ export const DashboardRenderedStep = (
       if (taskAliased) return <StepPending step={ step } task={ taskAliased }/>
     }
 
-    if (step.dependsOn?.field) {
-      // yep, two cases now:
-      // 1. we want a custom content if the field is missing
-      if (step.dependsOn.contentOnFail &&
-        !workflowInstanceTasks[0].variables[step.dependsOn.field])
-        return <StepFixedContent step={ step }>{ step.dependsOn.contentOnFail }</StepFixedContent>
+    // we want a deactivated content if the field is missing
+    if (step.activatedOnField) {
+      if (!workflowInstanceTasks[0].variables[step.activatedOnField])
+        return <StepFixedContent step={ step }>{ null }</StepFixedContent>
+    }
 
-      // 2. we want a done / not-done if the field is missing
-      if (!step.dependsOn.contentOnFail) {
-        if (workflowInstanceTasks[0].variables[step.dependsOn.field]) {
-          return <StepDone step={ step }/>
-        } else {
-          return <StepNotDone step={ step }/>
-        }
+    // we want a done / not-done if the field is missing
+    if (step.switchOnField) {
+      if (workflowInstanceTasks[0].variables[step.switchOnField]) {
+        return <StepDone step={ step }/>
+      } else {
+        return <StepNotDone step={ step }/>
       }
     }
 

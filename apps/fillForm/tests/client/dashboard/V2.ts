@@ -23,7 +23,7 @@ describe('Dashboard Steps render V2 steps', function (){
     // for the test to do well, the step need an empty parent
     assert.isDefined(stepsDefinitionV2.filter(
       s => s.id === 'Activity_Thesis_Co_Director_Signs'
-    )[0].content)
+    )[0].customContent)
 
     // take any, it does not matter
     Factory.create('task', setPHDFills1Attributes());

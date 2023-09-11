@@ -12,10 +12,7 @@ export const stepsDefinitionDefault: StepsDefinition = [
     id: 'Activity_Thesis_Co_Director_fills_annual_report',
     label: 'Co-Dir fills annual report',
     parents: ['Activity_PHD_fills_annual_report'],
-    dependsOn: {
-      field: 'thesisCoDirectorSciper',
-      contentOnFail: 'n/a',
-    },
+    activatedOnField: 'thesisCoDirectorSciper',
   },
   {
     id: 'Activity_Thesis_Director_fills_annual_report',
@@ -34,10 +31,7 @@ export const stepsDefinitionDefault: StepsDefinition = [
     id: 'Activity_Thesis_Co_Director_Signs',
     label: 'Co-Dir signature',
     parents: ['Activity_Thesis_Director_Collaborative_Review_Signs'],
-    dependsOn: {
-      field: 'thesisCoDirectorSciper',
-      contentOnFail: 'n/a',
-    },
+    activatedOnField: 'thesisCoDirectorSciper',
   },
   {
     id: 'Activity_Thesis_Director_Signs',
