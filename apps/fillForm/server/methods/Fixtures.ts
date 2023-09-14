@@ -2,8 +2,8 @@
  * offering to the devs a happy place with some datas to work on
  **/
 import {Meteor} from "meteor/meteor";
-import {createTasksForDashboardFixtures} from "/tests/factories/dashboard/tasksV1";
-import {createTasksForDashboardV2Fixtures} from "/tests/factories/dashboard/tasksV2";
+import {createTasksForDashboardFixtures} from "/tests/factories/dashboard/tasksFactoryV1";
+import {createTasksForDashboardV2Fixtures} from "/tests/factories/dashboard/tasksFactoryV2";
 
 
 Meteor.methods({
