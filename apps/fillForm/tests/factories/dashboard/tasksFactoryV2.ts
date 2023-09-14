@@ -144,15 +144,11 @@ export const setProgramDirectorSignsAttributes = (taskAttributes: any = generate
 })
 
 export const createTasksForDashboardV2Fixtures = () => {
-  Factory.create('task', setPHDFills1Attributes());
-  Factory.create('task', setPHDFills2Attributes());
-  Factory.create('task', setDirectorFillsAttributes());
-  Factory.create('task', setCoDirectorFillsAttributes());
-  Factory.create('task', setPHDFills2Attributes());
-  Factory.create('task', setCollabReviewAttributes());
-  Factory.create('task', setPHDSignsAttributes());
-  Factory.create('task', setProgramDirectorSignsAttributes());
 
+  Factory.create('task', setPHDFills1Attributes());
+
+  ////////
+  // Seconds steps are tricky, can have multiple configuration
   // as we can have multiple task for the same workflow instance (processInstanceKey)
   // let's build some
   const oneInstance= generateAGenericTaskAttributes()
@@ -160,4 +156,19 @@ export const createTasksForDashboardV2Fixtures = () => {
   Factory.create('task', setMentorSignsAttributes(oneInstance));
   Factory.create('task', setDirectorFillsAttributes(oneInstance));
   Factory.create('task', setCoDirectorFillsAttributes(oneInstance));
+
+  const thirdInstance = generateAGenericTaskAttributes()
+  Factory.create('task', setCoDirectorFillsAttributes(thirdInstance));
+  Factory.create('task', setDirectorFillsAttributes(thirdInstance));
+
+  Factory.create('task', setPHDFills2Attributes());
+  // ok done with the complex ones
+  ////////
+
+  Factory.create('task', setDirectorFillsAttributes());
+  Factory.create('task', setCoDirectorFillsAttributes());
+  Factory.create('task', setPHDFills2Attributes());
+  Factory.create('task', setCollabReviewAttributes());
+  Factory.create('task', setPHDSignsAttributes());
+  Factory.create('task', setProgramDirectorSignsAttributes());
 }
