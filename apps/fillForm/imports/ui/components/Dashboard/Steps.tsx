@@ -85,7 +85,7 @@ export const DashboardRenderedStep = (
   if (step.customContent !== undefined) return <StepFixedContent step={ step }>{ step.customContent }</StepFixedContent>
 
   // two main cases to manage: this is a step which a task exist, or one without a task
-    // 1. get the task concerned by the current step:
+  // 1. get the task concerned by the current step:
   const task = workflowInstanceTasks.find(t =>
     t.elementId === step.id
   )
@@ -93,15 +93,18 @@ export const DashboardRenderedStep = (
   if (task) {  // task exists. It can only be a pending then
     return <StepPending step={ step } task={ task }/>
   } else {  // no task cases. Let's find if it is done, not-done, or with a custom content
-    // has this step an alias, meaning we have to find another task ?
-    if (step.alias) {
+    // has this step an alias ?, meaning we have may have his color from another task
+    if (step.knownAs) {
       const taskAliased = workflowInstanceTasks.find(t =>
-        step.alias!.includes(t.elementId)
+        t.elementId === step.knownAs
       )
-      if (taskAliased) return <StepPending step={ step } task={ taskAliased }/>
+      if (taskAliased) {
+        return <StepPending step={ step } task={ taskAliased }/>
+      }
     }
 
-    // we want a deactivated content if the field is missing
+    // we want a deactivated content if the asked field is missing.
+    // if not, continue the process, as a normal case
     if (step.activatedOnField) {
       if (!workflowInstanceTasks[0].variables[step.activatedOnField])
         return <StepFixedContent step={ step }>{ null }</StepFixedContent>
@@ -123,6 +126,13 @@ export const DashboardRenderedStep = (
     // we parse the graph tree of parent-children to get this answer
     const listPendingSteps = workflowInstanceTasks.map(t => t.elementId);
 
+    // check if we are sibling of any
+    const siblingEdges = stepDefinition.getSiblings(step.id)
+    // check if this is a sibling
+    if (siblingEdges?.some(stepId => listPendingSteps.includes(stepId))) {
+      return <StepDone step={ step }/>
+    }
+
     let listActivitiesBeforeThePendingOnes: string[] = []
     listPendingSteps.forEach((pendingStepId) => {
       listActivitiesBeforeThePendingOnes = [
@@ -141,13 +151,6 @@ export const DashboardRenderedStep = (
 
     if (listActivitiesBeforeThePendingOnes?.includes(step.id)) return <StepDone step={ step }/>
     if (listActivitiesAfterThePendingOnes?.includes(step.id)) return <StepNotDone step={ step }/>
-    // Neither ? -> see if this is a sibling
-    const siblingEdges = stepDefinition.getSiblings(step.id)
-
-    // check if this is a sibling of a pending
-    if (siblingEdges?.some(stepId => listPendingSteps.includes(stepId))) {
-      return <StepDone step={ step }/>
-    }
 
     // nothing special found, it is certainly a task to be done later
     return <StepNotDone step={ step }/>

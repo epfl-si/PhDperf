@@ -18,14 +18,19 @@ export const convertDefinitionToGraph = (definition: StepsDefinition) => {
   definition.forEach((step, index) => {
     graph.setNode(step.id, step);
 
-    // set order by setting a parent-child
+    if (step.knownAs)
+      // create a "virtual node" for the knownAs,
+      // as it will be a virtual sibling later
+      graph.setNode(step.knownAs);
+
+    // allow to get an order by using the parent-child graphlib relationship
     if (index > 0) graph.setParent(step.id, definition[index-1].id)
 
-    // set all parents of this node
+    // set all parents (as Edges) of this node
     step.parents?.forEach(p => graph.setParentEdge(step.id, p))
 
-    // set a link between node that have the same parents configuration, as a shortcut, to represent the same level
-    // as siblings
+    // set a link between nodes, as sibling, for the one that have the same parents configuration.
+    // They represent the same level.
     if (step.parents) {
       definition.filter(
         (cStep) =>
@@ -33,7 +38,20 @@ export const convertDefinitionToGraph = (definition: StepsDefinition) => {
           cStep.parents &&
           compareArraysValues(cStep.parents, step.parents!)
       ).forEach(
-        (dStep) => graph.setSibling(step.id, dStep.id)
+        dStep => graph.setSibling(step.id, dStep.id)
+      )
+    }
+
+    // add all knownsAs parents as sibling
+    if (step.parents) {
+      // for every parent, find if they have sameAs and set them as siblings
+      step.parents.forEach(
+        parent => {
+          const parentKnownAs = definition.find(s => s.id == parent)?.knownAs
+          if (parentKnownAs) {
+            graph.setSibling(parentKnownAs, step.id)
+          }
+        }
       )
     }
   })
@@ -51,6 +69,9 @@ export class DashboardGraph extends GraphLib {
     super({ compound: true, directed: true, multigraph: false });
   }
 
+  /**
+   *  Get nodes, respecting the parent-child hierarchy
+   */
   nodesOrdered() {
     // find the first node
     let anyNode = this.nodes()[0]  // this should be the first alphabetically

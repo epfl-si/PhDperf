@@ -9,8 +9,7 @@ export const stepsDefinitionV2: StepsDefinition = [
     id: 'Activity_PHD_fills_annual_report_1',
     label: 'Phd fills annual report',
     parents: [],  // first step
-    // this step manage a second activity:
-    alias: ['Activity_PHD_fills_annual_report_2'],
+    knownAs: 'Activity_PHD_fills_annual_report_2',
   },
   {
     id: 'Activity_Thesis_Co_Director_fills_annual_report',
@@ -27,7 +26,7 @@ export const stepsDefinitionV2: StepsDefinition = [
     id: 'Activity_Thesis_Director_Collaborative_Review_Signs',
     label: 'Collaborative review',
     parents: [
-      'Activity_PHD_fills_annual_report_1',
+      'Activity_PHD_fills_annual_report_2',
       'Activity_Thesis_Co_Director_fills_annual_report',
       'Activity_Thesis_Director_fills_annual_report',
     ],

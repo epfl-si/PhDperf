@@ -84,6 +84,23 @@ describe('Dashboard Steps render V2 steps', function (){
       container.querySelectorAll('[data-step="Activity_PHD_fills_annual_report_1"][data-step-status="awaiting"]'),
       1,
       `${ container.innerHTML }`);
+
+    const shouldBeNotDoneList = [
+      'Activity_Thesis_Co_Director_fills_annual_report',
+      'Activity_Thesis_Director_fills_annual_report',
+      'Activity_Thesis_Director_Collaborative_Review_Signs',
+    ]
+
+    // should be 'not-done'
+    shouldBeNotDoneList.forEach( activity =>
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step='${activity}'][data-step-status='not-done']`
+        ),
+        1,
+        `${ container.innerHTML }`
+      )
+    )
   });
 
   it('should render the first step as awaiting,' +
@@ -92,7 +109,7 @@ describe('Dashboard Steps render V2 steps', function (){
     // assert aliases are set
     assert.isNotEmpty(stepsDefinitionV2.filter(
       s => s.id === 'Activity_PHD_fills_annual_report_1' &&
-        s.alias
+        s.knownAs
     ))
 
     Factory.create('task', setPHDFills2Attributes());
@@ -106,6 +123,30 @@ describe('Dashboard Steps render V2 steps', function (){
       ),
       1,
       `${ container.innerHTML }`);
+
+    const shouldBeDoneList = [
+      'Activity_Thesis_Co_Director_fills_annual_report',
+      'Activity_Thesis_Director_fills_annual_report',
+    ]
+
+    // should be 'not-done'
+    shouldBeDoneList.forEach( activity =>
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step='${activity}'][data-step-status='done']`
+        ),
+        1,
+        `${ container.innerHTML }`
+      )
+    )
+
+    assert.lengthOf(
+      container.querySelectorAll(
+        `[data-step='Activity_Thesis_Director_Collaborative_Review_Signs'][data-step-status='not-done']`
+      ),
+      1,
+      `${ container.innerHTML }`
+    )
   });
 
   it('should render the first step as awaiting,' +
@@ -141,6 +182,14 @@ describe('Dashboard Steps render V2 steps', function (){
       3,
       `${ container.innerHTML }`
     )
+
+    assert.lengthOf(
+      container.querySelectorAll(
+        `[data-step='Activity_Thesis_Director_Collaborative_Review_Signs'][data-step-status='not-done']`
+      ),
+      1,
+      `${ container.innerHTML }`
+    )
   });
 
   it('should render the first step as done,' +
@@ -156,7 +205,6 @@ describe('Dashboard Steps render V2 steps', function (){
 
     const container = await getContainerV2()
 
-    // the others not-done
     assert.lengthOf(
       container.querySelectorAll(
         '[data-step="Activity_PHD_fills_annual_report_1"][data-step-status="done"]'
@@ -174,6 +222,38 @@ describe('Dashboard Steps render V2 steps', function (){
         1,
         `${ container.innerHTML }`
       )
+    )
+  });
+
+  it('should render the collaborative as pending, the preceding as done' +
+    ' while having the aliased task (alias case)', async function (){
+    const oneInstance = generateAGenericTaskAttributes()
+    Factory.create('task', setCollabReviewAttributes(oneInstance));
+
+    const shouldBeDoneList = [
+      'Activity_PHD_fills_annual_report_1',
+      'Activity_Thesis_Co_Director_fills_annual_report',
+      'Activity_Thesis_Director_fills_annual_report',
+    ]
+
+    const container = await getContainerV2()
+
+    shouldBeDoneList.forEach( activity =>
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step='${activity}'][data-step-status='done']`
+        ),
+        1,
+        `${ container.innerHTML }`
+      )
+    )
+
+    assert.lengthOf(
+      container.querySelectorAll(
+        `[data-step='Activity_Thesis_Director_Collaborative_Review_Signs'][data-step-status='awaiting']`
+      ),
+      1,
+      `${ container.innerHTML }`
     )
   });
 });

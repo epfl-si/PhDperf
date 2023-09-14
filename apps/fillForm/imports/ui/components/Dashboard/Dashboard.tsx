@@ -23,9 +23,6 @@ const DrawProgress =
   const progressBarDrawn = stepsDefinition.nodesOrdered().reduce((accumulator: JSX.Element[], node: string) => {
     const step: Step = stepsDefinition.node(node)
 
-    // nodes without step data are certainly the aliases. Pass it
-    if (!step) return accumulator
-
     return [
       ...accumulator,
       <DashboardRenderedStep
