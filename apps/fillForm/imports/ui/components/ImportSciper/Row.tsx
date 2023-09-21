@@ -38,7 +38,7 @@ export const HeaderRow = ({doctoralSchool, isAllSelected, disabled} :
           <span className="loader" />
         }
       </div>
-      <div className={ `col-2 ${defaultColClasses}` }>Student Name</div>
+      <div className={ `col-2 ${defaultColClasses}` }>Doctoral candidate name</div>
       <div className={ `col-2 ${defaultColClasses}` }>Thesis director</div>
       <div className={ `col-2 ${defaultColClasses}` }>Thesis co-director</div>
       <div className={ `col-2 ${defaultColClasses}` }>Mentor</div>

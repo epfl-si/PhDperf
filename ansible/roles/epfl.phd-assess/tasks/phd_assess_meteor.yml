@@ -156,7 +156,9 @@
               - name: 'ZEEBE_WORKER_TIMEOUT'
                 value: '300000'
               - name: 'ZEEBE_WORKER_MAX_JOBS_TO_ACTIVATE'
-                value: '100'
+                # tried:
+                #   - 100: to much
+                value: '66'
               - name: 'TZ'
                 value: 'Europe/Zurich'
               - name: 'NODE_OPTIONS'
