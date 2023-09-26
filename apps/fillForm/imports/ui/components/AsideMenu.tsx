@@ -47,7 +47,7 @@ export const AsideMenu = () => {
               <Link to={`/dashboard`}>Dashboard</Link>
             </li>
             <li>
-              <a href={ 'https://www.epfl.ch/education/phd/wp-content/uploads/2021/12/annuel_report_user_manual.pdf' } target="_blank">
+              <a href={ 'https://www.epfl.ch/education/phd/annual_report' } target="_blank">
                 User manual&nbsp;
                 <svg className="icon feather" style={ { paddingBottom: 2 } } aria-hidden="true">
                   <use xlinkHref="#external-link"></use>
