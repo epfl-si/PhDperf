@@ -189,5 +189,14 @@ export default {
     })
     debug(`Worker ${key} sent complete and successful status to Zeebe`)
     Metrics.zeebe.successes.inc();
-  }
+  },
+
+  async publishMessage(params: PublishMessageRequest) {
+    if (zBClient == null) {
+      throw new Meteor.Error("zeebe disconnected",
+        `No message can be sent if zeebe is not connected.`);
+    }
+
+    return await zBClient.publishMessage(params)
+  },
 }
