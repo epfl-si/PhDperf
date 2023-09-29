@@ -18,6 +18,7 @@ import {auditLogConsoleOut} from "/imports/lib/logging";
 import '/imports/api/doctoralSchools/methods'
 import '/server/methods/ImportScipers'
 import '/server/methods/DoctoralSchools'
+import '/server/methods/TaskParticipant'
 
 const auditLog = auditLogConsoleOut.extend('server/methods/TaskForm')
 

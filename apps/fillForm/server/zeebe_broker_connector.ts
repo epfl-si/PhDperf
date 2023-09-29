@@ -8,7 +8,8 @@ import {
   Duration,
   Job,
   IOutputVariables,
-  JobCompletionInterface
+  JobCompletionInterface,
+  PublishMessageRequest
 } from "zeebe-node"
 import {
   Task,
@@ -30,6 +31,12 @@ interface OutputVariables {
 interface PhDZeebeJob<WorkerInputVariables = PhDInputVariables, CustomHeaderShape = PhDCustomHeaderShape, WorkerOutputVariables = IOutputVariables> extends Job<WorkerInputVariables, CustomHeaderShape>, JobCompletionInterface<WorkerOutputVariables> {
 }
 
+// list which variables are not encrypted.
+const alreadyDecryptedVariables = [
+  'dashboardDefinition',
+  'uuid',
+]
+
 export let zBClient: ZeebeSpreadingClient | null = null
 
 function zeebeJobToTask(job: PhDZeebeJob): Task {
@@ -41,6 +48,8 @@ function zeebeJobToTask(job: PhDZeebeJob): Task {
     try {
       if (job.variables[key] == null) {  // null is a "defined" valid json entry
         decryptedVariables[key] = null
+      } else if (alreadyDecryptedVariables.includes(key) ) {
+        decryptedVariables[key] = job.variables[key]
       } else if (Array.isArray(job.variables[key])) {
         decryptedVariables[key] = job.variables[key].reduce((acc: string[], item: string) => {
             acc.push(decrypt(item))
