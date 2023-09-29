@@ -129,6 +129,10 @@ export const canRefreshProcessInstance = (user: Meteor.User) : boolean => {
   return !!user?.isAdmin
 }
 
+export const canEditParticipants = (user: Meteor.User) : boolean => {
+  return !!user?.isAdmin
+}
+
 /*
  * Get keys that are submittable. (aka not disabled)
  */
