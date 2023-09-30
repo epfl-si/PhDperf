@@ -7,6 +7,7 @@ export const taskFieldsNeededForDashboard = {
   '_id': 1,
   'elementId': 1,
   'processInstanceKey': 1,
+  'variables.dashboardDefinition': 1,
   'variables.assigneeSciper': 1,
   'variables.updated_at': 1,
   'variables.phdStudentSciper': 1,
@@ -24,6 +25,7 @@ export const taskFieldsNeededForDashboard = {
   'variables.programDirectorEmail': 1,
   'variables.programDirectorName': 1,
   'variables.doctoralProgramName': 1,
+  'variables.mentorDate': 1,  // for checking if the values is submitted
 }
 
 // define here what is allowed in code, as we filter out a full task to get only useful data

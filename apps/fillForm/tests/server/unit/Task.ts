@@ -1,13 +1,11 @@
 import chai, {assert} from 'chai'
 import chaiDateTime from "chai-datetime";
 chai.use(chaiDateTime);
-
-import {Meteor} from "meteor/meteor";
-
-import {Tasks} from "/imports/model/tasks";
-import {DoctoralSchools} from "/imports/api/doctoralSchools/schema";
-import {initialEcolesDoctorales} from "/server/fixtures/doctoralSchools";
 import dayjs from "dayjs";
+
+import {Task, Tasks} from "/imports/model/tasks";
+import {convertDefinitionToGraph} from "/imports/ui/components/Dashboard/DefinitionGraphed";
+import {stepsDefinitionV2} from "/tests/factories/dashboard/dashboardDefinition";
 
 const dbCleaner = require("meteor/xolvio:cleaner");
 const Factory = require("meteor/dburles:factory").Factory
@@ -29,7 +27,7 @@ describe('Unit tests Tasks', function () {
     //   const { customHeaders, variables, ...taskLight } = t
     //   console.log(taskLight)
     // })
-    });
+  });
 
   // testing the test engine about dates, and how we are able to filter it with Mongo
   it('should be able to read and write dates', function () {
@@ -60,21 +58,47 @@ describe('Unit tests Tasks', function () {
   });
 });
 
-describe('Unit tests DoctoralSchools', function () {
+
+describe('Unit tests Tasks dashboard definition', function () {
+  let taskWithoutDefinition: Task | undefined
+  let tasksWithDefinition: Task[]
+
   beforeEach(function () {
-    if ( DoctoralSchools.find({}).count() === 0 ) {
-      initialEcolesDoctorales.forEach((doctoralSchool) => {
-        DoctoralSchools.insert(doctoralSchool);
+    dbCleaner.resetDatabase({}, () => {
+      Factory.create("task", {
+        "variables.dashboardDefinition": undefined
       });
-    }
+      Factory.create("task", {
+        "variables.dashboardDefinition": stepsDefinitionV2
+      });
+    });
   });
 
-  if (Meteor.isServer) {
-    it('should have doctoral schools data', function () {
-      // _dburlesFactory.Factory.create("doctoralSchool");
+  it('should have a dashboard definition', function () {
+    taskWithoutDefinition = Tasks.findOne({ 'variables.dashboardDefinition': { $exists: false } })
+    tasksWithDefinition = Tasks.find({ 'variables.dashboardDefinition': { $exists: true } }).fetch()
 
-      const ds = DoctoralSchools.find({})
-      assert.notStrictEqual(ds.count(), 0)
-    });
-  }
+    assert.isUndefined(taskWithoutDefinition?.variables.dashboardDefinition)
+
+    tasksWithDefinition.forEach(
+      (task) => {
+        assert.isDefined(task.variables.dashboardDefinition)
+        assert(task.variables.dashboardDefinition)  // test that it is some valid json
+      }
+    )
+  });
+
+  it('should have a dashboard definition graph-able', function () {
+    tasksWithDefinition.forEach(
+      (task) => {
+        if (task.variables?.dashboardDefinition) {
+          const graphedDefinition = convertDefinitionToGraph(
+            task.variables.dashboardDefinition
+          )
+          assert(graphedDefinition)
+          assert.isNotEmpty(graphedDefinition.nodes())
+        }
+      }
+    )
+  });
 });

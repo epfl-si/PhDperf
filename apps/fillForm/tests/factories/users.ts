@@ -17,10 +17,10 @@ const createRandomUser = () => {
   const sex = faker.name.sexType();
   const firstName = faker.name.firstName(sex);
   const lastName = faker.name.lastName(sex);
-  const email = faker.helpers.unique(faker.internet.email, [
+  const email = faker.internet.email(
     firstName.toLowerCase(),
-    lastName.toLowerCase(),
-  ]);
+    lastName.toLowerCase()
+  );
 
   return {
     "_id": sciper,
