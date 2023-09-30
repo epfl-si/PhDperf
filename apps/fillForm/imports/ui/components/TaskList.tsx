@@ -5,12 +5,14 @@ import {useTracker} from 'meteor/react-meteor-data'
 import {Tasks} from "/imports/model/tasks";
 import {WorkflowStarter} from './workflowStarter'
 import {Button, Loader} from "@epfl/epfl-sti-react-library"
-import {Link} from "react-router-dom"
+import {Link, useNavigate} from "react-router-dom"
 import {Participant} from "/imports/ui/components/Participant";
 import toast from "react-hot-toast";
 import Dropdown from 'react-bootstrap/Dropdown'
 import {
-  canDeleteProcessInstance, canRefreshProcessInstance
+  canDeleteProcessInstance,
+  canEditParticipants as canEditParticipantsCheck,
+  canRefreshProcessInstance
 } from "/imports/policy/tasks";
 import {toastErrorClosable} from "/imports/ui/components/Toasters";
 import {ITaskList} from "/imports/policy/tasksList/type";
@@ -61,8 +63,11 @@ export default function TaskList() {
 }
 
 const TaskRow = ({ task, user }: { task: ITaskList, user: Meteor.User }) => {
+  const navigate = useNavigate();
+
   const canDelete = user && canDeleteProcessInstance(user)
   const canRefresh = user && canRefreshProcessInstance(user)
+  const canEditParticipants = user && canEditParticipantsCheck(user)
 
   return (
     <div className={'border-top p-2'} style={ {
@@ -89,7 +94,7 @@ const TaskRow = ({ task, user }: { task: ITaskList, user: Meteor.User }) => {
                 onClickFn={() => void 0}
               />
             </Link>
-            { (canRefresh || canDelete) &&
+            { (canRefresh || canDelete || canEditParticipants) &&
               <span className={"ml-1"}>
                 <Dropdown as="span">
                   <Dropdown.Toggle
@@ -113,6 +118,19 @@ const TaskRow = ({ task, user }: { task: ITaskList, user: Meteor.User }) => {
                       }
                     </Dropdown.Header>
                     <Dropdown.Divider/>
+                    { canEditParticipants &&
+                      <Dropdown.Item
+                        className={'small'}
+                        eventKey={ task._id }
+                        onSelect={ (eventKey) => task.variables.uuid &&
+                          navigate(`tasks/${eventKey}/participants/edit`) }
+                      >
+                        { task.variables.uuid ?
+                          <>Edit a participant</> :
+                          <>No UUID to edit participants</>
+                        }
+                      </Dropdown.Item>
+                    }
                     { canRefresh &&
                       <Dropdown.Item
                         className={'small'}

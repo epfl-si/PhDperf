@@ -157,8 +157,9 @@
                 value: '300000'
               - name: 'ZEEBE_WORKER_MAX_JOBS_TO_ACTIVATE'
                 # tried:
-                #   - 100: to much
-                value: '66'
+                #   - 100: too much, 10 were gone as error
+                #   - 66: too much, 3 were gone as error
+                value: '50'
               - name: 'TZ'
                 value: 'Europe/Zurich'
               - name: 'NODE_OPTIONS'

@@ -1,4 +1,6 @@
+import crypto from "node:crypto";
 import {Meteor} from "meteor/meteor";
+
 import {encrypt} from "/server/encryption";
 import {Tasks, UnfinishedTasks} from "/imports/model/tasks";
 import {
@@ -44,6 +46,7 @@ Meteor.methods({
         created_by: encrypt(user._id),
         updated_at: encrypt(new Date().toJSON()),
         assigneeSciper: encrypt(user._id),
+        uuid: crypto.randomUUID(),
       }))
       auditLog(`created new instance ${diagramProcessId}, response: ${JSON.stringify(createProcessInstanceResponse)}`)
       return createProcessInstanceResponse?.processInstanceKey
@@ -52,7 +55,6 @@ Meteor.methods({
       throw new Meteor.Error(500, `Unable to start a new workflow. Please contact the admin to verify the server. ${e}`)
     }
   },
-
 
   async deleteProcessInstance(processInstanceKey) {
     let user: Meteor.User | null = null

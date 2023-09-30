@@ -8,7 +8,8 @@ import {
   Duration,
   Job,
   IOutputVariables,
-  JobCompletionInterface
+  JobCompletionInterface,
+  PublishMessageRequest
 } from "zeebe-node"
 import {
   Task,
@@ -31,8 +32,9 @@ interface PhDZeebeJob<WorkerInputVariables = PhDInputVariables, CustomHeaderShap
 }
 
 // list which variables are not encrypted.
-const nonEncryptedVariables = [
+const alreadyDecryptedVariables = [
   'dashboardDefinition',
+  'uuid',
 ]
 
 export let zBClient: ZeebeSpreadingClient | null = null
@@ -44,10 +46,10 @@ function zeebeJobToTask(job: PhDZeebeJob): Task {
 
   Object.keys(job.variables).map((key) => {
     try {
-      if (nonEncryptedVariables.includes(key)) {
-        decryptedVariables[key] = job.variables[key]
-      } else if (job.variables[key] == null) {  // null is a "defined" valid json entry
+      if (job.variables[key] == null) {  // null is a "defined" valid json entry
         decryptedVariables[key] = null
+      } else if (alreadyDecryptedVariables.includes(key) ) {
+        decryptedVariables[key] = job.variables[key]
       } else if (Array.isArray(job.variables[key])) {
         decryptedVariables[key] = job.variables[key].reduce((acc: string[], item: string) => {
             acc.push(decrypt(item))
@@ -190,5 +192,14 @@ export default {
     })
     debug(`Worker ${key} sent complete and successful status to Zeebe`)
     Metrics.zeebe.successes.inc();
-  }
+  },
+
+  async publishMessage(params: PublishMessageRequest) {
+    if (zBClient == null) {
+      throw new Meteor.Error("zeebe disconnected",
+        `No message can be sent if zeebe is not connected.`);
+    }
+
+    return await zBClient.publishMessage(params)
+  },
 }

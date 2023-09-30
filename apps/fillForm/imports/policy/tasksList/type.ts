@@ -8,6 +8,7 @@ export const taskFieldsNeededForList = {
   'processInstanceKey': 1,
   'customHeaders.title': 1,
   'processDefinitionVersion': 1,
+  'variables.uuid':1,
   'variables.assigneeSciper': 1,
   'variables.created_at': 1,
   'variables.created_by': 1,
