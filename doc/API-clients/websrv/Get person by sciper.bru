@@ -1,0 +1,29 @@
+meta {
+  name: Get person by sciper
+  type: http
+  seq: 1
+}
+
+get {
+  url: https://websrv.epfl.ch/cgi-bin/rwspersons/getPerson?app={{app}}&caller=000000&password={{password}}&id={{sciper}}
+  body: none
+}
+
+query {
+  app: {{app}}
+  caller: 000000
+  password: {{password}}
+  id: {{sciper}}
+}
+
+assert {
+  res.status: 200
+  res.body: isJson ''
+}
+
+tests {
+  test("should have a person ID inside the response", function() {
+    const data = res.getBody()
+    expect(data.result.id).to.be.equal(Number(bru.getEnvVar("sciper")));
+  });
+}

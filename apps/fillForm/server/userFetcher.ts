@@ -8,6 +8,7 @@ import {fetchTimeout} from "/imports/lib/fetchTimeout";
 const debug = require('debug')('server/userFetcher')
 
 // see http://websrv.epfl.ch/RWSPersons.html for detail definition
+// see ./doc/API-clients/websrv to explore the API
 
 interface GetPersonBadResult {
   error: {
