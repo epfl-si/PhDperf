@@ -15,8 +15,9 @@ import {
   Task,
   Tasks
 } from "/imports/model/tasks"
-import {PhDCustomHeaderShape, PhDInputVariables} from "/imports/model/tasksTypes";
+import {PhDInputVariables} from "/imports/model/tasksTypes";
 import {auditLogConsoleOut} from "/imports/lib/logging";
+import {PhDCustomHeaderShape} from "phd-assess-meta/types/fillForm/headers";
 
 const debug = debug_('phd-assess:zeebe-connector')
 const auditLog = auditLogConsoleOut.extend('server/zeebe_broker_connector')
@@ -69,6 +70,27 @@ function zeebeJobToTask(job: PhDZeebeJob): Task {
     debug(`Can't decrypt one or more key: ${JSON.stringify(undecryptableVariablesKey)}`)
     throw cantDecryptError
   }
+
+  // manage the special case of assignees scipers. They can come, historically, as a variable or as field designator
+  // the field designator is the moderne way to get the flexibility to refresh a job when a participant has been changed
+  if (job.customHeaders.assigneeSciperFieldName) {
+    const fieldsName = []
+    const scipers: string[] = []
+
+    if (job.customHeaders.assigneeSciperFieldName.includes(',')) {
+      job.customHeaders.assigneeSciperFieldName.split(',').forEach(f => fieldsName.push(f?.trim()))
+    } else {
+      fieldsName.push(job.customHeaders.assigneeSciperFieldName.trim())
+    }
+
+    // get the value for each field
+    fieldsName.forEach(field =>
+      decryptedVariables[field] && scipers.push(decryptedVariables[field])
+    )
+
+    decryptedVariables.assigneeSciper = scipers
+  }
+
   // we are ok to make it to a task now
   const task = job as unknown as Task
   task._id = job.key

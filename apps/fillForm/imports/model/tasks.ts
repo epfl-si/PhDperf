@@ -1,22 +1,28 @@
 import { Meteor } from 'meteor/meteor'
 import { Mongo } from 'meteor/mongo'
+import _ from 'lodash';
 import dayjs from "dayjs";
+
 import persistentDB from "/imports/db/persistent";
 import {Sciper} from "/imports/api/datatypes";
+import {PhDCustomHeaderShape} from "phd-assess-meta/types/fillForm/headers";
 import {ParticipantList, participantsFromZeebe} from './participants';
-import _ from 'lodash';
 import {
-  PhDCustomHeaderShape,
   PhDInputVariables,
   TaskInterface,
   TaskJournal
 } from "/imports/model/tasksTypes";
 
 
-// historically, assignees can come from multiple ways: as string or as array, from variables.assigneeSciper
-// Transform all into an array
+// historically, assignees can come from multiple ways:
+// as a string, with one or multiple values (separated by a comma); or as an array
+// Transform all that into an array
 const assigneeSciperToArray = (assigneSciperUnknownType: string | string[]) => {
   if (Array.isArray(assigneSciperUnknownType)) return assigneSciperUnknownType
+
+  if (assigneSciperUnknownType.includes(',')) {
+    return assigneSciperUnknownType.split(',')
+  }
 
   return [assigneSciperUnknownType]
 }
@@ -51,8 +57,6 @@ export class Task implements TaskInterface {
   constructor(doc: any) {
     _.extend(this, doc);
 
-    // historically, assignees can come from multiple ways: as string or as array, from variables.assigneeSciper
-    // Transform all into an array, named assigneeScipers
     if (this.variables?.assigneeSciper) {
       this.assigneeScipers = assigneeSciperToArray(this.variables.assigneeSciper)
     }
