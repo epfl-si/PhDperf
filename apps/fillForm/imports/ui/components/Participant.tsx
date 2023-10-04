@@ -70,6 +70,8 @@ export const EditParticipants = ({ _id }: { _id: string }) => {
     if (!hasBeenSubmitted) return <div>No such task with id: { _id }</div>
   }
 
+  if (!task?.variables.uuid) return <div>This task has no uuid and can not be edited</div>
+
   if (submitting) return <Loader message={'Submitting...'}/>
 
   const submitParticipantsChanges = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -120,6 +122,7 @@ export const EditParticipants = ({ _id }: { _id: string }) => {
             className="custom-select"
             onChange={ e => setRole(e.target.value) }
             defaultValue={ role }
+            required={ true }
           >
             <option> </option>
             { ParticipantIDs
@@ -130,15 +133,23 @@ export const EditParticipants = ({ _id }: { _id: string }) => {
           </select>
           <label
             htmlFor={ `participant-sciper` }
-            className={ "field-required mt-2" }
+            className={
+              (role === 'thesisCoDirector') ? "mt-2" : "field-required mt-2"
+            }
           >New sciper</label>
           <input
             id={ `participant-sciper` }
             name={ `sciper` }
             className="form-control"
             type="text"
+            pattern="\d*"
+            maxLength={ 6 }
+            minLength={ 6 }
             value={ sciper }
             onChange={ e => setSciper(e.target.value) }
+            required={
+              role !== 'thesisCoDirector'
+            }
           />
         </div>
       <button type="submit" className="btn btn-primary">Change & refresh</button>

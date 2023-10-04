@@ -11,25 +11,22 @@ import {Sciper} from "/imports/api/datatypes";
 import {getParticipantsToUpdateFromSciper} from "/server/userFetcher";
 import {PhDInputVariables} from "/imports/model/tasksTypes";
 import {canEditParticipants} from "/imports/policy/tasks";
+import {ParticipantRoles} from "/imports/model/participants";
 
 const auditLog = auditLogConsoleOut.extend('server/methods/TaskParticipants')
 
 
 export type EditableParticipant = {
   role:
-    'programAssistantSciper' |
-    'thesisDirectorSciper' |
-    'thesisCoDirectorSciper' |
-    'programDirectorSciper' |
-    'mentorSciper'
+    Omit<ParticipantRoles, 'phdStudent'>
   sciper: Sciper
 }
 
 const validRoles = [
-  'programAssistant' ,
-  'thesisDirector' ,
-  'thesisCoDirector' ,
-  'programDirector' ,
+  'programAssistant',
+  'thesisDirector',
+  'thesisCoDirector',
+  'programDirector',
   'mentor',
 ]
 
@@ -57,43 +54,55 @@ Meteor.methods({
 
     if (!task.variables.uuid) throw new Meteor.Error(
       409,
-      'This task has no uuid, it can not be used trough messages',
+      'This task has no uuid, it can not be used to edit participants',
     )
 
-    if (!validRoles.includes(participantData.role)) throw new Meteor.Error(
+    if (!validRoles.includes(participantData.role as string)) throw new Meteor.Error(
       409,
       `Payload is not correct. Role ${participantData.role} is unknown`,
     )
 
+    // only the thesisCoDirector can be empty/set to nothing
+    if (participantData.role !== 'thesisCoDirector' &&
+      !participantData.sciper
+    ) throw new Meteor.Error(
+      409,
+      `Payload is not correct. Only the thesisCoDirector field can be empty`,
+    )
+
     // prepare the data
-    // by default, set the other values to empty, in case of the userFetcher API fails
+    // by default, set the other values for this participant to empty, in case of the userFetcher API fails
     let participants = {
       [`${participantData.role}Sciper`]: participantData.sciper,
       [`${participantData.role}Name`]: '',
       [`${participantData.role}Email`]: '',
     }
 
-    // let's try to fulfill the missing information
-    try {
-      participants = await getParticipantsToUpdateFromSciper(participants as PhDInputVariables)
-      participants[`${participantData.role}Sciper`] = participantData.sciper  // bring back the new forgotten sciper
-    } catch (e: any) {
-      if (Meteor.isDevelopment && Meteor.settings?.skipUsersUpdateOnFail) {  // don't raise an error it optional on dev env.
-        console.log(`skipping the user update for dev env, as there is an error. ${ e }`)
-      } else {
-        if (e.name == 'AbortError') {
-          // Look like the fetching of user info has got a timeout,
-          throw new Meteor.Error(422, 'Unable to get users information, aborting. Please contact the administrator or try again later.')
+    // only do this part if we are not emptying the thesisCoDirector
+    if (!(participantData.role === 'thesisCoDirector' && !participantData.sciper)) {
+
+      // let's try to fulfill the missing information
+      try {
+        participants = await getParticipantsToUpdateFromSciper(participants as PhDInputVariables)
+        participants[`${ participantData.role }Sciper`] = participantData.sciper  // bring back the new forgotten sciper
+      } catch (e: any) {
+        if (Meteor.isDevelopment && Meteor.settings?.skipUsersUpdateOnFail) {  // don't raise an error it optional on dev env.
+          console.log(`skipping the user update for dev env, as there is an error. ${ e }`)
         } else {
-          throw new Meteor.Error(422, `There is a problem with a participant: ${ e }`)
+          if (e.name == 'AbortError') {
+            // Look like the fetching of user info has got a timeout,
+            throw new Meteor.Error(422, 'Unable to get users information, aborting. Please contact the administrator or try again later.')
+          } else {
+            throw new Meteor.Error(422, `There is a problem with a participant: ${ e }`)
+          }
         }
       }
-    }
 
-    // validity check before sending to Zeebe
-    if (!participants[`${participantData.role}Name`] ||
-      !participants[`${participantData.role}Email`]) {
-      throw new Meteor.Error(422, `Aborting the change : Unable to find any users information for the sciper "${participantData.sciper}".`)
+      // validity check before sending to Zeebe
+      if (!participants[`${ participantData.role }Name`] ||
+        !participants[`${ participantData.role }Email`]) {
+        throw new Meteor.Error(422, `Aborting the change : Unable to find any users information for the sciper "${ participantData.sciper }".`)
+      }
     }
 
     const publishResponse: PublishMessageResponse = await WorkersClient.publishMessage({
