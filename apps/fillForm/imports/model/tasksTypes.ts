@@ -1,13 +1,8 @@
-import {ICustomHeaders, IInputVariables, Job} from "zeebe-node";
-import {Sciper} from "../api/datatypes";
+import {IInputVariables, Job} from "zeebe-node";
 import {PhDAssessVariables} from "phd-assess-meta/types/variables";
+import {PhDCustomHeaderShape} from "phd-assess-meta/types/fillForm/headers";
+import {Sciper} from "phd-assess-meta/types/participants";
 
-export class PhDCustomHeaderShape implements ICustomHeaders {
-  groups?: string[]  // manage permission groupwise
-  title?: string  // title shown for this task
-  formIO?: string  // the formIO JSON
-  [key: string]: any  // the others var
-}
 
 // What the FormIO metadata provides us with
 export interface FormioActivityLog {
@@ -21,10 +16,9 @@ export interface FormioActivityLog {
   onLine?: boolean;
 }
 
-// This are the bpmn variables we could find for every steps and
-// we will need through the code.
-// Why a class instead an interface here ? To be able to read the
-// keys later in the process. See https://stackoverflow.com/a/59806829
+// These are the bpmn variables we could find for every step, and
+// we will need through the code. Here we add the assigneeSciper, that
+// can come from different sources. But we only want into this variable at the end.
 export interface PhDInputVariables extends PhDAssessVariables, IInputVariables {
   assigneeSciper?: Sciper | Sciper[]
   //[key: string]: any  // the others var
