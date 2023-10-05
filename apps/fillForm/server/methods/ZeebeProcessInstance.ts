@@ -45,7 +45,6 @@ Meteor.methods({
         created_at: encrypt(new Date().toJSON()),
         created_by: encrypt(user._id),
         updated_at: encrypt(new Date().toJSON()),
-        assigneeSciper: encrypt(user._id),
         uuid: crypto.randomUUID(),
       }))
       auditLog(`created new instance ${diagramProcessId}, response: ${JSON.stringify(createProcessInstanceResponse)}`)
