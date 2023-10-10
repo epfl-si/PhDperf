@@ -3,16 +3,16 @@
 - name: "Pull Zeebe broker image to the VM"
   import_tasks: _docker_login_and_pull.yml
   vars:
-    image: zeebe-broker-with-exporters
+    image: zeebe-broker
 
-- name: "Run Zeebe"
+- name: "Zeebe container"
   community.docker.docker_container:
     name: zeebe
-    image: "{{ openshift_image_registry }}/{{ phd_assess_build_namespace }}/zeebe-broker-with-exporters:latest"
+    image: "{{ openshift_image_registry }}/{{ phd_assess_build_namespace }}/zeebe-broker:latest"
     networks:
       - name: "{{ esb_docker_network }}"
     env: >-
-      {{ zeebe_broker_env
+      {{ zeebe_env
       | combine(_specific_env)
       }}
       # https://docs.camunda.io/docs/self-managed/zeebe-deployment/operations/setting-up-a-cluster/

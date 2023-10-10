@@ -102,7 +102,6 @@ while [ "$#" -gt 0 ]; do
             shift ;;
         --prod)
             inventory_mode="test_and_prod"
-            WWP_NAMESPACES="wwp-test,wwp"
             shift ;;
         *)
             ansible_args+=("$1")

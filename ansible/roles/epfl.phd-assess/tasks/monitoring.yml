@@ -98,7 +98,7 @@
     ( "monitoring-restart" in ansible_run_tags )
   shell:
     cmd: |
-      oc delete pod prometheus-0
+      oc -n {{ openshift_namespace }} delete pod prometheus-0
   tags: monitoring-restart
 
 
@@ -206,102 +206,22 @@
     tag: "{{ phd_assess_ubuntu_base_image.tag }}"
   tags: zeebe
 
-- name: "Build Perl tools image"
+- name: Log into the Openshift docker repository and push the zeebe-db-monitor image (assuming you have already built it with the tag 'zeebe-db-monitor:latest')
   when: openshift_namespace == phd_assess_build_namespace
-  openshift_imagestream:
-    metadata:
-      name: zeebe-tools
-      namespace: "{{ openshift_namespace }}"
-    from: "{{ phd_assess_ubuntu_base_image.mirrored }}"
-    git:
-      repository: "https://github.com/epfl-si/PhDAssess"
-      path: docker/zeebe-tools
-    spec:
-      resources: "{{ k8s_perl_build_resources }}"
-
-- name: "Build Perl observability image"
-  when: openshift_namespace == phd_assess_build_namespace
-  openshift_imagestream:
-    metadata:
-      name: zeebe-observability
-      namespace: "{{ openshift_namespace }}"
-    from: "{{ openshift_image_registry_inside }}/{{ openshift_namespace }}/zeebe-tools:latest"
-    git:
-      repository: "https://github.com/epfl-si/PhDAssess"
-      path: docker/zeebe-observability
-    spec:
-      resources: "{{ k8s_perl_build_resources }}"
-    triggers:
-    - type: ImageChange
-      imageChange:
-        from:
-          kind: ImageStreamTag
-          name: zeebe-tools:latest
-          namespace: "{{ openshift_namespace }}"
-
-- name: "zeebe-observability DeploymentConfig"
-  openshift:
-    apiVersion: apps.openshift.io/v1
-    kind: DeploymentConfig
-    metadata:
-      name: zeebe-observability
-      namespace: "{{ openshift_namespace }}"
-    spec:
-      replicas: 1
-      strategy:
-        resources: "{{ k8s_frugal_resources }}"
-      selector:
-        app: zeebe-observability
-      template:
-        metadata:
-          labels:
-            app: zeebe-observability
-        spec:
-          containers:
-            - name: zeebe-observability
-              image: "{{ openshift_local_images_base }}/zeebe-observability"
-              volumeMounts:
-                - name: zeebe-data
-                  mountPath: /usr/local/zeebe/data
-                  readOnly: true
-              resources: "{{ k8s_java_resources }}"
-              ports:
-                - name: http
-                  containerPort: 5000   # Default Plackup port
-          volumes:
-            - name: zeebe-data
-              persistentVolumeClaim:
-                claimName: "{{ volume_zeebe_name }}"
-                readOnly: true
-      triggers:
-      - type: ImageChange
-        imageChangeParams:
-          automatic: true
-          containerNames:
-          - zeebe-observability
-          from:
-            kind: ImageStreamTag
-            name: 'zeebe-observability:latest'
-            namespace: "{{openshift_namespace}}"
-
-
-- name: zeebe-observability Service
-  openshift:
-    state: latest
-    apiVersion: v1
-    kind: Service
-    metadata:
-      name: zeebe-observability
-      namespace: "{{ openshift_namespace }}"
-      labels:
-        app: zeebe-observability
-    spec:
-      ports:
-        - name: http
-          port: 5000
-      selector:
-        app: zeebe-observability
-
+  tags:
+    - monitoring.zeebe-db-monitor.push
+    - never
+  shell: |
+    set -e -x
+    oc whoami -t | docker login {{ openshift_image_registry }} -u unused --password-stdin
+    docker image tag zeebe-db-monitor:latest {{ openshift_image_registry }}/{{ openshift_namespace }}/zeebe-db-monitor:latest
+    docker push {{ openshift_image_registry }}/{{ openshift_namespace }}/zeebe-db-monitor:latest
+  register: output_push_image
+  delegate_to: localhost
+- debug: var=output_push_image.stdout_lines
+  tags:
+    - monitoring.zeebe-db-monitor.push
+    - never
 
 - name: "zeebe-db-monitor DeploymentConfig"
   tags: monitoring.zeebe-db-monitor
@@ -328,11 +248,7 @@
               image: "{{ openshift_local_images_base }}/zeebe-db-monitor"
               env:
                 - name: 'ZEEBE_DATA_RO_PATH'
-                  value: '/zeebe-data-ro'
-                - name: 'ZEEBE_DATA_RW_BASE_PATH'
-                  value: '/zeebe-data-rw'
-                - name: 'ZDB_READ_CACHE_TIMEOUT'
-                  value: '120000'
+                  value: '/zeebe-data-ro/raft-partition/partitions/1/runtime/'
               volumeMounts:
                 - mountPath: /zeebe-data-ro
                   name: zeebe-data
@@ -383,6 +299,7 @@
           port: 8080
       selector:
         app: zeebe-db-monitor
+
 
 - name: "Promote zeebe-db-monitor image from {{ phd_assess_build_namespace }} to production"
   when:

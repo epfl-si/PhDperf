@@ -14,6 +14,15 @@
     - zeebe
     - zeebe-promote
 
+- name: Zeebe local images
+  include_tasks:
+    file: zeebe-local-images.yml
+    apply:
+      tags: zeebe
+  tags:
+    - never
+    - zeebe-push
+
 - name: Zeebe 3-way production quorum (Kubernetes side)
   include_tasks:
     file: zeebe-high-availability.yml
@@ -21,16 +30,6 @@
         tags: zeebe
   tags:
     - zeebe
-
-- name: Kafka (build and test only)
-  when: >-
-    "test" in openshift_namespace
-  include_tasks:
-    file: kafka.yml
-    apply:
-      tags: kafka
-  tags:
-    - kafka
 
 - name: "{{ zeebe_gateway_servicename }} Service"
   tags: zeebe
@@ -47,10 +46,6 @@
           port: "{{ zeebe_ports.api }}"
           protocol: TCP
           targetPort: "{{ zeebe_ports.api }}"
-        - name: "zeebe-hazelcast"
-          port: "{{ zeebe_ports.hazelcast }}"
-          protocol: TCP
-          targetPort: "{{ zeebe_ports.hazelcast }}"
        selector:
          for-service: "{{ zeebe_gateway_servicename }}"
 
@@ -123,21 +118,10 @@
     - monitoring
     - monitoring-promote
     - monitoring.zeebe-db-monitor
+    - monitoring.zeebe-db-monitor.push
     - monitoring.zeebe-db-monitor.promote
   include_tasks:
     file: "monitoring.yml"
     apply:
       tags:
         - monitoring
-
-- name: Simple Monitor
-  tags:
-    - simple-monitor
-    - simple-monitor-update
-    - simple-monitor-promote
-  include_tasks:
-    file: "simple-monitor.yml"
-    apply:
-      tags:
-        - never
-        - simple-monitor

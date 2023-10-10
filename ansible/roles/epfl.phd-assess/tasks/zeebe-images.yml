@@ -1,51 +1,16 @@
-- tags: always
-  include_vars: build-vars.yml
-
 # Manage Zeebe broker images (build in test, promote in production)
 
-- name: "Pull upstream {{ zeebe_broker_base_image.qualified }} into {{ zeebe_broker_base_image.mirrored }}"
+- name: "Pull upstream {{ zeebe_base_image.qualified }} into {{ zeebe_base_image.mirrored }}"
   when: openshift_namespace == phd_assess_build_namespace
   openshift_imagestream:
     state: latest
     metadata:
-      name: "{{ zeebe_broker_base_image.shortname }}"
+      name: "{{ zeebe_base_image.shortname }}"
       namespace: "{{ openshift_namespace }}"
-    from: "{{ zeebe_broker_base_image.qualified }}"
-    tag: "{{ zeebe_broker_base_image.tag }}"
+    from: "{{ zeebe_base_image.qualified }}"
+    tag: "{{ zeebe_base_image.tag }}"
 
-- name: "Build custom Zeebe Broker image"
-  when: openshift_namespace == phd_assess_build_namespace
-  openshift_imagestream:
-    state: latest
-    metadata:
-      name: zeebe-broker-with-exporters
-      namespace: "{{ openshift_namespace }}"
-    from: "{{ zeebe_build_base_image }}"
-    source:
-      dockerfile: |
-        FROM camunda/zeebe
-        ADD "{{ zeebe_broker_kafka_exporter_jar_url }}" /usr/local/zeebe/lib/zeebe-kafka-exporter-with-dependencies.jar
-        ADD "{{ zeebe_broker_hazelcast_exporter_jar_url }}" /usr/local/zeebe/lib/zeebe-hazelcast-exporter.jar
-        ADD "{{ zeebe_broker_mongodb_exporter_jar_url }}" /usr/local/zeebe/lib/zeebe-mongo-exporter.jar
-        RUN chmod 755 /usr/local/zeebe/lib/*jar
-    spec:
-      resources:
-        limits:
-          cpu: '100m'
-          memory: 100M
-    strategy:
-      dockerStrategy:
-        forcePull: true
-  register: _openshift_image_zeebe_broker
-
-- name: "Rebuild custom Zeebe Broker image now"
-  when: |
-     ( openshift_namespace == phd_assess_build_namespace )
-     and
-     ( (_openshift_image_zeebe_broker | default({})) is changed )
-  shell: "oc -n {{openshift_namespace}} start-build --wait zeebe-broker-with-exporters"
-
-- name: "Promote zeebe-broker-with-exporters from {{ phd_assess_build_namespace }} to production"
+- name: "Promote zeebe from {{ phd_assess_build_namespace }} to production"
   when: >-
     (openshift_namespace != phd_assess_build_namespace)
     and
@@ -58,6 +23,6 @@
         - zeebe
         - zeebe-promote
   vars:
-    promote_image_name: zeebe-broker-with-exporters
+    promote_image_name: zeebe
     promote_image_tag: "latest"
     promote_from_namespace: "{{ phd_assess_build_namespace }}"

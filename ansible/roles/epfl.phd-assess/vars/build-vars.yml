@@ -1,7 +1,0 @@
-zeebe_custom_built_tag: 1.3.9-SNAPSHOT
-zeebe_build_base_image: >-
-  {{
-  "docker-registry.default.svc:5000/%s/zeebe:%s" % (openshift_namespace, zeebe_custom_built_tag)
-  if (zeebe_debug_build | default(False))
-  else zeebe_broker_base_image.mirrored
-  }}

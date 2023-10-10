@@ -1,7 +1,7 @@
 # Versions of software in use in the PhDAssess / ESB cluster
 
-zeebe_broker_base_image: >-
-  {{ "docker.io/camunda/zeebe:1.3.5"
+zeebe_base_image: >-
+  {{ ("docker.io/camunda/zeebe:" + zeebe_version|string)
   | parse_external_docker_tag(mirrored_base=openshift_local_images_base) }}
 
 ssh_tunnel_server_base_image: >-
@@ -10,10 +10,6 @@ ssh_tunnel_client_base_image: >-
   {{ "alpine:3.13"
   | parse_external_docker_tag(mirrored_base=openshift_local_images_base)
   }}
-
-kafka_base_image: >-
-  {{ "confluentinc/cp-kafka:7.0.0"
-  | parse_external_docker_tag(mirrored_base=openshift_local_images_base) }}
 
 # For the small TypeScript utility that monitors disk usage:
 monitoring_node_base_image: >-

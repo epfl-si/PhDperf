@@ -19,9 +19,7 @@ frontend_fqdn: "{{ frontend_hostname }}.epfl.ch"
 frontend_url: "https://{{ frontend_hostname }}"
 zeebe_gateway_servicename: "zeebe-gateway"
 
-zeebe_broker_hazelcast_exporter_jar_url: https://github.com/camunda-community-hub/zeebe-hazelcast-exporter/releases/download/1.0.1/zeebe-hazelcast-exporter-1.0.1-jar-with-dependencies.jar
-zeebe_broker_kafka_exporter_jar_url: https://github.com/camunda-community-hub/zeebe-kafka-exporter/releases/download/3.0.0/zeebe-kafka-exporter-3.0.0-jar-with-dependencies.jar
-zeebe_broker_mongodb_exporter_jar_url: https://github.com/crossid/zeebe-mongo-exporter/releases/download/v0.4.1/zeebe-mongo-exporter.jar
+zeebe_image_tag: "{{openshift_image_registry}}/{{openshift_namespace}}/zeebe"
 
 phd_assess_meteor_servicename: "phd-assess-meteor"
 phd_assess_meteor_image_tag: "{{openshift_image_registry}}/{{openshift_namespace}}/{{phd_assess_meteor_servicename}}:latest"

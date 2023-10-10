@@ -1,8 +1,5 @@
 # Variables common to multiple roles (a.k.a. “rendezvous” vars) go here.
 
-# Use a debug build of Zeebe (see roles/epfl.phd-assess/vars/build-vars.yml):
-zeebe_debug_build: true
-
 openshift_image_registry: "os-docker-registry.epfl.ch"
 openshift_image_registry_inside: "docker-registry.default.svc:5000"
 phd_assess_build_namespace: phd-assess-test
@@ -27,6 +24,8 @@ esb_ssh_tunnels:
     prometheus:
       via: 22223
 
+zeebe_version: '8.2.16'
+
 # The rendezvous port for Zeebe API connections (to use by clients and k8s services)
 zeebe_ports:
   # The port of the “Zeebe gateways,” where clients connect:
@@ -39,37 +38,13 @@ zeebe_ports:
   command: 26501
   # The port that brokers use to connect to each other to make the Raft network:
   quorum: 26502
-  # the Hazelcast connecting point
-  hazelcast: 5701
-
-_kafka_broker_hostname: kafka-broker
-kafka_broker:
-  image_name: kafka-kraft-broker
-  hostname: "{{ _kafka_broker_hostname }}"
-  address: "{{ _kafka_broker_hostname }}:9092"
-  env:
-    KAFKA_BROKER_ID: "1"
-    KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT"
-    KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://{{ _kafka_broker_hostname }}:29092,PLAINTEXT_HOST://{{ _kafka_broker_hostname }}:9092"
-    KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
-    KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: "0"
-    KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: "1"
-    KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: "1"
-    KAFKA_JMX_PORT: "9101"
-    KAFKA_JMX_HOSTNAME: "localhost"
-    KAFKA_PROCESS_ROLES: "broker,controller"
-    KAFKA_NODE_ID: "1"
-    KAFKA_CONTROLLER_QUORUM_VOTERS: "1@{{ _kafka_broker_hostname }}:29093"
-    KAFKA_LISTENERS: "PLAINTEXT://{{ _kafka_broker_hostname }}:29092,CONTROLLER://{{ _kafka_broker_hostname }}:29093,PLAINTEXT_HOST://{{ _kafka_broker_hostname }}:9092"
-    KAFKA_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
-    KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
 
 _zeebe_log_level: >-
-  {{ "debug" if is_test | default(false) else "info" }}
+  {{ "info" if is_test | default(false) else "info" }}
 
-zeebe_broker_env:
+zeebe_env:
   PORT: '{{ zeebe_ports.api | string }}'
-  JAVA_OPTS: "{{ '-Xmx2024m' if (openshift_namespace | default('VM')) in ['phd-assess', 'VM'] else '-Xmx1024m' }}"
+  JAVA_OPTS: "{{ '-Xmx2024m' }}"
   ZEEBE_BROKER_NETWORK_MONITORINGAPI_HOST: '0.0.0.0'
   # https://docs.camunda.io/docs/self-managed/zeebe-deployment/operations/setting-up-a-cluster/
   ZEEBE_LOG_APPENDER: Stackdriver
@@ -77,9 +52,6 @@ zeebe_broker_env:
   ZEEBE_BROKER_BACKPRESSURE_FIXEDLIMIT_LIMIT: '300'
   ZEEBE_BROKER_THREADS_CPUTHREADCOUNT: '1'
   ZEEBE_BROKER_THREADS_IOTHREADCOUNT: '1'
-  ZEEBE_BROKER_EXPORTERS_HAZELCAST_CLASSNAME: io.zeebe.hazelcast.exporter.HazelcastExporter
-  ZEEBE_BROKER_EXPORTERS_HAZELCAST_JARPATH: lib/zeebe-hazelcast-exporter.jar
-  ZEEBE_BROKER_EXPORTERS_HAZELCAST_PORT: '{{ zeebe_ports.hazelcast | string }}'
   ZEEBE_BROKER_CLUSTER_CLUSTERNAME: epfl
   ZEEBE_BROKER_CLUSTER_CLUSTERSIZE: "3"
   ZEEBE_BROKER_CLUSTER_REPLICATIONFACTOR: "3"
