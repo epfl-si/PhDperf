@@ -10,7 +10,6 @@
 - name: "Get OpenShift login token"
   delegate_to: localhost
   changed_when: false
-  no_log: true
   shell:
     cmd: oc whoami -t
   register: _oc_whoami
@@ -20,6 +19,7 @@
   shell:
     cmd: |
       docker login {{ openshift_image_registry }} -u unused --password "{{ _oc_whoami.stdout }}"
+      docker pull {{ openshift_image_registry }}/{{ phd_assess_build_namespace }}/{{ image }}:{{ zeebe_version }}
       docker pull {{ openshift_image_registry }}/{{ phd_assess_build_namespace }}/{{ image }}:{{ zeebe_version }}
       docker logout {{ openshift_image_registry }}
   register: _pull_image
