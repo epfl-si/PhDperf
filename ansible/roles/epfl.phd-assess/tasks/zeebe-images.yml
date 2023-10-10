@@ -24,5 +24,5 @@
         - zeebe-promote
   vars:
     promote_image_name: zeebe
-    promote_image_tag: "latest"
+    promote_image_tag: "{{ zeebe_version }}"
     promote_from_namespace: "{{ phd_assess_build_namespace }}"
