@@ -3,12 +3,12 @@
 - name: "Pull Zeebe broker image to the VM"
   import_tasks: _docker_login_and_pull.yml
   vars:
-    image: zeebe-broker
+    image: zeebe
 
 - name: "Zeebe container"
   community.docker.docker_container:
     name: zeebe
-    image: "{{ openshift_image_registry }}/{{ phd_assess_build_namespace }}/zeebe-broker:latest"
+    image: "{{ openshift_image_registry }}/{{ phd_assess_build_namespace }}/zeebe:{{ zeebe_version }}"
     networks:
       - name: "{{ esb_docker_network }}"
     env: >-
