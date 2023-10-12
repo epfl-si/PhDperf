@@ -66,6 +66,9 @@
   include_tasks:
     file: monitoring.yml
     apply:
-      tags: monitoring
+      tags:
+        - monitoring
+        - monitoring.prometheus
   tags:
     - monitoring
+    - monitoring.prometheus
