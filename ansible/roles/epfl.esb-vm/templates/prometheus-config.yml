@@ -20,7 +20,7 @@ scrape_configs:
     static_configs:
       - targets: ['zeebe:9600']
         labels:
-          instance: 'zeebe-broker-0'
+          instance: 'zeebe-0'
           app_instance: prod
           persistence: vm
   - job_name: 'traefik'
