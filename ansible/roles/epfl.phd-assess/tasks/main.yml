@@ -116,6 +116,7 @@
 - name: Monitoring
   tags:
     - monitoring
+    - monitoring.prometheus
     - monitoring-promote
     - monitoring.zeebe-db-monitor
     - monitoring.zeebe-db-monitor.push
