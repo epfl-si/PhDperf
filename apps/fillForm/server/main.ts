@@ -5,6 +5,7 @@ import './methods/ImportScipers'
 import './methods/TaskForm'
 import './methods/ZeebeProcessInstance'
 import './publish'
+import {setIndexes} from "/server/dbSetup";
 import WorkersClient from './zeebe_broker_connector'
 import { PrometheusSource } from '/server/prometheus'
 import Tequila from 'meteor/epfl:accounts-tequila'
@@ -15,6 +16,7 @@ require("dotenv").config({path: findUpSync(".env")})
 
 
 Meteor.startup(() => {
+  setIndexes();
 
   // add custom methods for the devs
   if (Meteor.isDevelopment) {
