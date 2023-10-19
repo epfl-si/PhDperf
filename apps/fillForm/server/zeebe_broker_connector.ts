@@ -2,7 +2,7 @@ import {Meteor} from 'meteor/meteor'
 import {MongoInternals} from "meteor/mongo"
 import {ZeebeSpreadingClient} from "/imports/api/zeebeStatus"
 import {Metrics} from '/server/prometheus'
-import {decrypt} from "/server/encryption"
+import {decrypt, encrypt} from "/server/encryption"
 import debug_ from 'debug'
 import {
   Duration,
@@ -18,6 +18,7 @@ import {
 import {PhDInputVariables} from "/imports/model/tasksTypes";
 import {auditLogConsoleOut} from "/imports/lib/logging";
 import {PhDCustomHeaderShape} from "phd-assess-meta/types/fillForm/headers";
+import {NotificationLog, NotificationStartMessage} from "phd-assess-meta/types/notification";
 
 const debug = debug_('phd-assess:zeebe-connector')
 const auditLog = auditLogConsoleOut.extend('server/zeebe_broker_connector')
@@ -36,6 +37,8 @@ interface PhDZeebeJob<WorkerInputVariables = PhDInputVariables, CustomHeaderShap
 const alreadyDecryptedVariables = [
   'dashboardDefinition',
   'uuid',
+  'notifySubject',
+  'notifyMessage',
 ]
 
 export let zBClient: ZeebeSpreadingClient | null = null
@@ -193,6 +196,8 @@ export default {
 
             if (outcome === PersistOutcome.NEW) {
               Metrics.zeebe.inserted.inc()
+
+              this.replyWithReceipt(job).then( ()=> {} )
             }
 
             // as we had no error, tell Zeebe that we'll think about it, and free ourselves to receive more work
@@ -228,6 +233,8 @@ export default {
       errorMessage: message,
       retryBackOff: 4 // should be optional, but as it is not, set it to default, 4ms
     })
+
+    debug(`Manually failed the job id ${task.key}`)
   },
 
   async publishMessage(params: PublishMessageRequest) {
@@ -272,4 +279,97 @@ export default {
 
     await Tasks.removeAsync({ '_id': task._id })
   },
+
+  async replyWithReceipt(job: PhDZeebeJob) {
+    /*
+      Inform Zeebe that the job is ready to be completed by users, and he can send notifications to them
+      tip: publishStartMessage is idempotent if messageId is set
+     */
+    // only send a receipt for jobs with a recent workflow -> with the needed variables to trigger a notification
+    if (
+      job.variables.uuid &&
+      job.customHeaders.notifyTo &&
+      job.customHeaders.notifySubject &&
+      job.customHeaders.notifyMessage
+    ) {
+
+      // Idempotency check : skip the call for notification if this job elementId has been already sent
+      if (job.variables.notificationLogs) {
+        const hasBeenAlreadySent = job.variables.notificationLogs
+                                      .map( (notificationLog: string) => {
+                                        const log = JSON.parse(notificationLog) as NotificationLog
+                                        return log?.fromElementId
+                                      })
+                                      .includes( job.elementId )
+
+        if (hasBeenAlreadySent) {
+          console.debug('Not sending a call for notification as this element has already been notified')
+          return
+        }
+      }
+
+      debug(`Job ${job.key} is eligible for a notification receipt. Sending the receipt...`)
+
+
+      // as the To, Cc or Bcc can come as string, array of string, and some are empty, let's have
+      // a function that process them correctly. They are all field specifier, not direct values
+      const parseCustomHeadersNotify = (notifyVar: string | string []) => {
+        if (! notifyVar ) return
+
+        if (Array.isArray(notifyVar)) {
+
+          return notifyVar.reduce( (result, fieldSpec) => {
+            // ignore if the field does not exist
+            if (job.variables[fieldSpec]) result.push(encrypt(job.variables[fieldSpec]))
+            return result;
+          }, [] as string[]) ?? undefined
+
+        } else {
+          return job.variables[job.customHeaders.notifyTo] ?
+            encrypt(job.variables[job.customHeaders.notifyTo]) : undefined
+        }
+      }
+
+      // There are no a direct value, but a field specifier inside the variables. So get the field content here
+      const notifyTo = parseCustomHeadersNotify( job.customHeaders.notifyTo )
+
+      const notifyCc = parseCustomHeadersNotify( job.customHeaders.notifyCc )
+
+      const notifyBcc = parseCustomHeadersNotify( job.customHeaders.notifyBCc )
+
+      const notifySubject = job.customHeaders.notifySubject ? encrypt(job.customHeaders.notifySubject) : undefined
+      const notifyMessage = job.customHeaders.notifyMessage ? encrypt(job.customHeaders.notifyMessage) : undefined
+
+      // check message validity before sending to notifier
+      if (!notifyTo) {
+        console.error(`Will not sent a notification receipt, as the 'to' is missing for job ${ job.key }`)
+        return
+      }
+      if (!notifySubject) {
+        console.error(`Will not sent a notification receipt, as the 'subject' is missing for job ${ job.key }`)
+        return
+      }
+      if (!notifyMessage) {
+        console.error(`Will not sent a notification receipt, as the 'message' is missing for job ${ job.key }`)
+        return
+      }
+
+      zBClient!.publishMessage({
+        // to have one idempotent message per fillForm activity task, sign it with the current step
+        messageId: `${ job.elementId }-${ job.variables.uuid }`,
+        correlationKey: job.variables.uuid,
+        name: 'Message_notify',
+        variables: {
+          to: notifyTo,
+          cc: notifyCc,
+          bcc: notifyBcc,
+          subject: notifySubject,
+          message: notifyMessage,
+          fromElementId: encrypt(job.elementId),
+          pdfType: job.customHeaders.pdfType ? encrypt(job.customHeaders.pdfType) : undefined,
+          pdfName: job.customHeaders.pdfName ? encrypt(job.customHeaders.pdfName) : undefined,
+        } as NotificationStartMessage
+      }).then( () => { debug(`Notification receipt sent for Job ${job.key}.`) } )
+    }
+  }
 }
