@@ -1,0 +1,20 @@
+meta {
+  name: Get current doctorants by doctoral acronym
+  type: http
+  seq: 1
+}
+
+get {
+  url: http://{{baseUrl}}/services/v1/doctorants/current/programme
+  body: none
+}
+
+vars:pre-request {
+  doctoralSchoolAcronym: EDAM
+}
+
+script:pre-request {
+  let url = req.getUrl();
+  
+  req.setUrl(url + '/' + bru.getVar('doctoralSchoolAcronym') )
+}
