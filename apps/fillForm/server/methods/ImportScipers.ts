@@ -43,7 +43,13 @@ const enhanceThesisCoDirectors = async (doctorants: DoctorantInfoSelectable[]) =
         if ("email" in doctorant.thesis.coDirecteur && doctorant.thesis.coDirecteur.email) {
           // case : email is not the one we have in our db
           try {
-            doctorants[index].needCoDirectorData = !(await verifyEmailFromSciper(doctorant.thesis.coDirecteur.email, doctorant.thesis.coDirecteur.sciper))
+            // check that the provided epfl email is still up-to-date with the websrv db
+            if (doctorant.thesis.coDirecteur.email.includes('@epfl.ch')) {
+              doctorants[index].needCoDirectorData = !(await verifyEmailFromSciper(doctorant.thesis.coDirecteur.email, doctorant.thesis.coDirecteur.sciper))
+            } else {
+              // for any external email, take it as it is
+              doctorants[index].needCoDirectorData = false
+            }
           } catch (e) {
             // case :  the api for getting the email from sciper is out of service
             doctorants[index].needCoDirectorData = true
