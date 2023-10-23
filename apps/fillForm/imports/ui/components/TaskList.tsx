@@ -17,6 +17,7 @@ import {
 import {toastErrorClosable} from "/imports/ui/components/Toasters";
 import {ITaskList} from "/imports/policy/tasksList/type";
 import {useAccountContext} from "/imports/ui/contexts/Account";
+import {TaskInfo} from "/imports/ui/components/Task/Info";
 
 
 export default function TaskList() {
@@ -75,18 +76,7 @@ const TaskRow = ({ task, user }: { task: ITaskList, user: Meteor.User }) => {
     } }>
       <details>
         <summary className={'d-flex align-items-center'}>
-          <span className={'mr-auto'}>
-            <div className={'mr-2'}>{ task.variables.phdStudentName } {task.variables.phdStudentSciper ? `( ${task.variables.phdStudentSciper} )` : '' }</div>
-            {task.created_at &&
-              <span className={'mr-2 small'}>Created {task.created_at.toLocaleString('fr-CH')}</span>
-            }
-            {task.updated_at &&
-              <span className={'small'}>Updated {task.updated_at.toLocaleString('fr-CH')}</span>
-            }
-            { user && user.isAdmin && task.isObsolete &&
-              <span className={'small ml-2'}>Task is obsolete</span>
-            }
-          </span>
+          <TaskInfo task={ task }/>
           <span className={'small'}>
             <Link className={''} to={`tasks/${task._id}`}>
               <Button
@@ -119,17 +109,12 @@ const TaskRow = ({ task, user }: { task: ITaskList, user: Meteor.User }) => {
                     </Dropdown.Header>
                     <Dropdown.Divider/>
                     { canEditParticipants &&
-                      <Dropdown.Item
-                        className={'small'}
-                        eventKey={ task._id }
-                        onSelect={ (eventKey) => task.variables.uuid &&
-                          navigate(`tasks/${eventKey}/participants/edit`) }
-                      >
-                        { task.variables.uuid ?
-                          <>Edit a participant</> :
-                          <>No UUID to edit participants</>
-                        }
-                      </Dropdown.Item>
+											<Dropdown.Item
+												className={'small'}
+												onSelect={ () => navigate(`workflows/${ task.processInstanceKey  }`) }
+											>
+                        <>Edit workflow</>
+											</Dropdown.Item>
                     }
                     { canRefresh &&
                       <Dropdown.Item
@@ -186,7 +171,7 @@ const refreshProcessInstance = (eventKey: any) => {
       if (error) {
         toastErrorClosable(eventKey, `${error}`)
       } else {
-        toast.success(`Successfully refreshed the process instance by removing it from the app`)
+        toast.success(`Successfully refreshed the process instance. Please wait some time while the new tasks are being created`)
       }
     }
   )

@@ -216,6 +216,20 @@ export default {
     Metrics.zeebe.successes.inc();
   },
 
+  async fail(task: Task, retry: number, message: string) {
+    if (zBClient == null) {
+      throw new Meteor.Error("zeebe disconnected",
+        `The job can not be set to fail if zeebe is not connected`);
+    }
+
+    await zBClient.failJob( {
+      jobKey: task.key,
+      retries: retry,
+      errorMessage: message,
+      retryBackOff: 4 // should be optional, but as it is not, set it to default, 4ms
+    })
+  },
+
   async publishMessage(params: PublishMessageRequest) {
     if (zBClient == null) {
       throw new Meteor.Error("zeebe disconnected",
@@ -223,5 +237,39 @@ export default {
     }
 
     return await zBClient.publishMessage(params)
+  },
+
+  async setTaskToActivateToANewJob(task: Task) {
+    if (zBClient == null) {
+      throw new Meteor.Error("zeebe disconnected",
+        `No task can be activated if zeebe is not connected.`);
+    }
+
+    return await zBClient.modifyProcessInstance({
+      processInstanceKey: task.processInstanceKey,
+      activateInstructions: [{
+        elementId: task.elementId,
+        ancestorElementInstanceKey: "-1",
+         variableInstructions: [],
+      }]
+    })
+  },
+
+  async refreshTask(task: Task) {
+    if (zBClient == null) {
+      throw new Meteor.Error("zeebe disconnected",
+        `No task can be refreshed if zeebe is not connected.`);
+    }
+
+    await this.setTaskToActivateToANewJob(task)
+
+    // fail the old jobs here, or we may get a 'two jobs' for the same element scenario
+    await this.fail(
+      task,
+      0,
+      'Some participants has been changed and a new job as been created. This is a safe fail.'
+    )
+
+    await Tasks.removeAsync({ '_id': task._id })
   },
 }

@@ -52,7 +52,7 @@
     "simpl-schema": "^1.12.0",
     "supports-color": "9.2.3",
     "timed-memoize": "^2.4.2",
-    "zeebe-node": "^8.2.1"
+    "zeebe-node": "^8.2.5"
   },
   "devDependencies": {
     "@testing-library/react": "^14.0.0",
