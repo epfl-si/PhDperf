@@ -34,7 +34,7 @@
               resources:
                 limits:
                   cpu: '100m'
-                  memory: 500M
+                  memory: 1000M
               volumeMounts:
                 - name: data-db
                   mountPath: /data/db
