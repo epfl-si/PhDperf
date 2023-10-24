@@ -12,7 +12,7 @@ import {ImportScipersForSchool, ImportScipersSchoolSelector} from "/imports/ui/c
 import TaskList from "/imports/ui/components/TaskList";
 import {TaskForm} from "/imports/ui/components/TaskForm";
 import {Dashboard} from "/imports/ui/components/Dashboard/Dashboard";
-import {EditParticipants} from "/imports/ui/components/Participant";
+import ViewWorkflow from "/imports/ui/components/Workflow/Show";
 
 import Main from "/imports/ui/Main";
 
@@ -20,11 +20,6 @@ import Main from "/imports/ui/Main";
 function TaskEdit() {
   const {_id} = useParams<{ _id: string }>()
   return <TaskForm _id={_id!}/>
-}
-
-function TaskEditParticipants() {
-  const {_id} = useParams<{ _id: string }>()
-  return <EditParticipants _id={_id!}/>
 }
 
 export const router = createBrowserRouter(
@@ -36,7 +31,10 @@ export const router = createBrowserRouter(
     >
       <Route index element={<TaskList />} />
       <Route path="/dashboard" element={<Dashboard/>}/>
-      <Route path="/tasks/:_id/participants/edit" element={<TaskEditParticipants/>}/>
+      <Route
+        path="/workflows/:processInstanceKey"
+        element={<ViewWorkflow/>}
+      />
       <Route path="/tasks/:_id" element={<TaskEdit/>}/>
       <Route path="/tasks/" element={<Navigate replace to="/" />}/>
       <Route path="/doctoral-programs" element={<DoctoralSchoolsList/>}/>

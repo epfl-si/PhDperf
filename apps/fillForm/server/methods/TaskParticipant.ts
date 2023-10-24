@@ -113,8 +113,16 @@ Meteor.methods({
       variables: _.mapValues(participants, x => x ? encrypt(x) : '' )
     } as PublishMessageRequest)
 
-    Tasks.remove({ '_id': task._id })
+    // all jobs have to be reset
+    const concernedTasks = Tasks.find({
+      processInstanceKey: task.processInstanceKey
+      }
+    )
 
-    auditLog(`Changed the participants of the task ${task._id}. Publish response: ${JSON.stringify(publishResponse)}`)
+    for (const taskForThisProcess of concernedTasks) {
+      await WorkersClient.refreshTask(taskForThisProcess)
+    }
+
+    auditLog(`Changed the participants of the instance ${task.processInstanceKey}. Publish response: ${JSON.stringify(publishResponse)}`)
   },
 })

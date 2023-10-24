@@ -8,6 +8,7 @@ import {
   canStartProcessInstance, canRefreshProcessInstance,
 } from "/imports/policy/tasks";
 import {zBClient} from "/server/zeebe_broker_connector";
+import WorkersClient from '../zeebe_broker_connector';
 import {auditLogConsoleOut} from "/imports/lib/logging";
 
 // load methods from shared js
@@ -106,7 +107,16 @@ Meteor.methods({
       throw new Meteor.Error(403, 'You are not allowed to refresh a process instance')
     }
 
-    auditLog(`Refreshing a process instance ${processInstanceKey} by removing it from Meteor`)
-    Tasks.remove({processInstanceKey: processInstanceKey})
+    auditLog(`Refreshing a process instance ${processInstanceKey} by creating new jobs`)
+
+    // all jobs have to be refreshed
+    const concernedTasks = Tasks.find({
+        processInstanceKey: processInstanceKey
+      }
+    )
+
+    for (const taskForThisProcess of concernedTasks) {
+      await WorkersClient.refreshTask(taskForThisProcess)
+    }
   },
 })

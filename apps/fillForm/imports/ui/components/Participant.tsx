@@ -34,7 +34,7 @@ export const Participant = React.memo(
   </>
 )
 
-export const EditParticipants = ({ _id }: { _id: string }) => {
+export const EditParticipants = ({ processInstanceKey }: { processInstanceKey: string }) => {
   const account = useAccountContext()
 
   const [submitting, setSubmitting] = useState(false)
@@ -44,8 +44,8 @@ export const EditParticipants = ({ _id }: { _id: string }) => {
   const [role, setRole] = useState('')
   const [sciper, setSciper] = useState('')
 
-  const isTaskLoading = useSubscribe('taskDetailed', [_id]);
-  const task = useTracker(() => Tasks.findOne({ '_id': _id}), [_id])
+  const isTaskLoading = useSubscribe('taskDetailed', [processInstanceKey]);
+  const task = useTracker(() => Tasks.findOne({ 'processInstanceKey': processInstanceKey}), [processInstanceKey])
 
   if (!account?.user) return <Loader message={'Loading your data...'}/>
 
@@ -66,13 +66,16 @@ export const EditParticipants = ({ _id }: { _id: string }) => {
   if (isTaskLoading()) return <Loader message={'Loading the task...'}/>
 
   if (!task) {
-    if (hasBeenSubmitted) return <Loader message={'Wait some times, the task is being refreshed'}/>
-    if (!hasBeenSubmitted) return <div>No such task with id: { _id }</div>
+    if (hasBeenSubmitted) {
+      return <Loader message={ 'Wait some times, the task is being refreshed' }/>
+    } else {
+      return <div>No such task with a processInstanceKey: { processInstanceKey }</div>
+    }
   }
 
   if (!task?.variables.uuid) return <div>This task has no uuid and can not be edited</div>
 
-  if (submitting) return <Loader message={'Submitting...'}/>
+  if (submitting) return <Loader message={'Changing a participant...'}/>
 
   const submitParticipantsChanges = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -97,19 +100,6 @@ export const EditParticipants = ({ _id }: { _id: string }) => {
   return <>
       <div>
         <h1 className={'h3'}>Change a participant</h1>
-        <div className="row">
-          {task!.participants &&
-            Object.entries(task!.participants).map(([role, info]) =>
-              <Participant
-                key={ `${task!._id}-${role}` }
-                role={ role }
-                info={ info }
-                isAssignee={ task!.assigneeScipers?.includes(info?.sciper) }
-                showEmail={ true }
-              />
-            )
-          }
-        </div>
       </div>
       <hr/>
       <form id="edit-participants-form" onSubmit={submitParticipantsChanges}>
