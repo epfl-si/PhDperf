@@ -47,12 +47,14 @@ down:
 # for want of enough RAM).
 .PHONY: build-meteor
 build-meteor:
-	docker build -t node-base docker/node-base/
-# Need to go through a Docker network, so as to obtain epfl-sti-react-library
-# out of the on-premise NPM server:
-	docker network inspect phd-assess-meteor-network >/dev/null 2>&1 || \
-           docker network create --driver bridge phd-assess-meteor-network
-	docker build -t phd-assess-meteor --network=phd-assess-meteor-network  .
+	cp ../../docker/node-base/Dockerfile ../../docker/node-base/Dockerfile.bak
+	sed -i 's/^FROM .*ubuntu:focal/FROM ubuntu:focal/' ../../docker/node-base/Dockerfile
+	docker build -t node-base ../../docker/node-base/
+	mv ../../docker/node-base/Dockerfile.bak ../../docker/node-base/Dockerfile
+	cp Dockerfile Dockerfile.bak
+	sed -i 's/^FROM .*node-base:latest/FROM node-base:latest/' Dockerfile
+	docker build -t phd-assess-meteor .
+	mv Dockerfile.bak Dockerfile
 
 .PHONY: push-meteor
 push-meteor:
