@@ -43,8 +43,8 @@ export const HeaderRow = ({doctoralSchool, isAllSelected, disabled} :
       <div className={ `col-2 ${defaultColClasses}` }>Thesis co-director</div>
       <div className={ `col-2 ${defaultColClasses}` }>Mentor</div>
       <div className={ `col-1 ${defaultColClasses}` }>Immatricul. date</div>
-      <div className={ `col-1 ${defaultColClasses}` }>Exam candidature</div>
-      <div className={ `col-1 ${defaultColClasses}` }>Admin these date</div>
+      <div className={ `col-1 ${defaultColClasses}` }>Candidacy exam</div>
+      <div className={ `col-1 ${defaultColClasses}` }>Thesis adm. date</div>
     </div>
   )
 }
