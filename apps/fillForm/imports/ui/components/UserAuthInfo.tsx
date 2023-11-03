@@ -29,17 +29,23 @@ export const UserAuthInfo = () => {
   if (!account || !account.user) return (<Loader></Loader>)
 
   return <>
-    <button ref={buttonRef} onClick={() => setVisibility(!visible)}
-            className="btn btn-secondary dropdown-toggle">
+    <button
+      ref={buttonRef}
+      onClick={() => setVisibility(!visible)}
+      className="btn btn-secondary dropdown-toggle"
+      id={'user-info-button'}
+    >
       <FontAwesomeIcon icon={ account.user.isAdmin ? faUserShield : faUser } />
     </button>
     <Popper relativeTo={buttonRef.current} options={popperOptions} visible={visible}
             onClickElsewhere={() => setVisibility(false)}>
     <div className="dropdown-menu-popper mt-3">
       <div className={'mx-3 my-3'}>
-        <div>
-          Logged in as { account.user.tequila?.displayname }
-          { account.user.isAdmin && ` (admin)` }
+        <div id={'user-info'}>
+          Logged in as <span id={'user-info-displayname'}>{ account.user.tequila?.displayname }</span>
+          { account.user.isAdmin &&
+            <span id={'user-info-status'}> (admin)</span>
+          }
         </div>
         { account.user.isAdmin &&
         <div className={'small'}>
