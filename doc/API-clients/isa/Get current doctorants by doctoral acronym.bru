@@ -5,16 +5,10 @@ meta {
 }
 
 get {
-  url: http://{{baseUrl}}/services/v1/doctorants/current/programme
+  url: http://{{baseUrl}}/services/v1/doctorants/current/programme/{{doctoralSchoolAcronym}}
   body: none
 }
 
 vars:pre-request {
-  doctoralSchoolAcronym: EDAM
-}
-
-script:pre-request {
-  let url = req.getUrl();
-  
-  req.setUrl(url + '/' + bru.getVar('doctoralSchoolAcronym') )
+  doctoralSchoolAcronym: EDCB
 }
