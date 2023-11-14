@@ -119,9 +119,9 @@ export const DashboardContent = ({ definitionForHeader, tasks, headerKey }: {
       <DashboardHeader key={ `header_${ headerKey }`} definition={ definitionForHeader } headerKey={ headerKey }/>
       {
         Object.keys(groupByWorkflowInstanceTasks).map(
-          (taskGrouper: string) => <DashboardRow
-            key={ taskGrouper }
-            workflowInstanceTasks={ groupByWorkflowInstanceTasks[taskGrouper] }
+          (tasksGrouper: string) => <DashboardRow
+            key={ tasksGrouper }
+            workflowInstanceTasks={ groupByWorkflowInstanceTasks[tasksGrouper] }
           />
         )
       }

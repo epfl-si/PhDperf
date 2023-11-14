@@ -47,17 +47,17 @@ export class fillFormAppPageBase {
 
     //this.tasks = this.page.getByRole('button', {name: 'Proceed'});
     this.tasks = this.page
-      .locator('.tasksListEntry')
+      .locator('.task')
 
     this.tasksAssign = this.page
-     .locator('.taskGrouper')
+     .locator('.tasksGrouper')
      .filter({ has: page.getByRole('heading', {name: 'Assigning participants'}) })
-     .locator('.tasksListEntry');
+     .locator('.task');
 
     this.tasksToBeCompleted_1_2 = this.page
-      .locator('.taskGrouper')
+      .locator('.tasksGrouper')
       .filter({ has: page.getByRole('heading', {name: 'Annual report to be completed part 1 of 2'}) })
-      .locator('.tasksListEntry');
+      .locator('.task');
 
     this.submitButton = page
       .getByRole('button', {name: 'Submit'});

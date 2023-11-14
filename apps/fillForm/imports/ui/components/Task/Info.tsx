@@ -9,7 +9,17 @@ export const TaskInfo = ({ task, showPhDStudent=true }: { task: ITaskList, showP
   return <>
       <span className={'mr-auto'}>
         { showPhDStudent &&
-          <div className={'mr-2'}>{ task.variables.phdStudentName } {task.variables.phdStudentSciper ? `( ${task.variables.phdStudentSciper} )` : '' }</div>
+          <div className={'task-phdstudent-info mr-2'}>
+            <span className={ 'task-phdstudent-name' }>
+              { task.variables.phdStudentName }
+            </span> {
+              task.variables.phdStudentSciper && <>
+              ( <span className={ 'task-phdstudent-sciper' }>
+                  { task.variables.phdStudentSciper }
+                </span> )
+              </>
+            }
+          </div>
         }
         {task.created_at &&
           <span className={'mr-2 small'}>Created {task.created_at.toLocaleString('fr-CH')}</span>
