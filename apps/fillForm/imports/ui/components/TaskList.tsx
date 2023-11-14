@@ -45,11 +45,18 @@ export default function TaskList() {
         <>
           {tasks.length > 0 ?
             Object.keys(groupByTasks).map((taskGrouper: string) => (
-              <div key={taskGrouper}>
+              <div
+                className={'taskGrouper'}
+                key={ taskGrouper }
+              >
                 <h3 className={'mt-5'}>{taskGrouper}</h3>
                 {
                   groupByTasks[taskGrouper].map((task) =>
-                    <TaskRow key={task._id} task={task} user={ account.user! }/>
+                    <TaskRow
+                      key={ task._id }
+                      user={ account.user! }
+                      task={ task }
+                    />
                   )
                 }
               </div>
@@ -71,9 +78,14 @@ const TaskRow = ({ task, user }: { task: ITaskList, user: Meteor.User }) => {
   const canEditParticipants = user && canEditParticipantsCheck(user)
 
   return (
-    <div className={'border-top p-2'} style={ {
-      ...((user && user.isAdmin && task.isObsolete) && {backgroundColor: 'WhiteSmoke'})
-    } }>
+    <div
+      data-id={ task._id }
+      data-process-instance={ task.processInstanceKey }
+      className={'tasksListEntry border-top p-2'}
+      style={ {
+        ...((user && user.isAdmin && task.isObsolete) && {backgroundColor: 'WhiteSmoke'})
+      } }
+    >
       <details>
         <summary className={'d-flex align-items-center'}>
           <TaskInfo task={ task }/>
