@@ -39,11 +39,11 @@ interface PersonInfo {
   username: string
 }
 
-interface GetPersonGoodResult {
+export interface GetPersonGoodResult {
   result: PersonInfo
 }
 
-export async function getUserInfo (sciper: string | number): Promise<PersonInfo> {
+export async function getUserInfo (sciper: string | number): Promise<PersonInfo | undefined> {
   const app = 'phd-assess'
   const caller = '000000'
   const password = process.env.WEBSRV_PASSWORD
@@ -64,20 +64,43 @@ export async function getUserInfo (sciper: string | number): Promise<PersonInfo>
     }
   );
 
-  const jsonResponse = await response.json()
+  let jsonResponse: any
+
+  try {
+    jsonResponse = await response.json()
+  } catch (e: any) {  // can't json decode the result ? hhmmmm not good
+    console.warn(
+      `${ server } has returned a bad result for ${ sciper }.`,
+      `Nothing is returned/cached as a result.`,
+      `Error was: ${response.text}.`)
+    return
+  }
 
   if ('error' in jsonResponse) {
-    // not working as expected, transorm it to an error so we can catch it later
+    // not working as expected, transform it to an error, so we can catch it later
     const badJsonResponse = jsonResponse as GetPersonBadResult
-    throw new Error(badJsonResponse.error.text)
+    console.warn(
+      `${ server } has returned a bad result for ${ sciper }.`,
+      `Nothing is returned/cached as a result.`,
+      `Error was: ${badJsonResponse.error.text}.`)
+    return
   }
+
   const goodJsonResponse = jsonResponse as GetPersonGoodResult
-  debug(`response for the user info fetch ${sciper} : ${JSON.stringify(goodJsonResponse)}`)
+  debug(`response for the user info fetch ${ sciper } : ${JSON.stringify(goodJsonResponse)}`)
   return goodJsonResponse.result
 }
 
 // keep users info in memory for 24 hours
-export const getUserInfoMemoized = memoize(getUserInfo, {timeout: 86400000, hot:false})
+export const getUserInfoMemoized = memoize(
+  getUserInfo, {
+    timeout: 86400000,
+    hot:false,
+    // getUserInfo should return undefined when something wrong is going on,
+    // so we can invalidate the cache
+    discardUndefined: true,
+  }
+)
 
 /*
  * Transform outputting Meteor Participants into Zeebe Variables

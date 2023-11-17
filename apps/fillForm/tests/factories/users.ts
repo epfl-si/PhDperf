@@ -12,7 +12,7 @@ const groupsAll = [
   "PhD-annual-report-admin"
 ]
 
-const createRandomUser = () => {
+export const createRandomUser = () => {
   const sciper = faker.sciper();
   const sex = faker.name.sexType();
   const firstName = faker.name.firstName(sex);
