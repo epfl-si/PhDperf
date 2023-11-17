@@ -6,6 +6,8 @@ export const fetchTimeout = (url: string, ms: number, signal: AbortSignal, optio
 
   const promise = fetch(
     url, {
+      // signal is tricky to get typescripted, let's ignore for a moment
+      // @ts-ignore
       signal: controller.signal,
       ...options
     });
