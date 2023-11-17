@@ -98,7 +98,7 @@ export class fillFormAppPageBase {
    * Form
    */
 
-  async fillAssigningParticipant(PhDStudentSciper: string | undefined) {
+  async fillAssigningParticipant() {
 
     await this.page
       .getByLabel('Program assistant sciper').click();
@@ -128,7 +128,7 @@ export class fillFormAppPageBase {
       .getByLabel('Doctoral candidate sciper').click();
     await this.page
       .getByLabel('Doctoral candidate sciper')
-      .fill(PhDStudentSciper ?? process.env.PARTICIPANT_PHD_STUDENT ?? '111111');
+      .fill(process.env.PARTICIPANT_PHD_STUDENT ?? '111111');
 
     await this.page
       .getByLabel('Thesis director sciper').click();

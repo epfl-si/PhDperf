@@ -65,28 +65,50 @@ test.describe('Tasks listing', () => {
 });
 
 test.describe('Form', () => {
-  test('I can fulfill assigning participant with success',
-  async () => {
-    await expect(userApp.tasksAssign).toHaveCount(1);
 
-    await userApp.proceedToLastTask();
+  test('I can progress a task', async () => {
 
-    await expect(userApp.submitButton).toBeDisabled()
+    await test.step('I can assign participants', async () => {
 
-    expect(process.env.CONNECT_AS_SCIPER).toBeDefined()
+      await expect(userApp.tasksAssign).toHaveCount(1);
+      await userApp.proceedToLastTask();
 
-    await userApp.fillAssigningParticipant(process.env.CONNECT_AS_SCIPER!);
+      await expect(userApp.submitButton).toBeDisabled()
 
-    await expect(userApp.submitButton).not.toBeDisabled();
+      await userApp.fillAssigningParticipant();
 
-    await userApp.submitButton.click();
+      await expect(userApp.submitButton).not.toBeDisabled();
 
-    await expect(userApp.page.getByRole('button', { name: 'Back' })).toBeVisible();
+      await userApp.submitButton.click();
+      await expect(userApp.page.getByRole('button', { name: 'Back' })).toBeVisible();
+      await userApp.page.getByRole('button', { name: 'Back' }).click();
 
-    await userApp.page.getByRole('button', { name: 'Back' }).click();
+      await userApp.page.waitForURL('/');
+    });
 
-    await userApp.page.waitForURL('/');
+    await test.step('I got a new task after assigning participants', async () => {
+      const connectedAs = process.env.CONNECT_AS_SCIPER
+      const assignedTo = process.env.PARTICIPANT_PHD_STUDENT
 
-    await expect(userApp.tasksToBeCompleted_1_2).toHaveCount(1, { timeout: 20*1000 })
+      expect(
+        connectedAs &&
+        assignedTo &&
+        connectedAs == assignedTo,
+      `As the task has been assigned to the student ${ assignedTo },
+       you have to log with this sciper to make the next step valid. Currently connected as: ${ connectedAs }`
+      ).toBeTruthy()
+
+      await expect(userApp.tasksToBeCompleted_1_2).toHaveCount(1, { timeout: 20*1000 })
+
+      const studentName = userApp.tasksToBeCompleted_1_2.first()
+        .locator('.task-phdstudent-name');
+      await expect(studentName).not.toBeEmpty();
+
+      const studentSciper = userApp.tasksToBeCompleted_1_2.first()
+        .locator('.task-phdstudent-sciper');
+
+      await expect(studentSciper).not.toBeEmpty();
+    });
+
   });
 });
