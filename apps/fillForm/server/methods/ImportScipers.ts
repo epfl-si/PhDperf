@@ -19,13 +19,13 @@ import path from 'path'
 const debug = require('debug')('server/methods/ImportScipers')
 
 /*
- * Thesis co directors can have
+ * Thesis co-directors can have
  *   - a "wrong" sciper value (that is unknown / obsolete)
  *   - no value at all
  *   - good values (sciper + email)
  * this method try to fetch information about that, and clean the data accordingly
- * by cleaning, we means, at the end, we have :
- *   - coDirecteur = null -> no need for a codirector
+ * by cleaning, we mean, at the end, we have :
+ *   - coDirecteur = null -> no need for a co-director
  *   - coDirecteur = {} -> we need someone to add the values
  *   - coDirecteur = {...coDirecteurInfo} -> all good
  */
@@ -33,6 +33,9 @@ const enhanceThesisCoDirectors = async (doctorants: DoctorantInfoSelectable[]) =
   const verifyEmailFromSciper = async (email: string, sciper: string) => {
     if (email && sciper) {
       const userInfo = await getUserInfoMemoized(sciper)
+
+      if (!userInfo) throw new Error('Fetch user api is out of service')
+
       return email === userInfo.email
     }
   }
@@ -290,6 +293,11 @@ Meteor.methods({
 
     if (!doctoralSchool) throw new Meteor.Error(500, `The doctoral school does not exist anymore`)
     const programDirector = await getUserInfoMemoized(doctoralSchool.programDirectorSciper)
+    // check the user api is working as intended
+    if (!programDirector) throw new Meteor.Error(
+      500,
+      `Unable to fetch user information for the program director ( ${ doctoralSchool.programDirectorSciper } )`
+    )
 
     // set the loading status
     const query = { doctoralSchoolAcronym: doctoralSchoolAcronym, }
