@@ -77,6 +77,10 @@ body .breadcrumb-container::before {
   z-index: 2;
 }
 
+.epfl-formio-component-textarea-large textarea {
+  height: 400px !important;
+}
+
 .field-required::after {
   position: relative;
   z-index: 10;
