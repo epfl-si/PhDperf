@@ -24,7 +24,7 @@ esb_ssh_tunnels:
     prometheus:
       via: 22223
 
-zeebe_version: '8.2.17'
+zeebe_version: '8.2.18'
 
 # The rendezvous port for Zeebe API connections (to use by clients and k8s services)
 zeebe_ports:
