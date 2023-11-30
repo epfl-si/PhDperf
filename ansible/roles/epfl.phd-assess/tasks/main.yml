@@ -30,6 +30,10 @@
         tags: zeebe
   tags:
     - zeebe
+    - zeebe-ha
+    - zeebe-ha-0
+    - zeebe-ha-1
+    - zeebe-ha-2
 
 - name: "{{ zeebe_gateway_servicename }} Service"
   tags: zeebe

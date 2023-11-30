@@ -7,27 +7,6 @@
 - tags: always
   include_vars: common-k8s-vars.yml
 
-- import_tasks: _zeebe-k8s-broker.yml
-  vars:
-    node_id: 1
-    data_volume:
-      persistentVolumeClaim:
-        claimName: "{{ volume_zeebe_name }}"
-    peers:
-      - "zeebe-quorum-2:{{ zeebe_ports.quorum }}"
-      - "zeebe-quorum-0:{{ zeebe_ports.quorum }}"
-
-- import_tasks: _zeebe-k8s-broker.yml
-  vars:
-    node_id: 2
-    data_volume:
-      emptyDir: {}
-    peers:
-      - "zeebe-quorum-1:{{ zeebe_ports.quorum }}"
-      - "zeebe-quorum-0:{{ zeebe_ports.quorum }}"
-  # Use `--skip-tags zeebe-ha` to only restart broker #1:
-  tags: zeebe-ha
-
 # Node 0 is on Kubernetes only for the test namespace
 # (in prod, it lives on the VM for persistence diversity)
 - import_tasks: _zeebe-k8s-broker.yml
@@ -42,8 +21,32 @@
       - "zeebe-quorum-1:{{ zeebe_ports.quorum }}"
   tags:
     - zeebe-ha
-    # Use `--skip-tags zeebe-ha` to only restart broker #1 and #2:
     - zeebe-ha-0
+
+- import_tasks: _zeebe-k8s-broker.yml
+  vars:
+    node_id: 1
+    data_volume:
+      persistentVolumeClaim:
+        claimName: "{{ volume_zeebe_name }}"
+    peers:
+      - "zeebe-quorum-0:{{ zeebe_ports.quorum }}"
+      - "zeebe-quorum-2:{{ zeebe_ports.quorum }}"
+  tags:
+    - zeebe-ha
+    - zeebe-ha-1
+
+- import_tasks: _zeebe-k8s-broker.yml
+  vars:
+    node_id: 2
+    data_volume:
+      emptyDir: {}
+    peers:
+      - "zeebe-quorum-0:{{ zeebe_ports.quorum }}"
+      - "zeebe-quorum-1:{{ zeebe_ports.quorum }}"
+  tags:
+    - zeebe-ha
+    - zeebe-ha-2
 
 - name: Quorum Services
   openshift:
