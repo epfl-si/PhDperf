@@ -105,6 +105,8 @@ const TaskRow = ({ task, user }: { task: ITaskList, user: Meteor.User }) => {
                     style={{
                       height: '2.5em',
                       padding: '0',
+                      paddingLeft: '0.2em',
+                      paddingRight: '0.2em',
                     }}
                   >⋮
                   </Dropdown.Toggle>
