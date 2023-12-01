@@ -5,6 +5,12 @@
   vars:
     image: zeebe
 
+- name: "Raft directory for the Zeebe container"
+  file:
+    state: directory
+    path: "{{ toplevel_state_dir }}/zeebe-data/raft-partition"
+    mode: "01777"
+
 - name: "Zeebe container"
   community.docker.docker_container:
     name: zeebe
