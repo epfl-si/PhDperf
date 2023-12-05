@@ -14,6 +14,7 @@ import {DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 import {fetchTimeout} from "/imports/lib/fetchTimeout";
 import AbortController from "abort-controller";
 import path from 'path'
+import crypto from "node:crypto";
 
 
 const debug = require('debug')('server/methods/ImportScipers')
@@ -358,6 +359,7 @@ Meteor.methods({
           created_at: encrypt(new Date().toJSON()),
           created_by: encrypt(user!._id),
           updated_at: encrypt(new Date().toJSON()),
+          uuid: crypto.randomUUID(),
         })
       ))
     })
