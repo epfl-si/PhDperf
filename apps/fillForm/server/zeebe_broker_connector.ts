@@ -311,14 +311,15 @@ export default {
       debug(`Job ${job.key} is eligible for a notification receipt. Sending the receipt...`)
 
 
-      // as the To, Cc or Bcc can come as string, array of string, and some are empty, let's have
-      // a function that process them correctly. They are all field specifier, not direct values
-      const parseCustomHeadersNotify = (notifyVar: string | string []) => {
+      // as the To, Cc or Bcc can come as string, a string of array of string (!, yep that's something like that : "[email1, email2]"), and
+      // some are empty, let's have a function that process them correctly. They are all field specifier, not direct values
+      const parseCustomHeadersNotify = (notifyVar: string) => {
         if (! notifyVar ) return
 
-        if (Array.isArray(notifyVar)) {
+        if (/^\[.*\]$/.test(notifyVar)) {
+          const array = notifyVar.slice(1, -1).split(',').map(item => item.trim());
 
-          return notifyVar.reduce( (result, fieldSpec) => {
+          return array.reduce( (result, fieldSpec) => {
             // ignore if the field does not exist
             if (job.variables[fieldSpec]) result.push(encrypt(job.variables[fieldSpec]))
             return result;
