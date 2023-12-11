@@ -79,28 +79,63 @@ const StepPending = ({step, task }: {step: Step, task: ITaskDashboard }) => {
  * Return the good color/text step, for a given workflowInstanceTasks and his dashboard steps definition
  */
 export const DashboardRenderedStep = (
-  { step, workflowInstanceTasks, stepDefinition }: { step: Step, workflowInstanceTasks: ITaskDashboard[], stepDefinition: Graph }
+  { step, workflowInstanceTasks, stepDefinition }:
+    { step: Step, workflowInstanceTasks: ITaskDashboard[], stepDefinition: Graph }
 ) => {
+  // the best to identify if we have a new generation of task is to see if they have their dashboard definition variable set.
+  // that's not ideal, I know, but the only way to move forward prod. right now
+  const isV2 = workflowInstanceTasks[0].variables.dashboardDefinition ?? false
+
+  // for latter use, to manage the knownAs
+  let mappedIdKnownAs: { [key: string]: string } = {}
+
   // custom content don't need any logic, go for it directly
-  if (step.customContent !== undefined) return <StepFixedContent step={ step }>{ step.customContent }</StepFixedContent>
+  if (step.customContent !== undefined)
+    return <StepFixedContent step={ step }>{ step.customContent }</StepFixedContent>
 
   // two main cases to manage: this is a step which a task exist, or one without a task
   // 1. get the task concerned by the current step:
-  const task = workflowInstanceTasks.find(t =>
-    t.elementId === step.id
+  const task = workflowInstanceTasks.find(
+    t => t.elementId === step.id
   )
 
   if (task) {  // task exists. It can only be a pending then
     return <StepPending step={ step } task={ task }/>
   } else {  // no task cases. Let's find if it is done, not-done, or with a custom content
-    // has this step an alias ?, meaning we have may have his color from another task
-    if (step.knownAs) {
-      const taskAliased = workflowInstanceTasks.find(t =>
-        t.elementId === step.knownAs
-      )
-      if (taskAliased) {
-        return <StepPending step={ step } task={ taskAliased }/>
+
+    if (isV2) {  // V2 has some special cases
+
+      // the mentor became a task that spans his lifetime trough near all the workflow
+      if (step.id === 'Activity_Post_Mentor_Meeting_Mentor_Signs') {
+
+        // is the phdFills going on ?
+        const phdFills = workflowInstanceTasks.find(
+          t => t.elementId === 'Activity_PHD_fills_annual_report'
+        )
+
+        return phdFills ?
+          <StepNotDone step={ step }/> :
+          <StepDone step={ step }/>
       }
+
+      // has this step an alias ?, meaning his color can come from another task
+      if (step.knownAs) {
+        const taskAliased = workflowInstanceTasks.find(
+          t => step.knownAs!.includes(t.elementId)
+        )
+
+        if (taskAliased) {
+          return <StepPending step={ step } task={ taskAliased }/>
+        }
+      }
+
+      // As we have to manage knownAs in the tree later too, for the task that has to be marked as Done,
+      // o prepare yourself to convert the aliased id to the original one with this new structure
+      workflowInstanceTasks[0].variables.dashboardDefinition.forEach( (step: Step ) => {
+        step.knownAs?.forEach(knownId => {
+          mappedIdKnownAs[knownId] = step.id;
+        });
+      });
     }
 
     // we want a deactivated content if the asked field is missing.
@@ -110,21 +145,19 @@ export const DashboardRenderedStep = (
         return <StepFixedContent step={ step }>{ null }</StepFixedContent>
     }
 
-    // we want a done / not-done if the field is missing
-    if (step.switchOnField) {
-      if (workflowInstanceTasks[0].variables[step.switchOnField]) {
-        return <StepDone step={ step }/>
-      } else {
-        return <StepNotDone step={ step }/>
-      }
-    }
-
     // Now, as:
     // - there is no task
     // - we do not depend on any field
     // let's define if we are before the pending(s) (meaning we are 'done') or after (meaning 'not-done')
-    // we parse the graph tree of parent-children to get this answer
-    const listPendingSteps = workflowInstanceTasks.map(t => t.elementId);
+    // we parse the graph tree of parent-children to get this answer.
+    const listPendingStepsAliased = workflowInstanceTasks.map(t => t.elementId);
+
+    const listPendingSteps =
+      listPendingStepsAliased.map(
+        ( step ) => Object.keys( mappedIdKnownAs ).includes(step) ?
+          mappedIdKnownAs[step] :
+          step
+      )
 
     // check if we are sibling of any
     const siblingEdges = stepDefinition.getSiblings(step.id)

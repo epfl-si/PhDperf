@@ -4,14 +4,32 @@ const dbCleaner = require("meteor/xolvio:cleaner");
 const Factory = require("meteor/dburles:factory").Factory
 
 import {getContainerV2} from "/tests/client/dashboard/utils";
-import {
-  setCoDirectorFillsAttributes, setCollabReviewAttributes, setDirectorFillsAttributes,
-  setMentorSignsAttributes,
-  setPHDFills1Attributes,
-  setPHDFills2Attributes
-} from "/tests/factories/dashboard/tasksFactoryV2";
+import * as V2Factory from "/tests/factories/dashboard/tasksFactoryV2";
 import {stepsDefinitionV2} from "/tests/factories/dashboard/dashboardDefinition";
 import {generateAGenericTaskAttributes} from "/tests/factories/task";
+
+
+const activityShort = {
+  phdFills: "Activity_PHD_fills_annual_report",
+
+  mentorFills: "Activity_Post_Mentor_Meeting_Mentor_Signs",
+  dirFills: "Activity_Thesis_Director_fills_annual_report",
+  coDirFills: "Activity_Thesis_Co_Director_fills_annual_report",
+
+  collabReview: "Activity_Thesis_Director_Collaborative_Review_Signs",
+
+  phdSigns: "Activity_PHD_Signs",
+
+  programDirSignsExceedAndDisagree: "Activity_Program_Director_Signs_Exceed_And_Disagree",
+  programDirSignsUnsatisfactoryAndDisagree: "Activity_Program_Director_Signs_Unsatisfactory_And_Disagree",
+  programDirSignsNeedsImprovementsAndDisagree: "Activity_Program_Director_Signs_Needs_Improvement_And_Disagree",
+  programDirSignsNeedsImprovementsOrUnsatisfactoryAndDisagree: "Activity_Program_Director_Signs_Needs_Improvement_And_Disagree",
+
+  // unused anymore
+  dirSigns: "Activity_Thesis_Director_Signs",
+  coDirSigns: "Activity_Thesis_Co_Director_Signs",
+  thesisSigns: "Activity_Post_Mentor_Meeting_PHD_Signs",
+}
 
 
 beforeEach(async function () {
@@ -19,241 +37,395 @@ beforeEach(async function () {
 });
 
 describe('Dashboard Steps render V2 steps', function (){
+
   it('should render custom content (content case)', async function (){
     // for the test to do well, the step need an empty parent
     assert.isDefined(stepsDefinitionV2.filter(
-      s => s.id === 'Activity_Thesis_Co_Director_Signs'
+      s => s.id === activityShort.coDirSigns
     )[0].customContent)
 
     // take any, it does not matter
-    Factory.create('task', setPHDFills1Attributes());
+    Factory.create('task', V2Factory.setPHDFillsAttributes());
 
     const container = await getContainerV2()
 
     assert.lengthOf(
-      container.querySelectorAll('[data-step="Activity_Thesis_Co_Director_Signs"][data-step-status="custom-content"]'),
+      container.querySelectorAll(`[data-step=${ activityShort.coDirSigns }][data-step-status="custom-content"]`),
       1,
       `${ container.innerHTML }`);
   });
 
+  it('should render the first step as pending,' +
+    ' the others empty', async function (){
 
-  it('should render the floating case step as awaiting, others can be anything (floating case)', async function (){
-    // for the test to do well, the step need an empty parent
-    assert.isNotTrue(stepsDefinitionV2.filter(
-      s => s.id === 'Activity_Post_Mentor_Meeting_Mentor_Signs'
-    )[0].parents)
-
-    Factory.create('task', setMentorSignsAttributes());
-
-    const container = await getContainerV2()
-
-    assert.lengthOf(
-      container.querySelectorAll('[data-step="Activity_Post_Mentor_Meeting_Mentor_Signs"][data-step-status="awaiting"]'),
-      1,
-      `${ container.innerHTML }`);
-  });
-
-  it('should render the floating case step as done, others can be anything (floating case)', async function (){
-    // for the test to do well, the step need an empty parent
-    assert.isNotTrue(stepsDefinitionV2.filter(
-      s => s.id === 'Activity_Post_Mentor_Meeting_Mentor_Signs'
-    )[0].parents)
-
-    // get any, but set the awaited field to a value
-    const oneInstanceWithMentorDate= generateAGenericTaskAttributes()
-    // @ts-ignore
-    oneInstanceWithMentorDate.variables.mentorDate = '123'
-
-    Factory.create('task', setCollabReviewAttributes(oneInstanceWithMentorDate));
-
-    const container = await getContainerV2()
-
-    assert.lengthOf(
-      container.querySelectorAll('[data-step="Activity_Post_Mentor_Meeting_Mentor_Signs"][data-step-status="done"]'),
-      1,
-      `${ container.innerHTML }`);
-  });
-
-  it('should render the first step as awaiting, for the step having an alias (alias case)', async function (){
-    Factory.create('task', setPHDFills1Attributes());
-
-    const container = await getContainerV2()
-
-    // first should be 'awaiting'
-    assert.lengthOf(
-      container.querySelectorAll('[data-step="Activity_PHD_fills_annual_report_1"][data-step-status="awaiting"]'),
-      1,
-      `${ container.innerHTML }`);
-
-    const shouldBeNotDoneList = [
-      'Activity_Thesis_Co_Director_fills_annual_report',
-      'Activity_Thesis_Director_fills_annual_report',
-      'Activity_Thesis_Director_Collaborative_Review_Signs',
-    ]
-
-    // should be 'not-done'
-    shouldBeNotDoneList.forEach( activity =>
-      assert.lengthOf(
-        container.querySelectorAll(
-          `[data-step='${activity}'][data-step-status='not-done']`
-        ),
-        1,
-        `${ container.innerHTML }`
-      )
-    )
-  });
-
-  it('should render the first step as awaiting,' +
-    ' for the step being aliased (alias case)', async function (){
-
-    // assert aliases are set
-    assert.isNotEmpty(stepsDefinitionV2.filter(
-      s => s.id === 'Activity_PHD_fills_annual_report_1' &&
-        s.knownAs
-    ))
-
-    Factory.create('task', setPHDFills2Attributes());
+    Factory.create('task', V2Factory.setPHDFillsAttributes());
 
     const container = await getContainerV2()
 
     // first should be 'awaiting'
     assert.lengthOf(
       container.querySelectorAll(
-        '[data-step="Activity_PHD_fills_annual_report_1"][data-step-status="awaiting"]'
+        `[data-step=${ activityShort.phdFills }][data-step-status="awaiting"]`
       ),
       1,
       `${ container.innerHTML }`);
 
-    const shouldBeDoneList = [
-      'Activity_Thesis_Co_Director_fills_annual_report',
-      'Activity_Thesis_Director_fills_annual_report',
-    ]
-
-    // should be 'not-done'
-    shouldBeDoneList.forEach( activity =>
-      assert.lengthOf(
-        container.querySelectorAll(
-          `[data-step='${activity}'][data-step-status='done']`
-        ),
-        1,
-        `${ container.innerHTML }`
-      )
-    )
-
     assert.lengthOf(
       container.querySelectorAll(
-        `[data-step='Activity_Thesis_Director_Collaborative_Review_Signs'][data-step-status='not-done']`
+        `[data-step-status='not-done']`
       ),
-      1,
+      6,
       `${ container.innerHTML }`
     )
   });
 
-  it('should render the first step as awaiting,' +
-    ' while having some other task going one (alias case)', async function (){
-    const oneInstance = generateAGenericTaskAttributes()
-    Factory.create('task', setPHDFills2Attributes(oneInstance));
-    Factory.create('task', setCoDirectorFillsAttributes(oneInstance));
-    Factory.create('task', setDirectorFillsAttributes(oneInstance));
+  describe('Special case : the dir / codir tasks. They are parallel.', function () {
 
-    const shouldBeAwaitingList = [
-      'Activity_PHD_fills_annual_report_1',
-      'Activity_Thesis_Co_Director_fills_annual_report',
-      'Activity_Thesis_Director_fills_annual_report',
-    ]
+    it('should render the codir task as pending,' +
+      ' phd fill and dir fill being done, the others empty', async function () {
 
-    const container = await getContainerV2()
+      const oneInstance = generateAGenericTaskAttributes()
+      Factory.create('task', V2Factory.setCoDirectorFillsAttributes(oneInstance));
 
-    // should be 'awaiting'
-    shouldBeAwaitingList.forEach( activity =>
+      const container = await getContainerV2()
+
       assert.lengthOf(
         container.querySelectorAll(
-          `[data-step='${activity}'][data-step-status='awaiting']`
+          `[data-step=${ activityShort.coDirFills }][data-step-status="awaiting"]`
         ),
         1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.phdFills }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.dirFills }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step-status='not-done']`
+        ),
+        3,
         `${ container.innerHTML }`
       )
-    )
+    });
 
-    assert.lengthOf(
-      container.querySelectorAll(
-        `[data-step-status='awaiting']`
-      ),
-      3,
-      `${ container.innerHTML }`
-    )
+    it('should render the dir task as pending,' +
+      ' phd fill and co-dir fill being done, the others empty', async function () {
 
-    assert.lengthOf(
-      container.querySelectorAll(
-        `[data-step='Activity_Thesis_Director_Collaborative_Review_Signs'][data-step-status='not-done']`
-      ),
-      1,
-      `${ container.innerHTML }`
-    )
+      const oneInstance = generateAGenericTaskAttributes()
+      Factory.create('task', V2Factory.setDirectorFillsAttributes(oneInstance));
+
+      const container = await getContainerV2()
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.dirFills }][data-step-status="awaiting"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.phdFills }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.coDirFills }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step-status='not-done']`
+        ),
+        3,
+        `${ container.innerHTML }`
+      )
+    });
+
+    it('should render without the codir, the dir task as pending,' +
+      ' phd fill being done, the others empty', async function () {
+
+      const oneInstance = generateAGenericTaskAttributes(false)
+      Factory.create('task', V2Factory.setDirectorFillsAttributes(oneInstance));
+
+      const container = await getContainerV2()
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.dirFills }][data-step-status="awaiting"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.phdFills }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.coDirFills }][data-step-status="custom-content"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step-status='not-done']`
+        ),
+        3,
+        `${ container.innerHTML }`
+      )
+    });
+
+    it('should render the two parallels as done', async function () {
+
+      Factory.create('task', V2Factory.setCollabReviewAttributes());
+
+      const container = await getContainerV2()
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.dirFills }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.coDirFills }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.collabReview }][data-step-status="awaiting"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step-status='not-done']`
+        ),
+        2,
+        `${ container.innerHTML }`
+      )
+    });
   });
 
-  it('should render the first step as done,' +
-    ' while having the aliased task (alias case)', async function (){
-    const oneInstance = generateAGenericTaskAttributes()
-    Factory.create('task', setCoDirectorFillsAttributes(oneInstance));
-    Factory.create('task', setDirectorFillsAttributes(oneInstance));
+  describe('Special case : the Mentor task. Lifespan of the task is workflow wide.', function () {
 
-    const shouldBeAwaitingList = [
-      'Activity_Thesis_Co_Director_fills_annual_report',
-      'Activity_Thesis_Director_fills_annual_report',
-    ]
+    it( 'should render the mentor as empty box when PhDFills is going on', async function () {
+      // yep, phdfills means mentor is still not created
 
-    const container = await getContainerV2()
+      Factory.create('task', V2Factory.setPHDFillsAttributes());
 
-    assert.lengthOf(
-      container.querySelectorAll(
-        '[data-step="Activity_PHD_fills_annual_report_1"][data-step-status="done"]'
-      ),
-      1,
-      `${ container.innerHTML }`
-    );
+      const container = await getContainerV2()
 
-    // should be 'awaiting'
-    shouldBeAwaitingList.forEach( activity =>
       assert.lengthOf(
         container.querySelectorAll(
-          `[data-step='${activity}'][data-step-status='awaiting']`
+          `[data-step=${ activityShort.phdFills }][data-step-status="awaiting"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.mentorFills }][data-step-status="not-done"]`
         ),
         1,
         `${ container.innerHTML }`
       )
-    )
+    });
+
+    it( 'should render the mentor as done when PhDFills is done and the mentor does not exist', async function () {
+      const oneInstance = generateAGenericTaskAttributes()
+      Factory.create('task', V2Factory.setPHDSignsAttributes(oneInstance));  // using a child task of phd makes phd task done
+
+      const container = await getContainerV2()
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.phdFills }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.mentorFills }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`
+      )
+    });
+
+    it( 'should render the mentor as pending when PhDFills is done, 1/2', async function () {
+
+      const oneInstance = generateAGenericTaskAttributes()
+      Factory.create('task', V2Factory.setDirectorFillsAttributes(oneInstance));  // using a child task of phd makes phd task done
+      Factory.create('task', V2Factory.setMentorSignsAttributes(oneInstance));
+
+      const container = await getContainerV2()
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.phdFills }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.dirFills }][data-step-status="awaiting"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.mentorFills }][data-step-status="awaiting"]`
+        ),
+        1,
+        `${ container.innerHTML }`
+      )
+    });
+
+    it( 'should render the mentor as pending when PhDFills is done, 2/2', async function () {
+      // make the mentor task exists for that
+      const oneInstance = generateAGenericTaskAttributes()
+      Factory.create('task', V2Factory.setPHDSignsAttributes(oneInstance));  // using a child task of phd makes phd task done
+      Factory.create('task', V2Factory.setMentorSignsAttributes(oneInstance));
+
+      const container = await getContainerV2()
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.phdFills }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.phdSigns }][data-step-status="awaiting"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.mentorFills }][data-step-status="awaiting"]`
+        ),
+        1,
+        `${ container.innerHTML }`
+      )
+    });
   });
 
-  it('should render the collaborative as pending, the preceding as done' +
-    ' while having the aliased task (alias case)', async function (){
-    const oneInstance = generateAGenericTaskAttributes()
-    Factory.create('task', setCollabReviewAttributes(oneInstance));
+  describe('Special case : the Program director task. I can be one of a choice.', function () {
 
-    const shouldBeDoneList = [
-      'Activity_PHD_fills_annual_report_1',
-      'Activity_Thesis_Co_Director_fills_annual_report',
-      'Activity_Thesis_Director_fills_annual_report',
-    ]
+    it('should render the corresponding prog. dir. task as pending 1/4', async function () {
+      Factory.create('task', V2Factory.setProgramDirectorSignsExceedAndDisagreeAttributes());  // using a child task of phd makes phd task done
 
-    const container = await getContainerV2()
+      const container = await getContainerV2()
 
-    shouldBeDoneList.forEach( activity =>
       assert.lengthOf(
         container.querySelectorAll(
-          `[data-step='${activity}'][data-step-status='done']`
+          `[data-step=${ activityShort.phdFills }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.programDirSignsExceedAndDisagree }][data-step-status="awaiting"]`
         ),
         1,
         `${ container.innerHTML }`
       )
-    )
+    });
 
-    assert.lengthOf(
-      container.querySelectorAll(
-        `[data-step='Activity_Thesis_Director_Collaborative_Review_Signs'][data-step-status='awaiting']`
-      ),
-      1,
-      `${ container.innerHTML }`
-    )
+    it('should render the corresponding prog. dir. task as pending 2/4', async function () {
+      Factory.create('task', V2Factory.setProgramDirectorSignsUnsatisfactoryAndDisagreesAttributes());  // using a child task of phd makes phd task done
+
+      const container = await getContainerV2()
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.phdFills }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.programDirSignsExceedAndDisagree }][data-step-status="awaiting"]`
+        ),
+        1,
+        `${ container.innerHTML }`
+      )
+    });
+
+    it('should render the corresponding prog. dir. task as pending 3/4', async function () {
+      Factory.create('task', V2Factory.setProgramDirectorSignsNeedsImprovementsAndDisagreeAttributes());  // using a child task of phd makes phd task done
+
+      const container = await getContainerV2()
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.phdFills }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.programDirSignsExceedAndDisagree }][data-step-status="awaiting"]`
+        ),
+        1,
+        `${ container.innerHTML }`
+      )
+    });
+
+    it('should render the corresponding prog. dir. task as pending 4/4', async function () {
+      Factory.create('task', V2Factory.setProgramDirectorSignsNeedsImprovementsOrUnsatisfactoryAndDisagreeAttributes());  // using a child task of phd makes phd task done
+
+      const container = await getContainerV2()
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.phdFills }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.programDirSignsExceedAndDisagree }][data-step-status="awaiting"]`
+        ),
+        1,
+        `${ container.innerHTML }`
+      )
+    });
   });
 });

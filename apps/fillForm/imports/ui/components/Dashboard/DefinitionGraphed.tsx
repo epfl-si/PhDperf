@@ -20,8 +20,8 @@ export const convertDefinitionToGraph = (definition: StepsDefinition) => {
 
     if (step.knownAs)
       // create a "virtual node" for the knownAs,
-      // as it will be a virtual sibling later
-      graph.setNode(step.knownAs);
+      // as it will be virtual siblings later
+      step.knownAs.forEach( as => graph.setNode(as))
 
     // allow to get an order by using the parent-child graphlib relationship
     if (index > 0) graph.setParent(step.id, definition[index-1].id)
@@ -39,19 +39,6 @@ export const convertDefinitionToGraph = (definition: StepsDefinition) => {
           compareArraysValues(cStep.parents, step.parents!)
       ).forEach(
         dStep => graph.setSibling(step.id, dStep.id)
-      )
-    }
-
-    // add all knownsAs parents as sibling
-    if (step.parents) {
-      // for every parent, find if they have sameAs and set them as siblings
-      step.parents.forEach(
-        parent => {
-          const parentKnownAs = definition.find(s => s.id == parent)?.knownAs
-          if (parentKnownAs) {
-            graph.setSibling(parentKnownAs, step.id)
-          }
-        }
       )
     }
   })
