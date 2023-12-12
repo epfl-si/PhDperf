@@ -85,6 +85,7 @@ export const DashboardRenderedStep = (
   // the best to identify if we have a new generation of task is to see if they have their dashboard definition variable set.
   // that's not ideal, I know, but the only way to move forward prod. right now
   const isV2 = workflowInstanceTasks[0].variables.dashboardDefinition ?? false
+  const additionalPendings: string[] = []  // if we have to manually set some pending
 
   // for latter use, to manage the knownAs
   let mappedIdKnownAs: { [key: string]: string } = {}
@@ -104,8 +105,19 @@ export const DashboardRenderedStep = (
   } else {  // no task cases. Let's find if it is done, not-done, or with a custom content
 
     if (isV2) {  // V2 has some special cases
-
+      ////
       // the mentor became a task that spans his lifetime trough near all the workflow
+      //
+
+      // quickhack: if the only left case is the mentor, we can set the majority of the task as green
+      if (workflowInstanceTasks.length == 1 &&
+        workflowInstanceTasks[0].elementId == 'Activity_Post_Mentor_Meeting_Mentor_Signs')
+      additionalPendings.push(
+        'Activity_Thesis_Director_Collaborative_Review_Signs',
+        'Activity_PHD_Signs',
+        'Activity_Program_Director_Signs_Exceed_And_Disagree',
+      )
+
       if (step.id === 'Activity_Post_Mentor_Meeting_Mentor_Signs') {
 
         // is the phdFills going on ?
@@ -117,6 +129,8 @@ export const DashboardRenderedStep = (
           <StepNotDone step={ step }/> :
           <StepDone step={ step }/>
       }
+      // end of the mentor specific rules
+      /////
 
       // has this step an alias ?, meaning his color can come from another task
       if (step.knownAs) {
@@ -182,7 +196,10 @@ export const DashboardRenderedStep = (
       ]
     })
 
-    if (listActivitiesBeforeThePendingOnes?.includes(step.id)) return <StepDone step={ step }/>
+    if (
+      listActivitiesBeforeThePendingOnes?.includes(step.id) ||
+      additionalPendings.includes(step.id)
+    ) return <StepDone step={ step }/>
     if (listActivitiesAfterThePendingOnes?.includes(step.id)) return <StepNotDone step={ step }/>
 
     // nothing special found, it is certainly a task to be done later

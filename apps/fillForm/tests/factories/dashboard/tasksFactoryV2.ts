@@ -197,6 +197,14 @@ export const createTasksForDashboardV2Fixtures = () => {
   Factory.create('task', setCoDirectorFillsAttributes(oneInstance));
   Factory.create('task', setDirectorFillsAttributes(oneInstance));
 
+  // let's get only the mentor
+  Factory.create('task', setMentorSignsAttributes());
+
+  // let's get only the mentor and the prog. dir. signs
+  oneInstance = generateAGenericTaskAttributes()
+  Factory.create('task', setMentorSignsAttributes(oneInstance));
+  Factory.create('task', setProgramDirectorSignsUnsatisfactoryAndDisagreesAttributes(oneInstance));
+
   // get somes flavors of some steps
   Factory.create('task', setDirectorFillsAttributes());
   Factory.create('task', setCoDirectorFillsAttributes());

@@ -253,8 +253,123 @@ describe('Dashboard Steps render V2 steps', function (){
           `[data-step=${ activityShort.mentorFills }][data-step-status="not-done"]`
         ),
         1,
-        `${ container.innerHTML }`
-      )
+        `${ container.innerHTML }`);
+    });
+
+    it( 'should render the mentor as pending when it is the only task left', async function () {
+      // make the mentor task exists for that
+      Factory.create('task', V2Factory.setMentorSignsAttributes());
+
+      const container = await getContainerV2()
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.phdFills }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.coDirFills }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.dirFills }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.collabReview }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.phdSigns }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.programDirSignsExceedAndDisagree }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.mentorFills }][data-step-status="awaiting"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+    });
+
+    it( 'should render the mentor as pending with the program director has to sign', async function () {
+      // make the mentor task exists for that
+      const oneInstance = generateAGenericTaskAttributes()
+      Factory.create('task', V2Factory.setMentorSignsAttributes(oneInstance));
+      Factory.create('task', V2Factory.setProgramDirectorSignsUnsatisfactoryAndDisagreesAttributes(oneInstance));
+
+      const container = await getContainerV2()
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.phdFills }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.coDirFills }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.dirFills }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.collabReview }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.phdSigns }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.programDirSignsExceedAndDisagree }][data-step-status="awaiting"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.mentorFills }][data-step-status="awaiting"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
     });
 
     it( 'should render the mentor as done when PhDFills is done and the mentor does not exist', async function () {
@@ -279,7 +394,7 @@ describe('Dashboard Steps render V2 steps', function (){
       )
     });
 
-    it( 'should render the mentor as pending when PhDFills is done, 1/2', async function () {
+    it( 'should render the mentor as pending when PhDFills is done and the dir fill is awaiting', async function () {
 
       const oneInstance = generateAGenericTaskAttributes()
       Factory.create('task', V2Factory.setDirectorFillsAttributes(oneInstance));  // using a child task of phd makes phd task done
@@ -306,11 +421,10 @@ describe('Dashboard Steps render V2 steps', function (){
           `[data-step=${ activityShort.mentorFills }][data-step-status="awaiting"]`
         ),
         1,
-        `${ container.innerHTML }`
-      )
+        `${ container.innerHTML }`);
     });
 
-    it( 'should render the mentor as pending when PhDFills is done, 2/2', async function () {
+    it( 'should render the mentor as pending when PhDFills is done and the phd signs is awaiting', async function () {
       // make the mentor task exists for that
       const oneInstance = generateAGenericTaskAttributes()
       Factory.create('task', V2Factory.setPHDSignsAttributes(oneInstance));  // using a child task of phd makes phd task done
@@ -337,8 +451,7 @@ describe('Dashboard Steps render V2 steps', function (){
           `[data-step=${ activityShort.mentorFills }][data-step-status="awaiting"]`
         ),
         1,
-        `${ container.innerHTML }`
-      )
+        `${ container.innerHTML }`);
     });
   });
 
@@ -361,8 +474,7 @@ describe('Dashboard Steps render V2 steps', function (){
           `[data-step=${ activityShort.programDirSignsExceedAndDisagree }][data-step-status="awaiting"]`
         ),
         1,
-        `${ container.innerHTML }`
-      )
+        `${ container.innerHTML }`);
     });
 
     it('should render the corresponding prog. dir. task as pending 2/4', async function () {
@@ -382,8 +494,7 @@ describe('Dashboard Steps render V2 steps', function (){
           `[data-step=${ activityShort.programDirSignsExceedAndDisagree }][data-step-status="awaiting"]`
         ),
         1,
-        `${ container.innerHTML }`
-      )
+        `${ container.innerHTML }`);
     });
 
     it('should render the corresponding prog. dir. task as pending 3/4', async function () {
@@ -403,8 +514,7 @@ describe('Dashboard Steps render V2 steps', function (){
           `[data-step=${ activityShort.programDirSignsExceedAndDisagree }][data-step-status="awaiting"]`
         ),
         1,
-        `${ container.innerHTML }`
-      )
+        `${ container.innerHTML }`);
     });
 
     it('should render the corresponding prog. dir. task as pending 4/4', async function () {
@@ -424,8 +534,7 @@ describe('Dashboard Steps render V2 steps', function (){
           `[data-step=${ activityShort.programDirSignsExceedAndDisagree }][data-step-status="awaiting"]`
         ),
         1,
-        `${ container.innerHTML }`
-      )
+        `${ container.innerHTML }`);
     });
   });
 });
