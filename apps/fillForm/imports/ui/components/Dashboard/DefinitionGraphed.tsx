@@ -4,7 +4,30 @@
 import _ from "lodash";
 import {Graph as GraphLib} from '@dagrejs/graphlib';
 
-import {StepsDefinition} from "phd-assess-meta/types/dashboards";
+import {Step, StepsDefinition} from "phd-assess-meta/types/dashboards";
+
+
+// there is dashboardDefinition running in production with the typo on the word "Improvement"
+// mistakes were made, better fix it inline now
+export const fixStepKnownAsTypo = (step: Step) => {
+  if (step.knownAs) {
+    const updatedKnownAs = step.knownAs.map(value => {
+      if (value === "Activity_Program_Director_Signs_Needs_Improvment_And_Disagree") {
+        return "Activity_Program_Director_Signs_Needs_Improvement_And_Disagree";
+      } else if (value === "Activity_Program_Director_Signs_Needs_Improvment_Or_Unsatisfactory_And_Agree") {
+        return "Activity_Program_Director_Signs_Needs_Improvement_Or_Unsatisfactory_And_Agree";
+      }
+      return value;
+    });
+
+    return {
+      ...step,
+      knownAs: updatedKnownAs,
+    };
+  }
+
+  return step;
+}
 
 /**
  * From a StepsDefinition for dashboard, set the parent-children relationship to represent the sequential path
@@ -14,6 +37,8 @@ import {StepsDefinition} from "phd-assess-meta/types/dashboards";
  */
 export const convertDefinitionToGraph = (definition: StepsDefinition) => {
   const graph = new DashboardGraph();
+
+  definition = definition.map(step => fixStepKnownAsTypo(step));
 
   definition.forEach((step, index) => {
     graph.setNode(step.id, step);

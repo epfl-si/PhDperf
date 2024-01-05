@@ -7,7 +7,7 @@ import {ParticipantDetail} from "/imports/model/participants";
 
 import {stepsDefinitionDefault} from "/imports/ui/components/Dashboard/DefaultDefinition";
 import {Step} from "phd-assess-meta/types/dashboards";
-import {DashboardGraph as Graph} from "/imports/ui/components/Dashboard/DefinitionGraphed";
+import {DashboardGraph as Graph, fixStepKnownAsTypo} from "/imports/ui/components/Dashboard/DefinitionGraphed";
 
 
 const StepNotDone = ({ step }: { step: Step }) =>
@@ -87,6 +87,8 @@ export const DashboardRenderedStep = (
   const isV2 = workflowInstanceTasks[0].variables.dashboardDefinition ?? false
   const additionalPendings: string[] = []  // if we have to manually set some pending
 
+  step = fixStepKnownAsTypo(step)
+
   // for latter use, to manage the knownAs
   let mappedIdKnownAs: { [key: string]: string } = {}
 
@@ -146,6 +148,7 @@ export const DashboardRenderedStep = (
       // As we have to manage knownAs in the tree later too, for the task that has to be marked as Done,
       // o prepare yourself to convert the aliased id to the original one with this new structure
       workflowInstanceTasks[0].variables.dashboardDefinition.forEach( (step: Step ) => {
+        step = fixStepKnownAsTypo(step)
         step.knownAs?.forEach(knownId => {
           mappedIdKnownAs[knownId] = step.id;
         });

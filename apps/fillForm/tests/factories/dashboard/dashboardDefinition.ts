@@ -79,3 +79,26 @@ export const stepsDefinitionV2: StepsDefinition = [
     ]
   },
 ]
+
+// this is to test a known mistake
+export const stepsDefinitionV2WithImprovmentTypo: StepsDefinition = stepsDefinitionV2.map(step => {
+  if (step.knownAs) {
+    const updatedKnownAs = step.knownAs.map(value => {
+      if (value === "Activity_Program_Director_Signs_Needs_Improvement_And_Disagree") {
+        return "Activity_Program_Director_Signs_Needs_Improvment_And_Disagree";
+      } else if (value === "Activity_Program_Director_Signs_Needs_Improvement_Or_Unsatisfactory_And_Agree") {
+        return "Activity_Program_Director_Signs_Needs_Improvment_Or_Unsatisfactory_And_Agree";
+      }
+      return value;
+    });
+
+    // Return a new object with updated knownAs array
+    return {
+      ...step,
+      knownAs: updatedKnownAs,
+    };
+  }
+
+  // Return the original object if knownAs doesn't exist
+  return step;
+});

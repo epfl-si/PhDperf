@@ -4,7 +4,7 @@
 import {faker} from "../../factories/faker";
 const Factory = require("meteor/dburles:factory").Factory
 import {generateAGenericTaskAttributes} from "../task";
-import {stepsDefinitionV2} from "/tests/factories/dashboard/dashboardDefinition";
+import {stepsDefinitionV2, stepsDefinitionV2WithImprovmentTypo} from "/tests/factories/dashboard/dashboardDefinition";
 
 
 export const setPHDFillsAttributes = (taskAttributes: any = generateAGenericTaskAttributes()) => ({
@@ -160,7 +160,7 @@ export const setProgramDirectorSignsNeedsImprovementsAndDisagreeAttributes = (ta
   ]),
 })
 
-export const setProgramDirectorSignsNeedsImprovementsOrUnsatisfactoryAndDisagreeAttributes = (taskAttributes: any = generateAGenericTaskAttributes()) => ({
+export const setProgramDirectorSignsNeedsImprovementsOrUnsatisfactoryAndAgreeAttributes = (taskAttributes: any = generateAGenericTaskAttributes()) => ({
   ...taskAttributes,
   'customHeaders': {
     ...taskAttributes.variables,
@@ -173,7 +173,24 @@ export const setProgramDirectorSignsNeedsImprovementsOrUnsatisfactoryAndDisagree
     'doctoralProgramName': 'V2',
   },
   'elementId': faker.helpers.arrayElement([
-    'Activity_Program_Director_Signs_Needs_Improvement_And_Disagree',
+    'Activity_Program_Director_Signs_Needs_Improvement_Or_Unsatisfactory_And_Agree',
+  ]),
+})
+
+export const setProgramDirectorSignsNeedsImprovementsOrUnsatisfactoryAndAgreeAttributesWithImprovmentTypo = (taskAttributes: any = generateAGenericTaskAttributes()) => ({
+  ...taskAttributes,
+  'customHeaders': {
+    ...taskAttributes.variables,
+    'title': 'Thesis Dir signature - Test',
+  },
+  'variables': {
+    ...taskAttributes.variables,
+    'assigneeSciper': taskAttributes.variables.thesisDirectorSciper,
+    'dashboardDefinition': stepsDefinitionV2WithImprovmentTypo,
+    'doctoralProgramName': 'V2',
+  },
+  'elementId': faker.helpers.arrayElement([
+    'Activity_Program_Director_Signs_Needs_Improvement_Or_Unsatisfactory_And_Agree',
   ]),
 })
 

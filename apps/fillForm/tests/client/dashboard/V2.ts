@@ -518,13 +518,89 @@ describe('Dashboard Steps render V2 steps', function (){
     });
 
     it('should render the corresponding prog. dir. task as pending 4/4', async function () {
-      Factory.create('task', V2Factory.setProgramDirectorSignsNeedsImprovementsOrUnsatisfactoryAndDisagreeAttributes());  // using a child task of phd makes phd task done
+      Factory.create('task', V2Factory.setProgramDirectorSignsNeedsImprovementsOrUnsatisfactoryAndAgreeAttributes());  // using a child task of phd makes phd task done
 
       const container = await getContainerV2()
 
       assert.lengthOf(
         container.querySelectorAll(
           `[data-step=${ activityShort.phdFills }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.dirFills }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.collabReview }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.mentorFills }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.phdSigns }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.programDirSignsExceedAndDisagree }][data-step-status="awaiting"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+    });
+
+    it('should render the corresponding prog. dir. task as pending with the "Improvment" typo', async function () {
+      Factory.create('task', V2Factory.setProgramDirectorSignsNeedsImprovementsOrUnsatisfactoryAndAgreeAttributesWithImprovmentTypo());  // using a child task of phd makes phd task done
+
+      const container = await getContainerV2()
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.phdFills }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.dirFills }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.collabReview }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.mentorFills }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.phdSigns }][data-step-status="done"]`
         ),
         1,
         `${ container.innerHTML }`);
