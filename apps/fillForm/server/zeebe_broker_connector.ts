@@ -336,7 +336,7 @@ export default {
 
       const notifyCc = parseCustomHeadersNotify( job.customHeaders.notifyCc )
 
-      const notifyBcc = parseCustomHeadersNotify( job.customHeaders.notifyBCc )
+      const notifyBcc = parseCustomHeadersNotify( job.customHeaders.notifyBcc )
 
       const notifySubject = job.customHeaders.notifySubject ? encrypt(job.customHeaders.notifySubject) : undefined
       const notifyMessage = job.customHeaders.notifyMessage ? encrypt(job.customHeaders.notifyMessage) : undefined
