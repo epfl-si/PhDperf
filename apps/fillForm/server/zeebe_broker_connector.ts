@@ -313,7 +313,7 @@ export default {
 
       // as the To, Cc or Bcc can come as string, a string of array of string (!, yep that's something like that : "[email1, email2]"), and
       // some are empty, let's have a function that process them correctly. They are all field specifier, not direct values
-      const parseCustomHeadersNotify = (notifyVar: string) => {
+      const parseCustomHeadersNotify = (notifyVar: string | undefined) => {
         if (! notifyVar ) return
 
         if (/^\[.*\]$/.test(notifyVar)) {
@@ -326,8 +326,8 @@ export default {
           }, [] as string[]) ?? undefined
 
         } else {
-          return job.variables[job.customHeaders.notifyTo] ?
-            encrypt(job.variables[job.customHeaders.notifyTo]) : undefined
+          return job.variables[job.customHeaders.notifyTo!] ?
+            encrypt(job.variables[job.customHeaders.notifyTo!]) : undefined
         }
       }
 
