@@ -17,6 +17,7 @@ scrape_configs:
 
   # Scrape Docker containers also running on the ESB VM
   - job_name: 'zeebe'
+    metrics_path: /actuator/prometheus
     static_configs:
       - targets: ['zeebe:9600']
         labels:

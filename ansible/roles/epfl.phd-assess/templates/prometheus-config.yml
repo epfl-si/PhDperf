@@ -4,25 +4,17 @@ global:
   evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
   # scrape_timeout is set to the global default (10s).
 
-scrape_configs:
-  # Prometheus scraping itself.
-  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
-  - job_name: 'prometheus'
-
-    # metrics_path defaults to '/metrics'
-    # scheme defaults to 'http'.
-
-    static_configs:
-    - targets: ['localhost:9090']
-
-    # Discover scrapable targets in the same namespace
-  - job_name: "{{ openshift_namespace }}-pods"
-    kubernetes_sd_configs:
+{% macro _discover_k8s_pods(ns, label_selector) %}
       - role: pod
         namespaces:
           names:
-            - "{{ openshift_namespace }}"
-    relabel_configs:
+            - "{{ ns }}"
+        selectors:
+        - role: pod
+          label: "{{ label_selector }}"
+{% endmacro %}
+
+{% macro _common_relabel_configs() %}
       # Only keep targets whose port name contains "metrics"
       - action: keep
         source_labels:
@@ -59,3 +51,31 @@ scrape_configs:
         source_labels:
           - instance
         regex: .*2.*
+{% endmacro %}
+
+scrape_configs:
+  # Prometheus scraping itself.
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: '0-prometheus'
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+    - targets: ['localhost:9090']
+
+    # Discover Zeebe targets in the same namespace
+  - job_name: "1-{{ openshift_namespace }}-zeebe-pods"
+    metrics_path: /actuator/prometheus
+    kubernetes_sd_configs:
+{{ _discover_k8s_pods(ns=openshift_namespace, label_selector="for-service==zeebe-gateway") }}
+    relabel_configs:
+{{ _common_relabel_configs() }}
+
+    # Discover other scrapable targets in the same namespace
+  - job_name: "2-{{ openshift_namespace }}-other-pods"
+    # Assume default `metrics_path` (i.e. /metrics)
+    kubernetes_sd_configs:
+{{ _discover_k8s_pods(ns=openshift_namespace, label_selector="for-service!=zeebe-gateway") }}
+    relabel_configs:
+{{ _common_relabel_configs() }}
