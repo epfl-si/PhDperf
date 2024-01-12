@@ -41,6 +41,24 @@ export const setMentorSignsAttributes = (taskAttributes: any = generateAGenericT
   ]),
 })
 
+export const setMentorSignsAttributesWithoutTheNeedOfTheProgramDirector = (taskAttributes: any = generateAGenericTaskAttributes()) => ({
+  ...taskAttributes,
+  'customHeaders': {
+    ...taskAttributes.variables,
+    'title': 'Thesis Dir signature - Test',
+  },
+  'variables': {
+    ...taskAttributes.variables,
+    'assigneeSciper': taskAttributes.variables.thesisDirectorSciper,
+    'dashboardDefinition': stepsDefinitionV2,
+    'doctoralProgramName': 'V2',
+    'notifProgramDirector': '1',  // this make the program director optional
+  },
+  'elementId': faker.helpers.arrayElement([
+    'Activity_Post_Mentor_Meeting_Mentor_Signs',
+  ]),
+})
+
 export const setDirectorFillsAttributes = (taskAttributes: any = generateAGenericTaskAttributes()) => ({
   ...taskAttributes,
   'customHeaders': {

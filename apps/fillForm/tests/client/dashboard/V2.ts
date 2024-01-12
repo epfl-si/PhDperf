@@ -612,5 +612,25 @@ describe('Dashboard Steps render V2 steps', function (){
         1,
         `${ container.innerHTML }`);
     });
+
+    it('should render the prog. dir. task green if there is no need of the program director ', async function () {
+      Factory.create('task', V2Factory.setMentorSignsAttributesWithoutTheNeedOfTheProgramDirector());
+
+      const container = await getContainerV2()
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.mentorFills }][data-step-status="awaiting"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+
+      assert.lengthOf(
+        container.querySelectorAll(
+          `[data-step=${ activityShort.programDirSignsExceedAndDisagree }][data-step-status="done"]`
+        ),
+        1,
+        `${ container.innerHTML }`);
+    });
   });
 });
