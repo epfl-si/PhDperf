@@ -117,18 +117,18 @@ const TaskRow = ({ task, user }: { task: ITaskList, user: Meteor.User }) => {
                       <div className={''}>Job { task._id }</div>
                       <div className={''}>Process { task.processInstanceKey }</div>
                       { task.monitorUri &&
-												<a href={task.monitorUri} target="_blank" className={'pr-3'}>on Monitor <span
-													className={"fa fa-external-link"}/></a>
+                        <a href={task.monitorUri} target="_blank" className={'pr-3'}>on Monitor <span
+                          className={"fa fa-external-link"}/></a>
                       }
                     </Dropdown.Header>
                     <Dropdown.Divider/>
                     { canEditParticipants &&
-											<Dropdown.Item
-												className={'small'}
-												onSelect={ () => navigate(`workflows/${ task.processInstanceKey  }`) }
-											>
+                      <Dropdown.Item
+                        className={'small'}
+                        onSelect={ () => navigate(`workflows/${ task.processInstanceKey  }`) }
+                      >
                         <>Edit workflow</>
-											</Dropdown.Item>
+                      </Dropdown.Item>
                     }
                     { canRefresh &&
                       <Dropdown.Item
