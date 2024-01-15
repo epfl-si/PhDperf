@@ -9,7 +9,7 @@ import {generateAGenericTaskAttributes} from "../task";
 export const setPHDFillsAttributes = (taskAttributes: any = generateAGenericTaskAttributes()) => ({
   ...taskAttributes,
   'customHeaders': {
-    ...taskAttributes.variables,
+    ...taskAttributes.customHeaders,
     'title': 'Phd fills annual report - Test',
   },
   'variables': {
@@ -26,7 +26,7 @@ export const setPHDFillsAttributes = (taskAttributes: any = generateAGenericTask
 export const setCoDirectorFillsAttributes =  (taskAttributes: any = generateAGenericTaskAttributes()) => ({
   ...taskAttributes,
   'customHeaders': {
-    ...taskAttributes.variables,
+    ...taskAttributes.customHeaders,
     'title': 'Co-Dir fills annual report - Test',
   },
   'variables': {
@@ -43,7 +43,7 @@ export const setCoDirectorFillsAttributes =  (taskAttributes: any = generateAGen
 export const setDirectorFillsAttributes = (taskAttributes: any = generateAGenericTaskAttributes()) => ({
   ...taskAttributes,
   'customHeaders': {
-    ...taskAttributes.variables,
+    ...taskAttributes.customHeaders,
     'title': 'Thesis Dir fills annual report - Test',
   },
   'variables': {
@@ -60,7 +60,7 @@ export const setDirectorFillsAttributes = (taskAttributes: any = generateAGeneri
 export const setCollabReviewAttributes = (taskAttributes: any = generateAGenericTaskAttributes()) => ({
   ...taskAttributes,
   'customHeaders': {
-    ...taskAttributes.variables,
+    ...taskAttributes.customHeaders,
     'title': 'Collaborative Review - Test',
   },
   'variables': {
@@ -77,7 +77,7 @@ export const setCollabReviewAttributes = (taskAttributes: any = generateAGeneric
 export const setDirectorCollabSignAttributes = (taskAttributes: any = generateAGenericTaskAttributes()) => ({
   ...taskAttributes,
   'customHeaders': {
-    ...taskAttributes.variables,
+    ...taskAttributes.customHeaders,
     'title': 'Co-Dir signature - Test',
   },
   'variables': {
@@ -94,7 +94,7 @@ export const setDirectorCollabSignAttributes = (taskAttributes: any = generateAG
 export const setDirectorSignsAttributes = (taskAttributes: any = generateAGenericTaskAttributes()) => ({
   ...taskAttributes,
   'customHeaders': {
-    ...taskAttributes.variables,
+    ...taskAttributes.customHeaders,
     'title': 'Thesis Dir signature - Test',
   },
   'variables': {
@@ -111,7 +111,7 @@ export const setDirectorSignsAttributes = (taskAttributes: any = generateAGeneri
 export const setPHDSignsAttributes = (taskAttributes: any = generateAGenericTaskAttributes()) => ({
   ...taskAttributes,
   'customHeaders': {
-    ...taskAttributes.variables,
+    ...taskAttributes.customHeaders,
     'title': 'PhD signature - Test',
   },
   'variables': {
@@ -128,7 +128,7 @@ export const setPHDSignsAttributes = (taskAttributes: any = generateAGenericTask
 export const setMentorSignsAttributes = (taskAttributes: any = generateAGenericTaskAttributes()) => ({
   ...taskAttributes,
   'customHeaders': {
-    ...taskAttributes.variables,
+    ...taskAttributes.customHeaders,
     'title': 'Mentor signature - Test',
   },
   'variables': {
@@ -145,7 +145,7 @@ export const setMentorSignsAttributes = (taskAttributes: any = generateAGenericT
 export const setPostMentorPHDSignsAttributes = (taskAttributes: any = generateAGenericTaskAttributes()) => ({
   ...taskAttributes,
   'customHeaders': {
-    ...taskAttributes.variables,
+    ...taskAttributes.customHeaders,
     'title': 'PhD signature after mentor - Test',
   },
   'variables': {
@@ -162,7 +162,7 @@ export const setPostMentorPHDSignsAttributes = (taskAttributes: any = generateAG
 export const setProgramDirectorSignsAttributes = (taskAttributes: any = generateAGenericTaskAttributes()) => ({
   ...taskAttributes,
   'customHeaders': {
-    ...taskAttributes.variables,
+    ...taskAttributes.customHeaders,
     'title': 'Program Director signature - Test',
   },
   'variables': {

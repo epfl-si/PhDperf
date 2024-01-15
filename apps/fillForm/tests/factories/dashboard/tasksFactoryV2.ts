@@ -10,7 +10,7 @@ import {stepsDefinitionV2, stepsDefinitionV2WithImprovmentTypo} from "/tests/fac
 export const setPHDFillsAttributes = (taskAttributes: any = generateAGenericTaskAttributes()) => ({
   ...taskAttributes,
   'customHeaders': {
-    ...taskAttributes.variables,
+    ...taskAttributes.customHeaders,
     'title': 'Phd fills annual report - Test',
   },
   'variables': {
@@ -27,7 +27,7 @@ export const setPHDFillsAttributes = (taskAttributes: any = generateAGenericTask
 export const setMentorSignsAttributes = (taskAttributes: any = generateAGenericTaskAttributes()) => ({
   ...taskAttributes,
   'customHeaders': {
-    ...taskAttributes.variables,
+    ...taskAttributes.customHeaders,
     'title': 'Mentor signature - Test',
   },
   'variables': {
@@ -62,7 +62,7 @@ export const setMentorSignsAttributesWithoutTheNeedOfTheProgramDirector = (taskA
 export const setDirectorFillsAttributes = (taskAttributes: any = generateAGenericTaskAttributes()) => ({
   ...taskAttributes,
   'customHeaders': {
-    ...taskAttributes.variables,
+    ...taskAttributes.customHeaders,
     'title': 'Thesis Dir fills annual report - Test',
   },
   'variables': {
@@ -79,7 +79,7 @@ export const setDirectorFillsAttributes = (taskAttributes: any = generateAGeneri
 export const setCoDirectorFillsAttributes = (taskAttributes: any = generateAGenericTaskAttributes()) => ({
   ...taskAttributes,
   'customHeaders': {
-    ...taskAttributes.variables,
+    ...taskAttributes.customHeaders,
     'title': 'Co-Dir fills annual report - Test',
   },
   'variables': {
@@ -96,7 +96,7 @@ export const setCoDirectorFillsAttributes = (taskAttributes: any = generateAGene
 export const setCollabReviewAttributes = (taskAttributes: any = generateAGenericTaskAttributes()) => ({
   ...taskAttributes,
   'customHeaders': {
-    ...taskAttributes.variables,
+    ...taskAttributes.customHeaders,
     'title': 'Collaborative Review - Test',
   },
   'variables': {
@@ -113,7 +113,7 @@ export const setCollabReviewAttributes = (taskAttributes: any = generateAGeneric
 export const setPHDSignsAttributes = (taskAttributes: any = generateAGenericTaskAttributes()) => ({
   ...taskAttributes,
   'customHeaders': {
-    ...taskAttributes.variables,
+    ...taskAttributes.customHeaders,
     'title': 'PhD signature - Test',
   },
   'variables': {
@@ -130,7 +130,7 @@ export const setPHDSignsAttributes = (taskAttributes: any = generateAGenericTask
 export const setProgramDirectorSignsExceedAndDisagreeAttributes = (taskAttributes: any = generateAGenericTaskAttributes()) => ({
   ...taskAttributes,
   'customHeaders': {
-    ...taskAttributes.variables,
+    ...taskAttributes.customHeaders,
     'title': 'Thesis Dir signature - Test',
   },
   'variables': {
@@ -147,7 +147,7 @@ export const setProgramDirectorSignsExceedAndDisagreeAttributes = (taskAttribute
 export const setProgramDirectorSignsUnsatisfactoryAndDisagreesAttributes = (taskAttributes: any = generateAGenericTaskAttributes()) => ({
   ...taskAttributes,
   'customHeaders': {
-    ...taskAttributes.variables,
+    ...taskAttributes.customHeaders,
     'title': 'Thesis Dir signature - Test',
   },
   'variables': {
@@ -164,7 +164,7 @@ export const setProgramDirectorSignsUnsatisfactoryAndDisagreesAttributes = (task
 export const setProgramDirectorSignsNeedsImprovementsAndDisagreeAttributes = (taskAttributes: any = generateAGenericTaskAttributes()) => ({
   ...taskAttributes,
   'customHeaders': {
-    ...taskAttributes.variables,
+    ...taskAttributes.customHeaders,
     'title': 'Thesis Dir signature - Test',
   },
   'variables': {
@@ -181,7 +181,7 @@ export const setProgramDirectorSignsNeedsImprovementsAndDisagreeAttributes = (ta
 export const setProgramDirectorSignsNeedsImprovementsOrUnsatisfactoryAndAgreeAttributes = (taskAttributes: any = generateAGenericTaskAttributes()) => ({
   ...taskAttributes,
   'customHeaders': {
-    ...taskAttributes.variables,
+    ...taskAttributes.customHeaders,
     'title': 'Thesis Dir signature - Test',
   },
   'variables': {
@@ -198,7 +198,7 @@ export const setProgramDirectorSignsNeedsImprovementsOrUnsatisfactoryAndAgreeAtt
 export const setProgramDirectorSignsNeedsImprovementsOrUnsatisfactoryAndAgreeAttributesWithImprovmentTypo = (taskAttributes: any = generateAGenericTaskAttributes()) => ({
   ...taskAttributes,
   'customHeaders': {
-    ...taskAttributes.variables,
+    ...taskAttributes.customHeaders,
     'title': 'Thesis Dir signature - Test',
   },
   'variables': {
