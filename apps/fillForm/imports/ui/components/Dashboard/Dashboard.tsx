@@ -36,7 +36,7 @@ const DrawProgress =
   return <>{ progressBarDrawn }</>
 }
 
-export const DashboardRow = ({ workflowInstanceTasks } : { workflowInstanceTasks:ITaskDashboard[] }) => {
+export const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks: ITaskDashboard[] }) => {
   // generate the good dashboard definition for this row
   const definition: DashboardGraph = convertDefinitionToGraph(
     workflowInstanceTasks[0].variables.dashboardDefinition ?? stepsDefinitionDefault
