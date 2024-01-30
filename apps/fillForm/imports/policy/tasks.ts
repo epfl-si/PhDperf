@@ -1,9 +1,12 @@
 import {Meteor} from "meteor/meteor";
-import {Tasks} from "/imports/model/tasks";
+import {Mongo} from 'meteor/mongo';
+
 import _ from "lodash";
-import { Mongo } from 'meteor/mongo';
-import {DoctoralSchool} from "/imports/api/doctoralSchools/schema";
 import dayjs from "dayjs";
+
+import {DoctoralSchool} from "/imports/api/doctoralSchools/schema";
+import {Tasks} from "/imports/model/tasks";
+
 const debug = require('debug')('import/policy/tasks.ts')
 
 
