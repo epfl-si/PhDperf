@@ -2,6 +2,7 @@ import {PhDInputVariables} from "/imports/model/tasksTypes";
 import {Job} from "zeebe-node";
 import {Sciper} from "/imports/api/datatypes";
 import {ParticipantList} from "/imports/model/participants";
+import {NotificationLog} from "phd-assess-meta/types/notification";
 
 
 export const taskFieldsNeededForDashboard = {
@@ -32,7 +33,9 @@ export const taskFieldsNeededForDashboard = {
   'variables.mentorName': 1,
   'variables.mentorEmail': 1,
   'variables.doctoralProgramName': 1,
+  'variables.uuid': 1,
   'variables.mentorDate': 1,  // for checking if the values is submitted
+  'variables.notificationLogs': 1,
 }
 
 // define here what is allowed in code, as we filter out a full task to get only useful data
@@ -48,4 +51,5 @@ export interface ITaskDashboard<WorkerInputVariables = PhDInputVariablesDashboar
   processInstanceKey: string
   assigneeScipers?: Sciper[]
   participants: ParticipantList  // values built from participants found in the 'variables' fields, see the Task class for details
+  notificationLogs: NotificationLog[]
 }

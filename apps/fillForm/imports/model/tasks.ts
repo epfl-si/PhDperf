@@ -12,6 +12,7 @@ import {
   TaskInterface,
   TaskJournal
 } from "/imports/model/tasksTypes";
+import {NotificationLog} from "phd-assess-meta/types/notification";
 
 
 // historically, assignees can come from multiple ways:
@@ -53,6 +54,7 @@ export class Task implements TaskInterface {
   created_at?: Date
   updated_at?: Date
   detail: any
+  notificationLogs: NotificationLog[]
 
   constructor(doc: any) {
     _.extend(this, doc);
@@ -65,6 +67,28 @@ export class Task implements TaskInterface {
     this.created_by = this.variables?.created_by
     this.created_at = this.variables?.created_at ? new Date(this.variables.created_at) : undefined
     this.updated_at = this.variables?.updated_at ? new Date(this.variables.updated_at) : undefined
+
+    // convert log decrypted strings to object
+    // and, as a confort for the app,
+    // dispatch them into two categories, notificationLogs and reminderLog
+    if (this.variables?.notificationLogs?.length > 0) {
+      this.notificationLogs = this.variables.notificationLogs.map(
+        log => {
+          try {
+            // TODO: filter out mentor is user has not the permission to read it from the log.
+            // here or before the fetch(), because, yeah, it has not to be here
+            // maybe replace it with something showing it censured
+            return JSON.parse(log)
+          } catch (e) {
+            console.error(
+              `PhDAssess app can not parse a notification log. Ignoring the log for the task ${this._id}.`
+            )
+          }
+        }
+      )
+    } else {
+      this.notificationLogs = []
+    }
 
     this.detail = [
       `Job key: ${this._id}`,

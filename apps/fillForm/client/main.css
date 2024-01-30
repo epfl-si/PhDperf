@@ -201,3 +201,11 @@ details[open] > summary::before {
   transition: background .25s;
   width: calc(100% - 6rem);
 }
+
+.tox-tinymce {
+  border-radius: 0px !important;
+}
+
+.mce-content-readonly {
+  background-color: #e6e6e6;
+}
