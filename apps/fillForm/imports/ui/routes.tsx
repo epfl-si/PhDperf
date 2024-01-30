@@ -16,6 +16,7 @@ import {DashboardOld} from "/imports/ui/components/DashboardOld/DashboardOld";
 
 import ViewWorkflow from "/imports/ui/components/ProcessInstance/Show";
 import Main from "/imports/ui/Main";
+import {TaskReminderForm} from "/imports/ui/components/Task/Reminder";
 
 
 function TaskEdit() {
@@ -37,6 +38,7 @@ export const router = createBrowserRouter(
         path="/workflows/:processInstanceKey"
         element={<ViewWorkflow/>}
       />
+      <Route path="/tasks/:_id/reminders/create" element={<TaskReminderForm/>}/>
       <Route path="/tasks/:_id" element={<TaskEdit/>}/>
       <Route path="/tasks/" element={<Navigate replace to="/" />}/>
       <Route path="/doctoral-programs" element={<DoctoralSchoolsList/>}/>
