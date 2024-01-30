@@ -6,7 +6,7 @@ import {Tasks} from "/imports/model/tasks";
 import {WorkflowStarter} from './workflowStarter'
 import {Button, Loader} from "@epfl/epfl-sti-react-library"
 import {Link, useNavigate} from "react-router-dom"
-import {Participant} from "/imports/ui/components/Participant";
+import {ParticipantsAsRow} from "/imports/ui/components/Participant/Show";
 import toast from "react-hot-toast";
 import Dropdown from 'react-bootstrap/Dropdown'
 import {
@@ -155,18 +155,7 @@ const TaskRow = ({ task, user }: { task: ITaskList, user: Meteor.User }) => {
         <pre><code>{task.detail}</code></pre>
         { user &&
           <div className={'container'}>
-            <div className="row">
-              {task.participants &&
-                Object.entries(task.participants).map(([role, info]) =>
-                  <Participant
-                    key={`${task._id}-${role}`}
-                    role={role}
-                    info={info}
-                    isAssignee={task.assigneeScipers?.includes(info?.sciper)}
-                  />
-                )
-              }
-            </div>
+            <ParticipantsAsRow task={ task } showEmail={ false }/>
           </div>
         }
 

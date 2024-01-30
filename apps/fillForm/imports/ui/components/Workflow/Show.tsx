@@ -4,10 +4,13 @@ import {useSubscribe, useFind} from "meteor/react-meteor-data";
 import {Loader} from "@epfl/epfl-sti-react-library";
 
 import {useAccountContext} from "/imports/ui/contexts/Account";
+
 import {Task, Tasks} from "/imports/model/tasks";
-import {EditParticipants, Participant} from "/imports/ui/components/Participant";
 import {TaskInfo} from "/imports/ui/components/Task/Info";
 import {ITaskList} from "/imports/policy/tasksList/type";
+
+import {ParticipantsAsRow} from "/imports/ui/components/Participant/Show";
+import {EditParticipants} from "/imports/ui/components/Participant/Edit";
 import {canEditParticipants} from "/imports/policy/tasks";
 
 
@@ -22,18 +25,11 @@ const ListTasks = ({ tasks }: { tasks : Task[] }) => {
             <div className={'font-weight-bold'}>{ task.customHeaders.title }</div>
             <TaskInfo task={ task as ITaskList } showPhDStudent={ false }/>
           </div>
-          <div className="row mb-3">
-            { task!.participants &&
-              Object.entries(task!.participants).map(([role, info]) =>
-                <Participant
-                  key={ `${task!._id}-${role}` }
-                  role={ role }
-                  info={ info }
-                  isAssignee={ task!.assigneeScipers?.includes(info?.sciper) }
-                  showEmail={ true }
-                />
-              )
-            }
+          <div className="mb-3">
+            <ParticipantsAsRow
+              task={ task }
+              showEmail={ true }
+            />
           </div>
           </>
         )
