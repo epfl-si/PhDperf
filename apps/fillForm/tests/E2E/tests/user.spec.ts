@@ -98,13 +98,13 @@ test.describe('Form', () => {
        you have to log with this sciper to make the next step valid. Currently connected as: ${ connectedAs }`
       ).toBeTruthy()
 
-      await expect(userApp.tasksToBeCompleted_1_2).toHaveCount(1, { timeout: 20*1000 })
+      await expect(userApp.tasksToBeCompleted).toHaveCount(1, { timeout: 20*1000 })
 
-      const studentName = userApp.tasksToBeCompleted_1_2.first()
+      const studentName = userApp.tasksToBeCompleted.first()
         .locator('.task-phdstudent-name');
       await expect(studentName).not.toBeEmpty();
 
-      const studentSciper = userApp.tasksToBeCompleted_1_2.first()
+      const studentSciper = userApp.tasksToBeCompleted.first()
         .locator('.task-phdstudent-sciper');
 
       await expect(studentSciper).not.toBeEmpty();

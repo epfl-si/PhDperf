@@ -20,8 +20,8 @@ export class fillFormAppPageBase {
   // task currently under the 'Assigning participants' grouper
   readonly tasksAssign: Locator;
 
-  // task currently under the 'Annual report 1 of 2' grouper
-  readonly tasksToBeCompleted_1_2: Locator;
+  // task currently under the 'Annual report to be completed' grouper
+  readonly tasksToBeCompleted: Locator;
 
   /**
    * Form
@@ -54,9 +54,9 @@ export class fillFormAppPageBase {
      .filter({ has: page.getByRole('heading', {name: 'Assigning participants'}) })
      .locator('.task');
 
-    this.tasksToBeCompleted_1_2 = this.page
+    this.tasksToBeCompleted = this.page
       .locator('.tasksGrouper')
-      .filter({ has: page.getByRole('heading', {name: 'Annual report to be completed part 1 of 2'}) })
+      .filter({ has: page.getByRole('heading', {name: 'Annual report to be completed'}) })
       .locator('.task');
 
     this.submitButton = page
