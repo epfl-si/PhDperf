@@ -98,13 +98,22 @@ export class fillFormAppPageBase {
    * Form
    */
 
-  async fillAssigningParticipant() {
+  async fillAssigningParticipant(
+    participants = {
+      programAssistantSciper: process.env.PARTICIPANT_PROGRAM_ASSISTANT ?? '111111',
+      phdStudentSciper: process.env.PARTICIPANT_PHD_STUDENT ?? '111111',
+      thesisDirectorSciper: process.env.PARTICIPANT_THESIS_DIRECTOR ?? '111111',
+      thesisCoDirectorSciper: process.env.PARTICIPANT_THESIS_CODIRECTOR ?? '111111',
+      programDirectorSciper: process.env.PARTICIPANT_PROGRAM_DIRECTOR ?? '111111',
+      mentorSciper: process.env.PARTICIPANT_MENTOR ?? '111111',
+    }
+  ) {
 
     await this.page
       .getByLabel('Program assistant sciper').click();
     await this.page
       .getByLabel('Program assistant sciper')
-      .fill(process.env.PARTICIPANT_PROGRAM_ASSISTANT ?? '111111');
+      .fill(participants.programAssistantSciper);
 
     await this.page
       .getByPlaceholder('ED__').click();
@@ -128,31 +137,31 @@ export class fillFormAppPageBase {
       .getByLabel('Doctoral candidate sciper').click();
     await this.page
       .getByLabel('Doctoral candidate sciper')
-      .fill(process.env.PARTICIPANT_PHD_STUDENT ?? '111111');
+      .fill(participants.phdStudentSciper);
 
     await this.page
       .getByLabel('Thesis director sciper').click();
     await this.page
       .getByLabel('Thesis director sciper')
-      .fill(process.env.PARTICIPANT_THESIS_DIRECTOR ?? '111111');
+      .fill(participants.thesisDirectorSciper);
 
     await this.page
       .getByLabel('Thesis co-director sciper').click();
     await this.page
       .getByLabel('Thesis co-director sciper')
-      .fill(process.env.PARTICIPANT_THESIS_CODIRECTOR ?? '111111');
+      .fill(participants.thesisCoDirectorSciper);
 
     await this.page
       .getByLabel('Program director sciper').click();
     await this.page
       .getByLabel('Program director sciper')
-      .fill(process.env.PARTICIPANT_PROGRAM_DIRECTOR ?? '111111');
+      .fill(participants.programDirectorSciper);
 
     await this.page
       .getByLabel('Mentor sciper').click();
     await this.page
       .getByLabel('Mentor sciper')
-      .fill(process.env.PARTICIPANT_MENTOR ?? '111111');
+      .fill(participants.mentorSciper);
 
     //await this.page.getByPlaceholder('__', { exact: true }).click();
     await this.page
