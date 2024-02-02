@@ -1,12 +1,12 @@
 
 import {expect} from "@playwright/test";
-import {cleanupPageAndTaskForAdmin, setupAPageWithATaskForAdmin, test} from "/tests/E2E/tests/fixtures";
+import {cleanupPageAndTaskForAdmin, setupAPageWithTasksForAdmin, test} from "/tests/E2E/tests/fixtures";
 import {fillFormAppPageForAdmin} from "/tests/E2E/tests/fixtures/fillFormApp";
 
 let adminApp: fillFormAppPageForAdmin;
 
 test.beforeAll(async ({ browser }) => {
-  adminApp = await setupAPageWithATaskForAdmin(browser);
+  adminApp = await setupAPageWithTasksForAdmin(browser);
 });
 
 test.afterAll(async () => {

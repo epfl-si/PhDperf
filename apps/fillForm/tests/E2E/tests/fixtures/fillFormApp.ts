@@ -6,6 +6,10 @@ export class fillFormAppPageBase {
 
   readonly page: Page;
 
+  readonly navigation: {
+    dashboard: Locator
+  }
+
   readonly userInfoButton: Locator;
   readonly userInfoDiv: Locator;
   readonly userInfoDisplayName: Locator;
@@ -28,9 +32,19 @@ export class fillFormAppPageBase {
    */
   readonly submitButton: Locator;
 
+  /**
+   * Dashboard
+   */
+  readonly dashboard: Locator;
+  readonly dashboardFirstRow: Locator;
+
 
   constructor(page: Page) {
     this.page = page
+
+    this.navigation = {
+      dashboard: page.locator('#nav-aside a[href*="/dashboard"]')
+    }
 
     this.userInfoButton = page
       .locator('#user-info-button');
@@ -61,6 +75,12 @@ export class fillFormAppPageBase {
 
     this.submitButton = page
       .getByRole('button', {name: 'Submit'});
+
+    this.dashboard = page
+      .locator('.dashboard');
+
+    this.dashboardFirstRow = page
+      .locator('.dashboard .row').first();
   }
 
   async teardown() {
@@ -92,6 +112,12 @@ export class fillFormAppPageBase {
   async proceedToLastTask() {
     await this.page.getByRole('button', {name: 'Proceed'}).last().click();
     await this.page.waitForURL((url) => url.href.includes('/tasks/'))
+  }
+
+  async createTask() {
+    await this.createTaskButton.click();
+
+    await expect(this.page.getByText('New workflow created').first()).toBeVisible();
   }
 
   /**
@@ -176,10 +202,30 @@ export class fillFormAppPageBase {
     await this.page.getByRole('button', {name: 'Submit'}).click();
   }
 
-  async createTask() {
-    await this.createTaskButton.click();
+  async moveInitialTaskToAnnualReportToBeCompletedStep() {
+    await expect(this.tasksToBeCompleted).toHaveCount(1);
+    await expect(this.tasksAssign).toHaveCount(1);
+    await this.proceedToLastTask();
 
-    await expect(this.page.getByText('New workflow created')).toBeVisible();
+    await this.fillAssigningParticipant();
+    await this.submitButton.click();
+
+    await this.page.waitForURL('/');
+  }
+
+  /**
+   * Dashboard
+   */
+  async goToDashboard() {
+    await this.navigation.dashboard.click()
+    await this.page.waitForURL('/dashboard');
+
+    await expect(
+      this.navigation.dashboard
+    ).toHaveCSS(
+      'font-weight',
+      '700'
+    )
   }
 }
 
@@ -194,8 +240,12 @@ export class fillFormAppPageForAdmin extends fillFormAppPageBase {
     await loginAsAdmin(this.page)
   }
 
-  async assertOrCreateATask() {
-    if (await this.tasks.count() == 0) {
+  async setupTwoTasks() {
+    if (await this.tasksAssign.count() < 1) {
+      await this.createTask();
+    }
+
+    if (await this.tasksAssign.count() < 2) {
       await this.createTask();
     }
   }
