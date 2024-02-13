@@ -1,6 +1,7 @@
 import React from "react";
 import {useAccountContext} from "/imports/ui/contexts/Account";
 import {ITaskList} from "/imports/policy/tasksList/type";
+import {Badge} from "react-bootstrap";
 
 
 export const TaskInfo = ({ task, showPhDStudent=true }: { task: ITaskList, showPhDStudent?: boolean }) => {
@@ -28,7 +29,9 @@ export const TaskInfo = ({ task, showPhDStudent=true }: { task: ITaskList, showP
           <span className={'small'}>Updated {task.updated_at.toLocaleString('fr-CH')}</span>
         }
         { account?.user?.isAdmin && task.isObsolete &&
-          <span className={'small ml-2'}>Task is obsolete</span>
+          <Badge pill variant={'warning'} className={'small ml-2'}>
+            Obsolete
+          </Badge>
         }
       </span>
     </>
