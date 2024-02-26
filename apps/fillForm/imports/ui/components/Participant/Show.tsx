@@ -2,6 +2,7 @@ import React from "react"
 import {ParticipantDetail} from "/imports/model/participants";
 import {ITaskList} from "/imports/policy/tasksList/type";
 import {Task} from "/imports/model/tasks";
+import { ITaskDashboard } from "/imports/policy/dashboard/type";
 
 
 const allGoodBoxColor = 'bg-info text-white'
@@ -31,24 +32,49 @@ export const Participant = React.memo(
     </>
 )
 
+/**
+ * Show all task(s) participants as a row
+ * @param task - Accept array of tasks (that should be, by design, in the same workflow).
+ *             When it is an array, all the assignees of all tasks are checked to get the good assignees colors
+ * @param showEmail - Add the email info
+ * @param showStatusColor - Get the color corresponding of an assignee
+ */
 export const ParticipantsAsRow = (
   { task,
     showEmail = false,
     showStatusColor = true
   }: {
-    task:  ITaskList | Task,
+    task: ITaskList |
+      Task |
+      ITaskDashboard |
+      ITaskDashboard[],
     showEmail?: boolean,
     showStatusColor?: boolean,
   },
 ) => {
+
+  // compile all assignees
+  const assigneeScipers: string[] = ( Array.isArray(task) ) ?
+    task.flatMap(
+        t => t.assigneeScipers ? t.assigneeScipers : []
+    ) :
+    task.assigneeScipers ?? []
+
+  // convert any array to one task
+  const _task:
+    ITaskList |
+    Task |
+    ITaskDashboard
+    = ( Array.isArray(task) ) ? task = task[0] : task
+
   return <div className="row">
-    { task.participants &&
-      Object.entries(task.participants).map(([role, info]) =>
+    { _task.participants &&
+      Object.entries(_task.participants).map(([role, info]) =>
         <Participant
-          key={ `${ task._id }-${ role }` }
+          key={ `${ _task._id }-${ role }` }
           role={ role }
           info={ info }
-          isAssignee={ showStatusColor ? task.assigneeScipers?.includes(info?.sciper) : false }
+          isAssignee={ showStatusColor ? assigneeScipers.includes(info?.sciper) : false }
           showEmail={ showEmail }
         />
       )
