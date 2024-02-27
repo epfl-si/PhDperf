@@ -14,7 +14,7 @@ export const setPHDFillsAttributes = (taskAttributes: any = generateAGenericTask
   },
   'variables': {
     ...taskAttributes.variables,
-    'assigneeSciper': taskAttributes.variables!.thesisCoDirectorSciper,
+    'assigneeSciper': taskAttributes.variables.phdStudentSciper,
     'dashboardDefinition': undefined,
     'doctoralProgramName': 'V1',
   },
@@ -65,7 +65,7 @@ export const setCollabReviewAttributes = (taskAttributes: any = generateAGeneric
   },
   'variables': {
     ...taskAttributes.variables,
-    'assigneeSciper': taskAttributes.variables.thesisDirectorSciper,
+    'assigneeSciper': taskAttributes.variables.phdStudentSciper,
     'dashboardDefinition': undefined,
     'doctoralProgramName': 'V1',
   },
@@ -74,7 +74,7 @@ export const setCollabReviewAttributes = (taskAttributes: any = generateAGeneric
   ]),
 })
 
-export const setDirectorCollabSignAttributes = (taskAttributes: any = generateAGenericTaskAttributes()) => ({
+export const setCoDirectorSignAttributes = (taskAttributes: any = generateAGenericTaskAttributes()) => ({
   ...taskAttributes,
   'customHeaders': {
     ...taskAttributes.customHeaders,
@@ -116,7 +116,7 @@ export const setPHDSignsAttributes = (taskAttributes: any = generateAGenericTask
   },
   'variables': {
     ...taskAttributes.variables,
-    'assigneeSciper': taskAttributes.variables.thesisDirectorSciper,
+    'assigneeSciper': taskAttributes.variables.phdStudentSciper,
     'dashboardDefinition': undefined,
     'doctoralProgramName': 'V1',
   },
@@ -150,7 +150,7 @@ export const setPostMentorPHDSignsAttributes = (taskAttributes: any = generateAG
   },
   'variables': {
     ...taskAttributes.variables,
-    'assigneeSciper': taskAttributes.variables.thesisDirectorSciper,
+    'assigneeSciper': taskAttributes.variables.phdStudentSciper,
     'dashboardDefinition': undefined,
     'doctoralProgramName': 'V1',
   },
@@ -167,7 +167,7 @@ export const setProgramDirectorSignsAttributes = (taskAttributes: any = generate
   },
   'variables': {
     ...taskAttributes.variables,
-    'assigneeSciper': taskAttributes.variables.thesisDirectorSciper,
+    'assigneeSciper': taskAttributes.variables.programDirectorSciper,
     'dashboardDefinition': undefined,
     'doctoralProgramName': 'V1',
   },
@@ -193,7 +193,7 @@ export const createTasksForDashboardFixtures = () => {
   Factory.create('task', setDirectorFillsAttributes(oneInstance));
 
   Factory.create('task', setCollabReviewAttributes());
-  Factory.create('task', setDirectorCollabSignAttributes());
+  Factory.create('task', setCoDirectorSignAttributes());
   Factory.create('task', setDirectorSignsAttributes());
   Factory.create('task', setPHDSignsAttributes());
   Factory.create('task', setMentorSignsAttributes());
