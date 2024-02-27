@@ -2,7 +2,7 @@ import {useTracker} from "meteor/react-meteor-data"
 import {Meteor} from "meteor/meteor"
 import {Tasks} from "../../../model/tasks";
 import _ from "lodash"
-import React, {CSSProperties} from "react"
+import React, {CSSProperties, useMemo, useState} from "react"
 import {Loader} from "@epfl/epfl-sti-react-library";
 import {ITaskDashboard} from "../../../policy/dashboard/type";
 import {useAccountContext} from "../../contexts/Account";
@@ -12,6 +12,8 @@ import {
 import {Step} from "phd-assess-meta/types/dashboards";
 import {DashboardRenderedStep} from "/imports/ui/components/Dashboard/Steps";
 import {convertDefinitionToGraph, DashboardGraph} from "/imports/ui/components/Dashboard/DefinitionGraphed";
+import { Collapse } from "react-bootstrap";
+import {ParticipantsAsRow} from "/imports/ui/components/Participant/Show";
 
 
 const DrawProgress =
@@ -37,28 +39,51 @@ const DrawProgress =
 }
 
 export const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks: ITaskDashboard[] }) => {
+
+  const [open, setOpen] = useState(false)
+
+  const stepsDefinition = workflowInstanceTasks[0].variables.dashboardDefinition ?? stepsDefinitionDefault
+
   // generate the good dashboard definition for this row
-  const definition: DashboardGraph = convertDefinitionToGraph(
-    workflowInstanceTasks[0].variables.dashboardDefinition ?? stepsDefinitionDefault
+  const definition = useMemo(
+    () => convertDefinitionToGraph(stepsDefinition),
+    [stepsDefinition]
   )
 
   // find the configuration directly into the bpmn, or use the default
-  return <div className="row" key={ `${workflowInstanceTasks[0]._id}_main_div` }>
-    <div className="dashboard-phdStudentName col-2 m-1 p-2 text-black" key={ `${workflowInstanceTasks[0]._id}_phdStudentSciper` } >
-      <a
-        href={`https://people.epfl.ch/${workflowInstanceTasks[0].variables.phdStudentSciper}`}
-        target={'_blank'}
-      >{ workflowInstanceTasks[0].variables.phdStudentName }</a> ({ workflowInstanceTasks[0].variables.phdStudentSciper })
+  return <>
+    <div
+      className="row"
+      key={ `${ workflowInstanceTasks[0]._id }_main_div` }
+      onClick={ () => setOpen(!open) }
+    >
+      <span className={ 'pt-2' }>
+        <svg className={ 'icon feather' } aria-hidden="true" style={ { height: '2em', width: '1.4em' } }>
+          <use xlinkHref={ open ? "#chevrons-down" : "#chevrons-right" }></use>
+        </svg>
+        &nbsp;
+      </span>
+      <div className="dashboard-phdStudentName col-2 m-1 p-2 text-black" key={ `${ workflowInstanceTasks[0]._id }_phdStudentSciper` }>
+        <a
+          href={ `https://people.epfl.ch/${ workflowInstanceTasks[0].variables.phdStudentSciper }` }
+          target={ '_blank' }
+        >{ workflowInstanceTasks[0].variables.phdStudentName }</a> ({ workflowInstanceTasks[0].variables.phdStudentSciper })
+      </div>
+      <div className="dashboard-doctoralProgramName col m-1 p-2 text-black" key={ `${ workflowInstanceTasks[0]._id }_doctoralProgramName` }>
+        { workflowInstanceTasks[0].variables.doctoralProgramName }
+      </div>
+      <DrawProgress
+        key={ workflowInstanceTasks[0]._id }
+        workflowInstanceTasks={ workflowInstanceTasks }
+        stepsDefinition={ definition }
+      />
     </div>
-    <div className="dashboard-doctoralProgramName col m-1 p-2 text-black" key={ `${workflowInstanceTasks[0]._id}_doctoralProgramName` } >
-      { workflowInstanceTasks[0].variables.doctoralProgramName }
-    </div>
-    <DrawProgress
-      key={ workflowInstanceTasks[0]._id }
-      workflowInstanceTasks={ workflowInstanceTasks }
-      stepsDefinition={ definition }
-    />
-  </div>
+    <Collapse in={ open }>
+      <div className={ `mb-2 pl-4 small` }>
+        <ParticipantsAsRow task={ workflowInstanceTasks } showEmail={ true }/>
+      </div>
+    </Collapse>
+  </>
 }
 
 const DashboardHeader = ({ definition, headerKey }: { definition: DashboardGraph, headerKey: string }) => {
