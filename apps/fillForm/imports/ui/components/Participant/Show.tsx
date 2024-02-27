@@ -67,9 +67,9 @@ export const ParticipantsAsRow = (
     ITaskDashboard
     = ( Array.isArray(task) ) ? task = task[0] : task
 
-  return <div className="row">
+  return <div className={ `row flex-nowrap` }>
     { _task.participants &&
-      Object.entries(_task.participants).map(([role, info]) =>
+      Object.entries(_task.participants).map( ( [role, info] ) =>
         <Participant
           key={ `${ _task._id }-${ role }` }
           role={ role }
