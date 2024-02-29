@@ -57,13 +57,15 @@ export const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks:
       key={ `${ workflowInstanceTasks[0]._id }_main_div` }
       onClick={ () => setOpen(!open) }
     >
-      <span className={ 'pt-2' }>
-        <svg className={ 'icon feather' } aria-hidden="true" style={ { height: '2em', width: '1.4em' } }>
-          <use xlinkHref={ open ? "#chevrons-down" : "#chevrons-right" }></use>
-        </svg>
-        &nbsp;
-      </span>
       <div className="dashboard-phdStudentName col-2 m-1 p-2 text-black" key={ `${ workflowInstanceTasks[0]._id }_phdStudentSciper` }>
+        <span>
+          <svg
+            className={ 'icon feather' }
+            aria-hidden="true"
+            style={ { height: open ? '2em' : '1.6em', width: open ? '1.6em' : '1.2em', paddingBottom: '0.12em' } }
+          ><use xlinkHref={ open ? "#chevrons-down" : "#chevrons-right" }></use>
+          </svg>
+        </span>
         <a
           href={ `https://people.epfl.ch/${ workflowInstanceTasks[0].variables.phdStudentSciper }` }
           target={ '_blank' }
@@ -107,7 +109,7 @@ const DashboardHeader = ({ definition, headerKey }: { definition: DashboardGraph
 
           return <div
             className="dashboard-header col m-1 p-2 text-black align-self-end text-small"
-            key={ `${ headerKey}-${ step.id }` }
+            key={ `${ headerKey }-${ step.id }` }
           >{ step.label }</div>
         })
       }
