@@ -1,5 +1,5 @@
 import {global_Error, Meteor} from "meteor/meteor"
-import React from "react"
+import React, {useRef, useState} from "react"
 import _ from "lodash"
 import {useTracker} from 'meteor/react-meteor-data'
 import {Tasks} from "/imports/model/tasks";
@@ -18,6 +18,8 @@ import {toastErrorClosable} from "/imports/ui/components/Toasters";
 import {ITaskList} from "/imports/policy/tasksList/type";
 import {useAccountContext} from "/imports/ui/contexts/Account";
 import {TaskInfo} from "/imports/ui/components/Task/Info";
+import {Button as BSButton, Form, Modal} from "react-bootstrap";
+import {ModalProps} from "react-bootstrap/Modal";
 
 
 export default function TaskList() {
@@ -73,6 +75,9 @@ export default function TaskList() {
 const TaskRow = ({ task, user }: { task: ITaskList, user: Meteor.User }) => {
   const navigate = useNavigate();
 
+  const [isModalRefreshOpen, setModalRefreshOpen] = useState(false);
+  const [isModalCancelOpen, setModalCancelOpen] = useState(false);
+
   const canDelete = user && canDeleteProcessInstance(user)
   const canRefresh = user && canRefreshProcessInstance(user)
   const canEditParticipants = user && canEditParticipantsCheck(user)
@@ -86,6 +91,16 @@ const TaskRow = ({ task, user }: { task: ITaskList, user: Meteor.User }) => {
         ...((user && user.isAdmin && task.isObsolete) && {backgroundColor: 'WhiteSmoke'})
       } }
     >
+      <RefreshProcessInstanceModal
+        task={ task }
+        onHide={ () => setModalRefreshOpen(false) }
+        show={ isModalRefreshOpen }
+      />
+      <CancelProcessInstanceModal
+        task={ task }
+        onHide={ () => setModalCancelOpen(false) }
+        show={ isModalCancelOpen }
+      />
       <details>
         <summary className={'d-flex align-items-center'}>
           <TaskInfo task={ task }/>
@@ -133,16 +148,14 @@ const TaskRow = ({ task, user }: { task: ITaskList, user: Meteor.User }) => {
                     { canRefresh &&
                       <Dropdown.Item
                         className={'small'}
-                        eventKey={ task.processInstanceKey }
-                        onSelect={ refreshProcessInstance }
+                        onSelect={ () => setModalRefreshOpen(true) }
                       >Refresh
                       </Dropdown.Item>
                     }
                     { canDelete &&
                       <Dropdown.Item
                         className={'small'}
-                        eventKey={ task.processInstanceKey }
-                        onSelect={ cancelProcessInstance }
+                        onSelect={ () => setModalCancelOpen(true) }
                       >Cancel
                       </Dropdown.Item>
                     }
@@ -158,39 +171,143 @@ const TaskRow = ({ task, user }: { task: ITaskList, user: Meteor.User }) => {
             <ParticipantsAsRow task={ task } showEmail={ false }/>
           </div>
         }
-
       </details>
     </div>
   )
 }
 
-
-const refreshProcessInstance = (eventKey: any) => {
-  window.confirm('Remove the process instance so it is refreshed after max 2 minutes ?') &&
-  Meteor.apply(
-    // @ts-ignore, because doc is saying noRetry exists
-    "refreshProcessInstance", [eventKey], { wait: true, noRetry: true },
-    (error: global_Error | Meteor.Error | undefined) => {
-      if (error) {
-        toastErrorClosable(eventKey, `${error}`)
-      } else {
-        toast.success(`Successfully refreshed the process instance. Please wait some time while the new tasks are being created`)
-      }
-    }
-  )
+interface ModalPropsWithTask extends ModalProps {
+  task: ITaskList
 }
 
-const cancelProcessInstance = (eventKey: any) => {
-  window.confirm('Delete the process instance?') &&
-  Meteor.apply(
-    // @ts-ignore, because doc is saying noRetry exists
-    "deleteProcessInstance", [eventKey], { wait: true, noRetry: true },
-    (error: global_Error | Meteor.Error | undefined) => {
-      if (error) {
-        toastErrorClosable(eventKey, `${error}`)
-      } else {
-        toast.success(`Successfully removed the process instance`)
+const RefreshProcessInstanceModal = (
+  props: ModalPropsWithTask
+) => {
+
+  const handleRefresh = (e: any) => {
+    e.preventDefault()
+    Meteor.apply(
+      "refreshProcessInstance", [props.task.processInstanceKey], { wait: true, noRetry: true },
+      (error: global_Error | Meteor.Error | undefined) => {
+        if (error) {
+          props.onHide && props.onHide();
+          toastErrorClosable(props.task.processInstanceKey, `${error}`)
+        } else {
+          props.onHide && props.onHide();
+          toast.success(`Successfully refreshed the process instance. You may wait some time while the new task(s) is being created`)
+        }
       }
-    }
-  )
+    );
+  }
+
+  const inputReference = useRef<HTMLInputElement>(null)
+
+  return <Modal
+    { ...props }
+    backdrop={ "static" }
+    animation={ true }
+    centered
+    onEntered={ () => inputReference?.current?.focus() } // trick to make the enter key works
+  >
+      <Modal.Header closeButton={ false }>
+        <Modal.Title>Refresh a process instance</Modal.Title>
+      </Modal.Header>
+
+    <Modal.Body>
+      <Form onSubmit={ handleRefresh }>
+        {/*this hidden form is here to steal the focus and make the "enter" keypress event do something*/}
+        <div style={ { height:0, width: 0, overflow: 'hidden' } }>
+          <Form.Control type="text" ref={ inputReference } />
+        </div>
+        <div>Remove the process instance so it is refreshed after max 2 minutes ?</div>
+        <div>{ props.task.variables.phdStudentName } ({ props.task.variables.phdStudentSciper })</div>
+        <code>{ props.task.detail }</code>
+      </Form>
+    </Modal.Body>
+
+    <Modal.Footer>
+      <BSButton
+        type='button'
+        className="btn btn-secondary mr-2"
+        onClick={ props.onHide }
+      >
+        Close
+      </BSButton>
+      <BSButton
+        type='button'
+        className="btn btn-primary"
+        onClick={ handleRefresh }
+      >
+        Refresh
+      </BSButton>
+    </Modal.Footer>
+  </Modal>
+}
+
+const CancelProcessInstanceModal = (
+  props: ModalPropsWithTask
+) => {
+  const handleDelete = (e: any) => {
+    e.preventDefault()
+    Meteor.apply(
+      "deleteProcessInstance", [props.task.processInstanceKey], { wait: true, noRetry: true },
+      (error: global_Error | Meteor.Error | undefined) => {
+        if (error) {
+          props.onHide && props.onHide();
+          toastErrorClosable(props.task.processInstanceKey, `${ error }`)
+        } else {
+          props.onHide && props.onHide();
+          toast.success(`Successfully removed the process instance`)
+        }
+      }
+    )
+  }
+
+  const inputReference = useRef<HTMLInputElement>(null)
+
+  return <Modal
+    { ...props }
+    backdrop={ "static" }
+    animation={ true }
+    centered
+    onEntered={ () => inputReference?.current?.focus() } // trick to make the enter key works
+  >
+    <Modal.Header closeButton={ false }>
+      <Modal.Title>Delete a process instance</Modal.Title>
+    </Modal.Header>
+
+    <Modal.Body>
+      <Form onSubmit={ handleDelete }>
+        {/*this hidden form is here to steal the focus and make the "enter" keypress event do something*/}
+        <div style={ { height:0, width: 0, overflow: 'hidden' } }>
+          <Form.Control type="text" ref={ inputReference } />
+        </div>
+        <div>
+          Delete the process instance { props.task.processInstanceKey } {
+          props.task.variables.phdStudentName && <>for { props.task.variables.phdStudentName }</>
+        } ?
+        </div>
+        <div>{ props.task.variables.phdStudentName } ({ props.task.variables.phdStudentSciper })</div>
+        <code>{ props.task.detail }</code>
+      </Form>
+    </Modal.Body>
+
+    <Modal.Footer>
+      <BSButton
+        type='button'
+        className="btn btn-secondary mr-2"
+        onClick={ props.onHide }
+      >
+        Close
+      </BSButton>
+      <BSButton
+        type='button'
+        className="btn btn-primary"
+        onClick={ handleDelete }
+      >
+        Delete
+      </BSButton>
+
+    </Modal.Footer>
+  </Modal>
 }
