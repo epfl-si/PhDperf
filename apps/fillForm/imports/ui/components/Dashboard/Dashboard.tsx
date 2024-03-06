@@ -62,7 +62,7 @@ export const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks:
           <svg
             className={ 'icon feather' }
             aria-hidden="true"
-            style={ { height: open ? '2em' : '1.6em', width: open ? '1.6em' : '1.2em', paddingBottom: '0.12em' } }
+            style={ { height: open ? '1.2em' : '1.2em', width: open ? '1.2em' : '1.2em', paddingBottom: '0.12em' } }
           ><use xlinkHref={ open ? "#chevrons-down" : "#chevrons-right" }></use>
           </svg>
         </span>
