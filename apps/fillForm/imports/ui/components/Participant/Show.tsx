@@ -15,7 +15,21 @@ export type ParticipantsInfo = {
   showEmail?: boolean
 }
 
-const camelCaseToLabel = (text: string) => text.replace(/([A-Z])/g, ' $1').replace(/^./, function(str: string){ return str.toUpperCase(); })
+// Label the participants
+const varToNameMap: { [key: string]: string } = {
+  programAssistant: 'Program assistant',
+  phdStudent: 'Doctoral candidate',
+  thesisDirector: 'Thesis director',
+  thesisCoDirector: 'Thesis co-director',
+  programDirector: 'Program director',
+  mentor: 'Mentor',
+}
+
+const camelCaseToLabel = (text: string): string => {
+  if (text in varToNameMap) return varToNameMap[text]
+
+  return text.replace(/([A-Z])/g, ' $1').replace(/^./, function(str: string){ return str.toUpperCase(); })
+}
 
 export const Participant = React.memo(
   ({role, info, isAssignee, showEmail = false}: ParticipantsInfo) =>
