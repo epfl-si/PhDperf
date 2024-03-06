@@ -13,7 +13,7 @@ import {Step} from "phd-assess-meta/types/dashboards";
 import {DashboardRenderedStep} from "/imports/ui/components/Dashboard/Steps";
 import {convertDefinitionToGraph, DashboardGraph} from "/imports/ui/components/Dashboard/DefinitionGraphed";
 import { Collapse } from "react-bootstrap";
-import {ParticipantsAsRow} from "/imports/ui/components/Participant/Show";
+import {ParticipantsAsTable} from "/imports/ui/components/Participant/Show";
 
 
 const DrawProgress =
@@ -82,7 +82,7 @@ export const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks:
     </div>
     <Collapse in={ open }>
       <div className={ `mb-2 pl-4 small` }>
-        <ParticipantsAsRow task={ workflowInstanceTasks } showEmail={ true }/>
+        <ParticipantsAsTable workflowInstanceTasks={ workflowInstanceTasks } showEmail={ true }/>
       </div>
     </Collapse>
   </>
