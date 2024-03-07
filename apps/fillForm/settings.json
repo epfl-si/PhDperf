@@ -16,6 +16,7 @@
       "neither Meteor.isDevelopment nor Meteor.isProduction)"
     ],
     "isTest": true,
+    "ignoreTestBackgroundColor": true,
     "///": [
       "Allow to control the Meteor connexion status from the client"
     ],

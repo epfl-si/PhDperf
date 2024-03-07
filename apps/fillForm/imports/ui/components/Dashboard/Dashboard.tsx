@@ -62,7 +62,7 @@ export const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks:
 }
 
 const DashboardHeader = ({ definition, headerKey }: { definition: DashboardGraph, headerKey: string }) => {
-  const backgroundColor: CSSProperties = Meteor.settings.public.isTest ? { backgroundColor: 'Cornsilk' } : { backgroundColor: 'white' }
+  const backgroundColor: CSSProperties = Meteor.settings.public.isTest && !Meteor.settings.public.ignoreTestBackgroundColor ? { backgroundColor: 'Cornsilk' } : { backgroundColor: 'white' }
 
   return (
     <div

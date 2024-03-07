@@ -13,7 +13,7 @@ import {ConnectionStatusFooter} from "/imports/ui/components/ConnectionStatus";
  * The base UI for all pages, where other pages are rendered into
  */
 export default function Main() {
-  const mainPanelBackgroundColor: CSSProperties = Meteor.settings.public.isTest ? {backgroundColor: 'Cornsilk'} : {}
+  const mainPanelBackgroundColor: CSSProperties = Meteor.settings.public.isTest && !Meteor.settings.public.ignoreTestBackgroundColor ? {backgroundColor: 'Cornsilk'} : {}
 
   const error:any = useRouteError();
 
