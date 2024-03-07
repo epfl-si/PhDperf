@@ -6,6 +6,10 @@ export class fillFormAppPageBase {
 
   readonly page: Page;
 
+  readonly navigation: {
+    dashboard: Locator
+  }
+
   readonly userInfoButton: Locator;
   readonly userInfoDiv: Locator;
   readonly userInfoDisplayName: Locator;
@@ -28,9 +32,19 @@ export class fillFormAppPageBase {
    */
   readonly submitButton: Locator;
 
+  /**
+   * Dashboard
+   */
+  readonly dashboard: Locator;
+  readonly dashboardFirstRow: Locator;
+
 
   constructor(page: Page) {
     this.page = page
+
+    this.navigation = {
+      dashboard: page.locator('#nav-aside a[href*="/dashboard"]')
+    }
 
     this.userInfoButton = page
       .locator('#user-info-button');
@@ -61,6 +75,12 @@ export class fillFormAppPageBase {
 
     this.submitButton = page
       .getByRole('button', {name: 'Submit'});
+
+    this.dashboard = page
+      .locator('.dashboard');
+
+    this.dashboardFirstRow = page
+      .locator('.dashboard .row').first();
   }
 
   async teardown() {
@@ -94,17 +114,32 @@ export class fillFormAppPageBase {
     await this.page.waitForURL((url) => url.href.includes('/tasks/'))
   }
 
+  async createTask() {
+    await this.createTaskButton.click();
+
+    await expect(this.page.getByText('New workflow created').first()).toBeVisible();
+  }
+
   /**
    * Form
    */
 
-  async fillAssigningParticipant() {
+  async fillAssigningParticipant(
+    participants = {
+      programAssistantSciper: process.env.PARTICIPANT_PROGRAM_ASSISTANT ?? '111111',
+      phdStudentSciper: process.env.PARTICIPANT_PHD_STUDENT ?? '111111',
+      thesisDirectorSciper: process.env.PARTICIPANT_THESIS_DIRECTOR ?? '111111',
+      thesisCoDirectorSciper: process.env.PARTICIPANT_THESIS_CODIRECTOR ?? '111111',
+      programDirectorSciper: process.env.PARTICIPANT_PROGRAM_DIRECTOR ?? '111111',
+      mentorSciper: process.env.PARTICIPANT_MENTOR ?? '111111',
+    }
+  ) {
 
     await this.page
       .getByLabel('Program assistant sciper').click();
     await this.page
       .getByLabel('Program assistant sciper')
-      .fill(process.env.PARTICIPANT_PROGRAM_ASSISTANT ?? '111111');
+      .fill(participants.programAssistantSciper);
 
     await this.page
       .getByPlaceholder('ED__').click();
@@ -128,31 +163,31 @@ export class fillFormAppPageBase {
       .getByLabel('Doctoral candidate sciper').click();
     await this.page
       .getByLabel('Doctoral candidate sciper')
-      .fill(process.env.PARTICIPANT_PHD_STUDENT ?? '111111');
+      .fill(participants.phdStudentSciper);
 
     await this.page
       .getByLabel('Thesis director sciper').click();
     await this.page
       .getByLabel('Thesis director sciper')
-      .fill(process.env.PARTICIPANT_THESIS_DIRECTOR ?? '111111');
+      .fill(participants.thesisDirectorSciper);
 
     await this.page
       .getByLabel('Thesis co-director sciper').click();
     await this.page
       .getByLabel('Thesis co-director sciper')
-      .fill(process.env.PARTICIPANT_THESIS_CODIRECTOR ?? '111111');
+      .fill(participants.thesisCoDirectorSciper);
 
     await this.page
       .getByLabel('Program director sciper').click();
     await this.page
       .getByLabel('Program director sciper')
-      .fill(process.env.PARTICIPANT_PROGRAM_DIRECTOR ?? '111111');
+      .fill(participants.programDirectorSciper);
 
     await this.page
       .getByLabel('Mentor sciper').click();
     await this.page
       .getByLabel('Mentor sciper')
-      .fill(process.env.PARTICIPANT_MENTOR ?? '111111');
+      .fill(participants.mentorSciper);
 
     //await this.page.getByPlaceholder('__', { exact: true }).click();
     await this.page
@@ -167,10 +202,30 @@ export class fillFormAppPageBase {
     await this.page.getByRole('button', {name: 'Submit'}).click();
   }
 
-  async createTask() {
-    await this.createTaskButton.click();
+  async moveInitialTaskToAnnualReportToBeCompletedStep() {
+    await expect(this.tasksToBeCompleted).toHaveCount(1);
+    await expect(this.tasksAssign).toHaveCount(1);
+    await this.proceedToLastTask();
 
-    await expect(this.page.getByText('New workflow created')).toBeVisible();
+    await this.fillAssigningParticipant();
+    await this.submitButton.click();
+
+    await this.page.waitForURL('/');
+  }
+
+  /**
+   * Dashboard
+   */
+  async goToDashboard() {
+    await this.navigation.dashboard.click()
+    await this.page.waitForURL('/dashboard');
+
+    await expect(
+      this.navigation.dashboard
+    ).toHaveCSS(
+      'font-weight',
+      '700'
+    )
   }
 }
 
@@ -185,8 +240,12 @@ export class fillFormAppPageForAdmin extends fillFormAppPageBase {
     await loginAsAdmin(this.page)
   }
 
-  async assertOrCreateATask() {
-    if (await this.tasks.count() == 0) {
+  async setupTwoTasks() {
+    if (await this.tasksAssign.count() < 1) {
+      await this.createTask();
+    }
+
+    if (await this.tasksAssign.count() < 2) {
       await this.createTask();
     }
   }

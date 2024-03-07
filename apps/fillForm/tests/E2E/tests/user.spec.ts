@@ -1,12 +1,16 @@
 import {expect} from '@playwright/test';
-import {cleanupPageAndTaskForUser, setupAPagWithATaskForUser, test} from './fixtures';
+import {
+  cleanupPageAndTaskForUser,
+  setupAPagWithTasksForUser,
+  test
+} from './fixtures';
 import {fillFormAppPageForUser} from "/tests/E2E/tests/fixtures/fillFormApp";
 
 
 let userApp: fillFormAppPageForUser;
 
 test.beforeAll(async ({ browser }) => {
-  userApp = await setupAPagWithATaskForUser(browser);
+  userApp = await setupAPagWithTasksForUser(browser);
 });
 
 test.afterAll(async () => {
@@ -70,7 +74,7 @@ test.describe('Form', () => {
 
     await test.step('I can assign participants', async () => {
 
-      await expect(userApp.tasksAssign).toHaveCount(1);
+      await expect(userApp.tasksAssign).toHaveCount(2);
       await userApp.proceedToLastTask();
 
       await expect(userApp.submitButton).toBeDisabled()
@@ -111,4 +115,23 @@ test.describe('Form', () => {
     });
 
   });
+});
+
+test.describe('Dashboard', () => {
+
+  test('Tasks visibility',
+    async () => {
+
+      if (!await userApp.tasksToBeCompleted.count()) {
+        await userApp.moveInitialTaskToAnnualReportToBeCompletedStep();
+      }
+
+      // need two tasks without inter lapping participants
+      await expect(userApp.tasksAssign).toHaveCount(2);
+
+      await userApp.goToDashboard();
+
+      await expect(userApp.dashboard).not.toBeEmpty();
+    });
+
 });

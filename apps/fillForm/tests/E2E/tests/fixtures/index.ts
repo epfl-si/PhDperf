@@ -26,27 +26,27 @@ export const test = base.extend<FillFormAppFixtures>({
   },
 });
 
-export const setupAPageWithATaskForAdmin = async (browser: Browser) => {
+export const setupAPageWithTasksForAdmin = async (browser: Browser) => {
   const page = await browser.newPage();
   const fillFormAppPageAsAdmin = new fillFormAppPageForAdmin(page);
 
   await fillFormAppPageAsAdmin.login()
-  await fillFormAppPageAsAdmin.assertOrCreateATask();
+  await fillFormAppPageAsAdmin.setupTwoTasks();
 
   return fillFormAppPageAsAdmin;
 }
 
 export const cleanupPageAndTaskForAdmin = async (app: fillFormAppPageForAdmin) => {
-  if (await app.tasks.count() > 0) await app.removeLastTask();
+  await app.removeAllTasks();
   await app.page.close();
 }
 
-export const setupAPagWithATaskForUser = async (browser: Browser) => {
+export const setupAPagWithTasksForUser = async (browser: Browser) => {
   const page = await browser.newPage();
   const fillFormAppPageAsAdmin = new fillFormAppPageForAdmin(page);
 
   await fillFormAppPageAsAdmin.login()
-  await fillFormAppPageAsAdmin.assertOrCreateATask();
+  await fillFormAppPageAsAdmin.setupTwoTasks();
 
   const fillFormAppPageAsUser = new fillFormAppPageForUser(page);
   await fillFormAppPageAsUser.login()
@@ -56,6 +56,6 @@ export const setupAPagWithATaskForUser = async (browser: Browser) => {
 export const cleanupPageAndTaskForUser = async (page: Page) => {
   await loginAsAdmin(page);  // relog, as the last account was user
   const fillFormAppPageAsAdmin = new fillFormAppPageForAdmin(page);
-  await fillFormAppPageAsAdmin.removeLastTask();
+  await fillFormAppPageAsAdmin.removeAllTasks();
   await fillFormAppPageAsAdmin.page.close();
 }
