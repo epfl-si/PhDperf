@@ -58,6 +58,12 @@ export const ParticipantAsBodyTable = ({role, info, isAssignee, showEmail = fals
       <td>
         { camelCaseToLabel(role) }
       </td>
+      <td className={ 'text-center' }>
+        { isAssignee ?
+          <Badge variant="warning" pill>Pending</Badge> :
+          <></>
+        }
+      </td>
       <td>
         { info.name }
       </td>
@@ -67,12 +73,7 @@ export const ParticipantAsBodyTable = ({role, info, isAssignee, showEmail = fals
       { showEmail &&
         <td><a href={ `mailto:${ info.email }` }>{ info.email }</a></td>
       }
-      <td className="text-center">
-        { isAssignee ?
-          <Badge variant="warning" pill>Pending</Badge> :
-          <></>
-        }
-      </td>
+
     </tr>
   }
 </>
@@ -99,31 +100,39 @@ export const ParticipantsAsTable = (
     [])
 
   return <>
-    { task.participants && <Table striped bordered className={'mb-4'}>
-      <caption style={ { captionSide: 'top' } }>Participants</caption>
-      <tr>
-        <th></th>
-        <th>Role</th>
-        <th>Name</th>
-        <th>Sciper</th>
-        <th>Email</th>
-        <th className="text-center">Task</th>
-      </tr>
-      { Object.entries(task.participants).map(([role, info]) =>
-        <ParticipantAsBodyTable
-          key={ `${ task._id }-${ role }` }
-          role={ role }
-          info={ info }
-          isAssignee={ showStatusColor ? assigneeList?.includes(info?.sciper) : false }
-          showEmail={ showEmail }
-        />
-      ) }
-    </Table>
+    { task.participants &&
+      <Table striped bordered className={ 'mb-4' }>
+        <caption style={ { captionSide: 'top' } }>Participants</caption>
+        <col style={ { width: '3%' } }/>
+        <col style={ { width: '11%' } }/>
+        <col style={ {} }/>
+        <col style={ { width: '15%' } }/>
+        <col style={ {} }/>
+        <col style={ {} }/>
+        <tr>
+          <th></th>
+          <th>Role</th>
+          <th className={ 'text-center' }>Task</th>
+          <th>Name</th>
+          <th>Sciper</th>
+          <th>Email</th>
+        </tr>
+
+        { Object.entries(task.participants).map(([role, info]) =>
+          <ParticipantAsBodyTable
+            key={ `${ task._id }-${ role }` }
+            role={ role }
+            info={ info }
+            isAssignee={ showStatusColor ? assigneeList?.includes(info?.sciper) : false }
+            showEmail={ showEmail }
+          />
+        ) }
+      </Table>
     }</>
 }
 
-export const ParticipantsAsRow = (
-  { task,
+export const ParticipantsAsRow = ({
+    task,
     showEmail = false,
     showStatusColor = true
   }: {
