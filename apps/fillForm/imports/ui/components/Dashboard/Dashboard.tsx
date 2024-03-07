@@ -12,7 +12,6 @@ import {
 import {Step} from "phd-assess-meta/types/dashboards";
 import {DashboardRenderedStep} from "/imports/ui/components/Dashboard/Steps";
 import {convertDefinitionToGraph, DashboardGraph} from "/imports/ui/components/Dashboard/DefinitionGraphed";
-import { Collapse } from "react-bootstrap";
 import {ParticipantsAsTable} from "/imports/ui/components/Participant/Show";
 
 
@@ -51,21 +50,13 @@ export const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks:
   )
 
   // find the configuration directly into the bpmn, or use the default
-  return <>
-    <div
+  return <details>
+    <summary
       className="row"
       key={ `${ workflowInstanceTasks[0]._id }_main_div` }
       onClick={ () => setOpen(!open) }
     >
       <div className="dashboard-phdStudentName col-2 m-1 p-2 text-black" key={ `${ workflowInstanceTasks[0]._id }_phdStudentSciper` }>
-        <span>
-          <svg
-            className={ 'icon feather' }
-            aria-hidden="true"
-            style={ { height: open ? '1.2em' : '1.2em', width: open ? '1.2em' : '1.2em', paddingBottom: '0.12em' } }
-          ><use xlinkHref={ open ? "#chevrons-down" : "#chevrons-right" }></use>
-          </svg>
-        </span>
         <a
           href={ `https://people.epfl.ch/${ workflowInstanceTasks[0].variables.phdStudentSciper }` }
           target={ '_blank' }
@@ -79,13 +70,14 @@ export const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks:
         workflowInstanceTasks={ workflowInstanceTasks }
         stepsDefinition={ definition }
       />
-    </div>
-    <Collapse in={ open }>
-      <div className={ `mb-2 pl-4 small` }>
+    </summary>
+    <p className={ 'row' }>
+      <div className={ 'col-2' }></div>
+      <div className={ 'col' }>
         <ParticipantsAsTable workflowInstanceTasks={ workflowInstanceTasks } showEmail={ true }/>
       </div>
-    </Collapse>
-  </>
+    </p>
+  </details>
 }
 
 const DashboardHeader = ({ definition, headerKey }: { definition: DashboardGraph, headerKey: string }) => {
