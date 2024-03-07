@@ -3,21 +3,21 @@ import {PhDInputVariables} from "/imports/model/tasksTypes";
 
 
 export const ParticipantIDs: ParticipantRoles[] = [
-  "programAssistant" ,
   "phdStudent" ,
   "thesisDirector" ,
   "thesisCoDirector" ,
-  "programDirector" ,
   "mentor",
+  "programDirector" ,
+  "programAssistant" ,
 ]
 
 export type ParticipantRoles =
-  "programAssistant" |
   "phdStudent" |
   "thesisDirector" |
   "thesisCoDirector" |
+  "mentor" |
   "programDirector" |
-  "mentor"
+  "programAssistant"
 
 export type ParticipantDetail = {
   sciper: Sciper

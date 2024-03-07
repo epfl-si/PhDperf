@@ -2,6 +2,8 @@ import React from "react"
 import {ParticipantDetail} from "/imports/model/participants";
 import {ITaskList} from "/imports/policy/tasksList/type";
 import {Task} from "/imports/model/tasks";
+import {ITaskDashboard} from "/imports/policy/dashboard/type";
+import {Badge, Table} from "react-bootstrap";
 
 
 const allGoodBoxColor = 'bg-info text-white'
@@ -14,7 +16,21 @@ export type ParticipantsInfo = {
   showEmail?: boolean
 }
 
-const camelCaseToLabel = (text: string) => text.replace(/([A-Z])/g, ' $1').replace(/^./, function(str: string){ return str.toUpperCase(); })
+// Label the participants
+const varToNameMap: { [key: string]: string } = {
+  programAssistant: 'Program assistant',
+  phdStudent: 'Doctoral candidate',
+  thesisDirector: 'Thesis director',
+  thesisCoDirector: 'Thesis co-director',
+  programDirector: 'Program director',
+  mentor: 'Mentor',
+}
+
+const camelCaseToLabel = (text: string): string => {
+  if (text in varToNameMap) return varToNameMap[text]
+
+  return text.replace(/([A-Z])/g, ' $1').replace(/^./, function(str: string){ return str.toUpperCase(); })
+}
 
 export const Participant = React.memo(
   ({role, info, isAssignee, showEmail = false}: ParticipantsInfo) =>
@@ -31,24 +47,123 @@ export const Participant = React.memo(
     </>
 )
 
-export const ParticipantsAsRow = (
-  { task,
+export const ParticipantAsBodyTable = ({role, info, isAssignee, showEmail = false}: ParticipantsInfo) => <>
+  { info &&
+    <tr>
+      <td>
+        <svg className="icon" aria-hidden="true">
+          <use xlinkHref="#user"></use>
+        </svg>
+      </td>
+      <td>
+        { camelCaseToLabel(role) }
+      </td>
+      <td className={ 'text-center' }>
+        { isAssignee ?
+          <Badge variant="warning" pill>Pending</Badge> :
+          <></>
+        }
+      </td>
+      <td>
+        { info.name }
+      </td>
+      <td>
+        { info.sciper }
+      </td>
+      { showEmail &&
+        <td><a href={ `mailto:${ info.email }` }>{ info.email }</a></td>
+      }
+
+    </tr>
+  }
+</>
+
+export const ParticipantsAsTable = (
+  {
+    workflowInstanceTasks,
     showEmail = false,
     showStatusColor = true
   }: {
-    task:  ITaskList | Task,
+    workflowInstanceTasks:
+      ITaskDashboard[],
     showEmail?: boolean,
     showStatusColor?: boolean,
   },
 ) => {
-  return <div className="row">
+  // the majority of the data are the same for tasks in the workflow
+  // so take the first one
+  const task = workflowInstanceTasks[0]
+
+  // compile all assingees into one list
+  const assigneeList = workflowInstanceTasks.reduce(
+    (acc: string[], task) => [...acc, ...task.assigneeScipers ?? []],
+    [])
+
+  return <>
     { task.participants &&
-      Object.entries(task.participants).map(([role, info]) =>
+      <Table striped bordered className={ 'mb-4' }>
+        <caption style={ { captionSide: 'top' } }>Participants</caption>
+        <col style={ { width: '3%' } }/>
+        <col style={ { width: '13%' } }/>
+        <col style={ {} }/>
+        <col style={ { width: '15%' } }/>
+        <col style={ {} }/>
+        <col style={ {} }/>
+        <tr>
+          <th></th>
+          <th>Role</th>
+          <th className={ 'text-center' }>Task</th>
+          <th>Name</th>
+          <th>Sciper</th>
+          <th>Email</th>
+        </tr>
+
+        { Object.entries(task.participants).map(([role, info]) =>
+          <ParticipantAsBodyTable
+            key={ `${ task._id }-${ role }` }
+            role={ role }
+            info={ info }
+            isAssignee={ showStatusColor ? assigneeList?.includes(info?.sciper) : false }
+            showEmail={ showEmail }
+          />
+        ) }
+      </Table>
+    }</>
+}
+
+export const ParticipantsAsRow = ({
+    task,
+    showEmail = false,
+    showStatusColor = true
+  }: {
+    task: ITaskList | Task
+    showEmail?: boolean,
+    showStatusColor?: boolean,
+  },
+) => {
+
+  // compile all assignees
+  const assigneeScipers: string[] = ( Array.isArray(task) ) ?
+    task.flatMap(
+        t => t.assigneeScipers ? t.assigneeScipers : []
+    ) :
+    task.assigneeScipers ?? []
+
+  // convert any array to one task
+  const _task:
+    ITaskList |
+    Task |
+    ITaskDashboard
+    = ( Array.isArray(task) ) ? task = task[0] : task
+
+  return <div className={ `row flex-nowrap` }>
+    { _task.participants &&
+      Object.entries(_task.participants).map( ( [role, info] ) =>
         <Participant
-          key={ `${ task._id }-${ role }` }
+          key={ `${ _task._id }-${ role }` }
           role={ role }
           info={ info }
-          isAssignee={ showStatusColor ? task.assigneeScipers?.includes(info?.sciper) : false }
+          isAssignee={ showStatusColor ? assigneeScipers.includes(info?.sciper) : false }
           showEmail={ showEmail }
         />
       )

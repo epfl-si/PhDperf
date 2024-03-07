@@ -15,7 +15,7 @@ export const setPHDFillsAttributes = (taskAttributes: any = generateAGenericTask
   },
   'variables': {
     ...taskAttributes.variables,
-    'assigneeSciper': taskAttributes.variables.thesisCoDirectorSciper,
+    'assigneeSciper': taskAttributes.variables.phdStudentSciper,
     'dashboardDefinition': stepsDefinitionV2,
     'doctoralProgramName': 'V2',
   },
@@ -32,7 +32,7 @@ export const setMentorSignsAttributes = (taskAttributes: any = generateAGenericT
   },
   'variables': {
     ...taskAttributes.variables,
-    'assigneeSciper': taskAttributes.variables.thesisDirectorSciper,
+    'assigneeSciper': taskAttributes.variables.mentorSciper,
     'dashboardDefinition': stepsDefinitionV2,
     'doctoralProgramName': 'V2',
   },
@@ -45,11 +45,11 @@ export const setMentorSignsAttributesWithoutTheNeedOfTheProgramDirector = (taskA
   ...taskAttributes,
   'customHeaders': {
     ...taskAttributes.variables,
-    'title': 'Thesis Dir signature - Test',
+    'title': 'Mentor signature without program director - Test',
   },
   'variables': {
     ...taskAttributes.variables,
-    'assigneeSciper': taskAttributes.variables.thesisDirectorSciper,
+    'assigneeSciper': taskAttributes.variables.mentorSciper,
     'dashboardDefinition': stepsDefinitionV2,
     'doctoralProgramName': 'V2',
     'notifProgramDirector': '1',  // this make the program director optional
@@ -101,7 +101,7 @@ export const setCollabReviewAttributes = (taskAttributes: any = generateAGeneric
   },
   'variables': {
     ...taskAttributes.variables,
-    'assigneeSciper': taskAttributes.variables.thesisDirectorSciper,
+    'assigneeSciper': taskAttributes.variables.phdStudentSciper,
     'dashboardDefinition': stepsDefinitionV2,
     'doctoralProgramName': 'V2',
   },
@@ -118,7 +118,7 @@ export const setPHDSignsAttributes = (taskAttributes: any = generateAGenericTask
   },
   'variables': {
     ...taskAttributes.variables,
-    'assigneeSciper': taskAttributes.variables.thesisDirectorSciper,
+    'assigneeSciper': taskAttributes.variables.phdStudentSciper,
     'dashboardDefinition': stepsDefinitionV2,
     'doctoralProgramName': 'V2',
   },
@@ -131,11 +131,11 @@ export const setProgramDirectorSignsExceedAndDisagreeAttributes = (taskAttribute
   ...taskAttributes,
   'customHeaders': {
     ...taskAttributes.customHeaders,
-    'title': 'Thesis Dir signature - Test',
+    'title': 'Program dir. exceed and disagree signature - Test',
   },
   'variables': {
     ...taskAttributes.variables,
-    'assigneeSciper': taskAttributes.variables.thesisDirectorSciper,
+    'assigneeSciper': taskAttributes.variables.programDirectorSciper,
     'dashboardDefinition': stepsDefinitionV2,
     'doctoralProgramName': 'V2',
   },
@@ -148,11 +148,11 @@ export const setProgramDirectorSignsUnsatisfactoryAndDisagreesAttributes = (task
   ...taskAttributes,
   'customHeaders': {
     ...taskAttributes.customHeaders,
-    'title': 'Thesis Dir signature - Test',
+    'title': 'Program dir. Unsat. and disagree signature - Test',
   },
   'variables': {
     ...taskAttributes.variables,
-    'assigneeSciper': taskAttributes.variables.thesisDirectorSciper,
+    'assigneeSciper': taskAttributes.variables.programDirectorSciper,
     'dashboardDefinition': stepsDefinitionV2,
     'doctoralProgramName': 'V2',
   },
@@ -165,11 +165,11 @@ export const setProgramDirectorSignsNeedsImprovementsAndDisagreeAttributes = (ta
   ...taskAttributes,
   'customHeaders': {
     ...taskAttributes.customHeaders,
-    'title': 'Thesis Dir signature - Test',
+    'title': 'Program dir. needs improv. and disagree signature - Test',
   },
   'variables': {
     ...taskAttributes.variables,
-    'assigneeSciper': taskAttributes.variables.thesisDirectorSciper,
+    'assigneeSciper': taskAttributes.variables.programDirectorSciper,
     'dashboardDefinition': stepsDefinitionV2,
     'doctoralProgramName': 'V2',
   },
@@ -182,11 +182,11 @@ export const setProgramDirectorSignsNeedsImprovementsOrUnsatisfactoryAndAgreeAtt
   ...taskAttributes,
   'customHeaders': {
     ...taskAttributes.customHeaders,
-    'title': 'Thesis Dir signature - Test',
+    'title': 'Program dir. needs improv. or unsat. and agree signature - Test',
   },
   'variables': {
     ...taskAttributes.variables,
-    'assigneeSciper': taskAttributes.variables.thesisDirectorSciper,
+    'assigneeSciper': taskAttributes.variables.programDirectorSciper,
     'dashboardDefinition': stepsDefinitionV2,
     'doctoralProgramName': 'V2',
   },
@@ -199,11 +199,11 @@ export const setProgramDirectorSignsNeedsImprovementsOrUnsatisfactoryAndAgreeAtt
   ...taskAttributes,
   'customHeaders': {
     ...taskAttributes.customHeaders,
-    'title': 'Thesis Dir signature - Test',
+    'title': 'Program dir. needs improv. or unsat. and agree signature with fixed typo - Test',
   },
   'variables': {
     ...taskAttributes.variables,
-    'assigneeSciper': taskAttributes.variables.thesisDirectorSciper,
+    'assigneeSciper': taskAttributes.variables.programDirectorSciper,
     'dashboardDefinition': stepsDefinitionV2WithImprovmentTypo,
     'doctoralProgramName': 'V2',
   },

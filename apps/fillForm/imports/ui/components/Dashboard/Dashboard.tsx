@@ -2,7 +2,7 @@ import {useTracker} from "meteor/react-meteor-data"
 import {Meteor} from "meteor/meteor"
 import {Tasks} from "../../../model/tasks";
 import _ from "lodash"
-import React, {CSSProperties} from "react"
+import React, {CSSProperties, useMemo, useState} from "react"
 import {Loader} from "@epfl/epfl-sti-react-library";
 import {ITaskDashboard} from "../../../policy/dashboard/type";
 import {useAccountContext} from "../../contexts/Account";
@@ -12,6 +12,7 @@ import {
 import {Step} from "phd-assess-meta/types/dashboards";
 import {DashboardRenderedStep} from "/imports/ui/components/Dashboard/Steps";
 import {convertDefinitionToGraph, DashboardGraph} from "/imports/ui/components/Dashboard/DefinitionGraphed";
+import {ParticipantsAsTable} from "/imports/ui/components/Participant/Show";
 
 
 const DrawProgress =
@@ -37,28 +38,46 @@ const DrawProgress =
 }
 
 export const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks: ITaskDashboard[] }) => {
+
+  const [open, setOpen] = useState(false)
+
+  const stepsDefinition = workflowInstanceTasks[0].variables.dashboardDefinition ?? stepsDefinitionDefault
+
   // generate the good dashboard definition for this row
-  const definition: DashboardGraph = convertDefinitionToGraph(
-    workflowInstanceTasks[0].variables.dashboardDefinition ?? stepsDefinitionDefault
+  const definition = useMemo(
+    () => convertDefinitionToGraph(stepsDefinition),
+    [stepsDefinition]
   )
 
   // find the configuration directly into the bpmn, or use the default
-  return <div className="row" key={ `${workflowInstanceTasks[0]._id}_main_div` }>
-    <div className="dashboard-phdStudentName col-2 m-1 p-2 text-black" key={ `${workflowInstanceTasks[0]._id}_phdStudentSciper` } >
-      <a
-        href={`https://people.epfl.ch/${workflowInstanceTasks[0].variables.phdStudentSciper}`}
-        target={'_blank'}
-      >{ workflowInstanceTasks[0].variables.phdStudentName }</a> ({ workflowInstanceTasks[0].variables.phdStudentSciper })
-    </div>
-    <div className="dashboard-doctoralProgramName col m-1 p-2 text-black" key={ `${workflowInstanceTasks[0]._id}_doctoralProgramName` } >
-      { workflowInstanceTasks[0].variables.doctoralProgramName }
-    </div>
-    <DrawProgress
-      key={ workflowInstanceTasks[0]._id }
-      workflowInstanceTasks={ workflowInstanceTasks }
-      stepsDefinition={ definition }
-    />
-  </div>
+  return <details>
+    <summary
+      className="row"
+      key={ `${ workflowInstanceTasks[0]._id }_main_div` }
+      onClick={ () => setOpen(!open) }
+    >
+      <div className="dashboard-phdStudentName col-2 m-1 p-2 text-black" key={ `${ workflowInstanceTasks[0]._id }_phdStudentSciper` }>
+        <a
+          href={ `https://people.epfl.ch/${ workflowInstanceTasks[0].variables.phdStudentSciper }` }
+          target={ '_blank' }
+        >{ workflowInstanceTasks[0].variables.phdStudentName }</a> ({ workflowInstanceTasks[0].variables.phdStudentSciper })
+      </div>
+      <div className="dashboard-doctoralProgramName col m-1 p-2 text-black" key={ `${ workflowInstanceTasks[0]._id }_doctoralProgramName` }>
+        { workflowInstanceTasks[0].variables.doctoralProgramName }
+      </div>
+      <DrawProgress
+        key={ workflowInstanceTasks[0]._id }
+        workflowInstanceTasks={ workflowInstanceTasks }
+        stepsDefinition={ definition }
+      />
+    </summary>
+    <p className={ 'row' }>
+      <div className={ 'col-2' }></div>
+      <div className={ 'col' }>
+        <ParticipantsAsTable workflowInstanceTasks={ workflowInstanceTasks } showEmail={ true }/>
+      </div>
+    </p>
+  </details>
 }
 
 const DashboardHeader = ({ definition, headerKey }: { definition: DashboardGraph, headerKey: string }) => {
@@ -82,7 +101,7 @@ const DashboardHeader = ({ definition, headerKey }: { definition: DashboardGraph
 
           return <div
             className="dashboard-header col m-1 p-2 text-black align-self-end text-small"
-            key={ `${ headerKey}-${ step.id }` }
+            key={ `${ headerKey }-${ step.id }` }
           >{ step.label }</div>
         })
       }

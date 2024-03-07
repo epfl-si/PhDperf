@@ -25,7 +25,7 @@ const generateParticipants = (hasThesisCoDirector= true) => {
 
     participants[`${role}Name`] = `${firstName} ${lastName}`
     participants[`${role}Sciper`] = `${faker.sciper()}`
-    participants[`${role}Email`] = `${firstName}.${lastName}@epfl.ch`
+    participants[`${role}Email`] = `${firstName.toLowerCase()}.${lastName.toLowerCase()}@epfl.ch`
   })
 
   return participants

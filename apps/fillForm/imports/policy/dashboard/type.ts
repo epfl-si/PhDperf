@@ -3,6 +3,7 @@ import {Job} from "zeebe-node";
 import {Sciper} from "/imports/api/datatypes";
 import {ParticipantList} from "/imports/model/participants";
 
+
 export const taskFieldsNeededForDashboard = {
   '_id': 1,
   'elementId': 1,
@@ -24,6 +25,12 @@ export const taskFieldsNeededForDashboard = {
   'variables.programDirectorSciper': 1,
   'variables.programDirectorEmail': 1,
   'variables.programDirectorName': 1,
+  'variables.programAssistantSciper': 1,
+  'variables.programAssistantEmail': 1,
+  'variables.programAssistantName': 1,
+  'variables.mentorSciper': 1,
+  'variables.mentorName': 1,
+  'variables.mentorEmail': 1,
   'variables.doctoralProgramName': 1,
   'variables.mentorDate': 1,  // for checking if the values is submitted
 }

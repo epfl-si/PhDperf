@@ -4,18 +4,18 @@ import {ImportScipersList} from "/imports/api/importScipers/schema"
 import {
   getUserPermittedTaskDetailed
 } from "/imports/policy/tasks";
-import {getUserPermittedTasksForDashboard} from "/imports/policy/dashboard/tasks";
+import {canViewMentor, getUserPermittedTasksForDashboard} from "/imports/policy/dashboard/tasks";
 import {getUserPermittedTasksForList} from "/imports/policy/tasksList/tasks";
 import {canEditAtLeastOneDoctoralSchool, canEditDoctoralSchool} from "/imports/policy/doctoralSchools";
 import {canImportScipersFromISA} from "/imports/policy/importScipers";
-import {Task, Tasks, isObsolete} from "/imports/model/tasks";
+import {Tasks, isObsolete} from "/imports/model/tasks";
 import {refreshAlreadyStartedImportScipersList} from "/imports/api/importScipers/helpers";
 import _ from "lodash";
 
 
 Meteor.publish('taskDetailed', function (args: [string]) {
   if (this.userId) {
-    const user = Meteor.users.findOne({ _id: this.userId }) ?? null
+    const user: Meteor.User | null = Meteor.users.findOne({ _id: this.userId }) ?? null
     return getUserPermittedTaskDetailed(user, args[0])
   } else {
     this.ready()
@@ -67,30 +67,34 @@ Meteor.publish('tasksDashboard', function () {
 
   if (!user) return this.ready()
 
-  // Set a custom handler for users, as we don't want to show the AssigneeSciper when the mentor task is going on
-  const handle = getUserPermittedTasksForDashboard(user, DoctoralSchools.find({}).fetch())?.observeChanges({
+  // Set a custom handler for users, as we don't want
+  //   - to show the AssigneeSciper when the mentor task is going on
+  //   - to show the mentor data
+  const handle = getUserPermittedTasksForDashboard(
+    user,
+    DoctoralSchools.find({}).fetch()
+  )?.observeChanges({
     added: (id, task) => {
-      // remove/hide the assigneeSciper for mentor's task if
-      //   - user is not an admin
-      //   - task is currently on the mentor task
-      //   - assigneeSciper is not the mentor, nor the students, as they are allowed to know each other
-      if (!user.isAdmin) {
-        if (task.elementId === 'Activity_Post_Mentor_Meeting_Mentor_Signs' &&
-          task.variables?.assigneeSciper
-        ) {
 
-          const isCurrentUserTheStudentOrTheMentor = (task: Partial<Task>) => {
-            return (
-              user._id === task.variables!.phdStudentSciper ||
-              user._id === task.variables!.mentorSciper
-            )
-          }
+      if (!canViewMentor(user, task) ) {  // not allowed to view the mentor ? let's clean all traces of it
 
-          if (!isCurrentUserTheStudentOrTheMentor(task)) {
-            task.variables.assigneeSciper = ''
-            task.assigneeScipers = []
-          }
+        const currentMentorSciper = task.variables?.mentorSciper
+
+        if (currentMentorSciper) {
+          task.variables!.mentorSciper = undefined
+
+          if (!Array.isArray(task.variables?.assigneeSciper) &&
+            task.variables?.assigneeSciper === currentMentorSciper) task.variables.assigneeSciper = undefined
+
+          if (Array.isArray(task.variables?.assigneeSciper) &&
+            task.variables?.assigneeSciper.includes(currentMentorSciper)
+          ) _.pull(task.variables.assigneeSciper, currentMentorSciper)
+
+          if (task.assigneeScipers?.includes(currentMentorSciper)) _.pull(task.assigneeScipers, currentMentorSciper)
         }
+
+        if (task.variables?.mentorName) task.variables.mentorName = undefined
+        if (task.variables?.mentorEmail) task.variables.mentorEmail = undefined
       }
 
       this.added('tasks', id, task);
