@@ -152,7 +152,7 @@ const TaskRow = ({ task, user }: { task: ITaskList, user: Meteor.User }) => {
             }
           </span>
         </summary>
-        <pre><code>{task.detail}</code></pre>
+        <span className={ 'small' }>{ task.detail }</span>
         { user &&
           <div className={'container'}>
             <ParticipantsAsRow task={ task } showEmail={ false }/>
