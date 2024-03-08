@@ -14,8 +14,13 @@ const generateParticipants = (hasThesisCoDirector= true) => {
   ParticipantIDs.forEach((role) => {
     if (role === 'thesisCoDirector' && !hasThesisCoDirector) return
 
-    const firstName = faker.name.firstName()
-    const lastName = faker.name.lastName()
+    const firstName = faker.helpers.maybe(
+      () => faker.name.firstName() + ' ' + faker.name.firstName(), { probability: 0.7 }
+    ) ?? faker.name.firstName()
+
+    const lastName = faker.helpers.maybe(
+      () => faker.name.lastName() + ' ' + faker.name.lastName(), { probability: 0.7 }
+    ) ?? faker.name.lastName()
 
     if (role === 'phdStudent') {
       // we save student detail, has it used to build the final GED path
