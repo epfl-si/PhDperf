@@ -132,15 +132,22 @@ div[id^=error-list].alert-success {
   min-height: 3em;
 }
 
+.dashboard details > summary {
+  position: relative;
+}
+
 .dashboard details > summary::before {
   content: '»';
-  padding-top: 0.5rem;
   font-size: large;
+  position: absolute;
+  top: 7.5px;
 }
 
 .dashboard details[open] > summary::before {
-  transform: rotate(90deg);
+  top: 7.5px;
+  font-size: large;
   transform-origin: center;
+  transform: translate(0%, -0%) rotate(90deg);
 }
 
 /* fix the formio input checkbox being invisible because of some strange filter on safari */

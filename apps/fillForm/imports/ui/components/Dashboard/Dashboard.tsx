@@ -56,7 +56,7 @@ export const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks:
       key={ `${ workflowInstanceTasks[0]._id }_main_div` }
       onClick={ () => setOpen(!open) }
     >
-      <div className="dashboard-phdStudentName col-2 m-1 p-2 text-black" key={ `${ workflowInstanceTasks[0]._id }_phdStudentSciper` }>
+      <div className="dashboard-phdStudentName col-2 m-1 ml-2 p-2 text-black" key={ `${ workflowInstanceTasks[0]._id }_phdStudentSciper` }>
         <a
           href={ `https://people.epfl.ch/${ workflowInstanceTasks[0].variables.phdStudentSciper }` }
           target={ '_blank' }
