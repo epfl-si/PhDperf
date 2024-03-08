@@ -6,7 +6,7 @@ import {Tasks} from "/imports/model/tasks";
 import {WorkflowStarter} from './workflowStarter'
 import {Button, Loader} from "@epfl/epfl-sti-react-library"
 import {Link, useNavigate} from "react-router-dom"
-import {ParticipantsAsRow} from "/imports/ui/components/Participant/Show";
+import {ParticipantsAsRow} from "/imports/ui/components/Participant/List";
 import toast from "react-hot-toast";
 import Dropdown from 'react-bootstrap/Dropdown'
 import {

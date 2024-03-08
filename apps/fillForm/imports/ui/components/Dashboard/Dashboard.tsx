@@ -12,7 +12,7 @@ import {
 import {Step} from "phd-assess-meta/types/dashboards";
 import {DashboardRenderedStep} from "/imports/ui/components/Dashboard/Steps";
 import {convertDefinitionToGraph, DashboardGraph} from "/imports/ui/components/Dashboard/DefinitionGraphed";
-import {ParticipantsAsTable} from "/imports/ui/components/Participant/Show";
+import {ParticipantsAsTable} from "/imports/ui/components/Participant/List";
 
 
 const DrawProgress =

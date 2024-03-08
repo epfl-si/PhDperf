@@ -9,7 +9,7 @@ import {Task, Tasks} from "/imports/model/tasks";
 import {TaskInfo} from "/imports/ui/components/Task/Info";
 import {ITaskList} from "/imports/policy/tasksList/type";
 
-import {ParticipantsAsRow} from "/imports/ui/components/Participant/Show";
+import {ParticipantsAsRow} from "/imports/ui/components/Participant/List";
 import {EditParticipants} from "/imports/ui/components/Participant/Edit";
 import {canEditParticipants} from "/imports/policy/tasks";
 
