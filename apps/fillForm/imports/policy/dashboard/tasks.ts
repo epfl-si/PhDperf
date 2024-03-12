@@ -51,11 +51,17 @@ export const canViewMentor = (
 
   if (user.isAdmin) return true;
 
+  // As soon as the user is one of this role, deny it
+  if ([
+    task.variables?.thesisDirectorSciper,
+    task.variables?.thesisCoDirectorSciper,
+    ].includes(user._id)) return false
+
+  // only this list of role can view it
   return [
     task.variables?.phdStudentSciper,
     task.variables?.programDirectorSciper,
     task.variables?.programAssistantSciper,
     task.variables?.mentorSciper,
-   ].includes(user._id)
-
+  ].includes(user._id)
 }
