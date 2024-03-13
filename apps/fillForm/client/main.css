@@ -132,23 +132,47 @@ div[id^=error-list].alert-success {
   min-height: 3em;
 }
 
-.dashboard details > summary {
+/** THE ARROW CASE
+  As it look like safari (Webkit engine) is the only browser to
+  handle the summary-detail arrow with a display:flex, remove it everywhere and
+  set it manually
+ */
+details > summary::marker, /* Latest Chrome, Edge, Firefox */
+details > summary::-webkit-details-marker /* Safari */ {
+  display: none;
+}
+
+details > summary {
   position: relative;
+  list-style: none;
 }
 
-.dashboard details > summary::before {
-  content: '»';
-  font-size: large;
+details > summary {
+  position: relative;
+  list-style: none;
+}
+
+details > summary::before {
+  content: "\25B6";
+  font-size: smaller;
   position: absolute;
-  top: 7.5px;
+  top: 13.5px;
 }
 
-.dashboard details[open] > summary::before {
-  top: 7.5px;
-  font-size: large;
+details[open] > summary::before {
+  top: 13.5px;
+  font-size: smaller;
   transform-origin: center;
   transform: translate(0%, -0%) rotate(90deg);
 }
+
+.task span:first-of-type {
+  margin-left: 12px;
+}
+
+/**
+    END OF THE ARROW CASE
+ */
 
 /* fix the formio input checkbox being invisible because of some strange filter on safari */
 .form-check input[type='checkbox'] {
