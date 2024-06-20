@@ -5,8 +5,9 @@ meta {
 }
 
 get {
-  url: http://{{baseUrl}}/services/v1/doctorants/current/programme/{{doctoralSchoolAcronym}}
+  url: {{baseUrl}}/services/v1/doctorants/current/programme/{{doctoralSchoolAcronym}}
   body: none
+  auth: none
 }
 
 vars:pre-request {

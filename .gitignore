@@ -2,6 +2,7 @@
 /apps/fillForm/node_modules/
 /apps/fillForm/.env
 /doc/API-clients/websrv/.env
+/doc/API-clients/isa/.env
 /apps/fillForm/tsconfig.tsbuildinfo
 /apps/fillForm/packages/
 /docker/zeebe-hazelcast/*.jar
