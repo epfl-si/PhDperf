@@ -11,17 +11,11 @@ post {
 }
 
 auth:basic {
-  username: {{ username }}
-  password: {{ password }}
+  username: {{process.env.ISA_POST_USERNAME}}
+  password: {{process.env.ISA_POST_PASSWORD}}
 }
 
 body:multipart-form {
-  personId: {{ personId }}
-  date: {{ date }}
-  evaluation: {{ evaluation }}
-}
-
-vars:pre-request {
   personId: 4159938
   date: 19.06.2026
   evaluation: MEETS_EXPECTATIONS
