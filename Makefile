@@ -32,25 +32,25 @@ pull:
 .PHONY: up
 up:
 	@mkdir -p docker/volumes/simple-monitor-data docker/volumes/zeebe_data || true
-	cd docker && docker-compose up -d
+	cd docker && docker compose up -d
 
 .PHONY: logs
 logs:
-	cd docker && docker-compose logs -f
+	cd docker && docker compose logs -f
 
 .PHONY: down
 down:
-	cd docker && docker-compose down
+	cd docker && docker compose down
 
 # The remainder of the targets are intended for “old-style” pushes (we
 # would prefer to do all of that in OpenShift; but currently we can't,
 # for want of enough RAM).
 .PHONY: build-meteor
 build-meteor:
-	cp ../../docker/node-base/Dockerfile ../../docker/node-base/Dockerfile.bak
-	sed -i 's/^FROM .*ubuntu:focal/FROM ubuntu:focal/' ../../docker/node-base/Dockerfile
-	docker build -t node-base ../../docker/node-base/
-	mv ../../docker/node-base/Dockerfile.bak ../../docker/node-base/Dockerfile
+	cp ./docker/node-base/Dockerfile ./docker/node-base/Dockerfile.bak
+	sed -i 's/^FROM .*ubuntu:focal/FROM ubuntu:focal/' ./docker/node-base/Dockerfile
+	docker build -t node-base ./docker/node-base/
+	mv ./docker/node-base/Dockerfile.bak ./docker/node-base/Dockerfile
 	cp Dockerfile Dockerfile.bak
 	sed -i 's/^FROM .*node-base:latest/FROM node-base:latest/' Dockerfile
 	docker build -t phd-assess-meteor .
