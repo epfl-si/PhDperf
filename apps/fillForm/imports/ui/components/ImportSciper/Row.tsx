@@ -49,15 +49,17 @@ export const HeaderRow = ({doctoralSchool, isAllSelected, disabled} :
   )
 }
 
-const PersonDisplay = ({ person, boldName = false, showSciper = true }: { person: Person, boldName?: boolean, showSciper?: boolean }) => {
-  return (
-    <div>
-      <div className={boldName ? 'font-weight-bold' : ''}>{ person.fullName }</div>
+const PersonDisplay = ({ person, boldName = false, showSciper = true }: { person?: Person, boldName?: boolean, showSciper?: boolean }) => {
+  if (person) {
+    return <div>
+      <div className={ boldName ? 'font-weight-bold' : '' }>{ person.fullName }</div>
       { showSciper &&
-        <div>{person.sciper}</div>
+        <div>{ person.sciper }</div>
       }
     </div>
-  )
+  } else {
+    return <div></div>
+  }
 }
 
 const ThesisCoDirectorDisplay = ({
@@ -166,12 +168,27 @@ export const Row = ({ doctorant, doctoralSchool, checked }: RowParameters) => {
             value={ key }
             checked={ checked }
             onChange={ () => toggleCheck(key) }
-            disabled={ isToggling || doctorant.needCoDirectorData || !doctorant.thesis?.mentor || doctorant.hasAlreadyStarted || doctorant.isBeingImported }
+            disabled={ isToggling ||
+              doctorant.needCoDirectorData ||
+              !doctorant.thesis?.directeur ||
+              !doctorant.thesis?.mentor ||
+              doctorant.hasAlreadyStarted ||
+              doctorant.isBeingImported
+          }
           />
           &nbsp;
           { doctorant.needCoDirectorData && !(isToggling || doctorant.isBeingImported || doctorant.hasAlreadyStarted) &&
             <>
               <span className={'h4 text-danger ml-1'} title="Co-director sciper is missing. Please enter the guest sciper account">⚠</span>
+            </>
+          }
+          { !doctorant.thesis?.directeur && !(isToggling || doctorant.isBeingImported || doctorant.hasAlreadyStarted) &&
+            <>
+              <span
+                className={'h4 text-danger ml-1'}
+                title="Thesis director is missing. Please enter the information in EDOC portal in ISA and re-import the list to start this student process">
+                ⚠
+              </span>
             </>
           }
           { !doctorant.thesis?.mentor && !(isToggling || doctorant.isBeingImported || doctorant.hasAlreadyStarted) &&
