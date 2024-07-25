@@ -38,6 +38,10 @@ up:
 logs:
 	cd docker && docker compose logs -f
 
+.PHONY: stop
+stop:
+	cd docker && docker compose stop
+
 .PHONY: down
 down:
 	cd docker && docker compose down
