@@ -25,11 +25,15 @@ Technically, the application consists on a Meteor server, defined as a [Zeebe](h
 The support infrastructure is required for the Meteor app to function (in addition to Meteor's usual, internally-managed requirement of a MongoDB database). It consists of Zeebe (the persistent store for workflow data and metadata), the zeebe-simple-monitor, and PostgreSQL (required by the latter for persistence).
 
 ```
-make pull build up logs
+make pull build
 ```
 
 ### Start the Web framework
 
+  - Set yourself in the web framework folder
+    ```
+    cd ./apps/fillForm
+    ```
   - Install dependencies
     ```
     meteor npm i
@@ -41,17 +45,21 @@ make pull build up logs
 
 ### Deploy the workflow
   ```
-  meteor node scripts/deployProcess.mjs
+  ./cli//phd.mjs deploy-bpmn
   ```
 
 ### Browse
 
-  - Assert your VPN is on (needed for tequila authentication)
-  - Assert you never use the https protocol while browsing (certainly after redirection from the first tequila authentication)
+  - Depending on your authentification setup, you may need to assert your VPN is on, as it is needed by the tequila server
+  - Assert you never use the https protocol while browsing (it may happen after the redirection from the first tequila authentication)
   - Open http://localhost:3000
 
 ### Stop the support infrastructure
 
+```
+./cli//phd.mjs stop
+```
+or, if you want to clear containers, networks, ...
 ```
 make down
 ```
@@ -87,6 +95,7 @@ phdsible -e zeebe_debug_build=1 -t zeebe
 
 Run
 ```
+cd ./apps/fillForm
 meteor test --driver-package meteortesting:mocha --port 3100
 ```
 
