@@ -1,0 +1,15 @@
+{
+  "crate": 5,
+  "current": "PhD",
+  "detect": "body",
+  "last-update": 1721937455901,
+  "password.charset": "qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM1234567890",
+  "password.length": 12,
+  "profile-PhD": "{\"data[programAssistantSciper]\":\"111111\",\"data[doctoralProgramName]\":\"EDEY\",\"data[docLinkAnnualReport]\":\"https://www.epfl.ch\",\"data[phdStudentSciper]\":\"111111\",\"data[thesisDirectorSciper]\":\"111111\",\"data[programDirectorSciper]\":\"111111\",\"data[mentorSciper]\":\"111111\",\"data[creditsNeeded]\":\"42\"}",
+  "profile-PhD-exceptions": "[\"user-name\",\"email\",\"title\",\"gender\",\"age\",\"first-name\",\"middle-name\",\"last-name\",\"name-suffix\",\"full-name\",\"street-line-1\",\"street-line-2\",\"street-line-3\",\"full-street\",\"city\",\"state\",\"zip-code\",\"country-code\",\"country\",\"lang\",\"birth-day-type-1\",\"birth-day-type-2\",\"birth-month-number-type-1\",\"birth-month-number-type-2\",\"birth-month-string\",\"birth-year\",\"company\",\"occupation\",\"phone\",\"homepage\",\"comment\"]",
+  "profile-default": "{}",
+  "profile-default-exceptions": "[]",
+  "rules": "{\"data[programAssistantSciper]\":{\"site-rule\":\"(?:)\",\"field-rule\":\"data\\\\[programAssistantSciper\\\\]\"},\"data[docLinkAnnualReport]\":{\"site-rule\":\"(?:)\",\"field-rule\":\"data\\\\[docLinkAnnualReport\\\\]\"},\"data[phdStudentSciper]\":{\"site-rule\":\"(?:)\",\"field-rule\":\"data\\\\[phdStudentSciper\\\\]\"},\"data[thesisDirectorSciper]\":{\"site-rule\":\"(?:)\",\"field-rule\":\"data\\\\[thesisDirectorSciper\\\\]\"},\"data[thesisCoDirectorSciper]\":{\"site-rule\":\"(?:)\",\"field-rule\":\"data\\\\[thesisCoDirectorSciper\\\\]\"},\"data[programDirectorSciper]\":{\"site-rule\":\"(?:)\",\"field-rule\":\"data\\\\[programDirectorSciper\\\\]\"},\"data[mentorSciper]\":{\"site-rule\":\"(?:)\",\"field-rule\":\"data\\\\[mentorSciper\\\\]\"},\"data[creditsNeeded]\":{\"site-rule\":\"(?:)\",\"field-rule\":\"data\\\\[creditsNeeded\\\\]\"},\"data[doctoralProgramName]\":{\"site-rule\":\"\",\"field-rule\":\"data\\\\[doctoralProgramName\\\\]\"}}",
+  "types": "^(?:(?:text(?:area)?)|(?:select-(?:(?:one)|(?:multiple)))|(?:checkbox)|(?:radio)|(?:email)|(?:url)|(?:number)|(?:month)|(?:week)|(?:tel)|(?:file)|(?:textarea))$",
+  "users": "PhD"
+}
