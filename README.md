@@ -17,8 +17,9 @@ The stack is composed of:
     - the BPMN
       - You can take a look at the process by installing the [BPMN Modeler](https://camunda.com/download/modeler/) and by opening [the process definition](https://github.com/epfl-si/PhDAssess-meta/blob/main/bpmn/phdAssessProcess.bpmn).
 - the GED uploader, as a nodeJS worker
-- the Email sender, as a nodeJS worker
+- the Email sender (aka notifier), as a nodeJS worker
 - the PDF builder, as a nodeJS worker
+- the ISA connector, as a nodeJS worker
 
 ### Frontend
 - the task filler
@@ -46,13 +47,13 @@ How about launching the app locally ?
   - `cd ..`
   - `git clone https://github.com/epfl-si/phdAssess-PDF`
   - `git clone https://github.com/epfl-si/phdAssess-Notifier`
-- Better skip the GED service for the moment 🤷. If you want the code, at least, do:
   - `git clone https://github.com/epfl-si/phdAssess-GED`
+  - `git clone https://github.com/epfl-si/phdAssess-ISA`
 - Come back into the projet folder
   - `cd PhDAssess`
 - Build and start the services
-  - `docker compose -f ./docker/docker-compose.yml build pdf notifier`
-  - `docker compose -f ./docker/docker-compose.yml up pdf notifier`
+  - `docker compose -f ./docker/docker-compose.yml build pdf notifier ged isa`
+  - `docker compose -f ./docker/docker-compose.yml up pdf notifier ged isa`
 
 ### Main app
 
