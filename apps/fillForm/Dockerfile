@@ -23,4 +23,4 @@ FROM docker-registry.default.svc:5000/phd-assess-test/node-base:latest
 COPY --from=0 /usr/bundle /usr/bundle/
 WORKDIR /usr/bundle
 
-CMD node main.js
+CMD ["node", "main.js"]
