@@ -12,6 +12,8 @@ import toast from "react-hot-toast";
 import _ from "lodash";
 import {useAccountContext} from "/imports/ui/contexts/Account";
 import {canImportScipersFromISA} from "/imports/policy/importScipers";
+import DueDatePicker from "/imports/ui/components/ImportSciper/DueDatePicker";
+import {toastErrorClosable} from "/imports/ui/components/Toasters";
 
 
 export const ImportScipersSchoolSelector = () => {
@@ -66,6 +68,13 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
       }
     }, [doctoralSchool.acronym])
 
+  const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
+  const [dueDateNeeded, setDueDateNeeded] = useState(false)
+  const setDueDateChanged = (newDate: Date | null) => {
+    setDueDate(newDate ?? undefined);
+    setDueDateNeeded(newDate ? false : true);
+  }
+
   const [importStarted, setImportStarted] = useState(isBeingImported)
   const [isErronous, setIsErronous] = useState('')
   const navigate = useNavigate()
@@ -82,12 +91,23 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
   }, [doctoralSchool]);
 
   const startImport = () => {
+    if (!dueDate) {
+      setDueDateNeeded(true);
+      toastErrorClosable(
+        `due-date-import-error-${ Meteor.userId() }`,
+        'A due date has to be set'
+      );
+      return;
+    }
+
     setImportStarted(true)
 
     const toastId = toast.loading('Launching import of selected entries...')
 
     Meteor.apply(
-      "startPhDAssess", [ doctoralSchool.acronym ], { wait: true, noRetry: true },
+      "startPhDAssess",
+      [ doctoralSchool.acronym, dueDate ],
+      { wait: true, noRetry: true },
       (error: any | global_Error | Meteor.Error | undefined) => {
         toast.dismiss(toastId)
         if (error) {
@@ -125,7 +145,14 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
           </div>
         }
         <hr />
-        <StartButton total={ total } nbSelected={ nbSelected } isStarted={ importStarted } startFunc={ startImport }/>
+        <div>
+          <StartButton total={ total } nbSelected={ nbSelected } isStarted={ importStarted } startFunc={ startImport }/>
+          <DueDatePicker
+            value={ dueDate }
+            isNeeded={ dueDateNeeded }
+            setDueDateCallback={ setDueDateChanged }
+          />
+        </div>
       </div>
       <div className="container import-scipers-selector">
         <HeaderRow doctoralSchool={ doctoralSchool } isAllSelected={ ISAScipersForSchool.isAllSelected } disabled={ importStarted }/>

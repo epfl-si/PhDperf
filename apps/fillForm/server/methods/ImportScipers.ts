@@ -15,6 +15,7 @@ import {fetchTimeout} from "/imports/lib/fetchTimeout";
 import AbortController from "abort-controller";
 import path from 'path'
 import crypto from "node:crypto";
+import dayjs from "dayjs";
 
 
 const debug = require('debug')('server/methods/ImportScipers')
@@ -269,7 +270,10 @@ Meteor.methods({
     ImportScipersList.update(query, updateDocument, options)
   },
 
-  async startPhDAssess(doctoralSchoolAcronym: string) {
+  async startPhDAssess(
+    doctoralSchoolAcronym: string,
+    dueDate: Date
+    ) {
     let user: Meteor.User | null = null
     if (this.userId) {
       user = Meteor.users.findOne({_id: this.userId}) ?? null
@@ -284,6 +288,14 @@ Meteor.methods({
     if (!ds || !canStartProcessInstance(user, [ds]) || !canImportScipersFromISA(user)) {
       auditLog(`Unallowed user ${user._id} is trying to start a workflow.`)
       throw new Meteor.Error(403, 'You are not allowed to start a workflow')
+    }
+
+    if (!dueDate) {
+      throw new Meteor.Error(500, 'No due date provided.')
+    }
+
+    if (!dayjs(dueDate).isAfter(dayjs(), 'day')) {
+      throw new Meteor.Error(500, 'The due date should be in the future.')
     }
 
     auditLog(`starting batch imports`)
@@ -332,6 +344,7 @@ Meteor.methods({
 
         dateOfCandidacyExam: encrypt(doctorant.dateExamCandidature ?? ''),
         dateOfEnrolment: encrypt(doctorant.dateImmatriculation ?? ''),
+        dueDate: encrypt(dueDate.toJSON()),
 
         phdStudentSciper: encrypt(doctorant.doctorant.sciper),
         phdStudentName: encrypt(doctorant.doctorant.fullName),

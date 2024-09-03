@@ -6,6 +6,9 @@ export default function StartButton({ nbSelected, total, isStarted, startFunc }:
   return (
     <button
       type="button"
+      style={{
+        width: "290px",
+      }}
       className={"btn btn-primary"}
       disabled={nbSelected == 0 || isStarted}
       onClick={ () => startFunc() }>
