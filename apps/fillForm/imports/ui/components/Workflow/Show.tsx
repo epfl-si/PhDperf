@@ -10,7 +10,7 @@ import {TaskInfo} from "/imports/ui/components/Task/Info";
 import {ITaskList} from "/imports/policy/tasksList/type";
 
 import {ParticipantsAsRow} from "/imports/ui/components/Participant/List";
-import {EditParticipants} from "/imports/ui/components/Participant/Edit";
+import {EditParticipants} from "/imports/ui/components/Instance/EditParticipants";
 import {canEditParticipants} from "/imports/policy/tasks";
 
 
