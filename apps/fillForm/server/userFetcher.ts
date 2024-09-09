@@ -2,7 +2,7 @@ import { Headers } from 'meteor/fetch'
 import AbortController from 'abort-controller'
 import memoize from 'timed-memoize'
 import {PhDInputVariables} from "/imports/model/tasksTypes";
-import {ParticipantIDs} from "/imports/model/participants";
+import {ParticipantRoles} from "/imports/model/participants";
 import {fetchTimeout} from "/imports/lib/fetchTimeout";
 
 const debug = require('debug')('server/userFetcher')
@@ -102,7 +102,7 @@ export const getParticipantsToUpdateFromSciper = async (variables: PhDInputVaria
 
   let updatedParticipants: any = {}
 
-  for (const participantName of ParticipantIDs) {
+  for (const participantName of Object.values(ParticipantRoles)) {
 
     const vSciper = variables[`${participantName}Sciper`]
     const vEmail = variables[`${participantName}Email`]
