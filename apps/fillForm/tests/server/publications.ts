@@ -9,7 +9,7 @@ const PublicationCollector = require("meteor/johanbrook:publication-collector").
 import {Tasks} from "/imports/model/tasks";
 import "../factories/task"
 import "../factories/users"
-import '../../server/publish'
+import '../../server/publish/index'
 
 
 let userAdmin: Meteor.User
