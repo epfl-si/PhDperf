@@ -1,10 +1,9 @@
 import {useAccountContext} from "/imports/ui/contexts/Account";
 import React, {useState} from "react";
-import {Loader} from "@epfl/epfl-sti-react-library";
 import {Task} from "/imports/model/tasks";
-
+import {Loader} from "@epfl/epfl-sti-react-library";
 import {canEditParticipants} from "/imports/policy/processInstance";
-import {ParticipantRoles} from "/imports/model/participants";
+import {ParticipantIDs} from "/imports/model/participants";
 
 
 export const EditParticipants = ({ tasks }: { tasks: Task[] }) => {
@@ -80,7 +79,7 @@ export const EditParticipants = ({ tasks }: { tasks: Task[] }) => {
           required={ true }
         >
           <option></option>
-          { Object.values(ParticipantRoles)
+          { ParticipantIDs
             .filter(p => p != 'phdStudent')
             .map((participant) =>
               <option

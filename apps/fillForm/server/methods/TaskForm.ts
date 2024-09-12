@@ -4,10 +4,7 @@ import dayjs from "dayjs";
 import {encrypt} from "/server/encryption";
 import {Tasks, UnfinishedTasks} from "/imports/model/tasks";
 import {FormioActivityLog} from "/imports/model/tasksTypes";
-import {
-  filterUnsubmittableVars, canSubmit,
-  getUserPermittedTaskDetailed
-} from "/imports/policy/tasks";
+import {canSubmit, getUserPermittedTaskDetailed} from "/imports/policy/tasks";
 import _ from "lodash";
 
 import WorkersClient from '../zeebe_broker_connector'
@@ -19,6 +16,7 @@ import '/imports/api/doctoralSchools/methods'
 import '/server/methods/ImportScipers'
 import '/server/methods/DoctoralSchools'
 import '/server/methods/TaskParticipant'
+import {filterUnsubmittableVars} from "/imports/policy/utils";
 
 const auditLog = auditLogConsoleOut.extend('server/methods/TaskForm')
 

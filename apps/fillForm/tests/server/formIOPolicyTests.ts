@@ -1,6 +1,6 @@
 import {assert} from 'chai'
 import {Task, Tasks} from "/imports/model/tasks";
-import {filterUnsubmittableVars, findFieldKeysToSubmit} from "/imports/policy/tasks";
+import {filterUnsubmittableVars, findFieldKeysToSubmit} from "/imports/policy/utils";
 
 
 const dbCleaner = require("meteor/xolvio:cleaner");

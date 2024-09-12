@@ -13,7 +13,7 @@ import {
   canDeleteProcessInstance,
   canEditParticipants as canEditParticipantsCheck,
   canRefreshProcessInstance
-} from "/imports/policy/tasks";
+} from "/imports/policy/processInstance";
 import {toastErrorClosable} from "/imports/ui/components/Toasters";
 import {ITaskList} from "/imports/policy/tasksList/type";
 import {useAccountContext} from "/imports/ui/contexts/Account";

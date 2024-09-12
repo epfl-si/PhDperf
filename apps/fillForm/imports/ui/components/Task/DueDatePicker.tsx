@@ -7,21 +7,25 @@ import Flatpickr from "react-flatpickr";
 
 type DueDatePickerType = {
   value: Date | undefined,
+  futureOnly: boolean,  // show and allow only days in the future  ?
   isNeeded: boolean,
   setDueDateCallback: (value: Date) => void,
+  label?: string
 }
 
 export default function DueDatePicker(
   {
     value,
+    futureOnly,
     isNeeded,  // show to the user that there is a need of this value ?
-    setDueDateCallback
+    setDueDateCallback,
+    label = 'Due date'
   }: DueDatePickerType
 ) {
   return (
     <div className="mt-2 form-row">
       <div className="form-check">
-      <label className="form-check-label">Due date</label>
+      <label className="form-check-label">{ label }</label>
       <Flatpickr
         options={
           {
@@ -31,7 +35,8 @@ export default function DueDatePicker(
             altFormat: "d.m.Y",
             dateFormat: "Y-m-d",
             // hack to remove the hour-minute-millisecond that invalidate the +1 day value
-            minDate: new Date(dayjs().add(1, 'day').toDate().toDateString()),
+            minDate: futureOnly ?
+              new Date(dayjs().add(1, 'day').toDate().toDateString()) : undefined,
             locale: {
               firstDayOfWeek: 1
             },
@@ -40,7 +45,12 @@ export default function DueDatePicker(
         defaultValue={ undefined }
         value={ value }
         onChange={
-          (newDate) => setDueDateCallback(newDate[0])
+          // when date is selected, the value is set back to local, aka GMT-2
+          // that make it look like it is in the past. So set it to 12 hours, for less confusion
+          (newDate) => {
+            const newDateMiddleOfTheDay = dayjs(newDate[0]).hour(14).toDate()
+            setDueDateCallback(newDateMiddleOfTheDay)
+          }
         }
       />
       { isNeeded &&

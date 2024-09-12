@@ -6,7 +6,7 @@ import {Tasks, UnfinishedTasks} from "/imports/model/tasks";
 import {
   canDeleteProcessInstance,
   canStartProcessInstance, canRefreshProcessInstance,
-} from "/imports/policy/tasks";
+} from "/imports/policy/processInstance";
 import {zBClient} from "/server/zeebe_broker_connector";
 import WorkersClient from '../zeebe_broker_connector';
 import {auditLogConsoleOut} from "/imports/lib/logging";

@@ -10,7 +10,7 @@ import {PublishMessageResponse} from "zeebe-node";
 import {Sciper} from "/imports/api/datatypes";
 import {getParticipantsToUpdateFromSciper} from "/server/userFetcher";
 import {PhDInputVariables} from "/imports/model/tasksTypes";
-import {canEditParticipants} from "/imports/policy/tasks";
+import {canEditParticipants} from "/imports/policy/processInstance";
 import {ParticipantRoles} from "/imports/model/participants";
 
 const auditLog = auditLogConsoleOut.extend('server/methods/TaskParticipants')

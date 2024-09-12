@@ -19,6 +19,7 @@ import {PhDInputVariables} from "/imports/model/tasksTypes";
 import {auditLogConsoleOut} from "/imports/lib/logging";
 import {PhDCustomHeaderShape} from "phd-assess-meta/types/fillForm/headers";
 import {NotificationLog, NotificationStartMessage} from "phd-assess-meta/types/notification";
+import {_PhDAssessVariables} from "phd-assess-meta/types/variables";
 
 const debug = debug_('phd-assess:zeebe-connector')
 const auditLog = auditLogConsoleOut.extend('server/zeebe_broker_connector')
@@ -235,6 +236,25 @@ export default {
     })
 
     debug(`Manually failed the job id ${task.key}`)
+  },
+
+  async setVariables(
+    elementInstanceKey: string,
+    variables: Partial<_PhDAssessVariables>,
+    local: boolean
+  ) {
+    if (zBClient == null) {
+      throw new Meteor.Error("zeebe disconnected",
+        `No variables can be sent if zeebe is not connected.`);
+    }
+
+    auditLog(`Calling setVariables on elementInstanceKey ${elementInstanceKey} with variables ${ JSON.stringify(variables) }`)
+
+    await zBClient.setVariables({
+      variables: variables,
+      elementInstanceKey: elementInstanceKey,
+      local: local
+    })
   },
 
   async publishMessage(params: PublishMessageRequest) {
