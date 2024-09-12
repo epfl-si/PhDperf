@@ -11,7 +11,7 @@ import toast from "react-hot-toast";
 import Dropdown from 'react-bootstrap/Dropdown'
 import {
   canDeleteProcessInstance,
-  canEditParticipants as canEditParticipantsCheck,
+  canEditParticipants, canEditProcessInstanceVariables,
   canRefreshProcessInstance
 } from "/imports/policy/processInstance";
 import {toastErrorClosable} from "/imports/ui/components/Toasters";
@@ -75,7 +75,7 @@ const TaskRow = ({ task, user }: { task: ITaskList, user: Meteor.User }) => {
 
   const canDelete = user && canDeleteProcessInstance(user)
   const canRefresh = user && canRefreshProcessInstance(user)
-  const canEditParticipants = user && canEditParticipantsCheck(user)
+  const canEditWorkflow = user && (canEditParticipants(user) || canEditProcessInstanceVariables(user))
 
   return (
     <div
@@ -96,7 +96,7 @@ const TaskRow = ({ task, user }: { task: ITaskList, user: Meteor.User }) => {
                 onClickFn={() => void 0}
               />
             </Link>
-            { (canRefresh || canDelete || canEditParticipants) &&
+            { (canRefresh || canDelete || canEditWorkflow) &&
               <span className={"ml-1"}>
                 <Dropdown as="span">
                   <Dropdown.Toggle
@@ -122,7 +122,7 @@ const TaskRow = ({ task, user }: { task: ITaskList, user: Meteor.User }) => {
                       }
                     </Dropdown.Header>
                     <Dropdown.Divider/>
-                    { canEditParticipants &&
+                    { canEditWorkflow &&
                       <Dropdown.Item
                         className={'small'}
                         onSelect={ () => navigate(`workflows/${ task.processInstanceKey  }`) }
