@@ -12,7 +12,7 @@ import toast from "react-hot-toast";
 import _ from "lodash";
 import {useAccountContext} from "/imports/ui/contexts/Account";
 import {canImportScipersFromISA} from "/imports/policy/importScipers";
-import DueDatePicker from "/imports/ui/components/ImportSciper/DueDatePicker";
+import DueDatePicker from "/imports/ui/components/Task/DueDatePicker";
 import {toastErrorClosable} from "/imports/ui/components/Toasters";
 
 
@@ -149,6 +149,7 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
           <StartButton total={ total } nbSelected={ nbSelected } isStarted={ importStarted } startFunc={ startImport }/>
           <DueDatePicker
             value={ dueDate }
+            futureOnly={ true }
             isNeeded={ dueDateNeeded }
             setDueDateCallback={ setDueDateChanged }
           />

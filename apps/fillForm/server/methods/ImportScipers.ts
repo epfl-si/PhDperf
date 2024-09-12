@@ -9,7 +9,7 @@ import _ from "lodash";
 import {Tasks} from "/imports/model/tasks";
 import {zBClient} from "/server/zeebe_broker_connector";
 import {encrypt} from "/server/encryption";
-import {canStartProcessInstance} from "/imports/policy/tasks";
+import {canStartProcessInstance} from "/imports/policy/processInstance";
 import {DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 import {fetchTimeout} from "/imports/lib/fetchTimeout";
 import AbortController from "abort-controller";
