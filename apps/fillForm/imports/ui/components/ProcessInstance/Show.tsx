@@ -36,7 +36,7 @@ export const Show = () => {
   return <>
     <div className={ 'h4 mt-2 mb-3' }>Edit process instance { processInstanceKey }</div>
     <Tabs>
-      <Tab key='listJobs' eventKey='listJobs' title='Current jobs'>
+      <Tab key='listJobs' eventKey='listJobs' title='Ongoing tasks'>
         <ListTasks tasks={ tasks }/>
       </Tab>
       { canEditParticipants(account.user) &&
