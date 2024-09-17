@@ -88,19 +88,19 @@ const TaskRow = ({ task, user }: { task: ITaskList, user: Meteor.User }) => {
     <div
       data-id={ task._id }
       data-process-instance={ task.processInstanceKey }
-      className={'task border-top p-2'}
+      className={ 'task border-top p-2' }
       style={ {
-        ...((user && user.isAdmin && task.isObsolete) && {backgroundColor: 'WhiteSmoke'})
+        ...((user && user.isAdmin && task.isObsolete) && { backgroundColor: 'WhiteSmoke' })
       } }
     >
       <details>
-        <summary className={'d-flex align-items-center'}>
+        <summary className={ 'd-flex align-items-center' }>
           <TaskInfo task={ task }/>
-          <span className={'small'}>
-            <Link className={''} to={`tasks/${task._id}`}>
+          <span className={ 'small' }>
+            <Link className={ '' } to={ `tasks/${ task._id }` }>
               <Button
-                label={'Proceed'}
-                onClickFn={() => void 0}
+                label={ 'Proceed' }
+                onClickFn={ () => void 0 }
               />
             </Link>
             { (canRefresh || canDelete || canEditThisProcessInstance) &&
@@ -109,37 +109,37 @@ const TaskRow = ({ task, user }: { task: ITaskList, user: Meteor.User }) => {
                   <Dropdown.Toggle
                     variant="secondary"
                     id="dropdown-task-row-actions"
-                    style={{
+                    style={ {
                       height: '2.5em',
                       padding: '0',
                       paddingLeft: '0.2em',
                       paddingRight: '0.2em',
-                    }}
+                    } }
                   >⋮
                   </Dropdown.Toggle>
 
                   <Dropdown.Menu>
                     <Dropdown.Header>
                       <div>Action on</div>
-                      <div className={''}>Job { task._id }</div>
-                      <div className={''}>Process { task.processInstanceKey }</div>
+                      <div>Job { task._id }</div>
+                      <div>Process { task.processInstanceKey }</div>
                       { task.monitorUri &&
-                        <a href={task.monitorUri} target="_blank" className={'pr-3'}>on Monitor <span
-                          className={"fa fa-external-link"}/></a>
+                        <a href={ task.monitorUri } target="_blank" className={ 'pr-3' }>on Monitor <span
+                          className={ "fa fa-external-link" }/></a>
                       }
                     </Dropdown.Header>
                     <Dropdown.Divider/>
                     { canEditThisProcessInstance &&
                       <Dropdown.Item
-                        className={'small'}
-                        onSelect={ () => navigate(`workflows/${ task.processInstanceKey  }`) }
+                        className={ 'small' }
+                        onSelect={ () => navigate(`workflows/${ task.processInstanceKey }`) }
                       >
                         <>Edit workflow</>
                       </Dropdown.Item>
                     }
                     { canRefresh &&
                       <Dropdown.Item
-                        className={'small'}
+                        className={ 'small' }
                         eventKey={ task.processInstanceKey }
                         onSelect={ refreshProcessInstance }
                       >Refresh
@@ -147,7 +147,7 @@ const TaskRow = ({ task, user }: { task: ITaskList, user: Meteor.User }) => {
                     }
                     { canDelete &&
                       <Dropdown.Item
-                        className={'small'}
+                        className={ 'small' }
                         eventKey={ task.processInstanceKey }
                         onSelect={ cancelProcessInstance }
                       >Cancel
@@ -161,7 +161,7 @@ const TaskRow = ({ task, user }: { task: ITaskList, user: Meteor.User }) => {
         </summary>
         <span className={ 'small' }>{ task.detail }</span>
         { user &&
-          <div className={'container'}>
+          <div className={ 'container' }>
             <ParticipantsAsRow task={ task } showEmail={ false }/>
           </div>
         }
