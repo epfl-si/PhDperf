@@ -13,6 +13,7 @@ import {Step} from "phd-assess-meta/types/dashboards";
 import {DashboardRenderedStep} from "/imports/ui/components/Dashboard/Steps";
 import {convertDefinitionToGraph, DashboardGraph} from "/imports/ui/components/Dashboard/DefinitionGraphed";
 import {ParticipantsAsTable} from "/imports/ui/components/Participant/List";
+import {Link} from "react-router-dom";
 
 
 const DrawProgress =
@@ -70,6 +71,12 @@ export const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks:
         workflowInstanceTasks={ workflowInstanceTasks }
         stepsDefinition={ definition }
       />
+      <div className={'pt-3'}>
+        <Link
+          to={`../workflows/${ workflowInstanceTasks[0].processInstanceKey  }`}
+        >Edit
+        </Link>
+      </div>
     </summary>
     <p className={ 'row' }>
       <div className={ 'col-2' }></div>
@@ -105,7 +112,10 @@ const DashboardHeader = ({ definition, headerKey }: { definition: DashboardGraph
           >{ step.label }</div>
         })
       }
+      {/*additional div for the edit link*/}
+      <div className={'pl-4'}>&nbsp;</div>
     </div>
+
   )
 }
 

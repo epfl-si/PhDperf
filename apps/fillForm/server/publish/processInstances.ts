@@ -1,5 +1,6 @@
 import {Meteor} from "meteor/meteor";
 import {getUserPermittedProcessInstanceEdit} from "/imports/policy/processInstance";
+import {DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 
 
 /**
@@ -14,10 +15,13 @@ import {getUserPermittedProcessInstanceEdit} from "/imports/policy/processInstan
  *
  */
 Meteor.publish('processInstanceEdit', function (processInstanceKey: string) {
-  if (this.userId) {
-    const user: Meteor.User | null = Meteor.users.findOne({ _id: this.userId }) ?? null
-    return getUserPermittedProcessInstanceEdit(user, processInstanceKey)
-  } else {
-    this.ready()
-  }
+  if (!this.userId) return this.ready()
+  const user: Meteor.User | null = Meteor.users.findOne({ _id: this.userId }) ?? null
+  if (!user) return this.ready()
+
+  return getUserPermittedProcessInstanceEdit(
+    user,
+    DoctoralSchools.find({}).fetch(),
+    processInstanceKey
+  )
 })

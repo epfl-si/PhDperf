@@ -1,14 +1,10 @@
-import {useAccountContext} from "/imports/ui/contexts/Account";
 import React, {useState} from "react";
 import {Task} from "/imports/model/tasks";
 import {Loader} from "@epfl/epfl-sti-react-library";
-import {canEditParticipants} from "/imports/policy/processInstance";
-import {ParticipantIDs} from "/imports/model/participants";
+import {ParticipantRoles} from "/imports/model/participants";
 
 
 export const EditParticipants = ({ tasks }: { tasks: Task[] }) => {
-  const account = useAccountContext()
-
   const [submitting, setSubmitting] = useState(false)
   const [hasBeenSubmitted, setHasBeenSubmitted] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
@@ -17,10 +13,6 @@ export const EditParticipants = ({ tasks }: { tasks: Task[] }) => {
   const [sciper, setSciper] = useState('')
 
   const task = tasks[0]
-
-  if (!account?.user) return <Loader message={ 'Loading your data...' }/>
-
-  if (!canEditParticipants(account.user)) return <div>{ 'Sorry, you do not have the permission to edit participants' }</div>
 
   if (errorMessage) return <div>
     <div>Error: { errorMessage }</div>
@@ -79,18 +71,18 @@ export const EditParticipants = ({ tasks }: { tasks: Task[] }) => {
           required={ true }
         >
           <option></option>
-          { ParticipantIDs
-            .filter(p => p != 'phdStudent')
-            .map((participant) =>
-              <option
-                key={ participant }
-                value={ participant }>
-                { `${ participant } \
+          { Object.values(ParticipantRoles)
+                  .filter(p => p != 'phdStudent')
+                  .map((participant) =>
+                    <option
+                      key={ participant }
+                      value={ participant }>
+                      { `${ participant } \
                  ${ task.participants?.[participant]?.name ?? '' } \
                  (${ task.participants?.[participant]?.sciper ?? 'Not set' })`
-                }
-              </option>
-            ) }
+                      }
+                    </option>
+                  ) }
         </select>
         <label
           htmlFor={ `participant-sciper` }

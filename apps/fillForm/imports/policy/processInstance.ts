@@ -1,13 +1,13 @@
 import {Meteor} from "meteor/meteor";
 import {Mongo} from 'meteor/mongo';
 
+import {DoctoralSchool, DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 import {Tasks} from "/imports/model/tasks";
 import {
   filterOutObsoleteTasksQuery,
   filterOutSubmittedTasksQuery,
   getAssistantAdministrativeMemberships
 } from "/imports/policy/tasks";
-import {DoctoralSchool} from "/imports/api/doctoralSchools/schema";
 
 
 /**
@@ -16,6 +16,7 @@ import {DoctoralSchool} from "/imports/api/doctoralSchools/schema";
  */
 export const getUserPermittedProcessInstanceEdit = (
   user: Meteor.User | null,
+  doctoralSchools: DoctoralSchool[],
   processInstanceKey: string
 ) => {
   // at this point, check the user is goodly instanced, or return nothing
@@ -25,6 +26,14 @@ export const getUserPermittedProcessInstanceEdit = (
     processInstanceKey: processInstanceKey,
     ...(!user.isAdmin && filterOutObsoleteTasksQuery()),
     ...filterOutSubmittedTasksQuery(),
+    // Get tasks for the group
+    ...(!user.isAdmin && {
+      "variables.doctoralProgramName": {
+        $in: Object.keys(
+          getAssistantAdministrativeMemberships(user, doctoralSchools)
+        )
+      }
+    }),
   }
 
   // Set which fields can be seen for a user, depending on their right
@@ -40,13 +49,29 @@ export const getUserPermittedProcessInstanceEdit = (
     'journal':0,
   }
 
-  if (user.isAdmin) {  // admin can see the exclusions, reactivate it
+  if (user.isAdmin || user.isUberProgramAssistant) {  // admin can see the exclusions, reactivate it
     delete fieldsView['variables.mentorSciper']
     delete fieldsView['variables.mentorName']
     delete fieldsView['variables.mentorEmail']
   }
 
   return Tasks.find(tasksQuery, { 'fields': fieldsView })
+}
+
+export const canEditProcessInstance = async  (
+  user: Meteor.User,
+  processInstanceKey: string,
+): Promise<boolean> => {
+  if (!user) return false;
+
+  if (user.isAdmin || user.isUberProgramAssistant) return true;
+
+  const allowedProcessInstancesCount = await getUserPermittedProcessInstanceEdit(
+    user, DoctoralSchools.find({}).fetch(),
+    processInstanceKey
+  )?.countAsync()
+
+  return allowedProcessInstancesCount ? allowedProcessInstancesCount == 0 : false
 }
 
 export const canStartProcessInstance = (user: Meteor.User, doctoralSchools: DoctoralSchool[]) : boolean => {
@@ -62,13 +87,5 @@ export const canDeleteProcessInstance = (user: Meteor.User) : boolean => {
 }
 
 export const canRefreshProcessInstance = (user: Meteor.User) : boolean => {
-  return !!user?.isAdmin
-}
-
-export const canEditProcessInstanceVariables = (user: Meteor.User) : boolean => {
-  return !!user?.isAdmin
-}
-
-export const canEditParticipants = (user: Meteor.User) : boolean => {
   return !!user?.isAdmin
 }

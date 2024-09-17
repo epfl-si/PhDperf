@@ -1,9 +1,7 @@
-import {useAccountContext} from "/imports/ui/contexts/Account";
 import React, {useEffect, useState} from "react";
 import {Task} from "/imports/model/tasks";
 import {Loader} from "@epfl/epfl-sti-react-library";
 import DueDatePicker from "/imports/ui/components/Task/DueDatePicker";
-import {canEditProcessInstanceVariables} from "/imports/policy/processInstance";
 import toast from "react-hot-toast";
 import {global_Error, Meteor} from "meteor/meteor";
 import dayjs from "dayjs";
@@ -11,8 +9,6 @@ import {Button} from "react-bootstrap";
 
 
 export const EditVariables = ({ task }: { task: Task }) => {
-  const account = useAccountContext()
-
   const [submitting, setSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
@@ -27,10 +23,6 @@ export const EditVariables = ({ task }: { task: Task }) => {
       new Date(task.variables.dueDate) : undefined
     )
   }, [task])
-
-  if (!account?.user) return <Loader message={ 'Loading your data...' }/>
-
-  if (!canEditProcessInstanceVariables(account.user)) return <div>{ 'Sorry, you do not have the permission to edit participants' }</div>
 
   if (errorMessage) return <div>
     <div>Error: { errorMessage }</div>

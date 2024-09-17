@@ -1,5 +1,5 @@
 import {global_Error, Meteor} from "meteor/meteor"
-import React from "react"
+import React, {useEffect, useState} from "react"
 import _ from "lodash"
 import {useTracker} from 'meteor/react-meteor-data'
 import {Tasks} from "/imports/model/tasks";
@@ -11,7 +11,7 @@ import toast from "react-hot-toast";
 import Dropdown from 'react-bootstrap/Dropdown'
 import {
   canDeleteProcessInstance,
-  canEditParticipants, canEditProcessInstanceVariables,
+  canEditProcessInstance,
   canRefreshProcessInstance
 } from "/imports/policy/processInstance";
 import {toastErrorClosable} from "/imports/ui/components/Toasters";
@@ -73,9 +73,16 @@ export default function TaskList() {
 const TaskRow = ({ task, user }: { task: ITaskList, user: Meteor.User }) => {
   const navigate = useNavigate();
 
+  const [canEditThisProcessInstance, setCanEditThisProcessInstance] = useState<Boolean>(false);
+
   const canDelete = user && canDeleteProcessInstance(user)
   const canRefresh = user && canRefreshProcessInstance(user)
-  const canEditWorkflow = user && (canEditParticipants(user) || canEditProcessInstanceVariables(user))
+
+  useEffect(() => {
+    (async function checkAndSetProcessInstancePermission() {
+      setCanEditThisProcessInstance(await canEditProcessInstance(user, task.processInstanceKey));
+    })();
+  }, [])
 
   return (
     <div
@@ -96,8 +103,8 @@ const TaskRow = ({ task, user }: { task: ITaskList, user: Meteor.User }) => {
                 onClickFn={() => void 0}
               />
             </Link>
-            { (canRefresh || canDelete || canEditWorkflow) &&
-              <span className={"ml-1"}>
+            { (canRefresh || canDelete || canEditThisProcessInstance) &&
+              <span className={ "ml-1" }>
                 <Dropdown as="span">
                   <Dropdown.Toggle
                     variant="secondary"
@@ -122,7 +129,7 @@ const TaskRow = ({ task, user }: { task: ITaskList, user: Meteor.User }) => {
                       }
                     </Dropdown.Header>
                     <Dropdown.Divider/>
-                    { canEditWorkflow &&
+                    { canEditThisProcessInstance &&
                       <Dropdown.Item
                         className={'small'}
                         onSelect={ () => navigate(`workflows/${ task.processInstanceKey  }`) }
