@@ -9,7 +9,7 @@ type DueDatePickerType = {
   value: Date | undefined,
   futureOnly: boolean,  // show and allow only days in the future  ?
   isNeeded: boolean,
-  setDueDateCallback: (value: Date) => void,
+  setDueDateCallback: (value: Date | undefined) => void,
   label?: string
 }
 
@@ -44,14 +44,16 @@ export default function DueDatePicker(
         }
         defaultValue={ undefined }
         value={ value }
-        onChange={
-          // when date is selected, the value is set back to local, aka GMT-2
-          // that make it look like it is in the past. So set it to 12 hours, for less confusion
-          (newDate) => {
-            const newDateMiddleOfTheDay = dayjs(newDate[0]).hour(14).toDate()
+        onChange={ (selectedDates: Date[]) => {
+          if (selectedDates.length == 0) {
+            setDueDateCallback(undefined)
+          } else {
+            // when date is selected, the value is set back to local, aka GMT-2
+            // that make it look like it is in the past. So set it to 12 hours, for less confusion
+            const newDateMiddleOfTheDay = dayjs(selectedDates[0]).hour(14).toDate()
             setDueDateCallback(newDateMiddleOfTheDay)
           }
-        }
+        }}
       />
       { isNeeded &&
         <span className="invalid-feedback">The due date is needed</span>
