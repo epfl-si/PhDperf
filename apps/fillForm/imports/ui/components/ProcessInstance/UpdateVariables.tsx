@@ -83,7 +83,7 @@ export const EditVariables = ({ task }: { task: Task }) => {
         </div>
         <DueDatePicker
           value={ dueDate }
-          futureOnly={ false }
+          futureOnly={ true }
           isNeeded={ false }
           setDueDateCallback={ setDueDate }
           label={ 'New due date' }
