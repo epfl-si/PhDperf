@@ -10,7 +10,6 @@ import {Button} from "react-bootstrap";
 
 export const EditVariables = ({ task }: { task: Task }) => {
   const [submitting, setSubmitting] = useState(false)
-  const [errorMessage, setErrorMessage] = useState('')
 
   const [dueDate, setDueDate] = useState<Date | undefined>(
      task.variables?.dueDate ?
@@ -23,18 +22,6 @@ export const EditVariables = ({ task }: { task: Task }) => {
       new Date(task.variables.dueDate) : undefined
     )
   }, [task])
-
-  if (errorMessage) return <div>
-    <div>Error: { errorMessage }</div>
-    <div>
-      <a
-        onClick={ () => {
-          setErrorMessage('')
-        } }
-        href={ '#' }
-      >Try again</a>
-    </div>
-  </div>
 
   if (!task) return <div>No task</div>
 
@@ -92,7 +79,7 @@ export const EditVariables = ({ task }: { task: Task }) => {
       <Button
         type="submit"
         className="btn btn-primary mt-3"
-        disabled={ JSON.stringify(task.variables.dueDate) == JSON.stringify(dueDate) }
+        disabled={ !dueDate || JSON.stringify(task.variables.dueDate) == JSON.stringify(dueDate) }
       >
         Update
       </Button>
