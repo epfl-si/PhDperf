@@ -5,21 +5,31 @@ import DueDatePicker from "/imports/ui/components/Task/DueDatePicker";
 import toast from "react-hot-toast";
 import {global_Error, Meteor} from "meteor/meteor";
 import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat"
 import {Button} from "react-bootstrap";
 
+
+// plugin to parse string as Date
+dayjs.extend(customParseFormat);
+
+/**
+ * Convert our variables that are in string format to a date object, like dueDate
+ * @param dateString a string like '01.01.2001'
+ */
+const fromStringToDate = (dateString: string) => dayjs(dateString, 'DD.MM.YYYY').toDate()
 
 export const EditVariables = ({ task }: { task: Task }) => {
   const [submitting, setSubmitting] = useState(false)
 
   const [dueDate, setDueDate] = useState<Date | undefined>(
      task.variables?.dueDate ?
-       new Date(task.variables.dueDate) : undefined
+       fromStringToDate(task.variables.dueDate) : undefined
   )
 
   useEffect(() => {
     setDueDate(
       task.variables?.dueDate ?
-      new Date(task.variables.dueDate) : undefined
+        fromStringToDate(task.variables.dueDate) : undefined
     )
   }, [task])
 
@@ -38,7 +48,11 @@ export const EditVariables = ({ task }: { task: Task }) => {
         'updateZeebeInstanceVariables',
         {
           processInstanceKey: task!.processInstanceKey,
-          newVariables: { 'dueDate': dueDate }
+          newVariables: {
+            'dueDate': dueDate ?
+              `${ ("0" + dueDate.getDate()).slice(-2) }.${ ("0" + (dueDate.getMonth() + 1)).slice(-2) }.${ dueDate.getFullYear() }` :
+              undefined
+          }
         }
       ),
       {
@@ -63,9 +77,12 @@ export const EditVariables = ({ task }: { task: Task }) => {
   return <>
     <form id="edit-variables-form" onSubmit={ submitVariablesChanges }>
       <div className="form-group">
-        <div>Current due date:
+        <div>Current due date:&nbsp;
           <span>
-            { task.variables.dueDate ? ` ${dayjs(task.variables.dueDate).format('DD.MM.YYYY')}` : '' }
+            { task.variables.dueDate ?
+              `${ dayjs(fromStringToDate(task.variables.dueDate)).format('DD.MM.YYYY') }` :
+              ''
+            }
           </span>
         </div>
         <DueDatePicker

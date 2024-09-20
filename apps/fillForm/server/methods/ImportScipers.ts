@@ -344,7 +344,7 @@ Meteor.methods({
 
         dateOfCandidacyExam: encrypt(doctorant.dateExamCandidature ?? ''),
         dateOfEnrolment: encrypt(doctorant.dateImmatriculation ?? ''),
-        dueDate: encrypt(dueDate.toJSON()),
+        dueDate: encrypt(`${ ("0" + dueDate.getDate()).slice(-2) }.${ ("0" + (dueDate.getMonth() + 1)).slice(-2) }.${ dueDate.getFullYear() }`),
 
         phdStudentSciper: encrypt(doctorant.doctorant.sciper),
         phdStudentName: encrypt(doctorant.doctorant.fullName),
