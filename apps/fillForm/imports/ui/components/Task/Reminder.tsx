@@ -21,9 +21,9 @@ import {toastErrorClosable} from "/imports/ui/components/Toasters";
 import { Editor } from "@tinymce/tinymce-react";
 import Mustache from "mustache"
 
-import {ParticipantsAsRow} from "/imports/ui/components/Participant/Show";
 import {Task} from "/imports/model/tasks";
 import {getUserPermittedTaskReminder} from "/imports/policy/reminders";
+import {ParticipantsAsRow} from "/imports/ui/components/Participant/List";
 
 
 export function TaskReminderForm() {
