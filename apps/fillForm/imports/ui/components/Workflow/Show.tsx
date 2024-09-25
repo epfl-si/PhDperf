@@ -10,8 +10,8 @@ import {TaskInfo} from "/imports/ui/components/Task/Info";
 import {ITaskList} from "/imports/policy/tasksList/type";
 
 import {ParticipantsAsRow} from "/imports/ui/components/Participant/List";
-import {EditParticipants} from "/imports/ui/components/Participant/Edit";
-import {canEditParticipants} from "/imports/policy/tasks";
+import {EditParticipants} from "/imports/ui/components/Instance/EditParticipants";
+import {canEditProcessInstance} from "/imports/policy/processInstance";
 
 
 const ListTasks = ({ tasks }: { tasks : Task[] }) => {
@@ -49,7 +49,7 @@ export const Show = () => {
 
   if (!account?.user) return <Loader message={ 'Loading your data...' }/>
 
-  if (!canEditParticipants(account.user)) return <div>{ 'Sorry, you do not have the permission to edit participants' }</div>
+  if (!canEditProcessInstance(account.user, tasks[0].processInstanceKey)) return <div>{ 'Sorry, you do not have the permission to edit this process instance.' }</div>
 
   if (!processInstanceKey) return <Loader message={ 'Loading the process...' }/>
 
@@ -60,7 +60,7 @@ export const Show = () => {
   return <div>
     <div className={ 'h4' }>Process instance {processInstanceKey}</div>
     { tasks[0].processInstanceKey ?
-        <EditParticipants processInstanceKey={ processInstanceKey! } /> :
+        <EditParticipants tasks={ tasks } /> :
         <div>No process instance key found on the first task. It is a requirment to edit the participants</div>
     }
     <div className={ 'mt-3' }>
