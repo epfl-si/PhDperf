@@ -4,7 +4,7 @@ import {useSubscribe, useTracker} from "meteor/react-meteor-data";
 import {Tasks} from "/imports/model/tasks";
 import {Loader} from "@epfl/epfl-sti-react-library";
 import {canEditParticipants} from "/imports/policy/tasks";
-import {ParticipantIDs} from "/imports/model/participants";
+import {ParticipantRoles} from "/imports/model/participants";
 
 
 export const EditParticipants = ({ processInstanceKey }: { processInstanceKey: string }) => {
@@ -88,7 +88,7 @@ export const EditParticipants = ({ processInstanceKey }: { processInstanceKey: s
           required={ true }
         >
           <option></option>
-          { ParticipantIDs
+          { Object.values(ParticipantRoles)
             .filter(p => p != 'phdStudent')
             .map((participant) =>
               <option key={ participant } value={ participant }>{ participant }</option>
