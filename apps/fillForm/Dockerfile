@@ -1,4 +1,6 @@
-FROM docker-registry.default.svc:5000/phd-assess-test/node-base:latest
+FROM docker-registry.default.svc:5000/phd-assess-test/node-base:latest AS build-stage
+
+ENV NODE_ENV=production
 
 # to ignore caniuse-lite outdated warning
 ENV BROWSERSLIST_IGNORE_OLD_DATA=1
@@ -7,20 +9,38 @@ ENV BROWSERSLIST_IGNORE_OLD_DATA=1
 RUN curl https://install.meteor.com/ | sh
 
 # build-essential needed at build time, but not run time:
-RUN set -e -x; export DEBIAN_FRONTEND=noninteractive; \
-    apt -qy update; \
-    apt -qy install build-essential git openssh-client
+RUN apt-get update && apt-get install -y \
+    sudo \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p /usr/src/app/
-COPY . /usr/src/app/
-WORKDIR /usr/src/app/
-RUN meteor npm i && meteor npm run postinstall
-RUN meteor build --allow-superuser /usr --directory
-RUN cd /usr/bundle/programs/server && npm install
+RUN groupadd -g 1001 meteoruser && \
+    useradd -u 1001 -g meteoruser -m -s /bin/bash meteoruser
+
+RUN mkdir -p /app/.meteor/local
+RUN chown -R meteoruser:meteoruser /app
+
+USER meteoruser
+
+WORKDIR /app
+COPY --chown=meteoruser:meteoruser . .
+
+RUN meteor npm install --production
+RUN meteor build --directory /app/output
+RUN meteor npm run postinstall
 
 FROM docker-registry.default.svc:5000/phd-assess-test/node-base:latest
 
-COPY --from=0 /usr/bundle /usr/bundle/
-WORKDIR /usr/bundle
+RUN groupadd -g 1001 meteoruser && \
+    useradd -u 1001 -g meteoruser -m -s /bin/bash meteoruser
+
+WORKDIR /app
+
+COPY --from=build-stage /app/output/bundle /app
+
+RUN cd /app/programs/server && npm install --production
+
+RUN chown -R meteoruser:meteoruser /app
+
+USER meteoruser
 
 CMD ["node", "main.js"]
