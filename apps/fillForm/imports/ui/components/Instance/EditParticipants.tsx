@@ -3,7 +3,7 @@ import React, {useState} from "react";
 import {Loader} from "@epfl/epfl-sti-react-library";
 import {Task} from "/imports/model/tasks";
 
-import {canEditParticipants} from "/imports/policy/processInstance";
+import {canEditProcessInstance} from "/imports/policy/processInstance";
 import {ParticipantRoles} from "/imports/model/participants";
 
 
@@ -21,7 +21,7 @@ export const EditParticipants = ({ tasks }: { tasks: Task[] }) => {
 
   if (!account?.user) return <Loader message={ 'Loading your data...' }/>
 
-  if (!canEditParticipants(account.user)) return <div>{ 'Sorry, you do not have the permission to edit participants' }</div>
+  if (!canEditProcessInstance(account.user, task.processInstanceKey)) return <div>{ 'Sorry, you do not have the permission to edit participants' }</div>
 
   if (errorMessage) return <div>
     <div>Error: { errorMessage }</div>
