@@ -74,6 +74,7 @@ export const generateAGenericTaskAttributes = (hasThesisCoDirector = true) => {
       "created_at": "2022-12-12T14:16:44.822Z",
       "created_by": () => faker.sciper(),
       "updated_at": "2022-12-12T14:17:01.951Z",
+      "dueDate": () => faker.date.future(),
       "activityLogs": "[{\"pathName\":\"/tasks/9999999999999999\"}]",
       "creditsNeeded": "21",
       "docLinkAnnualReport": "www.epfl.ch",
