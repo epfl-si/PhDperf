@@ -83,7 +83,7 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
       )
 
       if (Meteor.isDevelopment) {
-        console.log("found a unfinsihed task : %j", findingUnfinishedTask)
+        console.log("found a unfinished task : %j", findingUnfinishedTask)
         console.log("Compare it with task variables: %j", task.variables)
       }
     }
@@ -201,7 +201,7 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
             } else {
               toast.dismiss(toastId)
               setIsSubmitted(true)
-              onSubmitted()  // call the event that the submit has been done successfully
+              onSubmitted()  // call the event after the submit process has been done successfully
               next()
             }
           }

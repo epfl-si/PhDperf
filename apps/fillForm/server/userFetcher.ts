@@ -68,7 +68,7 @@ export async function getUserInfo (sciper: string | number): Promise<PersonInfo 
 
   try {
     jsonResponse = await response.json()
-  } catch (e: any) {  // can't json decode the result ? hhmmmm not good
+  } catch (e: any) {  // can't json decode the result ? not so good
     console.warn(
       `${ server } has returned a bad result for ${ sciper }.`,
       `Nothing is returned/cached as a result.`,

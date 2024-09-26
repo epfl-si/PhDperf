@@ -12,7 +12,7 @@ const awaitingBoxColor = 'bg-awaiting text-white'
 export type ParticipantsInfo = {
   role: string
   info?: ParticipantDetail
-  isAssignee?: boolean  // is the current user the one awaited to fullfil the task
+  isAssignee?: boolean  // is the current user the one awaited to fulfill the task
   showEmail?: boolean
 }
 
@@ -94,7 +94,7 @@ export const ParticipantsAsTable = (
   // so take the first one
   const task = workflowInstanceTasks[0]
 
-  // compile all assingees into one list
+  // compile all assignees into one list
   const assigneeList = workflowInstanceTasks.reduce(
     (acc: string[], task) => [...acc, ...task.assigneeScipers ?? []],
     [])

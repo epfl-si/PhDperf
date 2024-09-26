@@ -8,7 +8,7 @@ import {Tasks} from "/imports/model/tasks";
 
 
 /**
- * Build the filter query on the tasks taht last seen on zeebe is too old
+ * Build the filter query on the tasks that last seen on zeebe is too old
  * This kind of "desync" can happen, yeah, it has already happened  because some OOM error
  */
 export const filterOutObsoleteTasksQuery = () => {

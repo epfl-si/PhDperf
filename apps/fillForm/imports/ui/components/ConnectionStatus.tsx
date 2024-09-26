@@ -27,7 +27,7 @@ const ClientConnectionController = () => {
 /**
  * Here are shown information coming from
  *   1. the  client connection to Meteor (aka Meteor.status())
- *   2. the server connection to Zeebe (crawled from the zeebe.status table, updated by the server)
+ *   2. the server connection to Zeebe (crawled from the 'zeebe.status' table, updated by the server)
  * If one or another fail, it may be bad, so we notify it
  */
 export function ConnectionStatusFooter() {
