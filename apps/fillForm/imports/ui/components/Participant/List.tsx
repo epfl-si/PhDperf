@@ -154,7 +154,7 @@ export const ParticipantsAsRow = ({
     ITaskList |
     Task |
     ITaskDashboard
-    = ( Array.isArray(task) ) ? task = task[0] : task
+    = ( Array.isArray(task) ) ? task[0] : task
 
   return <div className={ `row flex-nowrap` }>
     { _task.participants &&
