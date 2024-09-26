@@ -41,7 +41,7 @@ export const WorkflowStarter = () => {
   const isReady = !(isLoading() || !account || !account.user)
 
   return (
-    <div id={ 'worklow-actions' } className={ 'mb-3' }>
+    <div id={ 'workflow-actions' } className={ 'mb-3' }>
       { !isReady && <></> }
       { isReady &&
         canStartProcessInstance(account!.user!, doctoralSchools) &&

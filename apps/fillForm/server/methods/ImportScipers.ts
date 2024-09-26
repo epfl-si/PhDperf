@@ -177,7 +177,7 @@ Meteor.methods({
 
     ImportScipersList.update(query, updateDocument, options)
 
-    // uncheck the all list if we got an uncheck
+    // uncheck the all list if we got an uncheck case
     if (!checked) {
       ImportScipersList.update({
         doctoralSchoolAcronym: doctoralSchoolAcronym,

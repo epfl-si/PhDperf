@@ -14,7 +14,7 @@ dayjs.extend(customParseFormat);
 
 /**
  * Convert our variables that are in string format to a date object, like dueDate
- * @param dateString a string like '01.01.2001'
+ * @param dateString a string like "01.01.2001"
  */
 const fromStringToDate = (dateString: string) => dayjs(dateString, 'DD.MM.YYYY').toDate()
 

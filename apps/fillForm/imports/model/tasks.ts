@@ -74,6 +74,7 @@ export class Task implements TaskInterface {
   }
 
   get monitorUri(): string | undefined {
+    // noinspection HttpUrlsUsage
     return Meteor.settings.public.monitor_address && Meteor.user()?.isAdmin ?
       `http://${Meteor.settings.public.monitor_address}/views/instances/${this.processInstanceKey}` :
       undefined

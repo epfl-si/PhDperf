@@ -81,7 +81,7 @@ Meteor.methods({
         await UnfinishedTasks.removeAsync({ taskId: task._id!})
       }
 
-      auditLog(`Sucessfully deleted a process instance ${processInstanceKey}`)
+      auditLog(`Successfully deleted a process instance ${processInstanceKey}`)
     } catch (error) {
       auditLog(`Error: Unable to cancel the process instance ${processInstanceKey}. ${error}`)
       Tasks.remove({processInstanceKey: processInstanceKey})

@@ -34,7 +34,7 @@ export const taskFieldsNeededForListAdmin = {
   'variables.mentorSciper': 1,
   'variables.mentorName': 1,
   'variables.mentorEmail': 1,
-  'journal.lastSeen': 1,  // to mark it on the list as obosolete
+  'journal.lastSeen': 1,  // to mark it on the list as obsolete
   ...taskFieldsNeededForList
 }
 
