@@ -72,7 +72,7 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
   const [dueDateNeeded, setDueDateNeeded] = useState(false)
   const setDueDateChanged = (newDate: Date | undefined) => {
     setDueDate(newDate ?? undefined);
-    setDueDateNeeded(newDate ? false : true);
+    setDueDateNeeded(!newDate);
   }
 
   const [importStarted, setImportStarted] = useState(isBeingImported)
