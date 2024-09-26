@@ -1,4 +1,5 @@
 import './doctoralSchools'
 import './importScipers'
 import './processInstances'
+import './reminders'
 import './tasks'
