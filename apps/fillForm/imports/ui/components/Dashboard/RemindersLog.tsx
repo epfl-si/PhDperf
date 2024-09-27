@@ -124,7 +124,7 @@ export const NotificationsCount = (
       (log.fromElementId === step.id || log.fromElementId === step.id + '_reminder')
   ) ?? []
 
-  return <div className={ 'pl-3 small' }>
+  return <div className={ 'pl-4 small' }>
     <span className={ 'mr-1 align-middle' }>
       { notificationLogsForThisStep.length }
     </span>

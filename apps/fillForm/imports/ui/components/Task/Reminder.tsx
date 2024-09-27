@@ -105,20 +105,20 @@ const ReminderForm = ({ task }: { task: Task }) => {
   return <>
     <h1 className={ 'h2' }>Send a reminder</h1>
 
-    <h2 className={ 'h4 mt-2' }>Task info</h2>
-    <div>Step:
+    <div className={ 'mb-2' }>Current step
       <div><strong>{ task?.customHeaders?.title }</strong></div>
     </div>
-    <div>Participants:
+
+    <div>
       <ParticipantsAsRow
         task={ task }
         showEmail={ true }
         showStatusColor={ false }
       />
     </div>
+    <hr/>
 
     { !isSubmitted && <>
-      <hr/>
       <form className="new-reminder-form" onSubmit={ handleSubmit }>
         <div className="form-group">
           <label htmlFor="reminderFrom">From</label>
@@ -207,6 +207,9 @@ const ReminderForm = ({ task }: { task: Task }) => {
         >Send reminder
         </button>
       </form>
+    </> }
+    { isSubmitted && <>
+      <div>Reminder sent.</div>
     </> }
   </>
 }
