@@ -3,9 +3,9 @@ import _ from "lodash";
 import styled from "styled-components";
 
 import {ITaskDashboard} from "/imports/policy/dashboard/type";
-import {ParticipantDetail} from "/imports/model/participants";
-
 import {stepsDefinitionDefault} from "/imports/ui/components/DashboardOld/DefaultDefinition";
+
+import {ParticipantDetail} from "/imports/model/participants";
 import {Step} from "phd-assess-meta/types/dashboards";
 import {DashboardGraph as Graph, fixStepKnownAsTypo} from "/imports/ui/components/Dashboard/DefinitionGraphed";
 
@@ -78,7 +78,7 @@ const StepPending = ({step, task }: {step: Step, task: ITaskDashboard }) => {
 /**
  * Return the good color/text step, for a given workflowInstanceTasks and his dashboard steps definition
  */
-export const DashboardRenderedStep = (
+export const DashboardRenderedStepOld = (
   { step, workflowInstanceTasks, stepDefinition }:
     { step: Step, workflowInstanceTasks: ITaskDashboard[], stepDefinition: Graph }
 ) => {

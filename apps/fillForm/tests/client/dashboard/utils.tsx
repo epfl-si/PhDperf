@@ -6,7 +6,7 @@ import {Tasks} from "/imports/model/tasks";
 import {ITaskDashboard} from "/imports/policy/dashboard/type";
 import {StepsDefinition} from "phd-assess-meta/types/dashboards";
 
-import {stepsDefinitionDefault} from "/imports/ui/components/Dashboard/DefaultDefinition";
+import {stepsDefinitionDefault} from "/imports/ui/components/DashboardOld/DefaultDefinition";
 import {convertDefinitionToGraph} from "/imports/ui/components/Dashboard/DefinitionGraphed";
 import {DashboardContent} from "/imports/ui/components/Dashboard/Dashboard";
 
