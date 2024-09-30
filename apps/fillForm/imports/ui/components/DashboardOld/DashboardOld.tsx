@@ -1,49 +1,51 @@
-import {useTracker} from "meteor/react-meteor-data"
-import {Meteor} from "meteor/meteor"
-import {Tasks} from "../../../model/tasks";
-import _ from "lodash"
-import React, {CSSProperties, useEffect, useMemo, useState} from "react"
+/**
+ * This is a copy of the dashboard, as a snapshot, so we can freely change the new one.
+ * This will serve only old workflows, identied by the fact they don't have an uuid.
+ *
+ * Main diff with the new dashboard:
+ * - no edit workflow link
+ *
+ */
+import {useAccountContext} from "/imports/ui/contexts/Account";
+import {useTracker} from "meteor/react-meteor-data";
+import {Meteor} from "meteor/meteor";
+import {Tasks} from "/imports/model/tasks";
+import {ITaskDashboard} from "/imports/policy/dashboard/type";
 import {Loader} from "@epfl/epfl-sti-react-library";
-import {ITaskDashboard} from "../../../policy/dashboard/type";
-import {useAccountContext} from "../../contexts/Account";
-import {
-  stepsDefinitionDefault,
-} from "../DashboardOld/DefaultDefinition";
-import {Step} from "phd-assess-meta/types/dashboards";
-import {DashboardRenderedStep} from "/imports/ui/components/Dashboard/Steps";
 import {convertDefinitionToGraph, DashboardGraph} from "/imports/ui/components/Dashboard/DefinitionGraphed";
+import {stepsDefinitionDefault} from "/imports/ui/components/DashboardOld/DefaultDefinition";
+import React, {CSSProperties, useMemo, useState} from "react";
+import {Step} from "phd-assess-meta/types/dashboards";
+import {DashboardRenderedStepOld} from "/imports/ui/components/DashboardOld/StepsOld";
 import {ParticipantsAsTable} from "/imports/ui/components/Participant/List";
-import {Link} from "react-router-dom";
-import {canEditProcessInstance} from "/imports/policy/processInstance";
+import _ from "lodash";
 
 
 const DrawProgress =
   ({workflowInstanceTasks, stepsDefinition}:
      { workflowInstanceTasks: ITaskDashboard[], stepsDefinition: DashboardGraph }) => {
-  const firstTask = workflowInstanceTasks[0]
-  const taskKey = `${ firstTask?._id }`
+    const firstTask = workflowInstanceTasks[0]
+    const taskKey = `${ firstTask?._id }`
 
-  const progressBarDrawn = stepsDefinition.nodesOrdered().reduce((accumulator: JSX.Element[], node: string) => {
-    const step: Step = stepsDefinition.node(node)
+    const progressBarDrawn = stepsDefinition.nodesOrdered().reduce((accumulator: JSX.Element[], node: string) => {
+      const step: Step = stepsDefinition.node(node)
 
-    return [
-      ...accumulator,
-      <DashboardRenderedStep
-        key={ `${ taskKey }_${ node }` }
-        step={ step }
-        workflowInstanceTasks={ workflowInstanceTasks }
-        stepDefinition={ stepsDefinition }
-      />
-    ]}, [])
+      return [
+        ...accumulator,
+        <DashboardRenderedStepOld
+          key={ `${ taskKey }_${ node }` }
+          step={ step }
+          workflowInstanceTasks={ workflowInstanceTasks }
+          stepDefinition={ stepsDefinition }
+        />
+      ]}, [])
 
-  return <>{ progressBarDrawn }</>
-}
+    return <>{ progressBarDrawn }</>
+  }
 
-export const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks: ITaskDashboard[] }) => {
-  const account = useAccountContext()
+const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks: ITaskDashboard[] }) => {
 
   const [open, setOpen] = useState(false)
-  const [canEditInstance, setCanEditInstance] = useState(false)
 
   const stepsDefinition = workflowInstanceTasks[0].variables.dashboardDefinition ?? stepsDefinitionDefault
 
@@ -52,12 +54,6 @@ export const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks:
     () => convertDefinitionToGraph(stepsDefinition),
     [stepsDefinition]
   )
-
-  useEffect(() => {
-    (async function fetchPermission() {
-      setCanEditInstance(await canEditProcessInstance(account!.user!, workflowInstanceTasks[0].processInstanceKey));
-    })();
-  }, [workflowInstanceTasks[0].processInstanceKey]);
 
   // find the configuration directly into the bpmn, or use the default
   return <details>
@@ -80,14 +76,6 @@ export const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks:
         workflowInstanceTasks={ workflowInstanceTasks }
         stepsDefinition={ definition }
       />
-      <div className={'pt-3'}>
-        { canEditInstance ?
-        <Link
-          to={`../workflows/${ workflowInstanceTasks[0].processInstanceKey  }`}
-        >Edit
-        </Link> : <span className={'ml-3'}>&nbsp;</span>
-        }
-      </div>
     </summary>
     <p className={ 'row' }>
       <div className={ 'col-2' }></div>
@@ -130,7 +118,7 @@ const DashboardHeader = ({ definition, headerKey }: { definition: DashboardGraph
   )
 }
 
-export const DashboardContent = ({ definitionForHeader, tasks, headerKey }: {
+const DashboardContent = ({ definitionForHeader, tasks, headerKey }: {
   definitionForHeader: DashboardGraph, tasks: ITaskDashboard[], headerKey: string
 }) => {
   //
@@ -169,13 +157,13 @@ export const DashboardContent = ({ definitionForHeader, tasks, headerKey }: {
   )
 }
 
-export function Dashboard() {
+export function DashboardOld() {
   const account = useAccountContext()
 
   const listLoading = useTracker(() => {
     // Note that this subscription will get cleaned up
     // when your component is unmounted or deps change.
-    const handle = Meteor.subscribe('tasksDashboard');
+    const handle = Meteor.subscribe('tasksDashboardOld');
     return !handle.ready();
   }, []);
 
