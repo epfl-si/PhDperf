@@ -160,3 +160,29 @@ export const getParticipantsToUpdateFromSciper = async (variables: PhDInputVaria
 
   return updatedParticipants
 }
+
+/**
+ * Provide user info from an env file. It used for development envs that
+ * do not have access to the api.
+ * Env. data exemple:
+ *   PARTICIPANT_PHDSTUDENT_SCIPER="1111111"
+ *   PARTICIPANT_PHDSTUDENT_NAME="Joe Bar"
+ *   PARTICIPANT_PHDSTUDENT_EMAIL="joe.bar@somewhere.com"
+ */
+export const getParticipantsToUpdateFromEnv = async () => {
+  let updatedParticipants: any = {}
+
+  for (const participantName of Object.values(ParticipantRoles)) {
+
+    const firstName = process.env[`PARTICIPANT_${ participantName.toUpperCase() }_FIRSTNAME`] ?? ''
+    const lastName = process.env[`PARTICIPANT_${ participantName.toUpperCase() }_LASTNAME`] ?? ''
+
+    updatedParticipants[`${ participantName }Sciper`] = process.env[`PARTICIPANT_${ participantName.toUpperCase() }_SCIPER`] ?? ''
+    updatedParticipants[`${ participantName }FirstName`] = firstName
+    updatedParticipants[`${ participantName }LastName`] = lastName
+    updatedParticipants[`${ participantName }Email`] = process.env[`PARTICIPANT_${ participantName.toUpperCase() }_EMAIL`] ?? ''
+    updatedParticipants[`${ participantName }Name`] = (firstName && lastName) ? `${firstName} ${lastName}` : ''
+  }
+
+  return updatedParticipants
+}
