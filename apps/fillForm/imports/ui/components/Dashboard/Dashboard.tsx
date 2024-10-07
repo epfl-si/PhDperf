@@ -2,7 +2,7 @@ import {useTracker} from "meteor/react-meteor-data"
 import {Meteor} from "meteor/meteor"
 import {Tasks} from "../../../model/tasks";
 import _ from "lodash"
-import React, {CSSProperties, useMemo, useState} from "react"
+import React, {CSSProperties, useEffect, useMemo, useState} from "react"
 import {Loader} from "@epfl/epfl-sti-react-library";
 import {ITaskDashboard} from "../../../policy/dashboard/type";
 import {useAccountContext} from "../../contexts/Account";
@@ -14,6 +14,7 @@ import {DashboardRenderedStep} from "/imports/ui/components/Dashboard/Steps";
 import {convertDefinitionToGraph, DashboardGraph} from "/imports/ui/components/Dashboard/DefinitionGraphed";
 import {ParticipantsAsTable} from "/imports/ui/components/Participant/List";
 import {Link} from "react-router-dom";
+import {canEditProcessInstance} from "/imports/policy/processInstance";
 
 
 const DrawProgress =
@@ -39,8 +40,10 @@ const DrawProgress =
 }
 
 export const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks: ITaskDashboard[] }) => {
+  const account = useAccountContext()
 
   const [open, setOpen] = useState(false)
+  const [canEditInstance, setCanEditInstance] = useState(false)
 
   const stepsDefinition = workflowInstanceTasks[0].variables.dashboardDefinition ?? stepsDefinitionDefault
 
@@ -49,6 +52,12 @@ export const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks:
     () => convertDefinitionToGraph(stepsDefinition),
     [stepsDefinition]
   )
+
+  useEffect(() => {
+    (async function fetchPermission() {
+      setCanEditInstance(await canEditProcessInstance(account!.user!, workflowInstanceTasks[0].processInstanceKey));
+    })();
+  }, [workflowInstanceTasks[0].processInstanceKey]);
 
   // find the configuration directly into the bpmn, or use the default
   return <details>
@@ -72,10 +81,12 @@ export const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks:
         stepsDefinition={ definition }
       />
       <div className={'pt-3'}>
+        { canEditInstance ?
         <Link
           to={`../workflows/${ workflowInstanceTasks[0].processInstanceKey  }`}
         >Edit
-        </Link>
+        </Link> : <span className={'ml-3'}>&nbsp;</span>
+        }
       </div>
     </summary>
     <p className={ 'row' }>
