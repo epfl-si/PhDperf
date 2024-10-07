@@ -77,7 +77,7 @@ export const EditParticipants = ({ tasks }: { tasks: Task[] }) => {
                     <option
                       key={ participant }
                       value={ participant }>
-                      { `${ participant } \
+                      { `${ participant } ${ task.participants?.[participant]?.sciper ? '👤' : '' } \
                  ${ task.participants?.[participant]?.name ?? '' } \
                  (${ task.participants?.[participant]?.sciper ?? 'Not set' })`
                       }
