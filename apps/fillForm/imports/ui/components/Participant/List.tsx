@@ -26,10 +26,10 @@ const varToNameMap: { [key: string]: string } = {
   mentor: 'Mentor',
 }
 
-const camelCaseToLabel = (text: string): string => {
-  if (text in varToNameMap) return varToNameMap[text]
+export const camelCaseToLabelParticipant = (role: string): string => {
+  if (role in varToNameMap) return varToNameMap[role]
 
-  return text.replace(/([A-Z])/g, ' $1').replace(/^./, function(str: string){ return str.toUpperCase(); })
+  return role.replace(/([A-Z])/g, ' $1').replace(/^./, function(str: string){ return str.toUpperCase(); })
 }
 
 export const Participant = React.memo(
@@ -37,7 +37,7 @@ export const Participant = React.memo(
     <>
       {info &&
         <div className={`participant border col m-1 p-2 ${ isAssignee ? awaitingBoxColor : allGoodBoxColor}` }>
-          <div className={`small border-bottom border-white`}>{ camelCaseToLabel(role) }</div>
+          <div className={`small border-bottom border-white`}>{ camelCaseToLabelParticipant(role) }</div>
           <div className={`small mt-1`}>{ info.name } ({ info.sciper })</div>
           { showEmail &&
             <div className={`small`}>{ info.email }</div>
@@ -56,7 +56,7 @@ export const ParticipantAsBodyTable = ({role, info, isAssignee, showEmail = fals
         </svg>
       </td>
       <td>
-        { camelCaseToLabel(role) }
+        { camelCaseToLabelParticipant(role) }
       </td>
       <td className={ 'text-center' }>
         { isAssignee ?
