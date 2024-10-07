@@ -105,7 +105,7 @@ const ReminderForm = ({ task }: { task: Task }) => {
   return <>
     <h1 className={ 'h2' }>Send a reminder</h1>
 
-    <div className={ 'mb-2' }>Current step
+    <div className={ 'mb-2' }>For the task:
       <div><strong>{ task?.customHeaders?.title }</strong></div>
     </div>
 
