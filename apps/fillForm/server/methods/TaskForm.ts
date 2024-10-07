@@ -8,7 +8,7 @@ import {canSubmit, getUserPermittedTaskDetailed} from "/imports/policy/tasks";
 import _ from "lodash";
 
 import WorkersClient from '../zeebe_broker_connector'
-import {getParticipantsToUpdateFromSciper} from "/server/userFetcher";
+import {getParticipantsToUpdateFromEnv, getParticipantsToUpdateFromSciper} from "/server/userFetcher";
 import {auditLogConsoleOut} from "/imports/lib/logging";
 
 import {filterUnsubmittableVars} from "/imports/policy/utils";
@@ -70,9 +70,11 @@ Meteor.methods({
       throw new Meteor.Error(400, 'There is not enough valid data to validate this form. Canceling.')
     }
 
+
+
     // update Users info, based on sciper, if possible. Block only if we don't have any data on the PhD
+    let participantsToUpdate: any
     try {
-      let participantsToUpdate: any
       if (!task.variables.phdStudentSciper) {
         // look like a first step if we do not have the phdStudentSciper in task.variables.
         // let's fetch with formData then
@@ -84,7 +86,10 @@ Meteor.methods({
       formData = {...formData, ...participantsToUpdate}
     } catch (e: any) {
       if (Meteor.isDevelopment && Meteor.settings?.skipUsersUpdateOnFail) {  // don't raise an error it optional on dev env.
-        console.log(`skipping the user update for dev env, as there is an error. ${ e }`)
+        console.log(`As we are in a dev env and as there is an error. ${ e }`)
+        console.log(`The user info will be fetched locally.`)
+        participantsToUpdate = await getParticipantsToUpdateFromEnv()
+        formData = {...formData, ...participantsToUpdate}
       } else {
         if (e.name == 'AbortError') {
           // Look like the fetching of user info has got a timeout,
