@@ -76,6 +76,7 @@ const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks: ITaskD
         workflowInstanceTasks={ workflowInstanceTasks }
         stepsDefinition={ definition }
       />
+      <span className={ 'ml-3' }>&nbsp;</span>
     </summary>
     <p className={ 'row' }>
       <div className={ 'col-2' }></div>
