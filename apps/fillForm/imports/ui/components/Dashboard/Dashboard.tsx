@@ -89,12 +89,12 @@ export const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks:
         }
       </div>
     </summary>
-    <p className={ 'row' }>
+    <div className={ 'row' }>
       <div className={ 'col-2' }></div>
       <div className={ 'col' }>
         <ParticipantsAsTable workflowInstanceTasks={ workflowInstanceTasks } showEmail={ true }/>
       </div>
-    </p>
+    </div>
   </details>
 }
 
