@@ -111,10 +111,14 @@ export const generateAGenericTaskAttributes = (hasThesisCoDirector = true) => {
     "variables": {
       ...participant,
       "assigneeSciper": participant.phdStudentSciper,
-      "created_at": "2022-12-12T14:16:44.822Z",
+      "created_at": () => faker.date.past(1).toISOString(),
       "created_by": () => faker.sciper(),
-      "updated_at": "2022-12-12T14:17:01.951Z",
-      "dueDate": () => faker.date.future(),
+      "updated_at": () => faker.date.past(1).toISOString(),  //it may be before created at, not a big deal for the moment
+      "dueDate": () => faker.date.future().toLocaleDateString('fr-CH', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      }),
       "activityLogs": "[{\"pathName\":\"/tasks/9999999999999999\"}]",
       "creditsNeeded": "21",
       "docLinkAnnualReport": "www.epfl.ch",
