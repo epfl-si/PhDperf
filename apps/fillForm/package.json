@@ -50,6 +50,7 @@
     "react-popper": "^2.3.0",
     "react-router-dom": "^6.10.0",
     "simpl-schema": "^1.12.0",
+    "styled-components": "^6.0.0-rc.6",
     "supports-color": "9.2.3",
     "timed-memoize": "^2.4.2",
     "zeebe-node": "^8.2.5"
@@ -75,7 +76,6 @@
     "patch-package": "^6.4.7",
     "phd-assess-meta": "git+https://github.com/epfl-si/PhDAssess-meta.git",
     "sinon": "^15.0.3",
-    "styled-components": "^6.0.0-rc.1",
     "ts-node": "^10.9.2",
     "ts-sinon": "^2.0.2",
     "typescript": "^5.5.4"
