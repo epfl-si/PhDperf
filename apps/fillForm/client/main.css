@@ -132,6 +132,12 @@ div[id^=error-list].alert-success {
   min-height: 3em;
 }
 
+.old-dashboard .old-dashboard-step {
+    height: 3em;
+    max-height: 3em;
+    min-height: 3em;
+}
+
 /** THE ARROW CASE
   As it look like safari (Webkit engine) is the only browser to
   handle the summary-detail arrow with a display:flex, remove it everywhere and
