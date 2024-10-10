@@ -13,10 +13,9 @@ import TaskList from "/imports/ui/components/TaskList";
 import {TaskForm} from "/imports/ui/components/TaskForm";
 import {Dashboard} from "/imports/ui/components/Dashboard/Dashboard";
 import {DashboardOld} from "/imports/ui/components/DashboardOld/DashboardOld";
-
 import ViewWorkflow from "/imports/ui/components/ProcessInstance/Show";
 import Main from "/imports/ui/Main";
-import {TaskReminderForm} from "/imports/ui/components/Task/Reminder";
+import {TaskReminderForm} from "/imports/ui/components/Reminder/Create";
 
 
 function TaskEdit() {

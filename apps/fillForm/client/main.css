@@ -126,10 +126,63 @@ div[id^=error-list].alert-success {
   background-color: #ff9933;
 }
 
+.dashboard .dashboard-header {
+    margin-bottom: 0;
+    margin-left: .3rem;
+    margin-right: 0;
+}
+
+.dashboard .dashboard-header-step {
+    font-size: .7rem;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.dashboard .dashboard-row-workflow-instance {
+    margin-top: .5rem !important;
+}
+
+.dashboard .dashboard-row-notification-logs {
+    margin-top: .5rem !important;
+}
+
 .dashboard .dashboard-step {
-  height: 3em;
-  max-height: 3em;
-  min-height: 3em;
+    margin-left: .25rem !important;
+    margin-right: .25rem !important;
+}
+
+.dashboard .dashboard-phdStudentName,
+.dashboard .dashboard-doctoralProgramName,
+.dashboard .dashboard-action-edit
+{
+    margin-top: 0.7rem;
+}
+
+.dashboard .notification-log-step-count {
+    margin-top: .6rem;
+    font-size: .7rem;
+    white-space: nowrap;
+}
+
+.dashboard .notification-log-step-count-number {
+    margin-right: .2rem;
+}
+
+.dashboard .notification-log-step-count-envelope {
+}
+
+.dashboard .notification-log-step-plus {
+    margin-left: .2rem;
+    font-size: .4rem;
+}
+
+.dashboard .dashboard-notification-log {
+    padding-left: .85rem !important;
+    padding-right: 0 !important;
+}
+
+.dashboard .notification-log-entry {
+    font-size: .65rem;
 }
 
 .old-dashboard .old-dashboard-step {

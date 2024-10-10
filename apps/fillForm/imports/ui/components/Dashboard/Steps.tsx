@@ -8,12 +8,12 @@ import {ParticipantDetail} from "/imports/model/participants";
 import {stepsDefinitionDefault} from "/imports/ui/components/DashboardOld/DefaultDefinition";
 import {Step} from "phd-assess-meta/types/dashboards";
 import {DashboardGraph as Graph, fixStepKnownAsTypo} from "/imports/ui/components/Dashboard/DefinitionGraphed";
-import {NotificationsCount, NotificationsCountWithAddNewButton} from "/imports/ui/components/Dashboard/RemindersLog";
+import {NotificationsCount, NotificationsCountWithAddNewButton} from "/imports/ui/components/Dashboard/Logs";
 
 
 const StepNotDone = ({ step }: { step: Step }) =>
   <DashboardStep
-    className="border col m-1 p-2 text-white"
+    className="dashboard-step border col text-white"
     data-step={ step.id }
     data-step-status={ 'not-done' }
   />
@@ -21,18 +21,16 @@ const StepNotDone = ({ step }: { step: Step }) =>
 // TODO: task from workflowInstanceTasks should take the biggest notificationLogs and not the first one
 const StepDone = ({ step, workflowInstanceTasks }: { step: Step, workflowInstanceTasks: ITaskDashboard[] }) =>
   <DashboardStep
-    className="border col m-1 p-2 bg-success text-white"
+    className='dashboard-step border col bg-success text-white text-center'
     data-step={ step.id }
     data-step-status={ 'done' }
   >
-    <div className={ 'row' }>
-      <NotificationsCount step={ step } task={ workflowInstanceTasks[0] }/>
-    </div>
+    <NotificationsCount step={ step } task={ workflowInstanceTasks[0] }/>
   </DashboardStep>
 
 const StepFixedContent = ({ step, children }: { step: Step, children: React.ReactNode }) =>
   <DashboardCustomContent
-    className="border col m-1 p-2 text-center small"
+    className='dashboard-step border col text-center small'
     data-step={ step.id }
     data-step-status={ 'custom-content' }
   >
@@ -72,16 +70,14 @@ const StepPending = ({ step, task }: { step: Step, task: ITaskDashboard }) => {
     day: 'numeric',
   }) }`
 
-  return <BgAwaiting className="border col m-1 p-2 text-white">
-    <div className={ 'row' }>
-      <NotificationsCountWithAddNewButton task={ task } step={ step }/>
-      <div
-        className={ 'col' }
-        data-step={ step.id }
-        data-step-status={ 'awaiting' }
-        data-toggle="tooltip"
-        title={ onHoverInfo }></div>
-    </div>
+  return <BgAwaiting
+    className='dashboard-step border col text-white text-center'
+    data-step={ step.id }
+    data-step-status={ 'awaiting' }
+    data-toggle='tooltip'
+    title={ onHoverInfo }
+  >
+    <NotificationsCountWithAddNewButton task={ task } step={ step }/>
   </BgAwaiting>
 }
 
