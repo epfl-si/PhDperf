@@ -72,7 +72,7 @@ export const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks:
            key={ `${ workflowInstanceTasks[0]._id }_doctoralProgramName` }>
         { workflowInstanceTasks[0].variables.doctoralProgramName }
       </div>
-      <div className={ 'dashboard-progress-squares col col-without-padding' }>
+      <div className={ 'dashboard-progress-squares col' }>
         <div className={ 'row' }>
           <DrawProgress
             key={ workflowInstanceTasks[0]._id }
@@ -93,7 +93,7 @@ export const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks:
     <div className={ 'dashboard-row-notification-logs row' }>
       <div className={ 'col-2 dashboard-notification-row-placeholder' }></div>
       <div className={ 'col-1 dashboard-notification-row-placeholder' }></div>
-      <div className={ 'col col-without-padding' }>
+      <div className={ 'col' }>
         <div className={ 'row' }>
           <NotificationLogsAsCol
             key={ `notification-logs-${ workflowInstanceTasks[0]._id }` }

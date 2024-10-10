@@ -23,7 +23,7 @@ export const DashboardHeader = (
       <div className="dashboard-header dashboard-header-doctoralProgramName col-1 text-black align-self-end">
         Program
       </div>
-      <div className={ 'dashboard-header-steps col col-without-padding' }>
+      <div className={ 'dashboard-header-steps col' }>
         <div className={ 'row' }>
           {
             definition.nodesOrdered().map((node) => {
@@ -31,7 +31,6 @@ export const DashboardHeader = (
 
               return <div
                 className={
-                  'border-left ' +
                   'dashboard-header ' +
                   'dashboard-header-step ' +
                   'col ' +
