@@ -62,7 +62,7 @@ export const NotificationLogsAsCol = (
 
         return (
           <div
-            className="dashboard-notification-log col border-left text-black"
+            className="dashboard-notification-log col text-black"
             key={ `${ workflowInstanceTasks[0]._id }-${ step.id }` }
           >
             <NotificationLogInStep
