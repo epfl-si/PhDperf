@@ -25,8 +25,10 @@ export const updateTaskWithASimulatedReminder = async (
       cc: cc.length > 0 ? cc : undefined,
       bcc: bcc.length > 0 ? bcc : undefined
     },
+    // add _reminder to type, to be able to find which are reminder type
+    // this is mainly a retro-compatibility trick, so old workflow can be reminded too
     fromElementId: `${ task.elementId }${ isReminder ? '_reminder' :  '' }`,
-    isUnconfirmed: isReminder ? '1' : undefined,
+    type: isReminder ? 'reminder' : 'pending',
   } as NotificationLog
 
   await Tasks.updateAsync(
@@ -100,6 +102,7 @@ Meteor.methods({
         subject: encrypt(reminderFormData.subject as string),
         message: encrypt(reminderFormData.message as string),
         fromElementId: encrypt(`${task.elementId}_reminder`),
+        type: encrypt('reminder'),
       } as NotificationStartMessage
     })
 

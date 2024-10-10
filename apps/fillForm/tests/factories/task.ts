@@ -68,6 +68,7 @@ const buildNotificationLog = (isNotAReminder?: boolean) => {
     },
     // using negative boolean, as a default mandatory is not a reminder
     fromElementId: isNotAReminder ? 'Activity_PHD_fills_annual_report' :  'Activity_PHD_fills_annual_report_reminder',
+    type: isNotAReminder ? 'pending' : 'reminder'
   } as NotificationLog )
 }
 
