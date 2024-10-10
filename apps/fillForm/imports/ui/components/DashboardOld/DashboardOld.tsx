@@ -62,13 +62,13 @@ const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks: ITaskD
       key={ `${ workflowInstanceTasks[0]._id }_main_div` }
       onClick={ () => setOpen(!open) }
     >
-      <div className="dashboard-phdStudentName col-2 m-1 ml-2 p-2 text-black" key={ `${ workflowInstanceTasks[0]._id }_phdStudentSciper` }>
+      <div className="old-dashboard-phdStudentName col-2 m-1 ml-2 p-2 text-black" key={ `${ workflowInstanceTasks[0]._id }_phdStudentSciper` }>
         <a
           href={ `https://people.epfl.ch/${ workflowInstanceTasks[0].variables.phdStudentSciper }` }
           target={ '_blank' }
         >{ workflowInstanceTasks[0].variables.phdStudentName }</a> ({ workflowInstanceTasks[0].variables.phdStudentSciper })
       </div>
-      <div className="dashboard-doctoralProgramName col m-1 p-2 text-black" key={ `${ workflowInstanceTasks[0]._id }_doctoralProgramName` }>
+      <div className="old-dashboard-doctoralProgramName col m-1 p-2 text-black" key={ `${ workflowInstanceTasks[0]._id }_doctoralProgramName` }>
         { workflowInstanceTasks[0].variables.doctoralProgramName }
       </div>
       <DrawProgress
@@ -92,14 +92,14 @@ const DashboardHeader = ({ definition, headerKey }: { definition: DashboardGraph
 
   return (
     <div
-      className="dashboard-title row flex-nowrap sticky-top"
+      className="old-dashboard-title row flex-nowrap sticky-top"
       key={ `dashboard_title_row` }
       style={ backgroundColor ?? {} }
     >
-      <div className="dashboard-header dashboard-header-phdStudentName col-2 m-1 p-2 text-black align-self-end">
+      <div className="old-dashboard-header old-dashboard-header-phdStudentName col-2 m-1 p-2 text-black align-self-end">
         Name
       </div>
-      <div className="dashboard-header dashboard-header-doctoralProgramName col m-1 p-2 text-black align-self-end">
+      <div className="old-dashboard-header old-dashboard-header-doctoralProgramName col m-1 p-2 text-black align-self-end">
         Program
       </div>
       {
@@ -107,7 +107,7 @@ const DashboardHeader = ({ definition, headerKey }: { definition: DashboardGraph
           const step = definition.node(node) as Step
 
           return <div
-            className="dashboard-header col m-1 p-2 text-black align-self-end text-small"
+            className="old-dashboard-header col m-1 p-2 text-black align-self-end text-small"
             key={ `${ headerKey }-${ step.id }` }
           >{ step.label }</div>
         })
@@ -144,7 +144,7 @@ const DashboardContent = ({ definitionForHeader, tasks, headerKey }: {
   const groupByWorkflowInstanceTasks = _.groupBy(tasks, 'processInstanceKey')
 
   return (
-    <div className="container small dashboard">
+    <div className="container small old-dashboard">
       <DashboardHeader key={ `header_${ headerKey }`} definition={ definitionForHeader } headerKey={ headerKey }/>
       {
         Object.keys(groupByWorkflowInstanceTasks).map(
