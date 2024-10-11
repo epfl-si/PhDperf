@@ -77,7 +77,7 @@ export function Dashboard() {
   if (allTasks.length === 0) return <div>There is currently no task</div>
 
   // having a graph for the dashboard definition is easier to process
-  const definitionGraph = convertDefinitionToGraph(stepsDefinitionDefault)
+  const definitionGraph = convertDefinitionToGraph(allTasks[0].variables.dashboardDefinition)
   // use the name of the variable as key
   const definitionKey = Object.keys({StepsDefinitionDefault: stepsDefinitionDefault})[0]
 
