@@ -18,9 +18,9 @@ import {NotificationLogsListWithIcon} from "/imports/ui/components/Reminder/List
  * Print follow how many notifications has been sent
  * in the corresponding step
  */
-export const NotificationsCount = (
-  { step, task, children }: {
-    step: Step, task: ITaskDashboard, children?: React.ReactNode
+export const NotificationsCountWithAddNewButton = (
+  { step, task, canStartReminder }: {
+    step: Step, task: ITaskDashboard, canStartReminder: boolean
   }) => {
 
   const notificationLogsForThisStep = task.notificationLogs.filter(
@@ -36,17 +36,11 @@ export const NotificationsCount = (
     <span className={ 'notification-log-step-count-envelope text-white' }>
       <FontAwesomeIcon icon={ faEnvelope } size={ 'sm' }/>
     </span>
-    { children }
-  </div>
-}
-
-export const NotificationsCountWithAddNewButton = ({ step, task }: { step: Step, task: ITaskDashboard }) => {
-  return <div className={ 'notification-log-step-count notification-log-step-count-widget' }>
-    <NotificationsCount step={ step } task={ task }>
-      <Link to={ `/tasks/${ task._id }/reminders/create` } className={ 'text-white' }>
-        <FontAwesomeIcon icon={ faPlus } border className={'notification-log-step-plus'} />
-      </Link>
-    </NotificationsCount>
+    { canStartReminder &&
+    <Link to={ `/tasks/${ task._id }/reminders/create` } className={ 'text-white' }>
+      <FontAwesomeIcon icon={ faPlus } border className={'notification-log-step-plus'}/>
+    </Link>
+    }
   </div>
 }
 

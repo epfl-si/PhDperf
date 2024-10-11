@@ -8,7 +8,9 @@ import {ParticipantDetail} from "/imports/model/participants";
 import {stepsDefinitionDefault} from "/imports/ui/components/DashboardOld/DefaultDefinition";
 import {Step} from "phd-assess-meta/types/dashboards";
 import {DashboardGraph as Graph, fixStepKnownAsTypo} from "/imports/ui/components/Dashboard/DefinitionGraphed";
-import {NotificationsCount, NotificationsCountWithAddNewButton} from "/imports/ui/components/Dashboard/Logs";
+import {NotificationsCountWithAddNewButton} from "/imports/ui/components/Dashboard/Logs";
+import {canSeeRemindersLogs, canSendReminders} from "/imports/policy/reminders";
+import {useAccountContext} from "/imports/ui/contexts/Account";
 
 
 const StepNotDone = ({ step }: { step: Step }) =>
@@ -19,14 +21,22 @@ const StepNotDone = ({ step }: { step: Step }) =>
   />
 
 // TODO: task from workflowInstanceTasks should take the biggest notificationLogs and not the first one
-const StepDone = ({ step, workflowInstanceTasks }: { step: Step, workflowInstanceTasks: ITaskDashboard[] }) =>
-  <DashboardStep
+const StepDone = ({ step, workflowInstanceTasks }: { step: Step, workflowInstanceTasks: ITaskDashboard[] }) => {
+  const account = useAccountContext()
+  return <DashboardStep
     className='dashboard-step border col bg-success text-white text-center'
     data-step={ step.id }
     data-step-status={ 'done' }
   >
-    <NotificationsCount step={ step } task={ workflowInstanceTasks[0] }/>
+    { account?.user && canSeeRemindersLogs(account.user) &&
+      <NotificationsCountWithAddNewButton
+        step={ step }
+        task={ workflowInstanceTasks[0] }
+        canStartReminder={ false }
+      />
+    }
   </DashboardStep>
+}
 
 const StepFixedContent = ({ step, children }: { step: Step, children: React.ReactNode }) =>
   <DashboardCustomContent
@@ -54,6 +64,10 @@ const DashboardCustomContent = styled(DashboardStep)`
 `;
 
 const StepPending = ({ step, task }: { step: Step, task: ITaskDashboard }) => {
+  const account = useAccountContext()
+
+  const [canHaveReminderPlusButton, setCanHaveReminderPlusButton] = useState(false)
+
   let assignees: ParticipantDetail[] | undefined = task.assigneeScipers && Object.values(task.participants).filter((participant: ParticipantDetail) => task.assigneeScipers!.includes(participant.sciper))
 
   assignees = (assignees && assignees.length > 1) ? _.uniqWith(assignees, _.isEqual) : assignees  // make it uniq if we have multiple roles
@@ -70,6 +84,12 @@ const StepPending = ({ step, task }: { step: Step, task: ITaskDashboard }) => {
     day: 'numeric',
   }) }`
 
+  useEffect(() => {
+    (async function fetchPermission() {
+      setCanHaveReminderPlusButton(await canSendReminders(account!.user!, task._id));
+    })();
+  }, [task]);
+
   return <BgAwaiting
     className='dashboard-step border col text-white text-center'
     data-step={ step.id }
@@ -77,7 +97,13 @@ const StepPending = ({ step, task }: { step: Step, task: ITaskDashboard }) => {
     data-toggle='tooltip'
     title={ onHoverInfo }
   >
-    <NotificationsCountWithAddNewButton task={ task } step={ step }/>
+    { account?.user && canSeeRemindersLogs(account.user) &&
+      <NotificationsCountWithAddNewButton
+        step={ step }
+        task={ task }
+        canStartReminder={ canHaveReminderPlusButton }
+      />
+    }
   </BgAwaiting>
 }
 
