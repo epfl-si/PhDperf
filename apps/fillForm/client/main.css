@@ -128,12 +128,13 @@ div[id^=error-list].alert-success {
 
 .dashboard .dashboard-header {
     margin-bottom: 0;
-    margin-left: .3rem;
+    margin-left: .2rem;
     margin-right: 0;
 }
 
 .dashboard .dashboard-header-step {
-    font-size: .7rem;
+    font-size: .85rem;
+    margin-right: .3rem;
     padding-left: 0 !important;
     padding-right: 0 !important;
 }
@@ -161,9 +162,14 @@ div[id^=error-list].alert-success {
 }
 
 .dashboard .notification-log-step-count {
-    margin-top: .6rem;
-    font-size: .7rem;
+    margin-top: .55rem;
+    /*margin-left: 1rem;*/
+    font-size: .8rem;
     white-space: nowrap;
+}
+
+.dashboard .notification-log-step-count:not(.notification-log-step-count-with-plus-button) {
+    margin-right: .8rem;
 }
 
 .dashboard .notification-log-step-count-number {
@@ -171,6 +177,8 @@ div[id^=error-list].alert-success {
 }
 
 .dashboard .notification-log-step-count-envelope {
+    font-size: 0.7rem;
+
 }
 
 .dashboard .notification-log-step-plus {

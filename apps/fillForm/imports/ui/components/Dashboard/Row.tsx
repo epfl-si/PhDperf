@@ -1,5 +1,7 @@
 import React, {useEffect, useMemo, useState} from "react";
 import {Link} from "react-router-dom";
+import {faPenToSquare} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import {useAccountContext} from "/imports/ui/contexts/Account";
 import {ITaskDashboard} from "/imports/policy/dashboard/type";
@@ -100,7 +102,7 @@ export const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks:
         { canEditInstance ?
           <Link
             to={ `../workflows/${ workflowInstanceTasks[0].processInstanceKey }` }
-          >Edit
+          ><FontAwesomeIcon icon={faPenToSquare} />
           </Link> : <span className={ 'ml-3' }>&nbsp;</span>
         }
       </div>

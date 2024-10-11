@@ -21,8 +21,8 @@ export const NotificationLogsListWithIcon = ({ logs }: { logs: NotificationLog[]
         { log.sentAt && <div className={ 'notification-log-entry'}>
           <div>
             { log.type === 'reminder' || log.fromElementId.endsWith('_reminder') ?
-              <FontAwesomeIcon icon={ faClockRotateLeft } /> :
-              <FontAwesomeIcon icon={ faEnvelope } />
+              <FontAwesomeIcon icon={ faClockRotateLeft } className={ 'notification-log-entry-clock' } /> :
+              <FontAwesomeIcon icon={ faEnvelope } className={ 'notification-log-entry-envelope' } />
             }
           </div>
           <div>
