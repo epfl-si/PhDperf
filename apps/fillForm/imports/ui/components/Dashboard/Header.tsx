@@ -23,6 +23,12 @@ export const DashboardHeader = (
       <div className="dashboard-header dashboard-header-doctoralProgramName col-1 text-black align-self-end">
         Program
       </div>
+      <div className="dashboard-header dashboard-header-launch-date col-1 text-black align-self-end">
+        Started
+      </div>
+      <div className="dashboard-header dashboard-header-dueDate col-1 text-black align-self-end">
+        Due
+      </div>
       <div className={ 'dashboard-header-steps col' }>
         <div className={ 'row' }>
           {
