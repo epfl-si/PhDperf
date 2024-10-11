@@ -29,12 +29,14 @@ export const NotificationsCountWithAddNewButton = (
       (log.fromElementId === step.id || log.fromElementId === step.id + '_reminder')
   ) ?? []
 
-  return <div className={ 'notification-log-step-count' }>
+  return <div className={
+    `notification-log-step-count${ canStartReminder ? ' notification-log-step-count-with-plus-button' : '' }`
+  }>
     <span className={ 'notification-log-step-count-number' }>
       { notificationLogsForThisStep.length }
     </span>
     <span className={ 'notification-log-step-count-envelope text-white' }>
-      <FontAwesomeIcon icon={ faEnvelope } size={ 'sm' }/>
+      <FontAwesomeIcon icon={ faEnvelope } />
     </span>
     { canStartReminder &&
     <Link to={ `/tasks/${ task._id }/reminders/create` } className={ 'text-white' }>

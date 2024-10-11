@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import _ from "lodash";
 import styled from "styled-components";
 
@@ -40,7 +40,7 @@ const StepDone = ({ step, workflowInstanceTasks }: { step: Step, workflowInstanc
 
 const StepFixedContent = ({ step, children }: { step: Step, children: React.ReactNode }) =>
   <DashboardCustomContent
-    className='dashboard-step border col text-center small'
+    className='dashboard-step border col small'
     data-step={ step.id }
     data-step-status={ 'custom-content' }
   >
