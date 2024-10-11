@@ -41,11 +41,12 @@ export const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks:
   const [canEditInstance, setCanEditInstance] = useState(false)
 
   const stepsDefinition = workflowInstanceTasks[0].variables.dashboardDefinition ?? stepsDefinitionDefault
+  const stepsDefinitionWithoutOldies = stepsDefinition.filter((v: Step) => v.customContent !== "")
 
   // generate the good dashboard definition for this row
   const definition = useMemo(
-    () => convertDefinitionToGraph(stepsDefinition),
-    [stepsDefinition]
+    () => convertDefinitionToGraph(stepsDefinitionWithoutOldies),
+    [stepsDefinitionWithoutOldies]
   )
 
   useEffect(() => {

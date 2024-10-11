@@ -29,6 +29,9 @@ export const DashboardHeader = (
             definition.nodesOrdered().map((node) => {
               const step = definition.node(node) as Step
 
+              // as we are only showing recent entries, we don't need the old steps
+              if (step.customContent === "") return <></>
+
               return <div
                 className={
                   'dashboard-header ' +
