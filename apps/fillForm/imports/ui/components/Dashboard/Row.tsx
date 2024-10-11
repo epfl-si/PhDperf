@@ -73,6 +73,20 @@ export const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks:
            key={ `${ workflowInstanceTasks[0]._id }_doctoralProgramName` }>
         { workflowInstanceTasks[0].variables.doctoralProgramName }
       </div>
+      <div className="dashboard-launched col-1 text-black text-center"
+           key={ `${ workflowInstanceTasks[0]._id }_launched` }>
+        {
+          new Date(workflowInstanceTasks[0].variables.created_at).toLocaleDateString('fr-CH', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+          })
+         }
+      </div>
+      <div className="dashboard-dueDate col-1 text-black text-center"
+           key={ `${ workflowInstanceTasks[0]._id }_launched` }>
+        { workflowInstanceTasks[0].variables.dueDate }
+      </div>
       <div className={ 'dashboard-progress-squares col' }>
         <div className={ 'row' }>
           <DrawProgress
@@ -93,6 +107,8 @@ export const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks:
     </summary>
     <div className={ 'dashboard-row-notification-logs row' }>
       <div className={ 'col-2 dashboard-notification-row-placeholder' }></div>
+      <div className={ 'col-1 dashboard-notification-row-placeholder' }></div>
+      <div className={ 'col-1 dashboard-notification-row-placeholder' }></div>
       <div className={ 'col-1 dashboard-notification-row-placeholder' }></div>
       <div className={ 'col' }>
         <div className={ 'row' }>

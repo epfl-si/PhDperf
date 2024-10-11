@@ -153,6 +153,8 @@ div[id^=error-list].alert-success {
 
 .dashboard .dashboard-phdStudentName,
 .dashboard .dashboard-doctoralProgramName,
+.dashboard .dashboard-launched,
+.dashboard .dashboard-dueDate,
 .dashboard .dashboard-action-edit
 {
     margin-top: 0.7rem;
