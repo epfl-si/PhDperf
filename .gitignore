@@ -3,6 +3,7 @@
 /apps/fillForm/.env
 /doc/API-clients/websrv/.env
 /doc/API-clients/isa/.env
+/doc/API-clients/api.epfl.ch/Persons API/.env
 /apps/fillForm/tsconfig.tsbuildinfo
 /apps/fillForm/packages/
 /docker/zeebe-hazelcast/*.jar
