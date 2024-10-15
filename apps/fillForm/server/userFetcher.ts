@@ -7,88 +7,80 @@ import {fetchTimeout} from "/imports/lib/fetchTimeout";
 
 const debug = require('debug')('server/userFetcher')
 
-// see http://websrv.epfl.ch/RWSPersons.html for detail definition
-// see ./doc/API-clients/websrv to explore the API
-
-interface GetPersonBadResult {
-  error: {
-    text: string
-  }
-}
-
-interface PersonInfo {
-  accreds: []
-  addresses: []
-  display: string
-  email: string
-  firstname: string
-  firstnameus: string
+// see https://api.epfl.ch/docs/persons-api/index.html#/persons/get_v1_persons__id_ for detail definition
+// see ./doc/API-clients/api.epfl.ch/Persons API to explore the API
+interface APIPersonInfo {
   id: number | string
-  name: string
-  nameus: string
-  org: string
-  physemail: string
-  sciper: number | string
-  sex: string
-  status: string
-  studies: []
-  type: string
-  uid: string
-  upfirstname: string
-  upname: string
-  username: string
+  firstname: string
+  lastname: string
+  firstnameofficial: string
+  lastnameofficial: string
+  email: string
 }
 
-export interface GetPersonGoodResult {
-  result: PersonInfo
-}
+export async function getUserInfo (sciper: string | number): Promise<APIPersonInfo | undefined> {
+  const server = 'https://api.epfl.ch/'
+  const url = `${server}v1/persons/${sciper}`
+  const authToken = process.env.API_EPFL_CH_AUTH_TOKEN
 
-export async function getUserInfo (sciper: string | number): Promise<PersonInfo | undefined> {
-  const app = 'phd-assess'
-  const caller = '000000'
-  const password = process.env.WEBSRV_PASSWORD
-  const server = 'https://websrv.epfl.ch/'
-  const url = `${server}cgi-bin/rwspersons/getPerson?app=${app}&caller=${caller}&password=${password}&id=${sciper}`
+  if (!authToken) {
+    console.warn(
+      `API is not configured correctly. Skipping user info update feature.`,
+      `Nothing is returned/cached as a result.`,
+    )
+    return
+  }
 
   const controller = new AbortController()
 
-  debug(`Requesting ${server} for user info for ${sciper}`)
-
-  const response = await fetchTimeout(url, 4000, controller.signal, {
-      "headers": new Headers({
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-        "Pragma": "no-cache",
-        "Cache-Control": "no-cache"
-      }),
-      "method": "GET"
-    }
-  );
-
-  let jsonResponse: any
+  debug(`Requesting ${url} for user info`)
 
   try {
-    jsonResponse = await response.json()
-  } catch (e: any) {  // can't json decode the result ? not so good
+    const response = await fetchTimeout(url, 4000, controller.signal, {
+        "headers": new Headers({
+          "accept": "application/json",
+          "authorization": `Basic ${authToken}`,
+          "Pragma": "no-cache",
+          "Cache-Control": "no-cache"
+        }),
+        "method": "GET"
+      }
+    );
+
+    let jsonResponse: any
+
+    try {
+      jsonResponse = await response.json()
+    } catch (e: any) {  // can't json decode the result ? hhmmmm not good
+      console.warn(
+        `${ server } has returned a bad result for ${ sciper }.`,
+        `Nothing is returned/cached as a result.`,
+        `Error was: ${response.text}.`)
+      return
+    }
+
+    const goodJsonResponse = jsonResponse as APIPersonInfo
+    debug(`response for the user info fetch ${ sciper } : ${JSON.stringify(goodJsonResponse)}`)
+
+    return goodJsonResponse
+
+  } catch (e: unknown) {
+    let errorMessage;
+
+    if (typeof e === "string") {
+      errorMessage = e // works, `e` narrowed to string
+    } else if (e instanceof Error) {
+      errorMessage = e.message // works, `e` narrowed to Error
+    }
+
+    // any error (404, 500, ...) is returned as undefined, so we can invalidate caches
     console.warn(
-      `${ server } has returned a bad result for ${ sciper }.`,
+      `${ server } is not responding correctly for ${ sciper }.`,
       `Nothing is returned/cached as a result.`,
-      `Error was: ${response.text}.`)
+      `Error was: ${errorMessage}.`)
+
     return
   }
-
-  if ('error' in jsonResponse) {
-    // not working as expected, transform it to an error, so we can catch it later
-    const badJsonResponse = jsonResponse as GetPersonBadResult
-    console.warn(
-      `${ server } has returned a bad result for ${ sciper }.`,
-      `Nothing is returned/cached as a result.`,
-      `Error was: ${badJsonResponse.error.text}.`)
-    return
-  }
-
-  const goodJsonResponse = jsonResponse as GetPersonGoodResult
-  debug(`response for the user info fetch ${ sciper } : ${JSON.stringify(goodJsonResponse)}`)
-  return goodJsonResponse.result
 }
 
 // keep users info in memory for 24 hours
@@ -114,15 +106,21 @@ export const getParticipantsToUpdateFromSciper = async (variables: PhDInputVaria
 
     const vSciper = variables[`${participantName}Sciper`]
     const vEmail = variables[`${participantName}Email`]
+    const vFirstNameUsage = variables[`${participantName}FirstNameUsage`]
+    const vLastNameUsage = variables[`${participantName}LastNameUsage`]
     const vUsageName = variables[`${participantName}Name`]
-    const vFirstName = variables[`${participantName}FirstName`]
-    const vLastName = variables[`${participantName}LastName`]
+    const vFirstNameOfficial = variables[`${participantName}FirstName`]
+    const vLastNameOfficial = variables[`${participantName}LastName`]
 
     if (vSciper) {  // we are going to check if participant exists, firstly
       const participantInfo = await getUserInfoMemoized(vSciper!)
 
       // assert all data are here, or ignore this participant
-      if (!participantInfo || !(participantInfo.name && participantInfo.email)) {
+      if (!participantInfo || !(
+        participantInfo.firstname &&
+        participantInfo.lastname &&
+        participantInfo.email)
+      ) {
         continue
       }
 
@@ -130,27 +128,31 @@ export const getParticipantsToUpdateFromSciper = async (variables: PhDInputVaria
         updatedParticipants[`${participantName}Email`] = participantInfo.email
       }
 
-      // usageName has to be built
-      const usageName = []
-      usageName.push(participantInfo.firstnameus || participantInfo.firstname)
-      usageName.push(participantInfo.nameus || participantInfo.name)
-      const fullName = usageName.join(' ')
-
-      if (!vUsageName || fullName !== vUsageName) {
-        updatedParticipants[`${participantName}Name`] = fullName
+      if (!vFirstNameUsage || participantInfo.firstname !== vFirstNameUsage) {
+        updatedParticipants[`${participantName}FirstNameUsage`] = participantInfo.firstname
       }
 
-      // keep the real names information too for the student, may be needed by some step later (like in GED folder's name)
-      if (participantName === "phdStudent") {
-        const firstName = participantInfo.firstname || participantInfo.firstnameus
-        const lastName = participantInfo.name || participantInfo.nameus
+      if (!vLastNameUsage || participantInfo.lastname !== vLastNameUsage) {
+        updatedParticipants[`${participantName}LastNameUsage`] = participantInfo.lastname
+      }
 
-        if (!vFirstName || firstName !== vFirstName) {
-          updatedParticipants[`${participantName}FirstName`] = firstName
+      if (!vUsageName ||
+        vUsageName !== `${ participantInfo.firstname } ${participantInfo.lastname}`
+      ) {
+        updatedParticipants[`${participantName}Name`] = `${ participantInfo.firstname } ${participantInfo.lastname}`
+      }
+
+      // keep the real names information for the student, may be needed by a step later (like in GED folder's name)
+      if (participantName === "phdStudent") {
+        const firstNameOfficial = participantInfo.firstnameofficial
+        const lastNameOfficial = participantInfo.lastnameofficial
+
+        if (!vFirstNameOfficial || vFirstNameOfficial !== firstNameOfficial) {
+          updatedParticipants[`${participantName}FirstName`] = firstNameOfficial
         }
 
-        if (!vLastName || lastName !== vLastName) {
-          updatedParticipants[`${participantName}LastName`] = lastName
+        if (!vLastNameOfficial || vLastNameOfficial !== lastNameOfficial) {
+          updatedParticipants[`${participantName}LastName`] = lastNameOfficial
         }
       }
     }
