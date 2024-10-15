@@ -29,7 +29,7 @@ keybase_secrets_folder: >-
 secret_name: "phd-assess.secrets"
 meteor_secret_name: "phd-assess.meteor.secrets"
 encryption_key_name: "PHDASSESS_ENCRYPTION_KEY"
-websrv_password_key_name: "WEBSRV_PASSWORD"
+api_epfl_ch_token_key_name: "API_EPFL_CH_TOKEN"
 persistent_mongo_url_key_name: "MONGO_PERSISTENT_URL"
 volume_zeebe_name: >-
   {{ "svc1394-svc0166-phd-assess-test-zeebe-partition-app-app" if ("test" in openshift_namespace)

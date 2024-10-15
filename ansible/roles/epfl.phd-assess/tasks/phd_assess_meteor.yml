@@ -169,11 +169,11 @@
                   secretKeyRef:
                     name: "{{ secret_name }}"
                     key: "{{ encryption_key_name }}"
-              - name: "{{ websrv_password_key_name }}"
+              - name: "{{ api_epfl_ch_token_key_name }}"
                 valueFrom:
                   secretKeyRef:
                     name: "{{ meteor_secret_name }}"
-                    key: "{{ websrv_password_key_name }}"
+                    key: "{{ api_epfl_ch_token_key_name }}"
               - name: "{{ persistent_mongo_url_key_name }}"
                 valueFrom:
                   secretKeyRef:
