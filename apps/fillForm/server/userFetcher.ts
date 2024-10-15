@@ -21,7 +21,7 @@ interface APIPersonInfo {
 export async function getUserInfo (sciper: string | number): Promise<APIPersonInfo | undefined> {
   const server = 'https://api.epfl.ch/'
   const url = `${server}v1/persons/${sciper}`
-  const authToken = process.env.API_EPFL_CH_AUTH_TOKEN
+  const authToken = process.env.API_EPFL_CH_TOKEN
 
   if (!authToken) {
     console.warn(
