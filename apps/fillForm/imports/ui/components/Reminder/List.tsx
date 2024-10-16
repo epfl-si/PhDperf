@@ -2,8 +2,9 @@ import React from "react";
 
 
 import {NotificationLog} from "phd-assess-meta/types/notification";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faClockRotateLeft, faEnvelope } from '@fortawesome/free-solid-svg-icons'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faClockRotateLeft} from '@fortawesome/free-solid-svg-icons'
+import {faEnvelope} from '@fortawesome/free-regular-svg-icons'
 
 
 /**
