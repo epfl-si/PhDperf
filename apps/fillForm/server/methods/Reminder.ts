@@ -28,7 +28,7 @@ export const updateTaskWithASimulatedReminder = async (
     // add _reminder to type, to be able to find which are reminder type
     // this is mainly a retro-compatibility trick, so old workflow can be reminded too
     fromElementId: `${ task.elementId }${ isReminder ? '_reminder' :  '' }`,
-    type: isReminder ? 'reminder' : 'pending',
+    type: isReminder ? 'reminder' : 'awaitingForm',
   } as NotificationLog
 
   await Tasks.updateAsync(
