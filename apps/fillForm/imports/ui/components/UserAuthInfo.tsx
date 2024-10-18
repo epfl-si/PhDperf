@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUser, faUserShield } from '@fortawesome/free-solid-svg-icons'
+import { faUser, faUserGear } from '@fortawesome/free-solid-svg-icons'
 
 import {Loader} from "@epfl/epfl-sti-react-library";
 
@@ -35,21 +35,27 @@ export const UserAuthInfo = () => {
       className="btn btn-secondary dropdown-toggle"
       id={'user-info-button'}
     >
-      <FontAwesomeIcon icon={ account.user.isAdmin ? faUserShield : faUser } />
+      <FontAwesomeIcon icon={
+        ( account.user.isAdmin || account.user.isUberProgramAssistant ) ? faUserGear : faUser
+      } />
     </button>
     <Popper relativeTo={buttonRef.current} options={popperOptions} visible={visible}
             onClickElsewhere={() => setVisibility(false)}>
     <div className="dropdown-menu-popper mt-3">
-      <div className={'mx-3 my-3'}>
+      <div className={'mx-3 my-3 text-center'}>
         <div id={'user-info'}>
-          Logged in as <span id={'user-info-displayname'}>{ account.user.tequila?.displayname }</span>
-          { account.user.isAdmin &&
-            <span id={'user-info-status'}> (admin)</span>
+          <span id={'user-info-displayname'}>{ account.user.tequila?.displayname }</span>
+          {
+            ( account.user.isAdmin || account.user.isUberProgramAssistant ) &&
+              <div id={ 'user-info-status' } className={ 'small' }>
+                { account.user.isAdmin && 'Admin' }
+                { account.user.isUberProgramAssistant && 'Program assistants manager' }
+              </div>
           }
         </div>
-        { account.user.isAdmin &&
-        <div className={'small'}>
-          Version {packageJson.version}
+        { ( account.user.isAdmin || account.user.isUberProgramAssistant ) &&
+        <div id={'application-version'} className={'small'}>
+          { packageJson.version }
         </div>
         }
       </div>
