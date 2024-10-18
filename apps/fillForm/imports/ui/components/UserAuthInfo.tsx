@@ -48,8 +48,9 @@ export const UserAuthInfo = () => {
           {
             ( account.user.isAdmin || account.user.isUberProgramAssistant ) &&
               <div id={ 'user-info-status' } className={ 'small' }>
-                { account.user.isAdmin && 'Admin' }
-                { account.user.isUberProgramAssistant && 'Program assistants manager' }
+                { account.user.isAdmin && 'admin' }
+                { ( account.user.isAdmin && account.user.isUberProgramAssistant ) && ' / ' }
+                { account.user.isUberProgramAssistant && 'program assistants manager' }
               </div>
           }
         </div>
