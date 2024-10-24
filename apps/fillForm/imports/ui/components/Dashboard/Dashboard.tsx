@@ -81,6 +81,8 @@ export function Dashboard() {
   // use the name of the variable as key
   const definitionKey = Object.keys({StepsDefinitionDefault: stepsDefinitionDefault})[0]
 
+  if (!definitionGraph) return <></>
+
   return (
     <DashboardContent
       key={ definitionKey }
