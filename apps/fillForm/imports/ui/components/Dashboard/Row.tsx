@@ -102,7 +102,7 @@ export const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks:
         { canEditInstance ?
           <Link
             to={ `../workflows/${ workflowInstanceTasks[0].processInstanceKey }` }
-          ><FontAwesomeIcon icon={faPenToSquare} />
+          ><FontAwesomeIcon icon={ faPenToSquare } />
           </Link> : <span className={ 'ml-3' }>&nbsp;</span>
         }
       </div>
