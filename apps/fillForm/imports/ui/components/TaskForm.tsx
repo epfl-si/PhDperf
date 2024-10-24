@@ -83,8 +83,8 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
       )
 
       if (Meteor.isDevelopment) {
-        console.log("found a unfinished task : %j", findingUnfinishedTask)
-        console.log("Compare it with task variables: %j", task.variables)
+        findingUnfinishedTask && console.log("found a unfinished task : %j", findingUnfinishedTask)
+        findingUnfinishedTask && console.log("Compare it with task variables: %j", task.variables)
       }
     }
     getUnfinishedTask().catch(console.error)
