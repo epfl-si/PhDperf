@@ -86,7 +86,7 @@ export const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks:
          }
       </div>
       <div className="dashboard-dueDate col-1 text-black text-center"
-           key={ `${ workflowInstanceTasks[0]._id }_launched` }>
+           key={ `${ workflowInstanceTasks[0].processInstanceKey }_dueDate` }>
         { workflowInstanceTasks[0].variables.dueDate }
       </div>
       <div className={ 'dashboard-progress-squares col' }>
