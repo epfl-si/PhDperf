@@ -10,7 +10,7 @@ import {PublishMessageResponse} from "zeebe-node";
 import {Sciper} from "/imports/api/datatypes";
 import {getParticipantsToUpdateFromSciper} from "/server/userFetcher";
 import {PhDInputVariables} from "/imports/model/tasksTypes";
-import {canEditParticipants} from "/imports/policy/tasks";
+import {canEditProcessInstance} from "/imports/policy/processInstance";
 import {ParticipantRoles} from "/imports/model/participants";
 
 const auditLog = auditLogConsoleOut.extend('server/methods/TaskParticipants')
@@ -42,14 +42,14 @@ Meteor.methods({
 
     const task = Tasks.findOne({_id: taskId})
 
-    if (!canEditParticipants(user)) throw new Meteor.Error(
-      403,
-      'You are not allowed to edit the participants',
-    )
-
     if (!task) throw new Meteor.Error(
       404,
       'This task does not exist.',
+    )
+
+    if ( !(await canEditProcessInstance(user, task!.processInstanceKey)) ) throw new Meteor.Error(
+      403,
+      'You are not allowed to edit the participants of this task.',
     )
 
     if (!task.variables.uuid) throw new Meteor.Error(

@@ -1,13 +1,13 @@
 import {useAccountContext} from "/imports/ui/contexts/Account";
 import React, {useState} from "react";
-import {useSubscribe, useTracker} from "meteor/react-meteor-data";
-import {Tasks} from "/imports/model/tasks";
 import {Loader} from "@epfl/epfl-sti-react-library";
-import {canEditParticipants} from "/imports/policy/tasks";
-import {ParticipantIDs} from "/imports/model/participants";
+import {Task} from "/imports/model/tasks";
+
+import {canEditProcessInstance} from "/imports/policy/processInstance";
+import {ParticipantRoles} from "/imports/model/participants";
 
 
-export const EditParticipants = ({ processInstanceKey }: { processInstanceKey: string }) => {
+export const EditParticipants = ({ tasks }: { tasks: Task[] }) => {
   const account = useAccountContext()
 
   const [submitting, setSubmitting] = useState(false)
@@ -17,12 +17,11 @@ export const EditParticipants = ({ processInstanceKey }: { processInstanceKey: s
   const [role, setRole] = useState('')
   const [sciper, setSciper] = useState('')
 
-  const isTaskLoading = useSubscribe('taskDetailed', [processInstanceKey]);
-  const task = useTracker(() => Tasks.findOne({ 'processInstanceKey': processInstanceKey }), [processInstanceKey])
+  const task = tasks[0]
 
   if (!account?.user) return <Loader message={ 'Loading your data...' }/>
 
-  if (!canEditParticipants(account.user)) return <div>{ 'Sorry, you do not have the permission to edit participants' }</div>
+  if (!canEditProcessInstance(account.user, task.processInstanceKey)) return <div>{ 'Sorry, you do not have the permission to edit participants' }</div>
 
   if (errorMessage) return <div>
     <div>Error: { errorMessage }</div>
@@ -36,13 +35,11 @@ export const EditParticipants = ({ processInstanceKey }: { processInstanceKey: s
     </div>
   </div>
 
-  if (isTaskLoading()) return <Loader message={ 'Loading the task...' }/>
-
   if (!task) {
     if (hasBeenSubmitted) {
       return <Loader message={ 'Wait some times, the task is being refreshed' }/>
     } else {
-      return <div>No such task with a processInstanceKey: { processInstanceKey }</div>
+      return <div>No such task with a processInstanceKey: { tasks[0].processInstanceKey }</div>
     }
   }
 
@@ -71,13 +68,8 @@ export const EditParticipants = ({ processInstanceKey }: { processInstanceKey: s
   }
 
   return <>
-    <div>
-      <h1 className={ 'h3' }>Change a participant</h1>
-    </div>
-    <hr/>
     <form id="edit-participants-form" onSubmit={ submitParticipantsChanges }>
       <div className="form-group">
-        <label htmlFor="role">Participant</label>
 
         <select
           name="role"
@@ -88,10 +80,17 @@ export const EditParticipants = ({ processInstanceKey }: { processInstanceKey: s
           required={ true }
         >
           <option></option>
-          { ParticipantIDs
+          { Object.values(ParticipantRoles)
             .filter(p => p != 'phdStudent')
             .map((participant) =>
-              <option key={ participant } value={ participant }>{ participant }</option>
+              <option
+                key={ participant }
+                value={ participant }>
+                { `${ participant } \
+                 ${ task.participants?.[participant]?.name ?? '' } \
+                 (${ task.participants?.[participant]?.sciper ?? 'Not set' })`
+                }
+              </option>
             ) }
         </select>
         <label

@@ -1,17 +1,14 @@
 import {Meteor} from "meteor/meteor";
 import {Mongo} from 'meteor/mongo';
 
-import _ from "lodash";
 import dayjs from "dayjs";
 
 import {DoctoralSchool} from "/imports/api/doctoralSchools/schema";
 import {Tasks} from "/imports/model/tasks";
 
-const debug = require('debug')('import/policy/tasks.ts')
-
 
 /**
- * Build the filter query on the tasks taht last seen on zeebe is too old
+ * Build the filter query on the tasks that last seen on zeebe is too old
  * This kind of "desync" can happen, yeah, it has already happened  because some OOM error
  */
 export const filterOutObsoleteTasksQuery = () => {
@@ -116,71 +113,3 @@ export const canSubmit = (user: Meteor.User | null, taskId: string) : boolean =>
   }
 }
 
-export const canStartProcessInstance = (user: Meteor.User, doctoralSchools: DoctoralSchool[]) : boolean => {
-  if (! user) return false;
-
-  if (user.isAdmin || user.isUberProgramAssistant) return true;
-
-  return Object.keys(getAssistantAdministrativeMemberships(user, doctoralSchools)).length > 0
-}
-
-export const canDeleteProcessInstance = (user: Meteor.User) : boolean => {
-  return !!user?.isAdmin
-}
-
-export const canRefreshProcessInstance = (user: Meteor.User) : boolean => {
-  return !!user?.isAdmin
-}
-
-export const canEditParticipants = (user: Meteor.User) : boolean => {
-  return !!user?.isAdmin
-}
-
-/*
- * Get keys that are submittable. (aka not disabled)
- */
-export function findFieldKeysToSubmit(form: any) {
-  let fieldKeys: string[] = [];
-
-  const rootComponents = form.components;
-
-  const searchForFieldKeys = (components: []) => {
-    components.forEach((element: any) => {
-      if (element.key !== undefined &&
-        !element.disabled &&
-        element.type !== 'panel') {
-        fieldKeys.push(element.key);
-      }
-
-      if (element.components !== undefined) {
-        searchForFieldKeys(element.components);
-      }
-    })
-  };
-
-  searchForFieldKeys(rootComponents);
-
-  return fieldKeys;
-}
-
-/*
- * Limit what can be submitted per step, by reading the provided formIO
- * @param dataToSubmit The raw data coming from the UI
- * @param formIODefinition The formIO for the current task
- * @param additionalIgnores Add key list of data you don't want to submit
- * @param exceptions The ones you whitelist anyway
- * @return the cleanuped data ready to be submitted
- */
-export const filterUnsubmittableVars = (dataToSubmit: any, formIODefinition: any, additionalIgnores: string[], exceptions: string[]) => {
-  let allowedKeys = findFieldKeysToSubmit(JSON.parse(formIODefinition))
-  allowedKeys = allowedKeys.filter(n => !additionalIgnores.includes(n))
-  allowedKeys = [...new Set([...allowedKeys ,...exceptions])]
-
-  const dataAllowedToSubmit = _.pick(dataToSubmit, allowedKeys)
-  const diff = _.differenceWith(Object.keys(dataToSubmit), allowedKeys, _.isEqual)
-  if (diff) {
-    debug(`Removed this keys has they are unauthorized to be sent: ${diff}`)
-  }
-
-  return dataAllowedToSubmit
-}

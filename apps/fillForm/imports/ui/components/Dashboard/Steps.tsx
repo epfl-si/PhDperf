@@ -52,7 +52,7 @@ const DashboardCustomContent = styled(DashboardStep)`
 const StepPending = ({step, task }: {step: Step, task: ITaskDashboard }) => {
   let assignees: ParticipantDetail[] | undefined = task.assigneeScipers && Object.values(task.participants).filter((participant: ParticipantDetail) => task.assigneeScipers!.includes(participant.sciper))
 
-  assignees = (assignees && assignees.length > 1) ? _.uniqWith(assignees, _.isEqual) : assignees  // make it uniqu if we have multiple roles
+  assignees = (assignees && assignees.length > 1) ? _.uniqWith(assignees, _.isEqual) : assignees  // make it uniq if we have multiple roles
   let onHoverInfo = ``
 
   const currentStepLabel = _.flatten(stepsDefinitionDefault).find((step) => step.id === task!.elementId)
@@ -111,7 +111,7 @@ export const DashboardRenderedStep = (
       // the mentor became a task that spans his lifetime trough near all the workflow
       //
 
-      // quickhack: if the only left case is the mentor, we can set the majority of the task as green
+      // quick-hack: if the only left case is the mentor, we can set the majority of the task as green
       if (workflowInstanceTasks.length == 1 &&
         workflowInstanceTasks[0].elementId == 'Activity_Post_Mentor_Meeting_Mentor_Signs')
       additionalPendings.push(

@@ -24,6 +24,7 @@ import _ from 'lodash'
 
 import { Meteor } from 'meteor/meteor'
 import { Mongo } from 'meteor/mongo'
+import Cursor = Mongo.Cursor;
 import * as MongoNpmModule from 'mongodb';
 import { LocalCollection } from 'meteor/minimongo'
 import SimpleSchema from 'simpl-schema'
@@ -151,7 +152,7 @@ if (Meteor.isServer) {
                         return _.pick(changes, ['_id', 'tequila'])  // disclosed
                     }
                 },
-                MeteorUsersCollectionName)
+                MeteorUsersCollectionName) as Cursor<User>
         })
     })
 } else {

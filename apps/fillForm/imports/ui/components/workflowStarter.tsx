@@ -2,7 +2,7 @@ import {global_Error, Meteor} from "meteor/meteor";
 import React, {useState} from "react";
 import toast from 'react-hot-toast';
 import {useFind, useSubscribe} from "meteor/react-meteor-data";
-import {canStartProcessInstance} from "/imports/policy/tasks";
+import {canStartProcessInstance} from "/imports/policy/processInstance";
 import {DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 import {useAccountContext} from "/imports/ui/contexts/Account";
 
@@ -41,7 +41,7 @@ export const WorkflowStarter = () => {
   const isReady = !(isLoading() || !account || !account.user)
 
   return (
-    <div id={ 'worklow-actions' } className={ 'mb-3' }>
+    <div id={ 'workflow-actions' } className={ 'mb-3' }>
       { !isReady && <></> }
       { isReady &&
         canStartProcessInstance(account!.user!, doctoralSchools) &&
