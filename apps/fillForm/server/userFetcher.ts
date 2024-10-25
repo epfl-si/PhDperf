@@ -51,7 +51,7 @@ export async function getUserInfo (sciper: string | number): Promise<APIPersonIn
 
     try {
       jsonResponse = await response.json()
-    } catch (e: any) {  // can't json decode the result ? hhmmmm not good
+    } catch (e: any) {  // can't json decode the result ? not good
       console.warn(
         `${ server } has returned a bad result for ${ sciper }.`,
         `Nothing is returned/cached as a result.`,
@@ -66,20 +66,27 @@ export async function getUserInfo (sciper: string | number): Promise<APIPersonIn
 
   } catch (e: unknown) {
     let errorMessage;
+    let errorName;
 
     if (typeof e === "string") {
       errorMessage = e // works, `e` narrowed to string
+      errorName = ''
     } else if (e instanceof Error) {
       errorMessage = e.message // works, `e` narrowed to Error
+
+      if (e.name === 'AbortError') {
+        // error message on abort because timeout is really confusing
+        errorMessage = 'Timeout'
+      }
     }
 
     // any error (404, 500, ...) is returned as undefined, so we can invalidate caches
     console.warn(
       `${ server } is not responding correctly for ${ sciper }.`,
       `Nothing is returned/cached as a result.`,
-      `Error was: ${errorMessage}.`)
+      `Error was: ${errorName}, ${errorMessage}.`)
 
-    return
+    throw e
   }
 }
 
