@@ -27,7 +27,7 @@ export const getUserPermittedProcessInstanceEdit = (
     ...(!user.isAdmin && filterOutObsoleteTasksQuery()),
     ...filterOutSubmittedTasksQuery(),
     // Get tasks for the group
-    ...(!user.isAdmin && {
+    ...( !( user.isAdmin || user.isUberProgramAssistant ) && {
       "variables.doctoralProgramName": {
         $in: Object.keys(
           getAssistantAdministrativeMemberships(user, doctoralSchools)
