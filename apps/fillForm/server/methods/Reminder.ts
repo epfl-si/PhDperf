@@ -1,6 +1,6 @@
 import {encrypt} from "/server/encryption";
 import {NotificationLog, NotificationStartMessage} from "phd-assess-meta/types/notification";
-import {PhDZeebeJob, zBClient} from "/server/zeebe_broker_connector";
+import {zBClient} from "/server/zeebe_broker_connector";
 import {Meteor} from "meteor/meteor";
 import {Task, Tasks} from "/imports/model/tasks";
 import {getUserPermittedTaskReminder} from "/imports/policy/reminders";
@@ -11,7 +11,7 @@ const debug = require('debug')('server/methods/Reminders')
 // of when the message has been sent, we update the local data only (leave Zeebe fill the variables.notificationLogs by itself)
 // but update the task so the notificationLogs look like it has been sent.
 export const updateTaskWithASimulatedReminder = async (
-  task: Task | PhDZeebeJob,
+  task: Task,
   to: string[],
   cc: string[],
   bcc: string[],
@@ -37,6 +37,17 @@ export const updateTaskWithASimulatedReminder = async (
         'variables.notificationLogs': JSON.stringify(notificationLog)
       }}
   )
+
+  // update sibling tasks about this notification too,
+  // as the info will disappear if not done, once the task is successful
+  await task.siblings?.forEachAsync( async ( task: Task ) => {
+    await Tasks.updateAsync(
+      { _id: task.key },
+      { $push: {
+          'variables.notificationLogs': JSON.stringify(notificationLog)
+        }}
+    )
+    })
 }
 
 Meteor.methods({

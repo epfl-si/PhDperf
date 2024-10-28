@@ -1,6 +1,5 @@
 import React from "react";
 
-
 import {NotificationLog} from "phd-assess-meta/types/notification";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faClockRotateLeft} from '@fortawesome/free-solid-svg-icons'
