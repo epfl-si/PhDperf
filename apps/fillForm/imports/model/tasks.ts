@@ -13,6 +13,7 @@ import {
   TaskJournal
 } from "/imports/model/tasksTypes";
 import {NotificationLog} from "phd-assess-meta/types/notification";
+import {ActivityLog} from "phd-assess-meta/types/activityLog";
 
 
 // historically, assignees can come from multiple ways:
@@ -28,12 +29,24 @@ const assigneeSciperToArray = (assigneSciperUnknownType: string | string[]) => {
   return [assigneSciperUnknownType]
 }
 
+// convert decrypted strings that represent a object to the object
+const parseJSONArrayOfObjectAsString = ( JSONObjectsAsString: string[] | undefined) => {
+  if (!JSONObjectsAsString || JSONObjectsAsString.length === 0) return []
+
+  return JSONObjectsAsString.map( JSONObject => {
+      try {
+        return JSON.parse(JSONObject)
+      } catch (e) {
+        return {}
+      }
+    })
+}
+
 export class Task implements TaskInterface {
   declare _id?: string
   declare variables: PhDInputVariables
   declare processInstanceKey: string
   declare processDefinitionVersion: number
-  declare activityLogs?: string
   declare key: string;
   declare type: string;
   declare bpmnProcessId: string;
@@ -54,6 +67,7 @@ export class Task implements TaskInterface {
   created_at?: Date
   updated_at?: Date
   detail: any
+  activityLogs: ActivityLog[]
   notificationLogs: NotificationLog[]
 
   constructor(doc: any) {
@@ -68,26 +82,18 @@ export class Task implements TaskInterface {
     this.created_at = this.variables?.created_at ? new Date(this.variables.created_at) : undefined
     this.updated_at = this.variables?.updated_at ? new Date(this.variables.updated_at) : undefined
 
-    // convert log decrypted strings to object
-    // and, as a confort for the app,
-    // dispatch them into two categories, notificationLogs and reminderLog
-    if (this.variables?.notificationLogs?.length > 0) {
-      this.notificationLogs = this.variables.notificationLogs.map(
-        log => {
-          try {
-            // TODO: filter out mentor is user has not the permission to read it from the log.
-            // here or before the fetch(), because, yeah, it has not to be here
-            // maybe replace it with something showing it censured
-            return JSON.parse(log)
-          } catch (e) {
-            console.error(
-              `PhDAssess app can not parse a notification log. Ignoring the log for the task ${this._id}.`
-            )
-          }
-        }
-      )
+    if (this.variables?.notificationLogs) {
+      this.notificationLogs = parseJSONArrayOfObjectAsString(this.variables?.notificationLogs)
+      this.variables.notificationLogs = undefined
     } else {
       this.notificationLogs = []
+    }
+
+    if (this.variables?.activityLogs) {
+      this.activityLogs = parseJSONArrayOfObjectAsString(this.variables?.activityLogs)
+      this.variables.activityLogs = undefined
+    } else {
+      this.activityLogs = []
     }
 
     this.detail = [
@@ -102,6 +108,10 @@ export class Task implements TaskInterface {
     return Meteor.settings.public.monitor_address && Meteor.user()?.isAdmin ?
       `http://${Meteor.settings.public.monitor_address}/views/instances/${this.processInstanceKey}` :
       undefined
+  }
+
+  get siblings(): Mongo.Cursor<Task, Task> {
+    return Tasks.find({ 'processInstanceKey': this.processInstanceKey })
   }
 }
 

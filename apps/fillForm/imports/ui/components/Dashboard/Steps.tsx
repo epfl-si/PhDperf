@@ -8,7 +8,7 @@ import {ParticipantDetail} from "/imports/model/participants";
 import {stepsDefinitionDefault} from "/imports/ui/components/DashboardOld/DefaultDefinition";
 import {Step} from "phd-assess-meta/types/dashboards";
 import {DashboardGraph as Graph, fixStepKnownAsTypo} from "/imports/ui/components/Dashboard/DefinitionGraphed";
-import {NotificationsCountWithAddNewButton} from "/imports/ui/components/Dashboard/Logs";
+import {NotificationsCount} from "/imports/ui/components/Dashboard/Logs/Notifications";
 import {canSeeRemindersLogs, canSendReminders} from "/imports/policy/reminders";
 import {useAccountContext} from "/imports/ui/contexts/Account";
 
@@ -20,7 +20,6 @@ const StepNotDone = ({ step }: { step: Step }) =>
     data-step-status={ 'not-done' }
   />
 
-// TODO: task from workflowInstanceTasks should take the biggest notificationLogs and not the first one
 const StepDone = ({ step, workflowInstanceTasks }: { step: Step, workflowInstanceTasks: ITaskDashboard[] }) => {
   const account = useAccountContext()
   return <DashboardStep
@@ -29,9 +28,14 @@ const StepDone = ({ step, workflowInstanceTasks }: { step: Step, workflowInstanc
     data-step-status={ 'done' }
   >
     { account?.user && canSeeRemindersLogs(account.user) &&
-      <NotificationsCountWithAddNewButton
+      <NotificationsCount
         step={ step }
-        task={ workflowInstanceTasks[0] }
+        task={
+          workflowInstanceTasks.findLast(
+            task => task.elementId === step.id
+          )!
+        }
+        workflowInstanceTasks={ workflowInstanceTasks }
         canStartReminder={ false }
       />
     }
@@ -63,7 +67,14 @@ const DashboardCustomContent = styled(DashboardStep)`
   font-size: 0.7rem;
 `;
 
-const StepPending = ({ step, task }: { step: Step, task: ITaskDashboard }) => {
+const StepPending = (
+  { step, task, workflowInstanceTasks }:
+    {
+      step: Step,
+      task: ITaskDashboard,
+      workflowInstanceTasks: ITaskDashboard[]
+    }
+) => {
   const account = useAccountContext()
 
   const [canHaveReminderPlusButton, setCanHaveReminderPlusButton] = useState(false)
@@ -98,9 +109,14 @@ const StepPending = ({ step, task }: { step: Step, task: ITaskDashboard }) => {
     title={ onHoverInfo }
   >
     { account?.user && canSeeRemindersLogs(account.user) &&
-      <NotificationsCountWithAddNewButton
+      <NotificationsCount
         step={ step }
-        task={ task }
+        task={
+          workflowInstanceTasks.findLast(
+            task => task.elementId === step.id
+          )!
+        }
+        workflowInstanceTasks={ workflowInstanceTasks }
         canStartReminder={ canHaveReminderPlusButton }
       />
     }
@@ -135,7 +151,7 @@ export const DashboardRenderedStep = (
   )
 
   if (task) {  // task exists. It can only be a pending then
-    return <StepPending step={ step } task={ task }/>
+    return <StepPending step={ step } task={ task } workflowInstanceTasks={ workflowInstanceTasks }/>
   } else {  // no task cases. Let's find if it is done, not-done, or with a custom content
 
     if (isV2) {  // V2 has some special cases
@@ -173,7 +189,7 @@ export const DashboardRenderedStep = (
         )
 
         if (taskAliased) {
-          return <StepPending step={ step } task={ taskAliased }/>
+          return <StepPending step={ step } task={ taskAliased } workflowInstanceTasks={ workflowInstanceTasks }/>
         }
       }
 

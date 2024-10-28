@@ -191,7 +191,12 @@ div[id^=error-list].alert-success {
     padding-right: 0 !important;
 }
 
-.dashboard .notification-log-entry {
+.dashboard .notification-log-entry,
+.dashboard .activity-log-entry {
+    font-size: .65rem;
+}
+
+.dashboard .activity-log-icon {
     font-size: .65rem;
 }
 

@@ -2,7 +2,7 @@ import {Meteor} from "meteor/meteor";
 import dayjs from "dayjs";
 
 import {encrypt} from "/server/encryption";
-import {Tasks, UnfinishedTasks} from "/imports/model/tasks";
+import {Task, Tasks, UnfinishedTasks} from "/imports/model/tasks";
 import {FormioActivityLog} from "/imports/model/tasksTypes";
 import {canSubmit, getUserPermittedTaskDetailed} from "/imports/policy/tasks";
 import _ from "lodash";
@@ -12,6 +12,7 @@ import {auditLogConsoleOut} from "/imports/lib/logging";
 
 import {filterUnsubmittableVars} from "/imports/policy/utils";
 import {updateParticipantsInfoForFormData} from "/server/methods/ParticipantsUpdater";
+import {ActivityLog} from "phd-assess-meta/types/activityLog";
 
 const auditLog = auditLogConsoleOut.extend('server/methods/TaskForm')
 
@@ -36,7 +37,7 @@ Meteor.methods({
     }
   },
 
-  async submit(_id, formData, formMetaData: FormioActivityLog) {
+  async submit(_id, formData, _formMetaData: FormioActivityLog) {
     let user: Meteor.User | null = null
     if (this.userId) {
       user = Meteor.users.findOne({_id: this.userId}) ?? null
@@ -74,23 +75,26 @@ Meteor.methods({
 
     formData.updated_at = new Date().toJSON()
 
-    formData = _.mapValues(formData, x => encrypt(x))  // encrypt all data
-
-    // append the current activity over other activities
-    // but only keep the pathName of the current task, as it inform about the jobId
-    const jobURLs = []
-
-    if (task.variables.activityLogs) {  // do we have already some activities logged ?
-      let activitiesLogs: FormioActivityLog[] = JSON.parse(task.variables.activityLogs)
-      // cleanup other data that were put inside in old code, only keep pathName
-      for (let activitiesLog of activitiesLogs) {
-        jobURLs.push(_.pick(activitiesLog, 'pathName'))
-      }
+    // create the activity info for this step
+    const activityLog: ActivityLog = {
+      elementId: task.elementId,
+      completed_at: new Date().toJSON()
     }
+    // save the activity into Zeebe, for later uses
+    formData.activityLog = JSON.stringify(activityLog)
 
-    jobURLs.push(_.pick(formMetaData, 'pathName'))  // push the actual one
+    // update sibling tasks about this activity in local DB,
+    // as the info will disappear once the task is successful
+    await task.siblings.forEachAsync( ( task: Task ) => {
+        task.activityLogs.push( activityLog )
+        // TODO: Check if it is needed too for notifylog
+        // save the notification log too, as the task is no more, the value will disappear
+        //task.notifyLog.append( notifiyLog )
+      }
+    )
 
-    formData.activityLogs = encrypt(JSON.stringify(jobURLs))
+    // encrypt all data
+    formData = _.mapValues(formData, x => encrypt(x))
 
     await WorkersClient.success(task._id!, formData)
     auditLog(`Sending success: job ${task._id} of process instance ${task.processInstanceKey} with data ${JSON.stringify(formData)}`)

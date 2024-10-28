@@ -10,8 +10,8 @@ import {Step} from "phd-assess-meta/types/dashboards";
 import {DashboardRenderedStep} from "/imports/ui/components/Dashboard/Steps";
 import {stepsDefinitionDefault} from "/imports/ui/components/DashboardOld/DefaultDefinition";
 import {canEditProcessInstance} from "/imports/policy/processInstance";
-import {NotificationLogsAsCol} from "/imports/ui/components/Dashboard/Logs";
 import {ParticipantsAsTable} from "/imports/ui/components/Participant/List";
+import {ListLogsInColumn} from "/imports/ui/components/Dashboard/Logs/Index";
 
 
 const DrawProgress =
@@ -56,6 +56,8 @@ export const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks:
       setCanEditInstance(await canEditProcessInstance(account!.user!, workflowInstanceTasks[0].processInstanceKey));
     })();
   }, [workflowInstanceTasks[0].processInstanceKey]);
+
+  if (!definition) return <></>
 
   // find the configuration directly into the bpmn, or use the default
   return <details>
@@ -114,8 +116,8 @@ export const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks:
       <div className={ 'col-1 dashboard-notification-row-placeholder' }></div>
       <div className={ 'col' }>
         <div className={ 'row' }>
-          <NotificationLogsAsCol
-            key={ `notification-logs-${ workflowInstanceTasks[0]._id }` }
+          <ListLogsInColumn
+            key={ `notification-logs-${ workflowInstanceTasks[0].processInstanceKey }` }
             definition={ definition }
             workflowInstanceTasks={ workflowInstanceTasks }
           />
