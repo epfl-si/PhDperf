@@ -135,17 +135,36 @@ function persistJob (job: PhDZeebeJob) : PersistOutcome {
     return PersistOutcome.ALREADY_SUBMITTED
   }
 
-  const { insertedId } = Tasks.upsert(
-    job.key,
-    {
-      $setOnInsert: zeebeJobToTask(job),
-      // add journal about operations on this task
-      $inc: { "journal.seenCount": 1 },
-      $set: { "journal.lastSeen": new Date() },
-    })
+  const task = zeebeJobToTask(job)
+  const taskExistAlready = ( Tasks.find({ _id: job.key }).count() !== 0 )
+  let taskId: String;
 
-  if (insertedId !== undefined) {
-    debug(`Received a new job from Zeebe ${ insertedId }`)
+  if ( !taskExistAlready ) {
+    // a new task, insert all data, with journaling set
+    taskId = Tasks.insert({
+        ...{
+          journal: {
+            lastSeen: new Date(),
+            seenCount: 1
+        }},
+        ...task
+      } as Task
+    )
+  } else {
+    // updating existing
+    Tasks.update(job.key, {
+      $inc: { "journal.seenCount": 1 },
+      $set: {
+        "journal.lastSeen": new Date(),
+        "variables.notificationLogs": task.variables.notificationLogs,
+        "variables.activityLogs": task.variables.activityLogs,
+      },
+    })
+    taskId = job.key
+  }
+
+  if ( !taskExistAlready ) {
+    debug(`Received a new job from Zeebe ${ taskId }`)
     status = PersistOutcome.NEW
   } else {
     status = PersistOutcome.ALREADY_KNOWN
