@@ -8,9 +8,10 @@ import {ParticipantDetail} from "/imports/model/participants";
 import {stepsDefinitionDefault} from "/imports/ui/components/DashboardOld/DefaultDefinition";
 import {Step} from "phd-assess-meta/types/dashboards";
 import {DashboardGraph as Graph, fixStepKnownAsTypo} from "/imports/ui/components/Dashboard/DefinitionGraphed";
-import {NotificationsCount} from "/imports/ui/components/Dashboard/Logs/Notifications";
+
 import {canSeeRemindersLogs, canSendReminders} from "/imports/policy/reminders";
 import {useAccountContext} from "/imports/ui/contexts/Account";
+import {RemindersCount} from "/imports/ui/components/Dashboard/Logs/Reminders";
 
 
 const StepNotDone = ({ step }: { step: Step }) =>
@@ -28,7 +29,7 @@ const StepDone = ({ step, workflowInstanceTasks }: { step: Step, workflowInstanc
     data-step-status={ 'done' }
   >
     { account?.user && canSeeRemindersLogs(account.user) &&
-      <NotificationsCount
+      <RemindersCount
         step={ step }
         task={
           workflowInstanceTasks.findLast(
@@ -109,7 +110,7 @@ const StepPending = (
     title={ onHoverInfo }
   >
     { account?.user && canSeeRemindersLogs(account.user) &&
-      <NotificationsCount
+      <RemindersCount
         step={ step }
         task={
           workflowInstanceTasks.findLast(
