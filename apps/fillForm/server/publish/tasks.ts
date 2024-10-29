@@ -62,6 +62,7 @@ const hideMentor = (task: Partial<Task>) => {
   if (!task.variables) return task
 
   const currentMentorSciper = task.variables.mentorSciper
+  const currentMentorEmail = task.variables.mentorEmail
 
   if (currentMentorSciper) {
     task.variables.mentorSciper = undefined
@@ -79,6 +80,15 @@ const hideMentor = (task: Partial<Task>) => {
   if (task.variables.mentorName) task.variables.mentorName = undefined
 
   if (task.variables.mentorEmail) task.variables.mentorEmail = undefined
+
+  // check if we have some notification logs with the mentor info in it
+  if (currentMentorEmail && task.notificationLogs) {
+    _.forEach(task.notificationLogs, notificationLog => {
+      _.pull(notificationLog.sentTo.to, currentMentorEmail);
+      _.pull(notificationLog.sentTo.cc, currentMentorEmail);
+      _.pull(notificationLog.sentTo.bcc, currentMentorEmail);
+    });
+  }
 
   return task
 }
