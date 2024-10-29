@@ -128,13 +128,13 @@ div[id^=error-list].alert-success {
 
 .dashboard .dashboard-header {
     margin-bottom: 0;
-    margin-left: .2rem;
     margin-right: 0;
 }
 
 .dashboard .dashboard-header-step {
-    font-size: .85rem;
-    margin-right: .3rem;
+    font-size: .68rem;
+    margin-left: .1rem;
+    margin-right: .1rem;
     padding-left: 0 !important;
     padding-right: 0 !important;
 }

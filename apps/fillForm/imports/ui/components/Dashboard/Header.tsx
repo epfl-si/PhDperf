@@ -23,13 +23,13 @@ export const DashboardHeader = (
       <div className="dashboard-header dashboard-header-doctoralProgramName col-1 text-black align-self-end">
         Program
       </div>
-      <div className="dashboard-header dashboard-header-launch-date col-1 text-black align-self-end">
-        Started
+      <div className="dashboard-header dashboard-header-launch-date col-1 text-black align-self-end text-center">
+        Report launched&nbsp;on
       </div>
-      <div className="dashboard-header dashboard-header-dueDate col-1 text-black align-self-end">
-        Due
+      <div className="dashboard-header dashboard-header-dueDate col-1 text-black align-self-end text-center">
+        Report due&nbsp;date
       </div>
-      <div className={ 'dashboard-header-steps col' }>
+      <div className={ 'dashboard-header-steps col align-self-end' }>
         <div className={ 'row' }>
           {
             definition.nodesOrdered().map((node) => {
@@ -45,7 +45,8 @@ export const DashboardHeader = (
                   'col ' +
                   'align-self-end ' +
                   'text-small ' +
-                  'text-black '
+                  'text-black ' +
+                  'text-center '
                 }
                 key={ `${ headerKey }-${ step.id }` }
               >{ step.label }</div>
