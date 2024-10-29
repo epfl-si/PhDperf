@@ -144,7 +144,7 @@ div[id^=error-list].alert-success {
 }
 
 .dashboard .dashboard-row-notification-logs {
-    margin-top: .5rem !important;
+    margin-top: 0 !important;
 }
 
 .dashboard .dashboard-step {
@@ -178,7 +178,6 @@ div[id^=error-list].alert-success {
 
 .dashboard .notification-log-step-count-envelope {
     font-size: 0.7rem;
-
 }
 
 .dashboard .notification-log-step-plus {
@@ -186,9 +185,16 @@ div[id^=error-list].alert-success {
     font-size: .4rem;
 }
 
+.dashboard .dashboard-activity-log,
 .dashboard .dashboard-notification-log {
-    padding-left: .85rem !important;
+    margin-left: .25rem !important;
+    margin-right: .25rem !important;
+    padding-left: 0 !important;
     padding-right: 0 !important;
+}
+
+.dashboard .dashboard-activity-log {
+    margin-top: .4rem;
 }
 
 .dashboard .notification-log-entry,

@@ -4,14 +4,18 @@ import {faPenToSquare} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import {useAccountContext} from "/imports/ui/contexts/Account";
+
 import {ITaskDashboard} from "/imports/policy/dashboard/type";
+
 import {convertDefinitionToGraph, DashboardGraph} from "/imports/ui/components/Dashboard/DefinitionGraphed";
 import {Step} from "phd-assess-meta/types/dashboards";
 import {DashboardRenderedStep} from "/imports/ui/components/Dashboard/Steps";
 import {stepsDefinitionDefault} from "/imports/ui/components/DashboardOld/DefaultDefinition";
 import {canEditProcessInstance} from "/imports/policy/processInstance";
+
 import {ParticipantsAsTable} from "/imports/ui/components/Participant/List";
-import {ListLogsInColumn} from "/imports/ui/components/Dashboard/Logs/Index";
+import {ShowActivityDatePerStep} from "/imports/ui/components/Dashboard/Logs/Activities";
+import {ListRemindersInColumn} from "/imports/ui/components/Dashboard/Logs/Reminders";
 
 
 const DrawProgress =
@@ -99,32 +103,42 @@ export const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks:
             stepsDefinition={ definition }
           />
         </div>
+        { canEditInstance &&
+          <div className={ 'row' }>
+            <ShowActivityDatePerStep
+              workflowInstanceTasks={ workflowInstanceTasks }
+              definition={ definition }
+            />
+          </div>
+        }
       </div>
       <div className={ 'dashboard-action-edit col-1' }>
         { canEditInstance ?
           <Link
             to={ `../workflows/${ workflowInstanceTasks[0].processInstanceKey }` }
-          ><FontAwesomeIcon icon={ faPenToSquare } />
+          ><FontAwesomeIcon icon={ faPenToSquare }/>
           </Link> : <span className={ 'ml-3' }>&nbsp;</span>
         }
       </div>
     </summary>
-    <div className={ 'dashboard-row-notification-logs row' }>
-      <div className={ 'col-2 dashboard-notification-row-placeholder' }></div>
-      <div className={ 'col-1 dashboard-notification-row-placeholder' }></div>
-      <div className={ 'col-1 dashboard-notification-row-placeholder' }></div>
-      <div className={ 'col-1 dashboard-notification-row-placeholder' }></div>
-      <div className={ 'col' }>
-        <div className={ 'row' }>
-          <ListLogsInColumn
-            key={ `notification-logs-${ workflowInstanceTasks[0].processInstanceKey }` }
-            definition={ definition }
-            workflowInstanceTasks={ workflowInstanceTasks }
-          />
+    { canEditInstance &&
+      <div className={ 'dashboard-row-notification-logs row' }>
+        <div className={ 'col-2 dashboard-notification-row-placeholder' }></div>
+        <div className={ 'col-1 dashboard-notification-row-placeholder' }></div>
+        <div className={ 'col-1 dashboard-notification-row-placeholder' }></div>
+        <div className={ 'col-1 dashboard-notification-row-placeholder' }></div>
+        <div className={ 'col' }>
+          <div className={ 'row' }>
+            <ListRemindersInColumn
+              key={ `notification-logs-${ workflowInstanceTasks[0].processInstanceKey }` }
+              definition={ definition }
+              workflowInstanceTasks={ workflowInstanceTasks }
+            />
+          </div>
         </div>
+        <div className={ 'col-1' }></div>
       </div>
-      <div className={ 'col-1' }></div>
-    </div>
+    }
     <div className={ 'dashboard-row-participants row' }>
       <div className={ 'col-2' }></div>
       <div className={ 'col' }>
