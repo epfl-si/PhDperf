@@ -416,7 +416,7 @@ export default {
       // of when the message sent date, we update the
       // local data only (leave Zeebe fill the variables.notificationLogs by itself)
       await updateTaskWithASimulatedReminder(
-        job,
+        new Task(job),  // convert this job to Task, as needed for next operations
         Array.isArray(notifyTo) ?
           notifyTo.map( to => decrypt(to)) :
           [decrypt(notifyTo)],
