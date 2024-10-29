@@ -77,8 +77,9 @@ Meteor.methods({
 
     // create the activity info for this step
     const activityLog: ActivityLog = {
+      event: 'completed',
       elementId: task.elementId,
-      completed_at: new Date().toJSON()
+      datetime: new Date().toJSON()
     }
     // save the activity into Zeebe, for later uses
     formData.activityLog = JSON.stringify(activityLog)
