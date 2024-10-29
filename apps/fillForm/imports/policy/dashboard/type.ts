@@ -43,7 +43,7 @@ export const taskFieldsNeededForDashboard = {
 }
 
 // define here what is allowed in code, as we filter out a full task to get only useful data
-type UnwantedPhDInputVariablesKeys = "created_by" | "created_at" | "activityLogs"
+type UnwantedPhDInputVariablesKeys = "created_by"
 
 type PhDInputVariablesDashboard = Omit<PhDInputVariables, UnwantedPhDInputVariablesKeys>
 
