@@ -23,24 +23,27 @@ export const getUserPermittedTaskReminder = (user?: Meteor.User | null, _id?: st
     'variables.mentorEmail': 0,
 
     // and not really needed stuffs for UI
+    'variables.notifyLogs': 0,
     'variables.activityLogs': 0,
     'journal': 0,
   }
 
-  if (user.isAdmin) {  // admin can see the exclusions, reactivate it
+  // some can see the exclusions, reactivate it
+  if (user.isAdmin || user.isUberProgramAssistant) {
     delete fieldsView['variables.mentorSciper']
     delete fieldsView['variables.mentorName']
     delete fieldsView['variables.mentorEmail']
+  }
+
+  // add journals info for admin
+  if (user.isAdmin) {
     delete fieldsView['journal']
   }
 
   return Tasks.find(taskQuery, { 'fields': fieldsView })
 }
 
-// TODO: assert no mentor email
-export const canSeeRemindersLogs = (user: Meteor.User) : boolean => {
-  return !!user?.isAdmin
-}
+export const canSeeRemindersLogs = (user: Meteor.User) : boolean => user.isAdmin || user.isUberProgramAssistant
 
 export const canSendReminders = async (user: Meteor.User, taskId: string) : Promise<boolean> => {
   // is the current processInstanceKey visible on the dashboard for this user ?
