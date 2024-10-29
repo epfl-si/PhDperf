@@ -140,7 +140,7 @@ div[id^=error-list].alert-success {
 }
 
 .dashboard .dashboard-row-workflow-instance {
-    margin-top: .5rem !important;
+    margin-top: .4rem !important;
 }
 
 .dashboard .dashboard-row-notification-logs {
