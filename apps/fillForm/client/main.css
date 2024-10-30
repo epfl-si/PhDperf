@@ -202,6 +202,10 @@ div[id^=error-list].alert-success {
     font-size: .65rem;
 }
 
+.dashboard .notification-log-entry {
+    margin-left: .12rem;
+}
+
 .dashboard .activity-log-icon {
     font-size: .65rem;
 }
