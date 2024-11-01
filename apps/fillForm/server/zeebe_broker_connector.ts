@@ -139,6 +139,22 @@ function persistJob (job: PhDZeebeJob) : PersistOutcome {
   const taskExistAlready = ( Tasks.find({ _id: job.key }).count() !== 0 )
   let taskId: String;
 
+  // set a status report to Zeebe about the datetime we get this task
+  if (!task.variables.activityLogs) task.variables.activityLogs = []
+
+  // FIXME: the date will change everyday as it is not set into the task variable
+  if (!task.variables.activityLogs.find( log => JSON.parse(log).elementId === task.elementId ) ) {
+    task.variables.activityLogs.push(
+      JSON.stringify( {
+        event: 'started',
+        datetime: new Date(),
+        elementId: task.elementId
+      } )
+    )
+  }
+  // TODO: later we have to set the activity info into the processInstance variables and the tasks variables
+
+
   if ( !taskExistAlready ) {
     // a new task, insert all data, with journaling set
     taskId = Tasks.insert({
