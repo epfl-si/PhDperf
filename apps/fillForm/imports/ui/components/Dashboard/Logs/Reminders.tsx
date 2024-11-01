@@ -118,7 +118,7 @@ export const ListRemindersInColumn = (
 
         return (
           <div
-            className="dashboard-notification-log col text-black"
+            className="dashboard-notification-log col text-black text-center"
             key={ `${ workflowInstanceTasks[0]._id }-${ step.id }` }
           >
             <ReminderLogsList
