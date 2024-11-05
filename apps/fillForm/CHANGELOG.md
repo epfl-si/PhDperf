@@ -1,5 +1,8 @@
 # CHANGELOG
 
+*1.23.0* (2024-10-05)
+- Use api instead of websrv when users info are needed
+
 *1.16.1* (2023-01-31)
 - Fix not being able to sync removed tasks on the list
 
