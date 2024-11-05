@@ -58,7 +58,7 @@ Meteor.publish('tasksList', function () {
   }
 })
 
-const hideMentor = (task: Partial<Task>) => {
+export const hideMentor = (task: Partial<Task>) => {
   if (!task.variables) return task
 
   const currentMentorSciper = task.variables.mentorSciper

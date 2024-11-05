@@ -1,16 +1,12 @@
 import _ from "lodash"
-import {Meteor} from "meteor/meteor"
 import React from "react"
-import {useTracker} from "meteor/react-meteor-data"
+import {useFind, useSubscribe} from "meteor/react-meteor-data"
 import {Loader} from "@epfl/epfl-sti-react-library";
 
-import {Tasks} from "../../../model/tasks";
 import {ITaskDashboard} from "../../../policy/dashboard/type";
 import {useAccountContext} from "../../contexts/Account";
-import {
-  stepsDefinitionDefault,
-} from "../DashboardOld/DefaultDefinition";
-import {convertDefinitionToGraph, DashboardGraph} from "/imports/ui/components/Dashboard/DefinitionGraphed";
+
+import {DashboardGraph} from "/imports/ui/components/Dashboard/DefinitionGraphed";
 import { DashboardHeader } from "./Header";
 import { DashboardRow } from "./Row";
 
@@ -54,41 +50,25 @@ export const DashboardContent = ({ definitionForHeader, tasks, headerKey }: {
   )
 }
 
+const processInstancesDashboard = new Mongo.Collection('processInstancesDashboard');
+
 export function Dashboard() {
   const account = useAccountContext()
 
-  const listLoading = useTracker(() => {
-    // Note that this subscription will get cleaned up
-    // when your component is unmounted or deps change.
-    const handle = Meteor.subscribe('tasksDashboard');
-    return !handle.ready();
-  }, []);
+  const listLoading = useSubscribe('tasksDashboardProcessInstance');
 
   //
   // Filter
-  let allTasks = useTracker(() => Tasks.find(
-    {"elementId": {$ne: "Activity_Program_Assistant_Assigns_Participants"}}  // ignore first step
-  ).fetch() as ITaskDashboard[])
+  const allTasks = useFind(() => processInstancesDashboard.find())
 
   //
   // Render
   if (!account?.isLoggedIn) return <Loader message={'Loading your data...'}/>
-  if (listLoading) return <Loader message={'Fetching tasks...'}/>
+  if (listLoading()) return <Loader message={'Fetching tasks...'}/>
   if (allTasks.length === 0) return <div>There is currently no task</div>
 
-  // having a graph for the dashboard definition is easier to process
-  const definitionGraph = convertDefinitionToGraph(allTasks[0].variables.dashboardDefinition)
-  // use the name of the variable as key
-  const definitionKey = Object.keys({StepsDefinitionDefault: stepsDefinitionDefault})[0]
-
-  if (!definitionGraph) return <></>
-
-  return (
-    <DashboardContent
-      key={ definitionKey }
-      headerKey={ definitionKey }  // propage the key
-      definitionForHeader={ definitionGraph }
-      tasks={ allTasks }
-    />
-  )
+  return allTasks.map( (processInstance) => <div>
+    { JSON.stringify(processInstance.created_at) }
+    <hr />
+  </div>)
 }
