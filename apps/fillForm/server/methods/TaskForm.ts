@@ -109,22 +109,6 @@ Meteor.methods({
 
     formData = _.mapValues(formData, x => encrypt(x))  // encrypt all data
 
-    // append the current activity over other activities
-    // but only keep the pathName of the current task, as it inform about the jobId
-    const jobURLs = []
-
-    if (task.variables.activityLogs) {  // do we have already some activities logged ?
-      let activitiesLogs: FormioActivityLog[] = JSON.parse(task.variables.activityLogs)
-      // cleanup other data that were put inside in old code, only keep pathName
-      for (let activitiesLog of activitiesLogs) {
-        jobURLs.push(_.pick(activitiesLog, 'pathName'))
-      }
-    }
-
-    jobURLs.push(_.pick(formMetaData, 'pathName'))  // push the actual one
-
-    formData.activityLogs = encrypt(JSON.stringify(jobURLs))
-
     await WorkersClient.success(task._id!, formData)
     auditLog(`Sending success: job ${task._id} of process instance ${task.processInstanceKey} with data ${JSON.stringify(formData)}`)
     await UnfinishedTasks.removeAsync({ taskId: task._id!, userId: user._id })
