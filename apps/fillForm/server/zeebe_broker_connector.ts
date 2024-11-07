@@ -46,7 +46,14 @@ export let zBClient: ZeebeSpreadingClient | null = null
 
 function zeebeJobToTask(job: PhDZeebeJob): Task {
   // decrypt the variables before saving into memory
-  const decryptedVariables: any = {}
+  const decryptedVariables:
+  {
+    [ key: string ]:
+      string |
+      null |
+      ( string | null )[]
+  } = {}
+
   let undecryptableVariablesKey: string[] = []
 
   Object.keys(job.variables).map((key) => {
@@ -87,7 +94,10 @@ function zeebeJobToTask(job: PhDZeebeJob): Task {
 
     // get the value for each field
     fieldsName.forEach(field =>
-      decryptedVariables[field] && scipers.push(decryptedVariables[field])
+      decryptedVariables[field] && scipers.push(
+        // this one are guaranteed to be string, not null or array
+        decryptedVariables[field] as string
+        )
     )
 
     decryptedVariables.assigneeSciper = scipers
