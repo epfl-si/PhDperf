@@ -14,11 +14,11 @@ export function encrypt(message: string | [], passphrase: string | undefined = p
 
 }
 
-export function decrypt(cryptedMessage: string, passphrase: string | undefined = process.env.PHDASSESS_ENCRYPTION_KEY): string {
+export function decrypt(cryptedMessage: string | null, passphrase: string | undefined = process.env.PHDASSESS_ENCRYPTION_KEY): string | null {
   if (passphrase === undefined) {
     throw new Meteor.Error('encryption error', 'Trying to encrypt a value without a passphrase set');
   }
-  if (cryptedMessage === "") {
+  if (cryptedMessage === "" || cryptedMessage == null) {
     return cryptedMessage;
   } else {
     const bytes = CryptoJS.AES.decrypt(cryptedMessage, passphrase)
