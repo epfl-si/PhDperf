@@ -1,17 +1,17 @@
 import {Meteor} from 'meteor/meteor'
 const CryptoJS = require("crypto-js");
 
-export function encrypt(message: string | [], passphrase: string | undefined = process.env.PHDASSESS_ENCRYPTION_KEY): string {
+
+export function encrypt(message: string | null | [], passphrase: string | undefined = process.env.PHDASSESS_ENCRYPTION_KEY): string | null {
   if (passphrase === undefined) {
     throw new Meteor.Error('encryption error', 'Trying to encrypt a value without a passphrase set');
   }
 
-  if (message === "") {
+  if (message === "" || message == null ) {
     return message;
   } else {
     return CryptoJS.AES.encrypt(JSON.stringify(message), passphrase).toString();
   }
-
 }
 
 export function decrypt(cryptedMessage: string | null, passphrase: string | undefined = process.env.PHDASSESS_ENCRYPTION_KEY): string | null {
