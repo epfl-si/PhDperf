@@ -111,7 +111,10 @@ export class Task implements TaskInterface {
   }
 
   get siblings(): Mongo.Cursor<Task, Task> {
-    return Tasks.find({ 'processInstanceKey': this.processInstanceKey })
+    return Tasks.find({
+      'processInstanceKey': this.processInstanceKey,
+      '_id': { $ne: this.key }
+    })
   }
 }
 
