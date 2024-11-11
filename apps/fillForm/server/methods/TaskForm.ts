@@ -15,6 +15,7 @@ import {updateParticipantsInfoForFormData} from "/server/methods/ParticipantsUpd
 import {ActivityLog} from "phd-assess-meta/types/activityLog";
 
 const auditLog = auditLogConsoleOut.extend('server/methods/TaskForm')
+const debug = require('debug')('server/methods/TaskForm')
 
 
 Meteor.methods({
@@ -99,8 +100,11 @@ Meteor.methods({
 
     await WorkersClient.success(task._id!, formData)
     auditLog(`Sending success: job ${task._id} of process instance ${task.processInstanceKey} with data ${JSON.stringify(formData)}`)
+
+    debug(`Clear the temp form, if any`)
     await UnfinishedTasks.removeAsync({ taskId: task._id!, userId: user._id })
-    // save as submitted in the local db, for journaling operations
+
+    debug(`Save as submitted in the local db, for journaling operations`)
     Tasks.markAsSubmitted(task._id!)
   },
 
