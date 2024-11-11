@@ -439,14 +439,14 @@ export default {
       await updateTaskWithASimulatedReminder(
         new Task(job),  // convert this job to Task, as needed for next operations
         Array.isArray(notifyTo) ?
-          notifyTo.map( to => decrypt(to)) :
-          [decrypt(notifyTo)],
+          notifyTo.map( to => decrypt(to) as string ) :
+          [decrypt(notifyTo) as string],
         Array.isArray(notifyCc) ?
-        notifyCc.map( cc => decrypt(cc)) :
-        notifyCc ? [decrypt(notifyCc)] : [],
+        notifyCc.map( cc => decrypt(cc)  as string ) :
+        notifyCc ? [decrypt(notifyCc) as string] : [],
         Array.isArray(notifyBcc) ?
-        notifyBcc.map( bcc => decrypt(bcc)) :
-        notifyBcc ? [decrypt(notifyBcc)] : [],
+        notifyBcc.map( bcc => decrypt(bcc) as string ) :
+        notifyBcc ? [decrypt(notifyBcc) as string ] : [],
         false
       )
     }
