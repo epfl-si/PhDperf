@@ -59,8 +59,11 @@ export const ShowActivityDatePerStep = (
         // compile all infos that can be found in different tasks into one
         const allActivitiesMerged=_.uniqBy(
           _.flatMap(
-            workflowInstanceTasks, task => task.activityLogs
-          ), log => `${log.elementId}${log.datetime}`)
+            workflowInstanceTasks,
+            task => task.activityLogs
+          ),
+          log => `${log.elementId}${log.datetime}`
+        )
 
         return (
           <div
