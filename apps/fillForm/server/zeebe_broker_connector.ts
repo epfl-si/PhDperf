@@ -52,15 +52,22 @@ function zeebeJobToTask(job: PhDZeebeJob): Task {
 
   Object.keys(job.variables).map((key) => {
     try {
-      if (alreadyDecryptedVariables.includes(key) ) {
+      if ( alreadyDecryptedVariables.includes(key) ) {
         decryptedVariables[key] = job.variables[key]
-      } else if (Array.isArray(job.variables[key])) {
-        decryptedVariables[key] = job.variables[key].reduce((acc: ( string | null )[], item: string | null) => {
-          acc.push(decrypt(item))
-          return acc
+      } else if ( Array.isArray(job.variables[key]) ) {
+        decryptedVariables[key] = job.variables[key].reduce(
+          (acc: ( string | null )[], item: string | null) => {
+            // forget null values, it provides nothing in our current setup
+            if (item != null) {
+              const decryptedItem = decrypt(item)
+              acc.push(decryptedItem)
+            }
+            return acc
         }, [])
       } else {
-        decryptedVariables[key] = decrypt(job.variables[key])
+        const decryptedItem = decrypt(job.variables[key])
+        // forget null values, it provides nothing in our current setup
+        if (decryptedItem != null) decryptedVariables[key] = decryptedItem
       }
     } catch (error) {
       undecryptableVariablesKey.push(key)
