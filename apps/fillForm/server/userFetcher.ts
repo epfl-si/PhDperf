@@ -16,6 +16,8 @@ interface APIPersonInfo {
   firstnameofficial: string
   lastnameofficial: string
   email: string
+  // this one is added manually and is set with the same string value as 'id'
+  sciper: string
 }
 
 export async function getUserInfo (sciper: string | number): Promise<APIPersonInfo | undefined> {
@@ -60,6 +62,7 @@ export async function getUserInfo (sciper: string | number): Promise<APIPersonIn
     }
 
     const goodJsonResponse = jsonResponse as APIPersonInfo
+    goodJsonResponse.sciper = goodJsonResponse.id?.toString()  // for personal sanity reasons
     debug(`response for the user info fetch ${ sciper } : ${JSON.stringify(goodJsonResponse)}`)
 
     return goodJsonResponse
