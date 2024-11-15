@@ -22,10 +22,10 @@ Meteor.methods({
     if (doctoralSchool) {
       const programDirector = await getUserInfoMemoized(doctoralSchool.programDirectorSciper)
 
-      if (programDirector && programDirector.name && programDirector.firstname) {
+      if (programDirector && programDirector.firstname && programDirector.lastname) {
         DoctoralSchools.update(
           {_id: doctoralSchool._id},
-          {$set: {programDirectorName: `${programDirector.firstname} ${programDirector.name}`}}
+          {$set: {programDirectorName: `${programDirector.firstname} ${programDirector.lastname}`}}
         )
       }
     }

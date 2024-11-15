@@ -257,7 +257,7 @@ Meteor.methods({
       $set: {
         "doctorants.$[doctorantInfo].needCoDirectorData": false,
         "doctorants.$[doctorantInfo].thesis.coDirecteur.sciper": coDirectorSciper,
-        "doctorants.$[doctorantInfo].thesis.coDirecteur.fullName": `${newCoDirector.firstname} ${newCoDirector.name}`,
+        "doctorants.$[doctorantInfo].thesis.coDirecteur.fullName": `${newCoDirector.firstname} ${newCoDirector.lastname}`,
         "doctorants.$[doctorantInfo].thesis.coDirecteur.email": newCoDirector.email,
       }
     }
@@ -339,7 +339,7 @@ Meteor.methods({
         docLinkAnnualReport: encrypt(doctoralSchool.helpUrl),
         creditsNeeded: encrypt(doctoralSchool.creditsNeeded.toString()),
         programDirectorSciper: encrypt(doctoralSchool.programDirectorSciper),
-        programDirectorName: encrypt(programDirector.firstname + ' ' + programDirector.name),
+        programDirectorName: encrypt(programDirector.firstname + ' ' + programDirector.lastname),
         programDirectorEmail: encrypt(programDirector.email),
 
         dateOfCandidacyExam: encrypt(doctorant.dateExamCandidature ?? ''),
