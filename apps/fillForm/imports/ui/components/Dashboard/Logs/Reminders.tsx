@@ -18,7 +18,7 @@ import {DashboardGraph} from "/imports/ui/components/Dashboard/DefinitionGraphed
 export const RemindersCount = (
   { step, task, workflowInstanceTasks, canStartReminder }: {
     step: Step,
-    task: ITaskDashboard,
+    task: ITaskDashboard | undefined,
     workflowInstanceTasks: ITaskDashboard[],
     canStartReminder: boolean
   }) => {
@@ -46,7 +46,7 @@ export const RemindersCount = (
     <span className={ 'notification-log-step-count-envelope text-white' }>
       <FontAwesomeIcon icon={ faEnvelope } />
     </span>
-    { canStartReminder &&
+    { task && canStartReminder &&
       <Link to={ `/tasks/${ task._id }/reminders/create` } className={ 'text-white' }>
         <FontAwesomeIcon icon={ faPlus } border className={'notification-log-step-plus'}/>
       </Link>
