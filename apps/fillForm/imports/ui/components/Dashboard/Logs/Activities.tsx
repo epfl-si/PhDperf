@@ -18,29 +18,42 @@ export const ActivityStatusForStep = (
   { step, activityLogs }:
     { step: Step, activityLogs: ActivityLog[] }
 ) => {
-  const activityForThisStep = activityLogs.find(
-    log => log.elementId === step.id
+
+  const activityCompletedForThisStep = activityLogs.find(
+    log => log.elementId === step.id && log.event === 'completed'
   )
 
-  return <>
-    { activityForThisStep?.datetime && <div className={ 'activity-log-entry text-nowrap' }>
-      { activityForThisStep.event === 'started' &&
-        <FontAwesomeIcon icon={ faClockRotateLeft } className={ 'activity-log-icon' } flip={ 'horizontal' } />
-      }
-      { activityForThisStep.event === 'completed' &&
-        <FontAwesomeIcon icon={ faCircleCheck } className={ 'activity-log-icon' } />
-      }
-      &nbsp;
-      {
-        new Date(activityForThisStep.datetime).toLocaleDateString('fr-CH', {
+  const activityStartedForThisStep = activityLogs.find(
+    log => log.elementId === step.id && log.event === 'started'
+  )
+
+  // priority to completed step
+  const currentActivity = activityCompletedForThisStep ?
+    activityCompletedForThisStep : activityStartedForThisStep
+
+  return <div className={ 'activity-log-entry text-nowrap' }>
+    { activityCompletedForThisStep ?
+      <FontAwesomeIcon
+        icon={ faCircleCheck }
+        className={ 'activity-log-icon' }
+      /> :
+      activityStartedForThisStep &&
+        <FontAwesomeIcon
+          icon={ faClockRotateLeft }
+          className={ 'activity-log-icon' }
+          flip={ 'horizontal' }
+        />
+    }
+    &nbsp;
+    {
+      currentActivity?.datetime &&
+        new Date(currentActivity.datetime).toLocaleDateString('fr-CH', {
           day: '2-digit',
           month: '2-digit',
           year: 'numeric'
         })
-      }
-    </div>
     }
-  </>
+  </div>
 }
 
 /**

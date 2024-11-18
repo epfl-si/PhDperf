@@ -20,10 +20,11 @@ import {auditLogConsoleOut} from "/imports/lib/logging";
 import {PhDCustomHeaderShape} from "phd-assess-meta/types/fillForm/headers";
 import {NotificationLog, NotificationStartMessage} from "phd-assess-meta/types/notification";
 import {PhDAssessVariables} from "phd-assess-meta/types/variables";
-import {updateTaskWithASimulatedReminder} from "/server/methods/Reminder";
+import {normalizeTaskActivityLogsForStartedEvent} from "/server/methods/Activity";
 
 const debug = debug_('phd-assess:zeebe-connector')
 const auditLog = auditLogConsoleOut.extend('server/zeebe_broker_connector')
+
 
 // what is sent as result
 // should be the whole form, or an ACL decided value
@@ -142,23 +143,7 @@ function persistJob (job: PhDZeebeJob) : PersistOutcome {
 
   const task = zeebeJobToTask(job)
   const taskExistAlready = ( Tasks.find({ _id: job.key }).count() !== 0 )
-  let taskId: String;
-
-  // set a status report to Zeebe about the datetime we get this task
-  if (!task.variables.activityLogs) task.variables.activityLogs = []
-
-  // FIXME: the date will change everyday as it is not set into the task variable
-  if (!task.variables.activityLogs.find( log => JSON.parse(log).elementId === task.elementId ) ) {
-    task.variables.activityLogs.push(
-      JSON.stringify( {
-        event: 'started',
-        datetime: new Date(),
-        elementId: task.elementId
-      } )
-    )
-  }
-  // TODO: later we have to set the activity info into the processInstance variables and the tasks variables
-
+  let taskId: string;  // keep a log of the created/updated id
 
   if ( !taskExistAlready ) {
     // a new task, insert all data, with journaling set
@@ -172,7 +157,7 @@ function persistJob (job: PhDZeebeJob) : PersistOutcome {
       } as Task
     )
   } else {
-    // updating existing
+    // updating the existing for the up-to-date values
     Tasks.update(job.key, {
       $inc: { "journal.seenCount": 1 },
       $set: {
@@ -190,6 +175,9 @@ function persistJob (job: PhDZeebeJob) : PersistOutcome {
   } else {
     status = PersistOutcome.ALREADY_KNOWN
   }
+
+  // assert the started activity is correctly set or set it
+  normalizeTaskActivityLogsForStartedEvent(task.key)
 
   return status
 }
@@ -431,24 +419,6 @@ export default {
           pdfName: job.customHeaders.pdfName ? encrypt(job.customHeaders.pdfName) : undefined,
         } as NotificationStartMessage
       }).then( () => { debug(`Notification receipt sent for Job ${job.key}.`) } )
-
-      // ok, notification call has been sent. As we don't want to wait for
-      // a task refresh to get the real value
-      // of when the message sent date, we update the
-      // local data only (leave Zeebe fill the variables.notificationLogs by itself)
-      await updateTaskWithASimulatedReminder(
-        new Task(job),  // convert this job to Task, as needed for next operations
-        Array.isArray(notifyTo) ?
-          notifyTo.map( to => decrypt(to) as string ) :
-          [decrypt(notifyTo) as string],
-        Array.isArray(notifyCc) ?
-        notifyCc.map( cc => decrypt(cc)  as string ) :
-        notifyCc ? [decrypt(notifyCc) as string] : [],
-        Array.isArray(notifyBcc) ?
-        notifyBcc.map( bcc => decrypt(bcc) as string ) :
-        notifyBcc ? [decrypt(notifyBcc) as string ] : [],
-        false
-      )
     }
   }
 }

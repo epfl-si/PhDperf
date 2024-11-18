@@ -2,7 +2,7 @@ import {Meteor} from "meteor/meteor";
 import dayjs from "dayjs";
 
 import {encrypt} from "/server/encryption";
-import {Task, Tasks, UnfinishedTasks} from "/imports/model/tasks";
+import {Tasks, UnfinishedTasks} from "/imports/model/tasks";
 import {FormioActivityLog} from "/imports/model/tasksTypes";
 import {canSubmit, getUserPermittedTaskDetailed} from "/imports/policy/tasks";
 import _ from "lodash";
@@ -13,6 +13,7 @@ import {auditLogConsoleOut} from "/imports/lib/logging";
 import {filterUnsubmittableVars} from "/imports/policy/utils";
 import {updateParticipantsInfoForFormData} from "/server/methods/ParticipantsUpdater";
 import {ActivityLog} from "phd-assess-meta/types/activityLog";
+import {bumpActivityLogsAfterSubmittedTask} from "/server/methods/Activity";
 
 const auditLog = auditLogConsoleOut.extend('server/methods/TaskForm')
 const debug = require('debug')('server/methods/TaskForm')
@@ -82,24 +83,17 @@ Meteor.methods({
       elementId: task.elementId,
       datetime: new Date().toJSON()
     }
-    // save the activity into Zeebe, for later uses
+    // save the activity into this Zeebe variable, as it will be saved into activityLogs by the BPMN
     formData.activityLog = JSON.stringify(activityLog)
-
-    // update sibling tasks about this activity in local DB,
-    // as the info will disappear once the task is successful
-    await task.siblings.forEachAsync( ( task: Task ) => {
-        task.activityLogs.push( activityLog )
-        // TODO: Check if it is needed too for notifylog
-        // save the notification log too, as the task is no more, the value will disappear
-        //task.notifyLog.append( notifiyLog )
-      }
-    )
 
     // encrypt all data
     formData = _.mapValues(formData, x => encrypt(x))
 
     await WorkersClient.success(task._id!, formData)
     auditLog(`Sending success: job ${task._id} of process instance ${task.processInstanceKey} with data ${JSON.stringify(formData)}`)
+
+    debug(`Bumping all activity logs about the submit`)
+    await bumpActivityLogsAfterSubmittedTask(task, activityLog)
 
     debug(`Clear the temp form, if any`)
     await UnfinishedTasks.removeAsync({ taskId: task._id!, userId: user._id })

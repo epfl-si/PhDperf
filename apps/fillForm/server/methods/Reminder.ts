@@ -1,15 +1,49 @@
 import {encrypt} from "/server/encryption";
 import {NotificationLog, NotificationStartMessage} from "phd-assess-meta/types/notification";
 import {zBClient} from "/server/zeebe_broker_connector";
+import WorkersClient from "/server/zeebe_broker_connector";
 import {Meteor} from "meteor/meteor";
 import {Task, Tasks} from "/imports/model/tasks";
 import {getUserPermittedTaskReminder} from "/imports/policy/reminders";
+import { ActivityLog } from "phd-assess-meta/types/activityLog";
 
 const debug = require('debug')('server/methods/Reminders')
 
-// ok, notification call has been sent. As we don't want to wait for a task refresh to get the real value
-// of when the message has been sent, we update the local data only (leave Zeebe fill the variables.notificationLogs by itself)
-// but update the task so the notificationLogs look like it has been sent.
+/**
+ * Hack to retrieve the started date activityLog from all the task, if missing in activityLog.
+ * Because of the old workflows, the value can only be found by reading the
+ * notificationLogs for the first 'awaitingForm' | '' type
+ */
+export const retrieveStartedDateFromNotificationLogs = (
+  task: Task
+) => {
+  // first check if the value is not already set
+  const startedCurrentElementId = task.activityLogs?.filter(
+    log => log.elementId === task.elementId && log.event === 'started'
+  )
+
+  if (!startedCurrentElementId) {
+    // missing started for this task. Let find in notificationLogs the value
+    const callForFillFormNotification = task.notificationLogs?.filter(
+      log => log.fromElementId === task.elementId && log.type !== 'reminder'
+    )
+
+    if (callForFillFormNotification) {
+      // found something ? update the task then
+      Tasks.update(
+        { _id: task.key },
+        { $push: {
+            'variables.activityLog': JSON.stringify({
+              event: 'started',
+              datetime: new Date().toJSON(),
+              elementId: task.elementId
+            } as ActivityLog )
+          }}
+      )
+    }
+  }
+}
+
 export const updateTaskWithASimulatedReminder = async (
   task: Task,
   to: string[],
@@ -17,6 +51,8 @@ export const updateTaskWithASimulatedReminder = async (
   bcc: string[],
   isReminder: boolean
 ) => {
+  debug(`Updating the local task ${task.key} with a new unconfirmed notificationLog...`)
+
   // simulate the add to the notification logs for this task, the real one will be done from Zeebe
   const notificationLog = {
     sentAt: new Date().toJSON(),
@@ -38,16 +74,39 @@ export const updateTaskWithASimulatedReminder = async (
       }}
   )
 
+  debug(`Updating the sibling task ${task.key} about this reminder, if any...`)
   // update sibling tasks about this notification too,
   // as the info will disappear if not done, once the task is successful
-  await task.siblings?.forEachAsync( async ( task: Task ) => {
+  await task.siblings?.forEachAsync( async ( siblingTask: Task ) => {
     await Tasks.updateAsync(
-      { _id: task.key },
+      { _id: siblingTask.key },
       { $push: {
           'variables.notificationLogs': JSON.stringify(notificationLog)
         }}
     )
-    })
+    debug(`Sibling task ${siblingTask.key} of ${task.key} updated about this reminder.`)
+  })
+
+  ////
+  // Update the service task variables too. As the task was created before the reminder is sent,
+  // in a case of a local db refresh, the values will be forgotten in the service task.
+  // This code aimm to prevent this fact.
+  debug(`Bumping the Zeebe service task ${task.elementInstanceKey} about this reminder...`)
+  const cTask = await Tasks.findOneAsync( { _id: task.key })  // fetch last values
+  if (cTask) {
+    // encrypt for zeebe
+    const encryptedVariables = cTask.variables.notificationLogs?.map(log => encrypt(log))
+
+    await WorkersClient.setVariables(
+      cTask.elementInstanceKey,
+      {
+        notificationLogs: encryptedVariables
+      },
+      true  // prevent moving the values into the process instance scope,
+      // as the value should / will be set into the process instance scope from the notifier microservice himself
+    )
+    debug(`Zeebe service task ${task.elementInstanceKey} bumped for the new reminder.`)
+  }
 }
 
 Meteor.methods({

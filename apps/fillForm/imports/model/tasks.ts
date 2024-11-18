@@ -67,8 +67,6 @@ export class Task implements TaskInterface {
   created_at?: Date
   updated_at?: Date
   detail: any
-  activityLogs: ActivityLog[]
-  notificationLogs: NotificationLog[]
 
   constructor(doc: any) {
     _.extend(this, doc);
@@ -82,25 +80,33 @@ export class Task implements TaskInterface {
     this.created_at = this.variables?.created_at ? new Date(this.variables.created_at) : undefined
     this.updated_at = this.variables?.updated_at ? new Date(this.variables.updated_at) : undefined
 
-    if (this.variables?.notificationLogs) {
-      this.notificationLogs = parseJSONArrayOfObjectAsString(this.variables?.notificationLogs)
-      this.variables.notificationLogs = undefined
-    } else {
-      this.notificationLogs = []
-    }
-
-    if (this.variables?.activityLogs) {
-      this.activityLogs = parseJSONArrayOfObjectAsString(this.variables?.activityLogs)
-      this.variables.activityLogs = undefined
-    } else {
-      this.activityLogs = []
-    }
-
     this.detail = [
       `Job key: ${this._id}`,
       `Process instance key: ${this.processInstanceKey}`,
       `workflow version: ${this.processDefinitionVersion}`,
     ].join(", ")
+  }
+
+  /**
+   * Shortcut to get notificationLogs as usable object
+   */
+  get notificationLogs(): NotificationLog[] {
+    if (this.variables?.notificationLogs) {
+      return parseJSONArrayOfObjectAsString(this.variables.notificationLogs)
+    } else {
+      return []
+    }
+  }
+
+  /**
+   * Shortcut to get activityLogs as usable object
+   */
+  get activityLogs(): ActivityLog[] {
+    if (this.variables?.activityLogs) {
+      return parseJSONArrayOfObjectAsString(this.variables.activityLogs)
+    } else {
+      return []
+    }
   }
 
   get monitorUri(): string | undefined {
