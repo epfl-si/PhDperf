@@ -9,7 +9,7 @@ export interface ActivityLog {
   jobKey: string;
   elementId: string;  // which step this log concerns
   event: ActivityLogEvent;  // which event has been done
-  datetime: Date;  // when the activity has been recorded
+  datetime: string;  // when the activity has been recorded
 }
 
 export interface ActivityLogs {

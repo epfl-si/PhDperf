@@ -20,7 +20,7 @@ export const bumpActivityLogsOnTaskNewArrival = (
     jobKey: job.key,
     elementId: job.elementId,
     event: 'started',
-    datetime: new Date(),
+    datetime: new Date().toJSON(),
   }
 
   if ( processInstance ) {
