@@ -5,44 +5,9 @@ import WorkersClient from "/server/zeebe_broker_connector";
 import {Meteor} from "meteor/meteor";
 import {Task, Tasks} from "/imports/model/tasks";
 import {getUserPermittedTaskReminder} from "/imports/policy/reminders";
-import { ActivityLog } from "phd-assess-meta/types/activityLog";
 
 const debug = require('debug')('server/methods/Reminders')
 
-/**
- * Hack to retrieve the started date activityLog from all the task, if missing in activityLog.
- * Because of the old workflows, the value can only be found by reading the
- * notificationLogs for the first 'awaitingForm' | '' type
- */
-export const retrieveStartedDateFromNotificationLogs = (
-  task: Task
-) => {
-  // first check if the value is not already set
-  const startedCurrentElementId = task.activityLogs?.filter(
-    log => log.elementId === task.elementId && log.event === 'started'
-  )
-
-  if (!startedCurrentElementId) {
-    // missing started for this task. Let find in notificationLogs the value
-    const callForFillFormNotification = task.notificationLogs?.filter(
-      log => log.fromElementId === task.elementId && log.type !== 'reminder'
-    )
-
-    if (callForFillFormNotification) {
-      // found something ? update the task then
-      Tasks.update(
-        { _id: task.key },
-        { $push: {
-            'variables.activityLog': JSON.stringify({
-              event: 'started',
-              datetime: new Date().toJSON(),
-              elementId: task.elementId
-            } as ActivityLog )
-          }}
-      )
-    }
-  }
-}
 
 export const updateTaskWithASimulatedReminder = async (
   task: Task,

@@ -5,9 +5,10 @@ import { faCircleCheck } from '@fortawesome/free-regular-svg-icons'
 import {faClockRotateLeft} from "@fortawesome/free-solid-svg-icons";
 
 import {Step} from "phd-assess-meta/types/dashboards";
-import {ActivityLog} from "phd-assess-meta/types/activityLog";
 import {ITaskDashboard} from "/imports/policy/dashboard/type";
 import {DashboardGraph} from "/imports/ui/components/Dashboard/DefinitionGraphed";
+import {ActivityLogs} from "/imports/api/activityLogs/schema";
+import {useTracker} from "meteor/react-meteor-data";
 
 
 /**
@@ -15,17 +16,23 @@ import {DashboardGraph} from "/imports/ui/components/Dashboard/DefinitionGraphed
  *
  */
 export const ActivityStatusForStep = (
-  { step, activityLogs }:
-    { step: Step, activityLogs: ActivityLog[] }
+  { step, workflowInstanceTasks }:
+    { step: Step, workflowInstanceTasks: ITaskDashboard[] }
 ) => {
+  const processInstanceKey = workflowInstanceTasks[0].processInstanceKey
 
-  const activityCompletedForThisStep = activityLogs.find(
-    log => log.elementId === step.id && log.event === 'completed'
-  )
+  const activityLogs = useTracker(
+    () => ActivityLogs.findOne(
+      { '_id': processInstanceKey }
+    ), [processInstanceKey]
+  );
 
-  const activityStartedForThisStep = activityLogs.find(
-    log => log.elementId === step.id && log.event === 'started'
-  )
+  const activityCompletedForThisStep = _.findLast(
+    activityLogs?.logs, { elementId: step.id, event: 'completed' })
+
+  const activityStartedForThisStep = _.findLast(
+    activityLogs?.logs, { elementId: step.id, event: 'started' })
+
 
   // priority to completed step
   const currentActivity = activityCompletedForThisStep ?
@@ -69,15 +76,6 @@ export const ShowActivityDatePerStep = (
       definition.nodesOrdered().map((node) => {
         const step = definition.node(node) as Step
 
-        // compile all infos that can be found in different tasks into one
-        const allActivitiesMerged=_.uniqBy(
-          _.flatMap(
-            workflowInstanceTasks,
-            task => task.activityLogs
-          ),
-          log => `${log.elementId}${log.datetime}`
-        )
-
         return (
           <div
             className="dashboard-activity-log col text-black text-center"
@@ -85,7 +83,7 @@ export const ShowActivityDatePerStep = (
           >
             <ActivityStatusForStep
               step={ step }
-              activityLogs={ allActivitiesMerged }
+              workflowInstanceTasks={ workflowInstanceTasks }
             />
           </div>
         )

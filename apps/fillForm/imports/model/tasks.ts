@@ -13,7 +13,7 @@ import {
   TaskJournal
 } from "/imports/model/tasksTypes";
 import {NotificationLog} from "phd-assess-meta/types/notification";
-import {ActivityLog} from "phd-assess-meta/types/activityLog";
+import {ActivityLogs} from "/imports/api/activityLogs/schema";
 
 
 // historically, assignees can come from multiple ways:
@@ -101,12 +101,8 @@ export class Task implements TaskInterface {
   /**
    * Shortcut to get activityLogs as usable object
    */
-  get activityLogs(): ActivityLog[] {
-    if (this.variables?.activityLogs) {
-      return parseJSONArrayOfObjectAsString(this.variables.activityLogs)
-    } else {
-      return []
-    }
+  get activityLogs() {
+    return ActivityLogs.find({ _id: this.processInstanceKey });
   }
 
   get monitorUri(): string | undefined {

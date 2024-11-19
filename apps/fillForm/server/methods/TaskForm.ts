@@ -12,8 +12,8 @@ import {auditLogConsoleOut} from "/imports/lib/logging";
 
 import {filterUnsubmittableVars} from "/imports/policy/utils";
 import {updateParticipantsInfoForFormData} from "/server/methods/ParticipantsUpdater";
-import {ActivityLog} from "phd-assess-meta/types/activityLog";
-import {bumpActivityLogsAfterSubmittedTask} from "/server/methods/Activity";
+import {bumpActivityLogsOnTaskSubmit} from "/imports/api/activityLogs/helpers";
+
 
 const auditLog = auditLogConsoleOut.extend('server/methods/TaskForm')
 const debug = require('debug')('server/methods/TaskForm')
@@ -77,23 +77,14 @@ Meteor.methods({
 
     formData.updated_at = new Date().toJSON()
 
-    // create the activity info for this step
-    const activityLog: ActivityLog = {
-      event: 'completed',
-      elementId: task.elementId,
-      datetime: new Date().toJSON()
-    }
-    // save the activity into this Zeebe variable, as it will be saved into activityLogs by the BPMN
-    formData.activityLog = JSON.stringify(activityLog)
-
     // encrypt all data
     formData = _.mapValues(formData, x => encrypt(x))
 
     await WorkersClient.success(task._id!, formData)
     auditLog(`Sending success: job ${task._id} of process instance ${task.processInstanceKey} with data ${JSON.stringify(formData)}`)
 
-    debug(`Bumping all activity logs about the submit`)
-    await bumpActivityLogsAfterSubmittedTask(task, activityLog)
+    debug(`Bumping activity logs about the submit`)
+    bumpActivityLogsOnTaskSubmit(task)
 
     debug(`Clear the temp form, if any`)
     await UnfinishedTasks.removeAsync({ taskId: task._id!, userId: user._id })

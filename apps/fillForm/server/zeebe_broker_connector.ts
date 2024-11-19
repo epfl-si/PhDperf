@@ -20,7 +20,7 @@ import {auditLogConsoleOut} from "/imports/lib/logging";
 import {PhDCustomHeaderShape} from "phd-assess-meta/types/fillForm/headers";
 import {NotificationLog, NotificationStartMessage} from "phd-assess-meta/types/notification";
 import {PhDAssessVariables} from "phd-assess-meta/types/variables";
-import {normalizeTaskActivityLogsForStartedEvent} from "/server/methods/Activity";
+import {bumpActivityLogsOnTaskNewArrival} from "/imports/api/activityLogs/helpers";
 
 const debug = debug_('phd-assess:zeebe-connector')
 const auditLog = auditLogConsoleOut.extend('server/zeebe_broker_connector')
@@ -163,7 +163,6 @@ function persistJob (job: PhDZeebeJob) : PersistOutcome {
       $set: {
         "journal.lastSeen": new Date(),
         "variables.notificationLogs": task.variables.notificationLogs,
-        "variables.activityLogs": task.variables.activityLogs,
       },
     })
     taskId = job.key
@@ -175,9 +174,6 @@ function persistJob (job: PhDZeebeJob) : PersistOutcome {
   } else {
     status = PersistOutcome.ALREADY_KNOWN
   }
-
-  // assert the started activity is correctly set or set it
-  normalizeTaskActivityLogsForStartedEvent(task.key)
 
   return status
 }
@@ -227,7 +223,11 @@ export default {
             if (outcome === PersistOutcome.NEW) {
               Metrics.zeebe.inserted.inc()
 
+              // message user about the task awaiting
               this.replyWithReceipt(job).then( ()=> {} )
+
+              // log the arrival time
+              bumpActivityLogsOnTaskNewArrival(job)
             }
 
             // as we had no error, tell Zeebe that we'll think about it, and free ourselves to receive more work

@@ -57,10 +57,13 @@ export const DashboardContent = ({ definitionForHeader, tasks, headerKey }: {
 export function Dashboard() {
   const account = useAccountContext()
 
-  const listLoading = useTracker(() => {
-    // Note that this subscription will get cleaned up
-    // when your component is unmounted or deps change.
+  const listTasksLoading = useTracker(() => {
     const handle = Meteor.subscribe('tasksDashboard');
+    return !handle.ready();
+  }, []);
+
+  const listActivityLogsLoading = useTracker(() => {
+    const handle = Meteor.subscribe('activityLogs');
     return !handle.ready();
   }, []);
 
@@ -73,7 +76,8 @@ export function Dashboard() {
   //
   // Render
   if (!account?.isLoggedIn) return <Loader message={'Loading your data...'}/>
-  if (listLoading) return <Loader message={'Fetching tasks...'}/>
+  if (listTasksLoading) return <Loader message={'Fetching tasks...'}/>
+  if (listActivityLogsLoading) return <Loader message={'Fetching logs...'}/>
   if (allTasks.length === 0) return <div>There is currently no task</div>
 
   // having a graph for the dashboard definition is easier to process
