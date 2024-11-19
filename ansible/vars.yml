@@ -38,6 +38,8 @@ zeebe_ports:
   command: 26501
   # The port that brokers use to connect to each other to make the Raft network:
   quorum: 26502
+  # the management port
+  management: 9600
 
 _zeebe_log_level: >-
   {{ "info" if is_test | default(false) else "info" }}
@@ -57,3 +59,6 @@ zeebe_env:
   ZEEBE_BROKER_CLUSTER_REPLICATIONFACTOR: "3"
   ZEEBE_LOG_LEVEL: "{{ _zeebe_log_level }}"
   ATOMIX_LOG_LEVEL: "{{ _zeebe_log_level }}"
+  ZEEBE_BROKER_DATA_BACKUP_STORE: "S3"
+  ZEEBE_BROKER_DATA_BACKUP_S3_REGION: "eu-central-2"
+  ZEEBE_BROKER_DATA_BACKUP_S3_ENDPOINT: "https://s3.epfl.ch"
