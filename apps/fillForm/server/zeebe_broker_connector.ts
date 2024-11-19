@@ -226,8 +226,8 @@ export default {
               // message user about the task awaiting
               this.replyWithReceipt(job).then( ()=> {} )
 
-              // log the arrival time
-              bumpActivityLogsOnTaskNewArrival(job)
+              // log the arrival time for the new workflows
+              if (job.variables.uuid) bumpActivityLogsOnTaskNewArrival(job)
             }
 
             // as we had no error, tell Zeebe that we'll think about it, and free ourselves to receive more work
