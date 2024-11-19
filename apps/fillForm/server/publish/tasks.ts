@@ -6,9 +6,10 @@ import _ from "lodash";
 import {
   canViewMentor,
   getUserPermittedTasksForDashboard,
-  getUserPermittedTasksForDashboardOld
+  getUserPermittedTasksForDashboardOld,
 } from "/imports/policy/dashboard/tasks";
 import {DoctoralSchools} from "/imports/api/doctoralSchools/schema";
+import {ActivityLogs} from "/imports/api/activityLogs/schema";
 
 
 Meteor.publish('taskDetailed', function (args: [string]) {
@@ -144,6 +145,9 @@ Meteor.publish('tasksDashboard', function () {
       if (!canViewMentor(user, task) ) {  // not allowed to view the mentor ? let's clean all traces of it
         task = hideMentor( task );
       }
+
+      const activityLogs = ActivityLogs.findOne({ _id: task.processInstanceKey }) ?? { logs: [] }
+      Object.assign(task, { activityLogs: activityLogs.logs })
 
       this.added('tasks', id, task);
     },

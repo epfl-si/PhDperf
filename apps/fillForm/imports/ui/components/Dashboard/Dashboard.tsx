@@ -62,22 +62,16 @@ export function Dashboard() {
     return !handle.ready();
   }, []);
 
-  const listActivityLogsLoading = useTracker(() => {
-    const handle = Meteor.subscribe('activityLogs');
-    return !handle.ready();
-  }, []);
-
   //
   // Filter
   let allTasks = useTracker(() => Tasks.find(
     {"elementId": {$ne: "Activity_Program_Assistant_Assigns_Participants"}}  // ignore first step
-  ).fetch() as ITaskDashboard[])
+  ).fetch() as unknown as ITaskDashboard[])
 
   //
   // Render
   if (!account?.isLoggedIn) return <Loader message={'Loading your data...'}/>
   if (listTasksLoading) return <Loader message={'Fetching tasks...'}/>
-  if (listActivityLogsLoading) return <Loader message={'Fetching logs...'}/>
   if (allTasks.length === 0) return <div>There is currently no task</div>
 
   // having a graph for the dashboard definition is easier to process

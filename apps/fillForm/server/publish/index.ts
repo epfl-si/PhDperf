@@ -1,4 +1,3 @@
-import './activityLogs'
 import './doctoralSchools'
 import './importScipers'
 import './processInstances'

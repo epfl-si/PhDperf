@@ -3,6 +3,7 @@ import {Job} from "zeebe-node";
 import {Sciper} from "/imports/api/datatypes";
 import {ParticipantList} from "/imports/model/participants";
 import {NotificationLog} from "phd-assess-meta/types/notification";
+import {ActivityLog} from "/imports/api/activityLogs/schema";
 
 
 export const taskFieldsNeededForDashboard = {
@@ -54,4 +55,5 @@ export interface ITaskDashboard<WorkerInputVariables = PhDInputVariablesDashboar
   assigneeScipers?: Sciper[]
   participants: ParticipantList  // values built from participants found in the 'variables' fields, see the Task class for details
   notificationLogs: NotificationLog[]
+  activityLogs: ActivityLog[]
 }

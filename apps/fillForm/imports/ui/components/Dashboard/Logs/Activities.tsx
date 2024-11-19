@@ -7,8 +7,7 @@ import {faClockRotateLeft} from "@fortawesome/free-solid-svg-icons";
 import {Step} from "phd-assess-meta/types/dashboards";
 import {ITaskDashboard} from "/imports/policy/dashboard/type";
 import {DashboardGraph} from "/imports/ui/components/Dashboard/DefinitionGraphed";
-import {ActivityLogs} from "/imports/api/activityLogs/schema";
-import {useTracker} from "meteor/react-meteor-data";
+import {ActivityLog} from "/imports/api/activityLogs/schema";
 
 
 /**
@@ -16,23 +15,14 @@ import {useTracker} from "meteor/react-meteor-data";
  *
  */
 export const ActivityStatusForStep = (
-  { step, workflowInstanceTasks }:
-    { step: Step, workflowInstanceTasks: ITaskDashboard[] }
+  { step, activityLogs }:
+    { step: Step, activityLogs: ActivityLog[] }
 ) => {
-  const processInstanceKey = workflowInstanceTasks[0].processInstanceKey
-
-  const activityLogs = useTracker(
-    () => ActivityLogs.findOne(
-      { '_id': processInstanceKey }
-    ), [processInstanceKey]
-  );
-
   const activityCompletedForThisStep = _.findLast(
-    activityLogs?.logs, { elementId: step.id, event: 'completed' })
+    activityLogs, { elementId: step.id, event: 'completed' })
 
   const activityStartedForThisStep = _.findLast(
-    activityLogs?.logs, { elementId: step.id, event: 'started' })
-
+    activityLogs, { elementId: step.id, event: 'started' })
 
   // priority to completed step
   const currentActivity = activityCompletedForThisStep ?
@@ -76,6 +66,15 @@ export const ShowActivityDatePerStep = (
       definition.nodesOrdered().map((node) => {
         const step = definition.node(node) as Step
 
+        // compile all activityLogs that can be found in different tasks into one
+        const allActivitiesMerged=_.uniqBy(
+          _.flatMap(
+            workflowInstanceTasks,
+            task => task.activityLogs
+          ),
+          log => `${log.event}${log.elementId}`
+        )
+
         return (
           <div
             className="dashboard-activity-log col text-black text-center"
@@ -83,7 +82,7 @@ export const ShowActivityDatePerStep = (
           >
             <ActivityStatusForStep
               step={ step }
-              workflowInstanceTasks={ workflowInstanceTasks }
+              activityLogs={ allActivitiesMerged }
             />
           </div>
         )
