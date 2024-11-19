@@ -61,6 +61,16 @@ const ReminderForm = ({ task }: { task: Task }) => {
     task?.variables
   )
 
+  const firstNotificationSubjectRendered = Mustache.render(
+    task?.customHeaders?.notifySubject ?? '',
+    task?.variables
+  )
+
+  const firstNotificationMessageRendered = Mustache.render(
+    task?.customHeaders?.notifyMessage ?? '',
+    task?.variables
+  )
+
   const [to, setTo] = useState(
     ( task?.customHeaders?.notifyTo ? task.variables[task?.customHeaders?.notifyTo] : undefined ) ?? ''
   );
@@ -205,6 +215,39 @@ const ReminderForm = ({ task }: { task: Task }) => {
         >Send reminder
         </button>
       </form>
+      { firstNotificationMessageRendered && <>
+        <hr/>
+        <h1 className={ 'h2 mt-2' }>Previously sent</h1>
+        <div className="form-group">
+          <label htmlFor="firstNotificationSubjectRendered" className={ '' }>Subject</label>
+          <input
+            id="firstNotificationSubjectRendered"
+            className="form-control"
+            type="text"
+            value={ firstNotificationSubjectRendered }
+            disabled={ true }
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="firstNotificationMessageRendered" className={ '' }>Message</label>
+          <Editor
+            tinymceScriptSrc="/js/tinymce/tinymce.min.js"
+            plugins={ 'link' }
+            toolbar={ 'undo redo | styles | align | bold italic | link' }
+            init={ {
+              menubar: false,
+              statusbar: true,
+              promotion: false,
+              branding: false,
+              link_context_toolbar: true,
+              height: 500,
+              content_style: isSubmitting ? '.mce-content-readonly { background-color: #e6e6e6; }' : undefined
+            } }
+            initialValue={ firstNotificationMessageRendered }
+            disabled={ true }
+          />
+        </div>
+      </> }
     </> }
     { isSubmitted && <>
       <div>Reminder sent.</div>
