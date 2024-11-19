@@ -1,7 +1,6 @@
 import {expect} from '@playwright/test';
 import {
   cleanupPageAndTaskForUser,
-  setupAPagWithTasksForUser,
   test
 } from './fixtures';
 import {fillFormAppPageForUser} from "/tests/E2E/tests/fixtures/fillFormApp";
@@ -10,13 +9,45 @@ import {fillFormAppPageForUser} from "/tests/E2E/tests/fixtures/fillFormApp";
 let userApp: fillFormAppPageForUser;
 
 test.beforeAll(async ({ browser }) => {
-  userApp = await setupAPagWithTasksForUser(browser);
+  //userApp = await setupAPagWithTasksForUser(browser);
 });
 
-test.afterAll(async () => {
-  await cleanupPageAndTaskForUser(userApp.page);
+// test.afterAll(async () => {
+//   await cleanupPageAndTaskForUser(userApp.page);
+// });
+
+
+test('admin and user', async ({ browser }) => {
+  // adminContext and all pages inside, including adminPage, are signed in as "admin".
+  const adminContext = await browser.newContext({ storageState: '.auth/admin.json' });
+  const adminPage = await adminContext.newPage();
+
+  // userContext and all pages inside, including userPage, are signed in as "user".
+  const userContext = await browser.newContext({ storageState: '.auth/user.json' });
+  const userPage = await userContext.newPage();
+
+  await adminPage.goto('/');
+  await adminPage.locator('#user-info-button').click()
+  await expect(adminPage.locator('#user-info-displayname')).toBeVisible();
+
+  await userPage.goto('/');
+  await userPage.locator('#user-info-button').click()
+  await expect(userPage.locator('#user-info-displayname')).not.toBeVisible();
+
+  await adminContext.close();
+  await userContext.close();
 });
 
+test('admin and user should flagged good', async ({ fillFormAppPageAsUser, fillFormAppPageAsAdmin,  }) => {
+  await fillFormAppPageAsAdmin.page.goto('/');
+  await fillFormAppPageAsAdmin.page.locator('#user-info-button').click()
+  await expect(fillFormAppPageAsAdmin.page.locator('#user-info-displayname')).toBeVisible();
+
+  await fillFormAppPageAsUser.page.goto('/');
+  await fillFormAppPageAsUser.page.locator('#user-info-button').click()
+  await expect(fillFormAppPageAsUser.page.locator('#user-info-displayname')).not.toBeVisible();
+
+});
 
 test('I should not be flagged as admin', async ({ fillFormAppPageAsUser }) => {
   await fillFormAppPageAsUser.page.locator('#user-info-button').click()
