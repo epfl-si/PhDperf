@@ -90,7 +90,7 @@ const ReminderForm = ({ task }: { task: Task }) => {
   )
 
   const [to, setTo] = useState(
-    ( task?.customHeaders?.notifyTo ? task.variables[task?.customHeaders?.notifyTo] : undefined ) ?? ''
+    fromZeebeCustomHeadersEmailsToEmailInput(task?.customHeaders?.notifyTo, task)
   );
 
   const [cc, setCc] = useState(
