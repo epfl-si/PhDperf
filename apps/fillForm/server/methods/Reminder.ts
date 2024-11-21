@@ -74,13 +74,18 @@ export const updateTaskWithASimulatedReminder = async (
   }
 }
 
+type reminderSubmitData = {
+  subject: string
+  message: string
+  to: string
+  cc: string | undefined
+  bcc: string | undefined
+}
+
 Meteor.methods({
   async sendReminder(
     taskId,
-    reminderFormData: Omit<
-      NotificationStartMessage,
-      'fromElementId'
-      >
+    reminderFormData: reminderSubmitData
   ) {
     let user: Meteor.User | null = null
     if (this.userId) {
@@ -121,9 +126,15 @@ Meteor.methods({
       'The "message" is missing.'
     )
 
-    const reminderTo = reminderFormData.to as string
-    const reminderCc = reminderFormData.cc as string
-    const reminderBcc = reminderFormData.bcc as string
+    const incomingFromDataEmailToString = ( emailsInput: string): string[] => {
+      // accept ',' and ';'
+      emailsInput = emailsInput.replace(/;/g, ',');
+      return emailsInput.split(',').map(email => email.trim());
+    }
+
+    const reminderTo = incomingFromDataEmailToString(reminderFormData.to)
+    const reminderCc = reminderFormData.cc ? incomingFromDataEmailToString(reminderFormData.cc) : undefined
+    const reminderBcc = reminderFormData.bcc ? incomingFromDataEmailToString(reminderFormData.bcc) : undefined
 
     debug(`Publishing Zeebe Message as a notification start...`)
 
@@ -131,12 +142,14 @@ Meteor.methods({
       correlationKey: task.variables.uuid,
       name: 'Message_notify',
       variables: {
-        to: encrypt(reminderTo),
-        cc: encrypt(reminderCc),
-        bcc: encrypt(reminderBcc),
-        subject: encrypt(reminderFormData.subject as string),
-        message: encrypt(reminderFormData.message as string),
-        fromElementId: encrypt(`${task.elementId}_reminder`),
+        to: reminderTo.map( to => encrypt(to) ),
+        cc: reminderCc ? reminderCc.map( cc => encrypt(cc) ) : undefined,
+        bcc: reminderBcc ? reminderBcc.map( bcc => encrypt(bcc) ) : undefined,
+        subject: encrypt(reminderFormData.subject),
+        message: encrypt(reminderFormData.message),
+        fromElementId: encrypt(`${task.elementId}`),
+        pdfType: task.customHeaders.pdfType ? encrypt(task.customHeaders.pdfType) : undefined,
+        pdfName: task.customHeaders.pdfName ? encrypt(task.customHeaders.pdfName) : undefined,
         type: encrypt('reminder'),
       } as NotificationStartMessage
     })
@@ -147,9 +160,9 @@ Meteor.methods({
     // the real one should be done in Zeebe very soon
     await updateTaskWithASimulatedReminder(
       task,
-      reminderTo.split(','),
-      reminderCc ? reminderCc.split(',') : [],
-      reminderBcc ? reminderBcc.split(',') : [],
+      reminderTo,
+      reminderCc ?? [],
+      reminderBcc ?? [],
       true
     )
   },
