@@ -26,6 +26,24 @@ import {getUserPermittedTaskReminder} from "/imports/policy/reminders";
 import {ParticipantsAsRow} from "/imports/ui/components/Participant/List";
 
 
+// as the To, Cc or Bcc can come as string, a string of array of string (!, yep that's something like that : "[email1, email2]"), and
+// some are empty, let's have a function that process them correctly. They are all field specifier, not direct values
+const fromZeebeCustomHeadersEmailsToEmailInput = (field: string | undefined, task: Task) => {
+  if (!field) return ''
+
+  if (/^\[.*\]$/.test(field)) {  // test for array in a string
+    const array = field.slice(1, -1).split(',').map(item => item.trim());
+
+    return array.reduce( (result, fieldSpec) => {
+      // ignore if the field does not exist
+      if (task.variables[fieldSpec]) result.push(task.variables[fieldSpec])
+      return result;
+    }, [] as string[]).join(',') ?? undefined
+  } else {
+   return task.variables[field]
+  }
+}
+
 export function TaskReminderForm() {
   const {_id} = useParams<{ _id: string }>()
 
@@ -76,11 +94,11 @@ const ReminderForm = ({ task }: { task: Task }) => {
   );
 
   const [cc, setCc] = useState(
-    task?.customHeaders?.notifyCc ?? ''
+    fromZeebeCustomHeadersEmailsToEmailInput(task?.customHeaders?.notifyCc, task)
   );
 
   const [bcc, setBcc] = useState(
-    task?.customHeaders?.notifyBcc ?? ''
+    fromZeebeCustomHeadersEmailsToEmailInput(task?.customHeaders?.notifyBcc, task)
   );
 
   const [subject, setSubject] = useState(subjectRendered);
