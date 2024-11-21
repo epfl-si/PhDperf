@@ -1,5 +1,5 @@
 import {Link, matchPath, useLocation} from "react-router-dom";
-import React from "react";
+import React, {useEffect, useState} from "react";
 
 import {Loader} from "@epfl/epfl-sti-react-library";
 
@@ -12,8 +12,17 @@ export const AsideMenu = () => {
   const account = useAccountContext()
   const { pathname } = useLocation()
 
-  const hasDoctoralSchoolEditLink = (account && account.user && canEditAtLeastOneDoctoralSchool(account.user)) ?? false
-  const hasImportSciperLink = (account && account.user && canImportScipersFromISA(account.user)) ?? false
+  const [hasDoctoralSchoolEditLink, setHasDoctoralSchoolEditLink] = useState(false)
+  const [hasImportSciperLink, setHasImportSciperLink] = useState(false)
+
+  useEffect(() => {
+    setHasDoctoralSchoolEditLink(
+      ( account && account.user && canEditAtLeastOneDoctoralSchool(account.user) ) ?? false
+    )
+    setHasImportSciperLink(
+      ( account && account.user && canImportScipersFromISA(account.user) ) ?? false
+    )
+  }, [account])
 
   return (
     <aside className="nav-aside-wrapper">
