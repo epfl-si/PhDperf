@@ -38,8 +38,10 @@ export const updateParticipantsInfoForFormData = async (
     if (Meteor.isDevelopment && Meteor.settings?.skipUsersUpdateOnFail) {
       console.log(`As we are in a dev env and as there is an error. ${ e }`)
       console.log(`The user info will be fetched locally.`)
-      participantsToUpdate = await getParticipantsToUpdateFromEnv()
-      formData = {...formData, ...participantsToUpdate}
+      if (Meteor.settings?.userUpdateWithEnv) {
+        participantsToUpdate = await getParticipantsToUpdateFromEnv()
+        formData = { ...formData, ...participantsToUpdate }
+      }
     } else {
       if (e.name == 'AbortError') {
         // Look like the fetching of user info has got a timeout,

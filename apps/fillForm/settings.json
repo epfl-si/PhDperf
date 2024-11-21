@@ -1,5 +1,6 @@
 {
   "skipUsersUpdateOnFail": true,
+  "userUpdateWithEnv": false,
   "fake_tequila": {
     "requestauth": {
       "uniqueid": "243371",
