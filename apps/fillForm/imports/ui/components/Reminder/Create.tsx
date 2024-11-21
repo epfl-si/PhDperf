@@ -217,7 +217,7 @@ const ReminderForm = ({ task }: { task: Task }) => {
       </form>
       { firstNotificationMessageRendered && <>
         <hr/>
-        <h1 className={ 'h2 mt-2' }>Previously sent</h1>
+        <h1 className={ 'h2 mt-2' }>Originally sent</h1>
         <div className="form-group">
           <label htmlFor="firstNotificationSubjectRendered" className={ '' }>Subject</label>
           <input
