@@ -81,7 +81,7 @@
     "chai-as-promised": "^7.1.1",
     "chai-datetime": "^1.8.0",
     "nock": "^13.3.8",
-    "phd-assess-meta": "git+https://github.com/epfl-si/PhDAssess-meta.git",
+    "phd-assess-meta": "git+https://github.com/epfl-si/PhDAssess-meta.git#feature/due-date",
     "sinon": "^15.0.3",
     "ts-node": "^10.9.2",
     "ts-sinon": "^2.0.2",
