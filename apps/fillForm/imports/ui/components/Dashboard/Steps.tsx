@@ -22,24 +22,21 @@ const StepNotDone = ({ step }: { step: Step }) =>
   />
 
 const StepDone = ({ step, workflowInstanceTasks }: { step: Step, workflowInstanceTasks: ITaskDashboard[] }) => {
-  const account = useAccountContext()
   return <DashboardStep
     className='dashboard-step border col bg-success text-white text-center'
     data-step={ step.id }
     data-step-status={ 'done' }
   >
-    { account?.user && canSeeRemindersLogs(account.user) &&
-      <RemindersCount
-        step={ step }
-        task={
-          workflowInstanceTasks.findLast(
-            task => task.elementId === step.id
-          )!
-        }
-        workflowInstanceTasks={ workflowInstanceTasks }
-        canStartReminder={ false }
-      />
-    }
+    <RemindersCount
+      step={ step }
+      task={
+        workflowInstanceTasks.findLast(
+          task => task.elementId === step.id
+        )!
+      }
+      workflowInstanceTasks={ workflowInstanceTasks }
+      canStartReminder={ false }
+    />
   </DashboardStep>
 }
 

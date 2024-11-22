@@ -43,7 +43,7 @@ export const getUserPermittedTaskReminder = (user?: Meteor.User | null, _id?: st
   return Tasks.find(taskQuery, { 'fields': fieldsView })
 }
 
-export const canSeeRemindersLogs = (user: Meteor.User) : boolean => user.isAdmin || user.isUberProgramAssistant
+export const canSeeRemindersLogs = (user: Meteor.User) : boolean => !!user
 
 export const canSendReminders = async (user: Meteor.User, taskId: string) : Promise<boolean> => {
   // is the current processInstanceKey visible on the dashboard for this user ?

@@ -103,14 +103,12 @@ export const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks:
             stepsDefinition={ definition }
           />
         </div>
-        { canEditInstance &&
-          <div className={ 'row' }>
-            <ShowActivityDatePerStep
-              workflowInstanceTasks={ workflowInstanceTasks }
-              definition={ definition }
-            />
-          </div>
-        }
+        <div className={ 'row' }>
+          <ShowActivityDatePerStep
+            workflowInstanceTasks={ workflowInstanceTasks }
+            definition={ definition }
+          />
+        </div>
       </div>
       <div className={ 'dashboard-action-edit col-1' }>
         { canEditInstance ?
@@ -121,24 +119,22 @@ export const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks:
         }
       </div>
     </summary>
-    { canEditInstance &&
-      <div className={ 'dashboard-row-notification-logs row' }>
-        <div className={ 'col-2 dashboard-notification-row-placeholder' }></div>
-        <div className={ 'col-1 dashboard-notification-row-placeholder' }></div>
-        <div className={ 'col-1 dashboard-notification-row-placeholder' }></div>
-        <div className={ 'col-1 dashboard-notification-row-placeholder' }></div>
-        <div className={ 'col' }>
-          <div className={ 'row' }>
-            <ListRemindersInColumn
-              key={ `notification-logs-${ workflowInstanceTasks[0].processInstanceKey }` }
-              definition={ definition }
-              workflowInstanceTasks={ workflowInstanceTasks }
-            />
-          </div>
+    <div className={ 'dashboard-row-notification-logs row' }>
+      <div className={ 'col-2 dashboard-notification-row-placeholder' }></div>
+      <div className={ 'col-1 dashboard-notification-row-placeholder' }></div>
+      <div className={ 'col-1 dashboard-notification-row-placeholder' }></div>
+      <div className={ 'col-1 dashboard-notification-row-placeholder' }></div>
+      <div className={ 'col' }>
+        <div className={ 'row' }>
+          <ListRemindersInColumn
+            key={ `notification-logs-${ workflowInstanceTasks[0].processInstanceKey }` }
+            definition={ definition }
+            workflowInstanceTasks={ workflowInstanceTasks }
+          />
         </div>
-        <div className={ 'col-1' }></div>
       </div>
-    }
+      <div className={ 'col-1' }></div>
+    </div>
     <div className={ 'dashboard-row-participants row' }>
       <div className={ 'col-2' }></div>
       <div className={ 'col' }>
