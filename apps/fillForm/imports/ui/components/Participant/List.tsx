@@ -103,30 +103,34 @@ export const ParticipantsAsTable = (
     { task.participants &&
       <Table striped bordered className={ 'mb-4' }>
         <caption style={ { captionSide: 'top' } }>Participants</caption>
-        <col style={ { width: '3%' } }/>
-        <col style={ { width: '14%' } }/>
-        <col style={ {} }/>
-        <col style={ { width: '15%' } }/>
-        <col style={ {} }/>
-        <col style={ {} }/>
-        <tr>
-          <th></th>
-          <th>Role</th>
-          <th className={ 'text-center' }>Task</th>
-          <th>Name</th>
-          <th>Sciper</th>
-          <th>Email</th>
-        </tr>
+        <colgroup>
+          <col style={ { width: '3%' } }/>
+          <col style={ { width: '14%' } }/>
+          <col style={ {} }/>
+          <col style={ { width: '15%' } }/>
+          <col style={ {} }/>
+          <col style={ {} }/>
+        </colgroup>
+        <tbody>
+          <tr>
+            <th></th>
+            <th>Role</th>
+            <th className={ 'text-center' }>Task</th>
+            <th>Name</th>
+            <th>Sciper</th>
+            <th>Email</th>
+          </tr>
 
-        { Object.entries(task.participants).map(([role, info]) =>
-          <ParticipantAsBodyTable
-            key={ `${ task._id }-${ role }` }
-            role={ role }
-            info={ info }
-            isAssignee={ showStatusColor ? assigneeList?.includes(info?.sciper) : false }
-            showEmail={ showEmail }
-          />
-        ) }
+          { Object.entries(task.participants).map(([role, info]) =>
+            <ParticipantAsBodyTable
+              key={ `${ task._id }-${ role }` }
+              role={ role }
+              info={ info }
+              isAssignee={ showStatusColor ? assigneeList?.includes(info?.sciper) : false }
+              showEmail={ showEmail }
+            />
+          ) }
+        </tbody>
       </Table>
     }</>
 }
