@@ -55,8 +55,8 @@ export const RemindersCount = (
 }
 
 export const ReminderLogsList = (
-  { step, notificationLogs }:
-    { step: Step, notificationLogs: NotificationLog[] }
+  { processInstanceKey, step, notificationLogs }:
+    { processInstanceKey: string, step: Step, notificationLogs: NotificationLog[] }
 ) => {
 
   const currentStepNotificationLogs = notificationLogs.filter(
@@ -66,9 +66,14 @@ export const ReminderLogsList = (
       ))
   )
 
-  return <div className={ `notification-log-step-${ step.id }` }>
+  return <div
+    key={ `notification-log-step-${ step.id }-${ processInstanceKey }` }
+  >
     { currentStepNotificationLogs ?
-      <ReminderLogsListWithIcon logs={ currentStepNotificationLogs }/> :
+      <ReminderLogsListWithIcon
+        processInstanceKey={ processInstanceKey }
+        logs={ currentStepNotificationLogs }
+      /> :
       <span>&nbsp;</span>
     }
   </div>
@@ -78,7 +83,11 @@ export const ReminderLogsList = (
  * List reminders sent
  *
  */
-const ReminderLogsListWithIcon = ({ logs }: { logs: NotificationLog[] }) => {
+const ReminderLogsListWithIcon = (
+  { processInstanceKey, logs }: {
+    processInstanceKey: string, logs: NotificationLog[]
+  }
+) => {
   return <>
     { logs
       .sort(
@@ -86,8 +95,14 @@ const ReminderLogsListWithIcon = ({ logs }: { logs: NotificationLog[] }) => {
           return new Date(a.sentAt).getTime() - new Date(b.sentAt).getTime()
         })
       .map((log) => <>
-          { log.sentAt && <div className={ 'notification-log-entry text-nowrap'}>
-            <FontAwesomeIcon icon={ faEnvelope } className={ 'notification-log-entry-envelope' } />
+          { log.sentAt && <div
+            className={ 'notification-log-entry text-nowrap'}
+            key={ `notification-log-entry-${ processInstanceKey }-${ log.fromElementId }-${ log.type }-${ log.sentAt }` }
+          >
+            <FontAwesomeIcon
+              icon={ faEnvelope }
+              className={ 'notification-log-entry-envelope' }
+            />
             &nbsp;
             { new Date(log.sentAt).toLocaleDateString('fr-CH', {
               day: '2-digit',
@@ -122,6 +137,7 @@ export const ListRemindersInColumn = (
             key={ `${ workflowInstanceTasks[0]._id }-${ step.id }` }
           >
             <ReminderLogsList
+              processInstanceKey={ workflowInstanceTasks[0].processInstanceKey }
               step={ step }
               notificationLogs={ allNotificationMerged }
             />
