@@ -69,6 +69,17 @@ const ReminderForm = ({ task }: { task: Task }) => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
 
+  const notifySubjectRendered = Mustache.render(
+    task?.customHeaders?.notifySubject ?? '',
+    task?.variables
+  )
+
+  const notifyMessageRendered = Mustache.render(
+    task?.customHeaders?.notifyMessage ?? '',
+    task?.variables
+  )
+  //TODO: Insert into task.variables the rendered notify infos
+
   const subjectRendered = Mustache.render(
     task?.customHeaders?.reminderSubject ?? task?.customHeaders?.notifySubject ?? '',
     task?.variables
@@ -76,16 +87,6 @@ const ReminderForm = ({ task }: { task: Task }) => {
 
   const messageRendered = Mustache.render(
     task?.customHeaders?.reminderMessage ?? task?.customHeaders?.notifyMessage ?? '',
-    task?.variables
-  )
-
-  const firstNotificationSubjectRendered = Mustache.render(
-    task?.customHeaders?.notifySubject ?? '',
-    task?.variables
-  )
-
-  const firstNotificationMessageRendered = Mustache.render(
-    task?.customHeaders?.notifyMessage ?? '',
     task?.variables
   )
 
@@ -233,39 +234,6 @@ const ReminderForm = ({ task }: { task: Task }) => {
         >Send reminder
         </button>
       </form>
-      { firstNotificationMessageRendered && <>
-        <hr/>
-        <h1 className={ 'h2 mt-2' }>Originally sent</h1>
-        <div className="form-group">
-          <label htmlFor="firstNotificationSubjectRendered" className={ '' }>Subject</label>
-          <input
-            id="firstNotificationSubjectRendered"
-            className="form-control"
-            type="text"
-            value={ firstNotificationSubjectRendered }
-            disabled={ true }
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="firstNotificationMessageRendered" className={ '' }>Message</label>
-          <Editor
-            tinymceScriptSrc="/js/tinymce/tinymce.min.js"
-            plugins={ 'link' }
-            toolbar={ 'undo redo | styles | align | bold italic | link' }
-            init={ {
-              menubar: false,
-              statusbar: true,
-              promotion: false,
-              branding: false,
-              link_context_toolbar: true,
-              height: 500,
-              content_style: isSubmitting ? '.mce-content-readonly { background-color: #e6e6e6; }' : undefined
-            } }
-            initialValue={ firstNotificationMessageRendered }
-            disabled={ true }
-          />
-        </div>
-      </> }
     </> }
     { isSubmitted && <>
       <div>Reminder sent.</div>
