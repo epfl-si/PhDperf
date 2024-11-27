@@ -8,14 +8,13 @@
  */
 
 import React, {useState} from "react";
-import {useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import {global_Error, Meteor} from "meteor/meteor";
 import {useTracker} from "meteor/react-meteor-data";
 
 import {useAccountContext} from "/imports/ui/contexts/Account";
 
-import {Loader} from "@epfl/epfl-sti-react-library";
-import toast from "react-hot-toast";
+import {Button, Loader} from "@epfl/epfl-sti-react-library";
 import {toastErrorClosable} from "/imports/ui/components/Toasters";
 
 import { Editor } from "@tinymce/tinymce-react";
@@ -125,7 +124,6 @@ const ReminderForm = ({ task }: { task: Task }) => {
             toastErrorClosable(task._id!, `${ error }`)
             setIsSubmitting(false )
           } else {
-            toast.success(`Successfully created a reminder`)
             setIsSubmitted(true)
           }
         }
@@ -238,7 +236,8 @@ const ReminderForm = ({ task }: { task: Task }) => {
       </form>
     </> }
     { isSubmitted && <>
-      <div>Reminder sent.</div>
+      <div className={'alert alert-success'} role='alert'>{'Reminder sent.'}</div>
+      <Link to={`/dashboard`}><Button label={'Back'} onClickFn={() => void 0}/></Link>
     </> }
   </>
 }
