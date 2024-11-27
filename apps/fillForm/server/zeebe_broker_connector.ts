@@ -119,7 +119,7 @@ enum PersistOutcome {
 /**
  * Save `job` into `to_collection`.
  *
- * 💡 A return value of `PersistOutcome.ALREADY_KNOWN` occurs quite a
+ * Insight: A return value of `PersistOutcome.ALREADY_KNOWN` occurs quite a
  * lot, since Zeebe's entire architecture basically believes that all
  * jobs should be performed promptly, whereas we are asking humans to
  * fill out forms.
