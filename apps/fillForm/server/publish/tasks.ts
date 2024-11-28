@@ -151,6 +151,16 @@ Meteor.publish('tasksDashboard', function () {
 
       this.added('tasks', id, task);
     },
+    changed: (id, task) => {
+      if (!canViewMentor(user, task) ) {  // not allowed to view the mentor ? let's clean all traces of it
+        task = hideMentor( task );
+      }
+
+      const activityLogs = ActivityLogs.findOne({ _id: task.processInstanceKey }) ?? { logs: [] }
+      Object.assign(task, { activityLogs: activityLogs.logs })
+
+      this.changed('tasks', id, task);
+    },
     removed: (id) => {
       this.removed('tasks', id)
     }
