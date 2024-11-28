@@ -187,6 +187,7 @@ export const DashboardRenderedStep = (
         )
 
         if (taskAliased) {
+          step.id = taskAliased.elementId  // set the correct id for fetch the good notifications
           return <StepPending step={ step } task={ taskAliased } workflowInstanceTasks={ workflowInstanceTasks }/>
         }
       }
