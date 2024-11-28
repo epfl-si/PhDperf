@@ -58,12 +58,13 @@ export const ReminderLogsList = (
   { processInstanceKey, step, notificationLogs }:
     { processInstanceKey: string, step: Step, notificationLogs: NotificationLog[] }
 ) => {
+  let allCurrentStepIds = [
+    step.id,
+    ...( step.knownAs ?? [] )
+  ]
 
   const currentStepNotificationLogs = notificationLogs.filter(
-    (log: NotificationLog) => log.sentAt &&
-      ( log.fromElementId === step.id + '_reminder' || (
-        ( log.fromElementId === step.id && log.type === 'reminder' )
-      ))
+    (log: NotificationLog) => log.sentAt && log.type === 'reminder' && allCurrentStepIds.includes(log.fromElementId)
   )
 
   return <div

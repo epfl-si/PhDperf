@@ -91,7 +91,17 @@ export class Task implements TaskInterface {
    */
   get notificationLogs(): NotificationLog[] {
     if (this.variables?.notificationLogs) {
-      return parseJSONArrayOfObjectAsString(this.variables.notificationLogs)
+       const notificationLogsRaw: NotificationLog[] = parseJSONArrayOfObjectAsString(this.variables.notificationLogs)
+
+      // curate the log.type info
+      // on old workflows, ending the log.FromElementId with '_reminder' means we have a type 'reminder'
+      // on recent workflows, the type should be set
+      return notificationLogsRaw.map(
+        log=> ({
+          ...log,
+          type: log.type ?? log.fromElementId.endsWith('_reminder') ? 'reminder': 'awaitingForm'
+        })
+      )
     } else {
       return []
     }
