@@ -18,11 +18,21 @@ export const ActivityStatusForStep = (
   { step, activityLogs }:
     { step: Step, activityLogs: ActivityLog[] }
 ) => {
+
+  const idsToFind = [
+    step.id,
+    ...( step.knownAs ?? [] ),
+  ]
+
   const activityCompletedForThisStep = _.findLast(
-    activityLogs, { elementId: step.id, event: 'completed' })
+    activityLogs, ( log ) =>
+      log.event === 'completed' && idsToFind.includes(log.elementId)
+  )
 
   const activityStartedForThisStep = _.findLast(
-    activityLogs, { elementId: step.id, event: 'started' })
+    activityLogs, ( log ) =>
+      log.event === 'started' && idsToFind.includes(log.elementId)
+  )
 
   // priority to completed step
   const currentActivity = activityCompletedForThisStep ?
