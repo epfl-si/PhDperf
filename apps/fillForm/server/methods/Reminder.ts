@@ -72,6 +72,27 @@ export const updateTaskWithASimulatedReminder = async (
     )
     debug(`Zeebe service task ${task.elementInstanceKey} bumped for the new reminder.`)
   }
+  debug(`Bumping the Zeebe service siblings tasks about this reminder...`)
+  await task.siblings?.forEachAsync( async ( siblingTask: Task ) => {
+    // encrypt for zeebe
+    let encryptedVariables = siblingTask.variables.notificationLogs?.map(log => encrypt(log))
+
+    if (encryptedVariables) {
+      encryptedVariables.push(encrypt(JSON.stringify(notificationLog)))
+    } else {
+      encryptedVariables = [encrypt(JSON.stringify(notificationLog))]
+    }
+
+    await WorkersClient.setVariables(
+      siblingTask.elementInstanceKey,
+      {
+        notificationLogs: encryptedVariables
+      },
+      true  // prevent moving the values into the process instance scope,
+      // as the value should / will be set into the process instance scope from the notifier microservice himself
+    )
+    debug(`Sibling task ${siblingTask.key} of ${task.key} updated on Zeebe about this reminder.`)
+  })
 }
 
 type reminderSubmitData = {
