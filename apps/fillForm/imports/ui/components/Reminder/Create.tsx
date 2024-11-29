@@ -68,19 +68,6 @@ const ReminderForm = ({ task }: { task: Task }) => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
 
-  //TODO: Insert into task.variables the rendered notify infos, like sentAt
-  //
-  // const notifySubjectRendered = Mustache.render(
-  //   task?.customHeaders?.notifySubject ?? '',
-  //   task?.variables
-  // )
-  //
-  // const notifyMessageRendered = Mustache.render(
-  //   task?.customHeaders?.notifyMessage ?? '',
-  //   task?.variables
-  // )
-
-
   const subjectRendered = Mustache.render(
     task?.customHeaders?.reminderSubject ?? task?.customHeaders?.notifySubject ?? '',
     task?.variables
