@@ -74,7 +74,7 @@ const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks: ITaskD
       <DrawProgress
         key={ workflowInstanceTasks[0]._id }
         workflowInstanceTasks={ workflowInstanceTasks }
-        stepsDefinition={ definition }
+        stepsDefinition={ definition! }
       />
       <span className={ 'ml-3' }>&nbsp;</span>
     </summary>
@@ -172,7 +172,7 @@ export function DashboardOld() {
   // Filter
   let allTasks = useTracker(() => Tasks.find(
     {"elementId": {$ne: "Activity_Program_Assistant_Assigns_Participants"}}  // ignore first step
-  ).fetch() as ITaskDashboard[])
+  ).fetch() as unknown as ITaskDashboard[])
 
   //
   // Render
@@ -189,7 +189,7 @@ export function DashboardOld() {
     <DashboardContent
       key={ definitionKey }
       headerKey={ definitionKey }  // propage the key
-      definitionForHeader={ definitionGraph }
+      definitionForHeader={ definitionGraph! }
       tasks={ allTasks }
     />
   )
