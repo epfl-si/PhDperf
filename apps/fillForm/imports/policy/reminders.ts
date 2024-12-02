@@ -6,9 +6,21 @@ import {getUserPermittedTasksForDashboard} from "/imports/policy/dashboard/tasks
 import {DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 
 
-// TODO: set correct permissions
 export const getUserPermittedTaskReminder = (user?: Meteor.User | null, _id?: string) => {
   if (!user || !_id) return
+
+  const permittedTasks = getUserPermittedTasksForDashboard(
+    user,
+    DoctoralSchools.find({}).fetch(),
+    { '_id': 1 }
+  )?.fetch()
+
+  // check that this _id is in the permitted tasks
+  if (
+    !_id ||
+    !permittedTasks ||
+    !permittedTasks.find( task => task._id === _id)
+  ) return
 
   const taskQuery = {
     _id: _id,
