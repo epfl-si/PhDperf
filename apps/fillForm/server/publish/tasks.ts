@@ -131,17 +131,20 @@ Meteor.publish('tasksDashboard', function () {
     user,
     DoctoralSchools.find({}).fetch()
   )?.observeChanges({
-    added: (id, task) => {
 
+    added: (id, task) => {
       if (!canViewMentor(user, task) ) {  // not allowed to view the mentor ? let's clean all traces of it
         task = hideMentor( task );
       }
 
+      // activityLogs do not really need his own publish methods,
+      // as the value changed when a task is created or removed anyway.
       const activityLogs = ActivityLogs.findOne({ _id: task.processInstanceKey }) ?? { logs: [] }
       Object.assign(task, { activityLogs: activityLogs.logs })
 
       this.added('tasks', id, task);
     },
+
     changed: (id, task) => {
       if (!canViewMentor(user, task) ) {  // not allowed to view the mentor ? let's clean all traces of it
         task = hideMentor( task );
@@ -152,9 +155,11 @@ Meteor.publish('tasksDashboard', function () {
 
       this.changed('tasks', id, task);
     },
+
     removed: (id) => {
       this.removed('tasks', id)
     }
+
   })
 
   this.ready()
