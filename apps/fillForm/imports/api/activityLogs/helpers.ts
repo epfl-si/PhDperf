@@ -48,7 +48,7 @@ export const bumpActivityLogsOnTaskSubmit = (
     jobKey: task.key,
     elementId: task.elementId,
     event: 'completed',
-    datetime: new Date(),
+    datetime: new Date().toJSON(),
   }
 
   if ( processInstance ) {
