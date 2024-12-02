@@ -1,6 +1,9 @@
 import {Meteor} from "meteor/meteor";
 import {Tasks} from "/imports/model/tasks";
 import {filterOutObsoleteTasksQuery, filterOutSubmittedTasksQuery} from "/imports/policy/tasks";
+import {ReminderLogs} from "/imports/api/reminderLogs/schema";
+import {getUserPermittedTasksForDashboard} from "/imports/policy/dashboard/tasks";
+import {DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 
 
 // TODO: set correct permissions
@@ -50,4 +53,22 @@ export const canSendReminders = async (user: Meteor.User, taskId: string) : Prom
   const tasksSeenByUser = await getUserPermittedTaskReminder(user, taskId)?.fetchAsync() ?? []
 
   return !!tasksSeenByUser[0]
+}
+
+export const getRemindersForDashboardTasks = (user?: Meteor.User | null) => {
+  if (!user) return
+
+  const permittedTasks = getUserPermittedTasksForDashboard(
+    user,
+    DoctoralSchools.find({}).fetch(),
+    { 'processInstanceKey': 1 }
+  )?.fetch()
+
+  return ReminderLogs.find(
+    { _id: {
+      $in: permittedTasks?.map(
+          task => task.processInstanceKey
+      ) ?? [] }
+    }
+  )
 }

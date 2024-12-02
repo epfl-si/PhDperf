@@ -1,99 +1,11 @@
 import {encrypt} from "/server/encryption";
-import {NotificationLog, NotificationStartMessage} from "phd-assess-meta/types/notification";
+import {NotificationStartMessage} from "phd-assess-meta/types/notification";
 import {zBClient} from "/server/zeebe_broker_connector";
-import WorkersClient from "/server/zeebe_broker_connector";
 import {Meteor} from "meteor/meteor";
-import {Task, Tasks} from "/imports/model/tasks";
 import {getUserPermittedTaskReminder} from "/imports/policy/reminders";
+import {onZeebeReminderCreated} from "/imports/api/reminderLogs/helpers";
 
 const debug = require('debug')('server/methods/Reminders')
-
-
-export const updateTaskWithASimulatedReminder = async (
-  task: Task,
-  to: string[],
-  cc: string[],
-  bcc: string[],
-  isReminder: boolean
-) => {
-  debug(`Updating the local task ${task.key} with a new unconfirmed notificationLog...`)
-
-  // simulate the add to the notification logs for this task, the real one will be done from Zeebe
-  const notificationLog = {
-    sentAt: new Date().toJSON(),
-    sentTo: {
-      to: to,
-      cc: cc.length > 0 ? cc : undefined,
-      bcc: bcc.length > 0 ? bcc : undefined
-    },
-    // add _reminder to type, to be able to find which are reminder type
-    // this is mainly a retro-compatibility trick, so old workflow can be reminded too
-    fromElementId: `${ task.elementId }${ isReminder ? '_reminder' :  '' }`,
-    type: isReminder ? 'reminder' : 'awaitingForm',
-  } as NotificationLog
-
-  await Tasks.updateAsync(
-    { _id: task.key },
-    { $push: {
-        'variables.notificationLogs': JSON.stringify(notificationLog)
-      }}
-  )
-
-  debug(`Updating the sibling task ${task.key} about this reminder, if any...`)
-  // update sibling tasks about this notification too,
-  // as the info will disappear if not done, once the task is successful
-  await task.siblings?.forEachAsync( async ( siblingTask: Task ) => {
-    await Tasks.updateAsync(
-      { _id: siblingTask.key },
-      { $push: {
-          'variables.notificationLogs': JSON.stringify(notificationLog)
-        }}
-    )
-    debug(`Sibling task ${siblingTask.key} of ${task.key} updated about this reminder.`)
-  })
-
-  ////
-  // Update the service task variables too. As the task was created before the reminder is sent,
-  // in a case of a local db refresh, the values will be forgotten in the service task.
-  // This code aimm to prevent this fact.
-  debug(`Bumping the Zeebe service task ${task.elementInstanceKey} about this reminder...`)
-  const cTask = await Tasks.findOneAsync( { _id: task.key })  // fetch last values
-  if (cTask) {
-    // encrypt for zeebe
-    const encryptedVariables = cTask.variables.notificationLogs?.map(log => encrypt(log))
-
-    await WorkersClient.setVariables(
-      cTask.elementInstanceKey,
-      {
-        notificationLogs: encryptedVariables
-      },
-      true  // prevent moving the values into the process instance scope,
-      // as the value should / will be set into the process instance scope from the notifier microservice himself
-    )
-    debug(`Zeebe service task ${task.elementInstanceKey} bumped for the new reminder.`)
-  }
-  debug(`Bumping the Zeebe service siblings tasks about this reminder...`)
-  await task.siblings?.forEachAsync( async ( siblingTask: Task ) => {
-    // encrypt for zeebe
-    let encryptedVariables = siblingTask.variables.notificationLogs?.map(log => encrypt(log))
-
-    if (encryptedVariables) {
-      encryptedVariables.push(encrypt(JSON.stringify(notificationLog)))
-    } else {
-      encryptedVariables = [encrypt(JSON.stringify(notificationLog))]
-    }
-
-    await WorkersClient.setVariables(
-      siblingTask.elementInstanceKey,
-      {
-        notificationLogs: encryptedVariables
-      },
-      true  // prevent moving the values into the process instance scope,
-      // as the value should / will be set into the process instance scope from the notifier microservice himself
-    )
-    debug(`Sibling task ${siblingTask.key} of ${task.key} updated on Zeebe about this reminder.`)
-  })
-}
 
 type reminderSubmitData = {
   subject: string
@@ -177,14 +89,6 @@ Meteor.methods({
 
     debug(`Published Zeebe message for a new reminder.`)
 
-    // simulate the add to the notification logs for this task,
-    // the real one should be done in Zeebe very soon
-    await updateTaskWithASimulatedReminder(
-      task,
-      reminderTo,
-      reminderCc ?? [],
-      reminderBcc ?? [],
-      true
-    )
+    await onZeebeReminderCreated(task)
   },
 })

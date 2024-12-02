@@ -1,14 +1,15 @@
-import {Step} from "phd-assess-meta/types/dashboards";
-import {NotificationLog} from "phd-assess-meta/types/notification";
 import React from "react";
-import {ITaskDashboard} from "/imports/policy/dashboard/type";
+import {Link} from "react-router-dom";
+import {useTracker} from "meteor/react-meteor-data";
+
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import {faEnvelope} from "@fortawesome/free-regular-svg-icons";
-import {Link} from "react-router-dom";
-import _ from "lodash";
-import {DashboardGraph} from "/imports/ui/components/Dashboard/DefinitionGraphed";
 
+import {Step} from "phd-assess-meta/types/dashboards";
+import {ITaskDashboard} from "/imports/policy/dashboard/type";
+import {DashboardGraph} from "/imports/ui/components/Dashboard/DefinitionGraphed";
+import {ReminderLog, ReminderLogs} from "/imports/api/reminderLogs/schema";
 
 
 /**
@@ -16,38 +17,43 @@ import {DashboardGraph} from "/imports/ui/components/Dashboard/DefinitionGraphed
  * in the corresponding step. You may add the start reminder button with canStartReminder = true
  */
 export const RemindersCount = (
-  { step, task, workflowInstanceTasks, canStartReminder }: {
+  { step, workflowInstanceTasks, canStartReminder }: {
     step: Step,
-    task: ITaskDashboard | undefined,
     workflowInstanceTasks: ITaskDashboard[],
     canStartReminder: boolean
   }) => {
+  // Filter
+  let remindersLogs = useTracker(() => ReminderLogs.find(
+    { _id: workflowInstanceTasks[0]?.processInstanceKey }
+  ).fetch(), [workflowInstanceTasks])
 
-  // compile all infos that can be found in different tasks into one
-  const allNotificationMerged=_.uniqBy(
-    _.flatMap(
-      workflowInstanceTasks, task => task.notificationLogs
-    ), log => `${log.sentAt}${log.fromElementId}${log.type ?? 'awaitingForm'}`)
+  const allCurrentStepIds = [
+    step.id,
+    ...( step.knownAs ?? [] )
+  ]
 
-  const reminderLogsForThisStep = allNotificationMerged.filter(
-    // count the normal and the reminders
-    (log: NotificationLog) =>
-      ( log.fromElementId === step.id + '_reminder' || (
-        log.fromElementId === step.id && log.type === 'reminder'
-      ))
-  ) ?? []
+  const currentTask = workflowInstanceTasks.findLast(
+    task => allCurrentStepIds.includes(task.elementId)
+  )
+
+  // get the interesting logs only
+  const reminders = remindersLogs.flatMap(
+    log => log.logs
+  ).filter(
+    log => allCurrentStepIds.includes(log.elementId)
+  )
 
   return <div className={
     `notification-log-step-count${ canStartReminder ? ' notification-log-step-count-with-plus-button' : '' }`
   }>
     <span className={ 'notification-log-step-count-number' }>
-      { reminderLogsForThisStep.length }
+      { reminders.length }
     </span>
     <span className={ 'notification-log-step-count-envelope text-white' }>
       <FontAwesomeIcon icon={ faEnvelope } />
     </span>
-    { task && canStartReminder &&
-      <Link to={ `/tasks/${ task._id }/reminders/create` } className={ 'text-white' }>
+    { currentTask && canStartReminder &&
+      <Link to={ `/tasks/${ currentTask._id }/reminders/create` } className={ 'text-white' }>
         <FontAwesomeIcon icon={ faPlus } border className={'notification-log-step-plus'}/>
       </Link>
     }
@@ -55,25 +61,33 @@ export const RemindersCount = (
 }
 
 export const ReminderLogsList = (
-  { processInstanceKey, step, notificationLogs }:
-    { processInstanceKey: string, step: Step, notificationLogs: NotificationLog[] }
+  { processInstanceKey, step }:
+    { processInstanceKey: string, step: Step }
 ) => {
-  let allCurrentStepIds = [
+  // Filter
+  let remindersLogs = useTracker(() => ReminderLogs.find(
+    { _id: processInstanceKey }
+  ).fetch(), [processInstanceKey])
+
+  const allCurrentStepIds = [
     step.id,
     ...( step.knownAs ?? [] )
   ]
 
-  const currentStepNotificationLogs = notificationLogs.filter(
-    (log: NotificationLog) => log.sentAt && log.type === 'reminder' && allCurrentStepIds.includes(log.fromElementId)
+  // get the interesting logs only
+  const reminders = remindersLogs.flatMap(
+    log => log.logs
+  ).filter(
+    log => allCurrentStepIds.includes(log.elementId)
   )
 
   return <div
     key={ `notification-log-step-${ step.id }-${ processInstanceKey }` }
   >
-    { currentStepNotificationLogs ?
+    { reminders ?
       <ReminderLogsListWithIcon
         processInstanceKey={ processInstanceKey }
-        logs={ currentStepNotificationLogs }
+        logs={ reminders }
       /> :
       <span>&nbsp;</span>
     }
@@ -86,26 +100,26 @@ export const ReminderLogsList = (
  */
 const ReminderLogsListWithIcon = (
   { processInstanceKey, logs }: {
-    processInstanceKey: string, logs: NotificationLog[]
+    processInstanceKey: string, logs: ReminderLog[]
   }
 ) => {
   return <>
     { logs
       .sort(
         (a,b) => {
-          return new Date(a.sentAt).getTime() - new Date(b.sentAt).getTime()
+          return new Date(a.datetime).getTime() - new Date(b.datetime).getTime()
         })
       .map((log) => <>
-          { log.sentAt && <div
+          { log.datetime && <div
             className={ 'notification-log-entry text-nowrap'}
-            key={ `notification-log-entry-${ processInstanceKey }-${ log.fromElementId }-${ log.type }-${ log.sentAt }` }
+            key={ `notification-log-entry-${ processInstanceKey }-${ log.elementId }-${ log.datetime }` }
           >
             <FontAwesomeIcon
               icon={ faEnvelope }
               className={ 'notification-log-entry-envelope' }
             />
             &nbsp;
-            { new Date(log.sentAt).toLocaleDateString('fr-CH', {
+            { new Date(log.datetime).toLocaleDateString('fr-CH', {
               day: '2-digit',
               month: '2-digit',
               year: 'numeric'
@@ -126,12 +140,6 @@ export const ListRemindersInColumn = (
       definition.nodesOrdered().map((node) => {
         const step = definition.node(node) as Step
 
-        // compile all infos that can be found in different tasks into one
-        const allNotificationMerged=_.uniqBy(
-          _.flatMap(
-            workflowInstanceTasks, task => task.notificationLogs
-          ), log => `${log.sentAt}${log.fromElementId}${log.type ?? 'awaitingForm'}`)
-
         return (
           <div
             className="dashboard-notification-log col text-black text-center"
@@ -140,7 +148,6 @@ export const ListRemindersInColumn = (
             <ReminderLogsList
               processInstanceKey={ workflowInstanceTasks[0].processInstanceKey }
               step={ step }
-              notificationLogs={ allNotificationMerged }
             />
           </div>
         )

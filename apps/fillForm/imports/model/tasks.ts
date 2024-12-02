@@ -12,7 +12,6 @@ import {
   TaskInterface,
   TaskJournal
 } from "/imports/model/tasksTypes";
-import {NotificationLog} from "phd-assess-meta/types/notification";
 
 
 // historically, assignees can come from multiple ways:
@@ -26,19 +25,6 @@ const assigneeSciperToArray = (assigneSciperUnknownType: string | string[]) => {
   }
 
   return [assigneSciperUnknownType]
-}
-
-// convert decrypted strings that represent a object to the object
-const parseJSONArrayOfObjectAsString = ( JSONObjectsAsString: string[] | undefined) => {
-  if (!JSONObjectsAsString || JSONObjectsAsString.length === 0) return []
-
-  return JSONObjectsAsString.map( JSONObject => {
-      try {
-        return JSON.parse(JSONObject)
-      } catch (e) {
-        return {}
-      }
-    })
 }
 
 export class Task implements TaskInterface {
@@ -86,27 +72,6 @@ export class Task implements TaskInterface {
     ].join(", ")
   }
 
-  /**
-   * Shortcut to get notificationLogs as usable object
-   */
-  get notificationLogs(): NotificationLog[] {
-    if (this.variables?.notificationLogs) {
-       const notificationLogsRaw: NotificationLog[] = parseJSONArrayOfObjectAsString(this.variables.notificationLogs)
-
-      // curate the log.type info
-      // on old workflows, ending the log.FromElementId with '_reminder' means we have a type 'reminder'
-      // on recent workflows, the type should be set
-      return notificationLogsRaw.map(
-        log=> ({
-          ...log,
-          type: log.type ?? log.fromElementId.endsWith('_reminder') ? 'reminder': 'awaitingForm'
-        })
-      )
-    } else {
-      return []
-    }
-  }
-
   get monitorUri(): string | undefined {
     // noinspection HttpUrlsUsage
     return Meteor.settings.public.monitor_address && Meteor.user()?.isAdmin ?
@@ -121,7 +86,6 @@ export class Task implements TaskInterface {
     })
   }
 }
-
 
 /**
  * Check a date to see if this is, in our opinion, an obsolete one

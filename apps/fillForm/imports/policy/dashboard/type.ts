@@ -2,8 +2,8 @@ import {PhDInputVariables} from "/imports/model/tasksTypes";
 import {Job} from "zeebe-node";
 import {Sciper} from "/imports/api/datatypes";
 import {ParticipantList} from "/imports/model/participants";
-import {NotificationLog} from "phd-assess-meta/types/notification";
 import {ActivityLog} from "/imports/api/activityLogs/schema";
+import {ReminderLog} from "/imports/api/reminderLogs/schema";
 
 
 export const taskFieldsNeededForDashboard = {
@@ -37,7 +37,6 @@ export const taskFieldsNeededForDashboard = {
   'variables.doctoralProgramName': 1,
   'variables.uuid': 1,
   'variables.mentorDate': 1,  // for checking if the values is submitted
-  'variables.notificationLogs': 1,
   'variables.dueDate': 1,
 }
 
@@ -54,6 +53,6 @@ export interface ITaskDashboard<WorkerInputVariables = PhDInputVariablesDashboar
   processInstanceKey: string
   assigneeScipers?: Sciper[]
   participants: ParticipantList  // values built from participants found in the 'variables' fields, see the Task class for details
-  notificationLogs: NotificationLog[]
   activityLogs: ActivityLog[]
+  reminderLogs: ReminderLog[]
 }

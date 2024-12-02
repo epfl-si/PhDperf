@@ -13,7 +13,8 @@ import {taskFieldsNeededForDashboard} from "/imports/policy/dashboard/type";
 // All participants should be able to see the task, but not all data are viewable
 export const getUserPermittedTasksForDashboard = (
   user: Meteor.User | null,
-  doctoralSchools : DoctoralSchool[]
+  doctoralSchools : DoctoralSchool[],
+  fields: any = taskFieldsNeededForDashboard
 ) => {
   // at this point, check the user is goodly instanced, or return nothing
   if (!user) return
@@ -36,7 +37,7 @@ export const getUserPermittedTasksForDashboard = (
     }),
   }
 
-  return Tasks.find(taskQuery, { 'fields': taskFieldsNeededForDashboard })
+  return Tasks.find(taskQuery, { 'fields': fields })
 }
 
 // Define which tasks can be seen from the dashboard, but only for oldies this time

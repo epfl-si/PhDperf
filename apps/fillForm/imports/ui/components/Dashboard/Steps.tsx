@@ -29,11 +29,6 @@ const StepDone = ({ step, workflowInstanceTasks }: { step: Step, workflowInstanc
   >
     <RemindersCount
       step={ step }
-      task={
-        workflowInstanceTasks.findLast(
-          task => task.elementId === step.id
-        )!
-      }
       workflowInstanceTasks={ workflowInstanceTasks }
       canStartReminder={ false }
     />
@@ -109,11 +104,6 @@ const StepPending = (
     { account?.user && canSeeRemindersLogs(account.user) &&
       <RemindersCount
         step={ step }
-        task={
-          workflowInstanceTasks.findLast(
-            task => task.elementId === step.id
-          )!
-        }
         workflowInstanceTasks={ workflowInstanceTasks }
         canStartReminder={ canHaveReminderPlusButton }
       />
