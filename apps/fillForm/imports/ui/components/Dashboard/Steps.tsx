@@ -9,7 +9,7 @@ import {stepsDefinitionDefault} from "/imports/ui/components/DashboardOld/Defaul
 import {Step} from "phd-assess-meta/types/dashboards";
 import {DashboardGraph as Graph, fixStepKnownAsTypo} from "/imports/ui/components/Dashboard/DefinitionGraphed";
 
-import {canSeeRemindersLogs, canSendReminders} from "/imports/policy/reminders";
+import {canSeeRemindersLogs, canSendRemindersForThisTask} from "/imports/policy/reminders";
 import {useAccountContext} from "/imports/ui/contexts/Account";
 import {RemindersCount} from "/imports/ui/components/Dashboard/Logs/Reminders";
 
@@ -90,7 +90,7 @@ const StepPending = (
 
   useEffect(() => {
     (async function fetchPermission() {
-      setCanHaveReminderPlusButton(await canSendReminders(account!.user!, task._id));
+      setCanHaveReminderPlusButton(await canSendRemindersForThisTask(account!.user!, task._id));
     })();
   }, [task]);
 

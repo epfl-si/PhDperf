@@ -1,32 +1,33 @@
 import {Meteor} from "meteor/meteor";
 import {Tasks} from "/imports/model/tasks";
-import {filterOutObsoleteTasksQuery, filterOutSubmittedTasksQuery} from "/imports/policy/tasks";
+import {
+  filterOutObsoleteTasksQuery,
+  filterOutSubmittedTasksQuery,
+  getAssistantAdministrativeMemberships
+} from "/imports/policy/tasks";
 import {ReminderLogs} from "/imports/api/reminderLogs/schema";
 import {getUserPermittedTasksForDashboard} from "/imports/policy/dashboard/tasks";
 import {DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 
 
+/**
+ * Get the asked task for creating a reminder, but only if permitted
+ */
 export const getUserPermittedTaskReminder = (user?: Meteor.User | null, _id?: string) => {
   if (!user || !_id) return
-
-  const permittedTasks = getUserPermittedTasksForDashboard(
-    user,
-    DoctoralSchools.find({}).fetch(),
-    { '_id': 1 }
-  )?.fetch()
-
-  // check that this _id is in the permitted tasks
-  if (
-    !_id ||
-    !permittedTasks ||
-    !permittedTasks.find( task => task._id === _id)
-  ) return
 
   const taskQuery = {
     _id: _id,
     ...filterOutSubmittedTasksQuery(),
-    ...(!user.isAdmin && filterOutObsoleteTasksQuery()),
-    ...(!user.isAdmin && { "variables.assigneeSciper": user._id }),
+    ...filterOutObsoleteTasksQuery(),
+    // Get tasks for the group
+    ...( !( user.isAdmin || user.isUberProgramAssistant ) && {
+      "variables.doctoralProgramName": {
+        $in: Object.keys(
+          getAssistantAdministrativeMemberships(user, DoctoralSchools.find({}).fetch())
+        )
+      }
+    }),
   }
 
   // Set which fields can be seen for a user, depending on their right
@@ -58,15 +59,14 @@ export const getUserPermittedTaskReminder = (user?: Meteor.User | null, _id?: st
   return Tasks.find(taskQuery, { 'fields': fieldsView })
 }
 
+/**
+ * Who can see the reminders ? Everyone connected !
+ */
 export const canSeeRemindersLogs = (user: Meteor.User) : boolean => !!user
 
-export const canSendReminders = async (user: Meteor.User, taskId: string) : Promise<boolean> => {
-  // is the current processInstanceKey visible on the dashboard for this user ?
-  const tasksSeenByUser = await getUserPermittedTaskReminder(user, taskId)?.fetchAsync() ?? []
-
-  return !!tasksSeenByUser[0]
-}
-
+/**
+ * Provide all the reminders for tasks that the user can see in the dashboard
+ */
 export const getRemindersForDashboardTasks = (user?: Meteor.User | null) => {
   if (!user) return
 
@@ -83,4 +83,10 @@ export const getRemindersForDashboardTasks = (user?: Meteor.User | null) => {
       ) ?? [] }
     }
   )
+}
+
+export const canSendRemindersForThisTask = async (user: Meteor.User, taskId: string) : Promise<boolean> => {
+  const tasksSeenByUser = await getUserPermittedTaskReminder(user, taskId)?.fetchAsync() ?? []
+
+  return !!tasksSeenByUser[0]
 }
