@@ -62,6 +62,11 @@ export function Dashboard() {
     return !handle.ready();
   }, []);
 
+  const listDoctoralSchoolsLoading = useTracker(() => {
+    const handle = Meteor.subscribe('doctoralSchools');
+    return !handle.ready();
+  }, []);
+
   const listRemindersLoading = useTracker(() => {
     const handle = Meteor.subscribe('remindersForDashboardTasks');
     return !handle.ready();
@@ -76,7 +81,9 @@ export function Dashboard() {
   //
   // Render
   if (!account?.isLoggedIn) return <Loader message={'Loading your data...'}/>
-  if (listTasksLoading || listRemindersLoading) return <Loader message={'Fetching tasks...'}/>
+  if (listTasksLoading ||
+    listRemindersLoading ||
+    listDoctoralSchoolsLoading) return <Loader message={'Fetching tasks...'}/>
   if (allTasks.length === 0) return <div>There is currently no task</div>
 
   // having a graph for the dashboard definition is easier to process

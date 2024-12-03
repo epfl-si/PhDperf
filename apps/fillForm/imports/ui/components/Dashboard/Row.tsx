@@ -16,11 +16,16 @@ import {canEditProcessInstance} from "/imports/policy/processInstance";
 import {ParticipantsAsTable} from "/imports/ui/components/Participant/List";
 import {ShowActivityDatePerStep} from "/imports/ui/components/Dashboard/Logs/Activities";
 import {ListRemindersInColumn} from "/imports/ui/components/Dashboard/Logs/Reminders";
+import {canSendRemindersForThisTask} from "/imports/policy/reminders";
+import {DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 
 
 const DrawProgress =
-  ({workflowInstanceTasks, stepsDefinition}:
-     { workflowInstanceTasks: ITaskDashboard[], stepsDefinition: DashboardGraph }) => {
+  ({ workflowInstanceTasks, stepsDefinition, canSendReminders }: {
+    workflowInstanceTasks: ITaskDashboard[],
+    stepsDefinition: DashboardGraph,
+    canSendReminders: boolean
+  }) => {
     const firstTask = workflowInstanceTasks[0]
     const taskKey = `${ firstTask?._id }`
 
@@ -34,17 +39,21 @@ const DrawProgress =
           step={ step }
           workflowInstanceTasks={ workflowInstanceTasks }
           stepDefinition={ stepsDefinition }
+          canSendReminders={ canSendReminders }
         />
       ]}, [])
 
     return <>{ progressBarDrawn }</>
   }
 
-export const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks: ITaskDashboard[] }) => {
+export const DashboardRow = ({ workflowInstanceTasks }: {
+  workflowInstanceTasks: ITaskDashboard[]
+}) => {
   const account = useAccountContext()
 
   const [open, setOpen] = useState(false)
   const [canEditInstance, setCanEditInstance] = useState(false)
+  const [canSendReminders, setCanSendReminders] = useState(false)
 
   const stepsDefinition = workflowInstanceTasks[0].variables.dashboardDefinition ?? stepsDefinitionDefault
   const stepsDefinitionWithoutOldies = stepsDefinition.filter((v: Step) => v.customContent !== "")
@@ -59,7 +68,20 @@ export const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks:
     (async function fetchPermission() {
       setCanEditInstance(await canEditProcessInstance(account!.user!, workflowInstanceTasks[0].processInstanceKey));
     })();
-  }, [workflowInstanceTasks[0].processInstanceKey]);
+  }, [workflowInstanceTasks]);
+
+  useEffect(() => {
+    (async function fetchPermission() {
+      const doctoralSchools = await DoctoralSchools.find().fetchAsync()
+      setCanSendReminders(
+       await canSendRemindersForThisTask(
+         account!.user!,
+         workflowInstanceTasks[0]._id,
+         doctoralSchools
+        )
+      );
+    })();
+  }, [workflowInstanceTasks]);
 
   if (!definition) return <></>
 
@@ -101,6 +123,7 @@ export const DashboardRow = ({ workflowInstanceTasks }: { workflowInstanceTasks:
             key={ workflowInstanceTasks[0]._id }
             workflowInstanceTasks={ workflowInstanceTasks }
             stepsDefinition={ definition }
+            canSendReminders={ canSendReminders }
           />
         </div>
         <div className={ 'row' }>

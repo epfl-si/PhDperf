@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import _ from "lodash";
 import styled from "styled-components";
 
@@ -9,7 +9,7 @@ import {stepsDefinitionDefault} from "/imports/ui/components/DashboardOld/Defaul
 import {Step} from "phd-assess-meta/types/dashboards";
 import {DashboardGraph as Graph, fixStepKnownAsTypo} from "/imports/ui/components/Dashboard/DefinitionGraphed";
 
-import {canSeeRemindersLogs, canSendRemindersForThisTask} from "/imports/policy/reminders";
+import {canSeeRemindersLogs} from "/imports/policy/reminders";
 import {useAccountContext} from "/imports/ui/contexts/Account";
 import {RemindersCount} from "/imports/ui/components/Dashboard/Logs/Reminders";
 
@@ -61,16 +61,14 @@ const DashboardCustomContent = styled(DashboardStep)`
 `;
 
 const StepPending = (
-  { step, task, workflowInstanceTasks }:
-    {
-      step: Step,
-      task: ITaskDashboard,
-      workflowInstanceTasks: ITaskDashboard[]
-    }
+  { step, task, workflowInstanceTasks, canSendReminders }: {
+    step: Step,
+    task: ITaskDashboard,
+    workflowInstanceTasks: ITaskDashboard[],
+    canSendReminders: boolean
+  }
 ) => {
   const account = useAccountContext()
-
-  const [canHaveReminderPlusButton, setCanHaveReminderPlusButton] = useState(false)
 
   let assignees: ParticipantDetail[] | undefined = task.assigneeScipers && Object.values(task.participants).filter((participant: ParticipantDetail) => task.assigneeScipers!.includes(participant.sciper))
 
@@ -88,12 +86,6 @@ const StepPending = (
     day: 'numeric',
   }) }`
 
-  useEffect(() => {
-    (async function fetchPermission() {
-      setCanHaveReminderPlusButton(await canSendRemindersForThisTask(account!.user!, task._id));
-    })();
-  }, [task]);
-
   return <BgAwaiting
     className='dashboard-step border col text-white text-center'
     data-step={ step.id }
@@ -105,7 +97,7 @@ const StepPending = (
       <RemindersCount
         step={ step }
         workflowInstanceTasks={ workflowInstanceTasks }
-        canStartReminder={ canHaveReminderPlusButton }
+        canStartReminder={ canSendReminders }
       />
     }
   </BgAwaiting>
@@ -115,8 +107,12 @@ const StepPending = (
  * Return the good color/text step, for a given workflowInstanceTasks and his dashboard steps definition
  */
 export const DashboardRenderedStep = (
-  { step, workflowInstanceTasks, stepDefinition }:
-    { step: Step, workflowInstanceTasks: ITaskDashboard[], stepDefinition: Graph }
+  { step, workflowInstanceTasks, stepDefinition, canSendReminders }: {
+    step: Step,
+    workflowInstanceTasks: ITaskDashboard[],
+    stepDefinition: Graph,
+    canSendReminders: boolean
+  }
 ) => {
   // the best to identify if we have a new generation of task is to see if they have their dashboard definition variable set.
   // that's not ideal, I know, but the only way to move forward prod. right now
@@ -139,7 +135,12 @@ export const DashboardRenderedStep = (
   )
 
   if (task) {  // task exists. It can only be a pending then
-    return <StepPending step={ step } task={ task } workflowInstanceTasks={ workflowInstanceTasks }/>
+    return <StepPending
+      step={ step }
+      task={ task }
+      workflowInstanceTasks={ workflowInstanceTasks }
+      canSendReminders={ canSendReminders }
+    />
   } else {  // no task cases. Let's find if it is done, not-done, or with a custom content
 
     if (isV2) {  // V2 has some special cases
@@ -178,7 +179,12 @@ export const DashboardRenderedStep = (
 
         if (taskAliased) {
           step.id = taskAliased.elementId  // set the correct id for fetch the good notifications
-          return <StepPending step={ step } task={ taskAliased } workflowInstanceTasks={ workflowInstanceTasks }/>
+          return <StepPending
+            step={ step }
+            task={ taskAliased }
+            workflowInstanceTasks={ workflowInstanceTasks }
+            canSendReminders={ canSendReminders }
+          />
         }
       }
 
