@@ -78,7 +78,15 @@ Meteor.methods({
 
     await WorkersClient.success(task._id!, formData)
     auditLog(`Sending success: job ${task._id} of process instance ${task.processInstanceKey} with data ${JSON.stringify(formData)}`)
+
+    // cleanup temp forms
     await UnfinishedTasks.removeAsync({ taskId: task._id!, userId: user._id })
+    await UnfinishedTasks.removeAsync({
+      userId: user._id,
+      processInstanceKey: task.processInstanceKey,
+      stepId: task.elementId,
+    })
+
     Tasks.markAsSubmitted(task._id!)
   },
 
@@ -90,10 +98,26 @@ Meteor.methods({
 
     if (!user) return
 
-    await UnfinishedTasks.updateAsync(
-      { userId: user._id, taskId: taskId },
-      { $set: {
-          userId: user._id, taskId: taskId, inputJSON: formData, updatedAt: dayjs().toDate()
+    const task = await Tasks.findOneAsync(
+      { _id: taskId },
+      { fields: {
+          processInstanceKey: 1,
+          elementId: 1,
+        }
+      }
+    )
+
+    await UnfinishedTasks.updateAsync({
+        userId: user._id,
+        taskId: taskId
+      }, {
+      $set: {
+        userId: user._id,
+        taskId: taskId,
+        inputJSON: formData,
+        updatedAt: dayjs().toDate(),
+        processInstanceKey: task?.processInstanceKey ?? undefined,
+        stepId: task?.elementId ?? undefined,
         }
       },
       { upsert: true}
@@ -108,6 +132,32 @@ Meteor.methods({
 
     if (!user) return
 
-    return await UnfinishedTasks.findOneAsync({ userId: user._id, taskId: taskId })
+    let unfinishedTask = await UnfinishedTasks.findOneAsync(
+      { userId: user._id, taskId: taskId }
+    )
+
+    // can't find one ? let's check if the cause is
+    // the change of a variable that created a new job
+    if (!unfinishedTask) {
+      const task = await Tasks.findOneAsync(
+        { _id: taskId },
+        { fields: {
+            processInstanceKey: 1,
+            elementId: 1,
+          }
+        }
+      )
+
+      if (task) {
+        unfinishedTask = await UnfinishedTasks.findOneAsync({
+            userId: user._id,
+            processInstanceKey: task.processInstanceKey,
+            stepId: task.elementId
+          }
+        )
+      }
+    }
+
+    return unfinishedTask
   },
 })
