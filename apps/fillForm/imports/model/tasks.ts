@@ -132,6 +132,10 @@ export interface UnfinishedTask {
   taskId: string,
   updatedAt: Date,
   inputJSON: string,
+  // The taskId can change on refresh. This two values help to
+  // recover this cases
+  processInstanceKey?: string,
+  stepId?: string,
 }
 
 class UnfinishedTasksCollection extends Mongo.Collection<UnfinishedTask> {
