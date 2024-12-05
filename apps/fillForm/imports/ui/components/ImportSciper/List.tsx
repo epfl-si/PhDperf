@@ -105,7 +105,7 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
     const toastId = toast.loading('Launching import of selected entries...')
 
     Meteor.apply(
-      "startPhDAssess",
+      "startProcessInstancesCreation",
       [ doctoralSchool.acronym, dueDate ],
       { wait: true, noRetry: true },
       (error: any | global_Error | Meteor.Error | undefined) => {

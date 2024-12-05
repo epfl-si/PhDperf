@@ -270,7 +270,7 @@ Meteor.methods({
     ImportScipersList.update(query, updateDocument, options)
   },
 
-  async startPhDAssess(
+  async startProcessInstancesCreation(
     doctoralSchoolAcronym: string,
     dueDate: Date
     ) {
