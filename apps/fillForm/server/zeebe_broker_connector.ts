@@ -19,7 +19,7 @@ import {PhDInputVariables} from "/imports/model/tasksTypes";
 import {auditLogConsoleOut} from "/imports/lib/logging";
 import {PhDCustomHeaderShape} from "phd-assess-meta/types/fillForm/headers";
 import {NotificationLog, NotificationStartMessage} from "phd-assess-meta/types/notification";
-import {_PhDAssessVariables} from "phd-assess-meta/types/variables";
+import {PhDAssessCustomVariables} from "phd-assess-meta/types/variables";
 
 const debug = debug_('phd-assess:zeebe-connector')
 const auditLog = auditLogConsoleOut.extend('server/zeebe_broker_connector')
@@ -248,7 +248,7 @@ export default {
 
   async setVariables(
     elementInstanceKey: string,
-    variables: Partial<_PhDAssessVariables>,
+    variables: Partial<PhDAssessCustomVariables>,
     local: boolean
   ) {
     if (zBClient == null) {
