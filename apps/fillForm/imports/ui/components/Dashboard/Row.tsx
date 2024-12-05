@@ -17,7 +17,6 @@ import {ParticipantsAsTable} from "/imports/ui/components/Participant/List";
 import {ShowActivityDatePerStep} from "/imports/ui/components/Dashboard/Logs/Activities";
 import {ListRemindersInColumn} from "/imports/ui/components/Dashboard/Logs/Reminders";
 import {canSendRemindersForThisTask} from "/imports/policy/reminders";
-import {DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 
 
 const DrawProgress =
@@ -72,12 +71,10 @@ export const DashboardRow = ({ workflowInstanceTasks }: {
 
   useEffect(() => {
     (async function fetchPermission() {
-      const doctoralSchools = await DoctoralSchools.find().fetchAsync()
       setCanSendReminders(
        await canSendRemindersForThisTask(
          account!.user!,
-         workflowInstanceTasks[0]._id,
-         doctoralSchools
+         workflowInstanceTasks[0]._id
         )
       );
     })();

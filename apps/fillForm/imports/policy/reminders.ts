@@ -6,7 +6,7 @@ import {
 } from "/imports/policy/tasks";
 import {ReminderLogs} from "/imports/api/reminderLogs/schema";
 import {getUserPermittedTasksForDashboard} from "/imports/policy/dashboard/tasks";
-import {DoctoralSchool, DoctoralSchools} from "/imports/api/doctoralSchools/schema";
+import {DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 
 
 /**
@@ -14,10 +14,11 @@ import {DoctoralSchool, DoctoralSchools} from "/imports/api/doctoralSchools/sche
  */
 export const getUserPermittedTaskReminder = (
   user?: Meteor.User | null,
-  _id?: string,
-  doctoralSchools?: DoctoralSchool[]
+  _id?: string
 ) => {
-  if (!user || !_id || !doctoralSchools) return
+
+  if (!user) return
+  if (!_id) return
 
   const taskQuery = {
     _id: _id,
@@ -26,7 +27,7 @@ export const getUserPermittedTaskReminder = (
     ...( !( user.isAdmin || user.isUberProgramAssistant ) && {
       "variables.doctoralProgramName": {
         $in: Object.keys(
-          getAssistantAdministrativeMemberships(user, doctoralSchools)
+          getAssistantAdministrativeMemberships(user, DoctoralSchools.find({}).fetch())
         )
       }
     }),
@@ -87,7 +88,7 @@ export const getRemindersForDashboardTasks = (user?: Meteor.User | null) => {
   )
 }
 
-export const canSendRemindersForThisTask = async (user: Meteor.User, taskId: string,  doctoralSchools: DoctoralSchool[]) : Promise<boolean> => {
-  const tasksSeenByUser = await getUserPermittedTaskReminder(user, taskId,  doctoralSchools)?.fetchAsync() ?? []
+export const canSendRemindersForThisTask = async (user: Meteor.User, taskId: string) : Promise<boolean> => {
+  const tasksSeenByUser = await getUserPermittedTaskReminder(user, taskId)?.fetchAsync() ?? []
   return !!tasksSeenByUser[0]
 }
