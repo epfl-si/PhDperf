@@ -334,37 +334,46 @@ Meteor.methods({
     const ProcessInstanceCreationPromises: any = []
     doctorantsToLoad?.forEach((doctorant) => {
       const dataToPush = {
-        doctoralProgramName: encrypt(doctoralSchool.acronym),
-        doctoralProgramEmail: encrypt(`${doctoralSchool.acronym}@epfl.ch`),
-        docLinkAnnualReport: encrypt(doctoralSchool.helpUrl),
-        creditsNeeded: encrypt(doctoralSchool.creditsNeeded.toString()),
-        programDirectorSciper: encrypt(doctoralSchool.programDirectorSciper),
-        programDirectorName: encrypt(programDirector.firstname + ' ' + programDirector.lastname),
-        programDirectorEmail: encrypt(programDirector.email),
+        doctoralProgramName: encrypt(doctoralSchool.acronym) ?? undefined,
+        doctoralProgramEmail: encrypt(`${doctoralSchool.acronym}@epfl.ch`) ?? undefined,
+        docLinkAnnualReport: encrypt(doctoralSchool.helpUrl) ?? undefined,
+        creditsNeeded: encrypt(doctoralSchool.creditsNeeded.toString()) ?? undefined,
+        programDirectorSciper: encrypt(doctoralSchool.programDirectorSciper) ?? undefined,
+        programDirectorName: encrypt(programDirector.firstname + ' ' + programDirector.lastname) ?? undefined,
+        programDirectorEmail: encrypt(programDirector.email) ?? undefined,
+        doctoralProgramName: encrypt(doctoralSchool.acronym) ?? undefined,
+        doctoralProgramEmail: encrypt(`${doctoralSchool.acronym}@epfl.ch`)  ?? undefined,
+        docLinkAnnualReport: encrypt(doctoralSchool.helpUrl) ?? undefined,
+        creditsNeeded: encrypt(doctoralSchool.creditsNeeded.toString()) ?? undefined,
+        programDirectorSciper: encrypt(doctoralSchool.programDirectorSciper) ?? undefined,
+        programDirectorName: encrypt(programDirector.firstname + ' ' + programDirector.lastname) ?? undefined,
+        programDirectorEmail: encrypt(programDirector.email) ?? undefined,
 
-        dateOfCandidacyExam: encrypt(doctorant.dateExamCandidature ?? ''),
-        dateOfEnrolment: encrypt(doctorant.dateImmatriculation ?? ''),
-        dueDate: encrypt(`${ ("0" + dueDate.getDate()).slice(-2) }.${ ("0" + (dueDate.getMonth() + 1)).slice(-2) }.${ dueDate.getFullYear() }`),
+        dateOfCandidacyExam: encrypt(doctorant.dateExamCandidature ?? '') ?? undefined,
+        dateOfEnrolment: encrypt(doctorant.dateImmatriculation ?? '') ?? undefined,
+        dueDate: encrypt(
+          `${ ("0" + dueDate.getDate()).slice(-2) }.${ ("0" + (dueDate.getMonth() + 1)).slice(-2) }.${ dueDate.getFullYear() }`
+        ) ?? undefined,
 
-        phdStudentSciper: encrypt(doctorant.doctorant.sciper),
-        phdStudentName: encrypt(doctorant.doctorant.fullName),
-        phdStudentEmail: encrypt(doctorant.doctorant.email),
+        phdStudentSciper: encrypt(doctorant.doctorant.sciper) ?? undefined,
+        phdStudentName: encrypt(doctorant.doctorant.fullName) ?? undefined,
+        phdStudentEmail: encrypt(doctorant.doctorant.email) ?? undefined,
 
-        mentorSciper: encrypt(doctorant.thesis.mentor.sciper),
-        mentorName: encrypt(doctorant.thesis.mentor.fullName),
-        mentorEmail: encrypt(doctorant.thesis.mentor.email),
+        mentorSciper: encrypt(doctorant.thesis.mentor.sciper) ?? undefined,
+        mentorName: encrypt(doctorant.thesis.mentor.fullName) ?? undefined,
+        mentorEmail: encrypt(doctorant.thesis.mentor.email) ?? undefined,
 
-        thesisDirectorSciper: encrypt(doctorant.thesis.directeur.sciper),
-        thesisDirectorName: encrypt(doctorant.thesis.directeur.fullName),
-        thesisDirectorEmail: encrypt(doctorant.thesis.directeur.email),
+        thesisDirectorSciper: encrypt(doctorant.thesis.directeur.sciper) ?? undefined,
+        thesisDirectorName: encrypt(doctorant.thesis.directeur.fullName) ?? undefined,
+        thesisDirectorEmail: encrypt(doctorant.thesis.directeur.email) ?? undefined,
 
-        thesisCoDirectorSciper: encrypt(doctorant.thesis.coDirecteur?.sciper ?? ''),
-        thesisCoDirectorName: encrypt(doctorant.thesis.coDirecteur?.fullName ?? ''),
-        thesisCoDirectorEmail: encrypt(doctorant.thesis.coDirecteur?.email ?? ''),
+        thesisCoDirectorSciper: encrypt(doctorant.thesis.coDirecteur?.sciper ?? '') ?? undefined,
+        thesisCoDirectorName: encrypt(doctorant.thesis.coDirecteur?.fullName ?? '') ?? undefined,
+        thesisCoDirectorEmail: encrypt(doctorant.thesis.coDirecteur?.email ?? '') ?? undefined,
 
-        programAssistantSciper: encrypt(user!._id),
-        programAssistantName: encrypt(user?.tequila?.displayname ?? ''),
-        programAssistantEmail: encrypt(user?.tequila.email ?? ''),
+        programAssistantSciper: encrypt(user!._id) ?? undefined,
+        programAssistantName: encrypt(user?.tequila?.displayname ?? '') ?? undefined,
+        programAssistantEmail: encrypt(user?.tequila.email ?? '') ?? undefined,
       }
 
       ProcessInstanceCreationPromises.push(
