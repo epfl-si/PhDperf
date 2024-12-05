@@ -1,21 +1,25 @@
 import {Meteor} from "meteor/meteor";
+import dayjs from "dayjs";
+import crypto from "node:crypto";
+import path from 'path'
+import _ from "lodash";
+import AbortController from "abort-controller";
 
+import {zBClient} from "/server/zeebe_broker_connector";
+import {auditLogConsoleOut} from "/imports/lib/logging";
+import {fetchTimeout} from "/imports/lib/fetchTimeout";
+import {encrypt} from "/server/encryption";
+import {getUserInfoMemoized} from "/server/userFetcher";
+import {
+  PhDAssessEditableVariables,
+} from "phd-assess-meta/types/variables";
+
+import {DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 import {DoctorantInfoSelectable, ImportScipersList} from "/imports/api/importScipers/schema";
 import {isaResponse} from "/imports/api/importScipers/isaTypes";
-import {canImportScipersFromISA} from "/imports/policy/importScipers";
-import {auditLogConsoleOut} from "/imports/lib/logging";
-import {getUserInfoMemoized} from "/server/userFetcher";
-import _ from "lodash";
 import {Tasks} from "/imports/model/tasks";
-import {zBClient} from "/server/zeebe_broker_connector";
-import {encrypt} from "/server/encryption";
 import {canStartProcessInstance} from "/imports/policy/processInstance";
-import {DoctoralSchools} from "/imports/api/doctoralSchools/schema";
-import {fetchTimeout} from "/imports/lib/fetchTimeout";
-import AbortController from "abort-controller";
-import path from 'path'
-import crypto from "node:crypto";
-import dayjs from "dayjs";
+import {canImportScipersFromISA} from "/imports/policy/importScipers";
 
 
 const debug = require('debug')('server/methods/ImportScipers')
@@ -285,26 +289,46 @@ Meteor.methods({
 
     const ds = DoctoralSchools.findOne({'acronym': doctoralSchoolAcronym})
 
-    if (!ds || !canStartProcessInstance(user, [ds]) || !canImportScipersFromISA(user)) {
+    if (
+      !ds ||
+      !canStartProcessInstance(
+        user, [ds
+        ]) ||
+      !canImportScipersFromISA(user)
+    ) {
       auditLog(`Unallowed user ${user._id} is trying to start a workflow.`)
-      throw new Meteor.Error(403, 'You are not allowed to start a workflow')
+      throw new Meteor.Error(
+        403,
+        'You are not allowed to start a workflow'
+      )
     }
 
     if (!dueDate) {
-      throw new Meteor.Error(500, 'No due date provided.')
+      throw new Meteor.Error(
+        500,
+        'No due date provided.'
+      )
     }
 
     if (!dayjs(dueDate).isAfter(dayjs(), 'day')) {
-      throw new Meteor.Error(500, 'The due date should be in the future.')
+      throw new Meteor.Error(
+        500,
+        'The due date should be in the future.')
     }
 
     auditLog(`starting batch imports`)
 
-    if(!zBClient) throw new Meteor.Error(500, `The Zeebe client has not been able to start on the server.`)
+    if(!zBClient) throw new Meteor.Error(
+      500,
+      `The Zeebe client has not been able to start on the server.`
+    )
 
     const doctoralSchool = DoctoralSchools.findOne({acronym: doctoralSchoolAcronym})
+    if (!doctoralSchool) throw new Meteor.Error(
+      500,
+      `The doctoral school does not exist anymore`
+    )
 
-    if (!doctoralSchool) throw new Meteor.Error(500, `The doctoral school does not exist anymore`)
     const programDirector = await getUserInfoMemoized(doctoralSchool.programDirectorSciper)
     // check the user api is working as intended
     if (!programDirector) throw new Meteor.Error(
@@ -329,7 +353,9 @@ Meteor.methods({
       doctoralSchoolAcronym: doctoralSchoolAcronym,
     })
 
-    const doctorantsToLoad = imports!.doctorants?.filter((doctorant) => doctorant.isSelected)
+    const doctorantsToLoad = imports!.doctorants?.filter(
+      (doctorant) => doctorant.isSelected
+    )
 
     const ProcessInstanceCreationPromises: any = []
     doctorantsToLoad?.forEach((doctorant) => {
