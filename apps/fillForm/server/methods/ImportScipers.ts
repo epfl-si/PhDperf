@@ -359,7 +359,7 @@ Meteor.methods({
 
     const ProcessInstanceCreationPromises: any = []
     doctorantsToLoad?.forEach((doctorant) => {
-      const dataToPush = {
+      const dataToPush: Partial<PhDAssessEditableVariables> = {
         doctoralProgramName: encrypt(doctoralSchool.acronym) ?? undefined,
         doctoralProgramEmail: encrypt(`${doctoralSchool.acronym}@epfl.ch`) ?? undefined,
         docLinkAnnualReport: encrypt(doctoralSchool.helpUrl) ?? undefined,
