@@ -341,13 +341,6 @@ Meteor.methods({
         programDirectorSciper: encrypt(doctoralSchool.programDirectorSciper) ?? undefined,
         programDirectorName: encrypt(programDirector.firstname + ' ' + programDirector.lastname) ?? undefined,
         programDirectorEmail: encrypt(programDirector.email) ?? undefined,
-        doctoralProgramName: encrypt(doctoralSchool.acronym) ?? undefined,
-        doctoralProgramEmail: encrypt(`${doctoralSchool.acronym}@epfl.ch`)  ?? undefined,
-        docLinkAnnualReport: encrypt(doctoralSchool.helpUrl) ?? undefined,
-        creditsNeeded: encrypt(doctoralSchool.creditsNeeded.toString()) ?? undefined,
-        programDirectorSciper: encrypt(doctoralSchool.programDirectorSciper) ?? undefined,
-        programDirectorName: encrypt(programDirector.firstname + ' ' + programDirector.lastname) ?? undefined,
-        programDirectorEmail: encrypt(programDirector.email) ?? undefined,
 
         dateOfCandidacyExam: encrypt(doctorant.dateExamCandidature ?? '') ?? undefined,
         dateOfEnrolment: encrypt(doctorant.dateImmatriculation ?? '') ?? undefined,
