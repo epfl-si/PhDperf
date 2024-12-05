@@ -349,7 +349,7 @@ export default {
 
           return array.reduce( (result, fieldSpec) => {
             // ignore if the field does not exist
-            if (job.variables[fieldSpec]) result.push(encrypt(job.variables[fieldSpec]))
+            if (job.variables[fieldSpec]) result.push(encrypt(job.variables[fieldSpec])!)
             return result;
           }, [] as string[]) ?? undefined
 
