@@ -354,8 +354,8 @@ export default {
           }, [] as string[]) ?? undefined
 
         } else {
-          return job.variables[job.customHeaders.notifyTo!] ?
-            encrypt(job.variables[job.customHeaders.notifyTo!]) : undefined
+          return job.variables[notifyVar] ?
+            encrypt(job.variables[notifyVar]) : undefined
         }
       }
 
