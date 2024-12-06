@@ -5,28 +5,39 @@ import styled from "styled-components";
 import {ITaskDashboard} from "/imports/policy/dashboard/type";
 import {ParticipantDetail} from "/imports/model/participants";
 
-import {stepsDefinitionDefault} from "/imports/ui/components/Dashboard/DefaultDefinition";
+import {stepsDefinitionDefault} from "/imports/ui/components/DashboardOld/DefaultDefinition";
 import {Step} from "phd-assess-meta/types/dashboards";
 import {DashboardGraph as Graph, fixStepKnownAsTypo} from "/imports/ui/components/Dashboard/DefinitionGraphed";
+
+import {canSeeRemindersLogs} from "/imports/policy/reminders";
+import {useAccountContext} from "/imports/ui/contexts/Account";
+import {RemindersCount} from "/imports/ui/components/Dashboard/Logs/Reminders";
 
 
 const StepNotDone = ({ step }: { step: Step }) =>
   <DashboardStep
-    className="border col m-1 p-2 text-white"
+    className="dashboard-step border col text-white"
     data-step={ step.id }
     data-step-status={ 'not-done' }
   />
 
-const StepDone = ({ step }: { step: Step }) =>
-  <DashboardStep
-    className="border col m-1 p-2 bg-success text-white"
+const StepDone = ({ step, workflowInstanceTasks }: { step: Step, workflowInstanceTasks: ITaskDashboard[] }) => {
+  return <DashboardStep
+    className='dashboard-step border col bg-success text-white text-center'
     data-step={ step.id }
     data-step-status={ 'done' }
-  />
+  >
+    <RemindersCount
+      step={ step }
+      workflowInstanceTasks={ workflowInstanceTasks }
+      canStartReminder={ false }
+    />
+  </DashboardStep>
+}
 
-const StepFixedContent = ({ step, children }: {step: Step, children: React.ReactNode }) =>
+const StepFixedContent = ({ step, children }: { step: Step, children: React.ReactNode }) =>
   <DashboardCustomContent
-    className="border col m-1 p-2 text-center small"
+    className='dashboard-step border col small'
     data-step={ step.id }
     data-step-status={ 'custom-content' }
   >
@@ -49,38 +60,59 @@ const DashboardCustomContent = styled(DashboardStep)`
   font-size: 0.7rem;
 `;
 
-const StepPending = ({step, task }: {step: Step, task: ITaskDashboard }) => {
+const StepPending = (
+  { step, task, workflowInstanceTasks, canSendReminders }: {
+    step: Step,
+    task: ITaskDashboard,
+    workflowInstanceTasks: ITaskDashboard[],
+    canSendReminders: boolean
+  }
+) => {
+  const account = useAccountContext()
+
   let assignees: ParticipantDetail[] | undefined = task.assigneeScipers && Object.values(task.participants).filter((participant: ParticipantDetail) => task.assigneeScipers!.includes(participant.sciper))
 
   assignees = (assignees && assignees.length > 1) ? _.uniqWith(assignees, _.isEqual) : assignees  // make it uniq if we have multiple roles
   let onHoverInfo = ``
 
   const currentStepLabel = _.flatten(stepsDefinitionDefault).find((step) => step.id === task!.elementId)
-  if (currentStepLabel) onHoverInfo += `Step: ${currentStepLabel?.label}\n`
+  if (currentStepLabel) onHoverInfo += `Step: ${ currentStepLabel?.label }\n`
 
-  const assigneesLabel = assignees?.map((assignee: ParticipantDetail) => ` ${assignee.name} (${assignee.sciper})`).join(',') ?? ''
-  if (assigneesLabel) onHoverInfo += `Assignee: ${assigneesLabel}\n`
-  if (task!.updated_at) onHoverInfo += `Preceding step completion date: ${task.updated_at!.toLocaleString('fr-CH', {
+  const assigneesLabel = assignees?.map((assignee: ParticipantDetail) => ` ${ assignee.name } (${ assignee.sciper })`).join(',') ?? ''
+  if (assigneesLabel) onHoverInfo += `Assignee: ${ assigneesLabel }\n`
+  if (task!.updated_at) onHoverInfo += `Preceding step completion date: ${ task.updated_at!.toLocaleString('fr-CH', {
     year: 'numeric',
     month: 'numeric',
     day: 'numeric',
-  })}`
+  }) }`
 
-  return (
-    <BgAwaiting className="border col m-1 p-2 text-white"
-                data-step={ step.id }
-                data-step-status={ 'awaiting' }
-                data-toggle="tooltip"
-                title={ onHoverInfo } />
-  )
+  return <BgAwaiting
+    className='dashboard-step border col text-white text-center'
+    data-step={ step.id }
+    data-step-status={ 'awaiting' }
+    data-toggle='tooltip'
+    title={ onHoverInfo }
+  >
+    { account?.user && canSeeRemindersLogs(account.user) &&
+      <RemindersCount
+        step={ step }
+        workflowInstanceTasks={ workflowInstanceTasks }
+        canStartReminder={ canSendReminders }
+      />
+    }
+  </BgAwaiting>
 }
 
 /**
  * Return the good color/text step, for a given workflowInstanceTasks and his dashboard steps definition
  */
 export const DashboardRenderedStep = (
-  { step, workflowInstanceTasks, stepDefinition }:
-    { step: Step, workflowInstanceTasks: ITaskDashboard[], stepDefinition: Graph }
+  { step, workflowInstanceTasks, stepDefinition, canSendReminders }: {
+    step: Step,
+    workflowInstanceTasks: ITaskDashboard[],
+    stepDefinition: Graph,
+    canSendReminders: boolean
+  }
 ) => {
   // the best to identify if we have a new generation of task is to see if they have their dashboard definition variable set.
   // that's not ideal, I know, but the only way to move forward prod. right now
@@ -103,7 +135,12 @@ export const DashboardRenderedStep = (
   )
 
   if (task) {  // task exists. It can only be a pending then
-    return <StepPending step={ step } task={ task }/>
+    return <StepPending
+      step={ step }
+      task={ task }
+      workflowInstanceTasks={ workflowInstanceTasks }
+      canSendReminders={ canSendReminders }
+    />
   } else {  // no task cases. Let's find if it is done, not-done, or with a custom content
 
     if (isV2) {  // V2 has some special cases
@@ -114,11 +151,11 @@ export const DashboardRenderedStep = (
       // quick-hack: if the only left case is the mentor, we can set the majority of the task as green
       if (workflowInstanceTasks.length == 1 &&
         workflowInstanceTasks[0].elementId == 'Activity_Post_Mentor_Meeting_Mentor_Signs')
-      additionalPendings.push(
-        'Activity_Thesis_Director_Collaborative_Review_Signs',
-        'Activity_PHD_Signs',
-        'Activity_Program_Director_Signs_Exceed_And_Disagree',
-      )
+        additionalPendings.push(
+          'Activity_Thesis_Director_Collaborative_Review_Signs',
+          'Activity_PHD_Signs',
+          'Activity_Program_Director_Signs_Exceed_And_Disagree',
+        )
 
       if (step.id === 'Activity_Post_Mentor_Meeting_Mentor_Signs') {
 
@@ -129,7 +166,7 @@ export const DashboardRenderedStep = (
 
         return phdFills ?
           <StepNotDone step={ step }/> :
-          <StepDone step={ step }/>
+          <StepDone step={ step } workflowInstanceTasks={ workflowInstanceTasks }/>
       }
       // end of the mentor specific rules
       /////
@@ -141,13 +178,19 @@ export const DashboardRenderedStep = (
         )
 
         if (taskAliased) {
-          return <StepPending step={ step } task={ taskAliased }/>
+          step.id = taskAliased.elementId  // set the correct id for fetch the good notifications
+          return <StepPending
+            step={ step }
+            task={ taskAliased }
+            workflowInstanceTasks={ workflowInstanceTasks }
+            canSendReminders={ canSendReminders }
+          />
         }
       }
 
       // As we have to manage knownAs in the tree later too, for the task that has to be marked as Done,
       // o prepare yourself to convert the aliased id to the original one with this new structure
-      workflowInstanceTasks[0].variables.dashboardDefinition.forEach( (step: Step ) => {
+      workflowInstanceTasks[0].variables.dashboardDefinition.forEach((step: Step) => {
         step = fixStepKnownAsTypo(step)
         step.knownAs?.forEach(knownId => {
           mappedIdKnownAs[knownId] = step.id;
@@ -171,7 +214,7 @@ export const DashboardRenderedStep = (
 
     const listPendingSteps =
       listPendingStepsAliased.map(
-        ( step ) => Object.keys( mappedIdKnownAs ).includes(step) ?
+        (step) => Object.keys(mappedIdKnownAs).includes(step) ?
           mappedIdKnownAs[step] :
           step
       )
@@ -180,7 +223,7 @@ export const DashboardRenderedStep = (
     const siblingEdges = stepDefinition.getSiblings(step.id)
     // check if this is a sibling
     if (siblingEdges?.some(stepId => listPendingSteps.includes(stepId))) {
-      return <StepDone step={ step }/>
+      return <StepDone step={ step } workflowInstanceTasks={ workflowInstanceTasks }/>
     }
 
     let listActivitiesBeforeThePendingOnes: string[] = []
@@ -202,7 +245,7 @@ export const DashboardRenderedStep = (
     if (
       listActivitiesBeforeThePendingOnes?.includes(step.id) ||
       additionalPendings.includes(step.id)
-    ) return <StepDone step={ step }/>
+    ) return <StepDone step={ step } workflowInstanceTasks={ workflowInstanceTasks }/>
     if (listActivitiesAfterThePendingOnes?.includes(step.id)) return <StepNotDone step={ step }/>
 
     // nothing special found, it is certainly a task to be done later

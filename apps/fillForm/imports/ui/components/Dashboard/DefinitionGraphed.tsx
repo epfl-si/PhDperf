@@ -35,8 +35,10 @@ export const fixStepKnownAsTypo = (step: Step) => {
  * All relationships are represented as Edges, only the order is using the parent-child-predecessor-successor feature
  * of the graph lib.
  */
-export const convertDefinitionToGraph = (definition: StepsDefinition) => {
+export const convertDefinitionToGraph = (definition: StepsDefinition | undefined) => {
   const graph = new DashboardGraph();
+
+  if (!definition) return
 
   definition = definition.map(step => fixStepKnownAsTypo(step));
 

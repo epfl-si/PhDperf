@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import {Task} from "/imports/model/tasks";
 import {Loader} from "@epfl/epfl-sti-react-library";
 import {ParticipantRoles} from "/imports/model/participants";
+import {camelCaseToLabelParticipant} from "/imports/ui/components/Participant/List";
 
 
 export const EditParticipants = ({ tasks }: { tasks: Task[] }) => {
@@ -77,7 +78,7 @@ export const EditParticipants = ({ tasks }: { tasks: Task[] }) => {
                     <option
                       key={ participant }
                       value={ participant }>
-                      { `${ participant } \
+                      { `${ camelCaseToLabelParticipant(participant) } ${ task.participants?.[participant]?.sciper ? '👤' : '' } \
                  ${ task.participants?.[participant]?.name ?? '' } \
                  (${ task.participants?.[participant]?.sciper ?? 'Not set' })`
                       }

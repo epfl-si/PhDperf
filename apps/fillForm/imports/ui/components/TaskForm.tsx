@@ -83,8 +83,8 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
       )
 
       if (Meteor.isDevelopment) {
-        console.log("found a unfinished task : %j", findingUnfinishedTask)
-        console.log("Compare it with task variables: %j", task.variables)
+        findingUnfinishedTask && console.log("found a unfinished task : %j", findingUnfinishedTask)
+        findingUnfinishedTask && console.log("Compare it with task variables: %j", task.variables)
       }
     }
     getUnfinishedTask().catch(console.error)
@@ -122,7 +122,7 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
     // only call server if something actually changed
     if (!_.isEqual(eventDataChanged, localFormData.current)) {
       if (Meteor.isDevelopment) {
-        console.log("Calling server for change: %j", localFormData)
+        console.log("As the form changed, calling server to save the current fulfilled info: %j", localFormData)
       }
 
       await Meteor.callAsync('saveAsUnfinishedTask', task._id, eventDataChanged)

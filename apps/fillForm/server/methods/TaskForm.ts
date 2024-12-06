@@ -12,8 +12,11 @@ import {auditLogConsoleOut} from "/imports/lib/logging";
 
 import {filterUnsubmittableVars} from "/imports/policy/utils";
 import {updateParticipantsInfoForFormData} from "/server/methods/ParticipantsUpdater";
+import {bumpActivityLogsOnTaskSubmit} from "/imports/api/activityLogs/helpers";
+
 
 const auditLog = auditLogConsoleOut.extend('server/methods/TaskForm')
+const debug = require('debug')('server/methods/TaskForm')
 
 
 Meteor.methods({
@@ -36,7 +39,7 @@ Meteor.methods({
     }
   },
 
-  async submit(_id, formData, formMetaData: FormioActivityLog) {
+  async submit(_id, formData, _formMetaData: FormioActivityLog) {
     let user: Meteor.User | null = null
     if (this.userId) {
       user = Meteor.users.findOne({_id: this.userId}) ?? null
@@ -74,12 +77,16 @@ Meteor.methods({
 
     formData.updated_at = new Date().toJSON()
 
-    formData = _.mapValues(formData, x => encrypt(x))  // encrypt all data
+    // encrypt all data
+    formData = _.mapValues(formData, x => encrypt(x))
 
     await WorkersClient.success(task._id!, formData)
     auditLog(`Sending success: job ${task._id} of process instance ${task.processInstanceKey} with data ${JSON.stringify(formData)}`)
 
-    // cleanup temp forms
+    debug(`Bumping activity logs about the submit`)
+    bumpActivityLogsOnTaskSubmit(task)
+
+    debug(`Clear the temp form, if any`)
     await UnfinishedTasks.removeAsync({ taskId: task._id!, userId: user._id })
     await UnfinishedTasks.removeAsync({
       userId: user._id,
@@ -87,6 +94,7 @@ Meteor.methods({
       stepId: task.elementId,
     })
 
+    debug(`Save as submitted in the local db, for journaling operations`)
     Tasks.markAsSubmitted(task._id!)
   },
 

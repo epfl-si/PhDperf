@@ -13,12 +13,44 @@ import {taskFieldsNeededForDashboard} from "/imports/policy/dashboard/type";
 // All participants should be able to see the task, but not all data are viewable
 export const getUserPermittedTasksForDashboard = (
   user: Meteor.User | null,
+  doctoralSchools : DoctoralSchool[],
+  fields: any = taskFieldsNeededForDashboard
+) => {
+  // at this point, check the user is goodly instanced, or return nothing
+  if (!user) return
+
+  const taskQuery = {
+    ...{"variables.uuid": { $exists: true }},
+    ...(!user.isAdmin && filterOutObsoleteTasksQuery()),
+    ...filterOutSubmittedTasksQuery(),
+    ...(!user.isAdmin && {
+      '$or': [
+        {"variables.assigneeSciper": user._id},
+        {"variables.phdStudentSciper": user._id},
+        {"variables.thesisDirectorSciper": user._id},
+        {"variables.thesisCoDirectorSciper": user._id},
+        {"variables.programDirectorSciper": user._id},
+        {"variables.programAssistantSciper": user._id},
+        {"variables.mentorSciper": user._id},
+        {"variables.doctoralProgramName": {$in: Object.keys(getAssistantAdministrativeMemberships(user, doctoralSchools))}},  // Get tasks for the group
+      ]
+    }),
+  }
+
+  return Tasks.find(taskQuery, { 'fields': fields })
+}
+
+// Define which tasks can be seen from the dashboard, but only for oldies this time
+// At a certain point (when there is no more tasks in this), this should be removable
+export const getUserPermittedTasksForDashboardOld = (
+  user: Meteor.User | null,
   doctoralSchools : DoctoralSchool[]
 ) => {
   // at this point, check the user is goodly instanced, or return nothing
   if (!user) return
 
   const taskQuery = {
+    ...{"variables.uuid": { $exists: false }},
     ...(!user.isAdmin && filterOutObsoleteTasksQuery()),
     ...filterOutSubmittedTasksQuery(),
     ...(!user.isAdmin && {

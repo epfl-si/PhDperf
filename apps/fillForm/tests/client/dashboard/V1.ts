@@ -12,7 +12,7 @@ import {
   setPHDFillsAttributes as setPHDFillsAttributesV1, setPHDSignsAttributes
 } from "/tests/factories/dashboard/tasksFactoryV1";
 
-import {stepsDefinitionDefault} from "/imports/ui/components/Dashboard/DefaultDefinition";
+import {stepsDefinitionDefault} from "/imports/ui/components/DashboardOld/DefaultDefinition";
 import {getContainerV1} from "/tests/client/dashboard/utils";
 
 

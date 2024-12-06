@@ -20,9 +20,11 @@ import {auditLogConsoleOut} from "/imports/lib/logging";
 import {PhDCustomHeaderShape} from "phd-assess-meta/types/fillForm/headers";
 import {NotificationLog, NotificationStartMessage} from "phd-assess-meta/types/notification";
 import {PhDAssessCustomVariables} from "phd-assess-meta/types/variables";
+import {bumpActivityLogsOnTaskNewArrival} from "/imports/api/activityLogs/helpers";
 
 const debug = debug_('phd-assess:zeebe-connector')
 const auditLog = auditLogConsoleOut.extend('server/zeebe_broker_connector')
+
 
 // what is sent as result
 // should be the whole form, or an ACL decided value
@@ -31,7 +33,7 @@ interface OutputVariables {
 }
 
 // redeclare what is a job in the PhD context
-interface PhDZeebeJob<WorkerInputVariables = PhDInputVariables, CustomHeaderShape = PhDCustomHeaderShape, WorkerOutputVariables = IOutputVariables> extends Job<WorkerInputVariables, CustomHeaderShape>, JobCompletionInterface<WorkerOutputVariables> {
+export interface PhDZeebeJob<WorkerInputVariables = PhDInputVariables, CustomHeaderShape = PhDCustomHeaderShape, WorkerOutputVariables = IOutputVariables> extends Job<WorkerInputVariables, CustomHeaderShape>, JobCompletionInterface<WorkerOutputVariables> {
 }
 
 // list which variables are not encrypted.
@@ -58,15 +60,22 @@ function zeebeJobToTask(job: PhDZeebeJob): Task {
 
   Object.keys(job.variables).map((key) => {
     try {
-      if (alreadyDecryptedVariables.includes(key) ) {
+      if ( alreadyDecryptedVariables.includes(key) ) {
         decryptedVariables[key] = job.variables[key]
-      } else if (Array.isArray(job.variables[key])) {
-        decryptedVariables[key] = job.variables[key].reduce((acc: ( string | null )[], item: string | null) => {
-          acc.push(decrypt(item))
-          return acc
+      } else if ( Array.isArray(job.variables[key]) ) {
+        decryptedVariables[key] = job.variables[key].reduce(
+          (acc: ( string | null )[], item: string | null) => {
+            // forget null values, it provides nothing in our current setup
+            if (item != null) {
+              const decryptedItem = decrypt(item)
+              acc.push(decryptedItem)
+            }
+            return acc
         }, [])
       } else {
-        decryptedVariables[key] = decrypt(job.variables[key])
+        const decryptedItem = decrypt(job.variables[key])
+        // forget null values, it provides nothing in our current setup
+        if (decryptedItem != null) decryptedVariables[key] = decryptedItem
       }
     } catch (error) {
       undecryptableVariablesKey.push(key)
@@ -120,7 +129,7 @@ enum PersistOutcome {
 /**
  * Save `job` into `to_collection`.
  *
- * 💡 A return value of `PersistOutcome.ALREADY_KNOWN` occurs quite a
+ * Insight: A return value of `PersistOutcome.ALREADY_KNOWN` occurs quite a
  * lot, since Zeebe's entire architecture basically believes that all
  * jobs should be performed promptly, whereas we are asking humans to
  * fill out forms.
@@ -142,17 +151,35 @@ function persistJob (job: PhDZeebeJob) : PersistOutcome {
     return PersistOutcome.ALREADY_SUBMITTED
   }
 
-  const { insertedId } = Tasks.upsert(
-    job.key,
-    {
-      $setOnInsert: zeebeJobToTask(job),
-      // add journal about operations on this task
-      $inc: { "journal.seenCount": 1 },
-      $set: { "journal.lastSeen": new Date() },
-    })
+  const task = zeebeJobToTask(job)
+  const taskExistAlready = ( Tasks.find({ _id: job.key }).count() !== 0 )
+  let taskId: string;  // keep a log of the created/updated id
 
-  if (insertedId !== undefined) {
-    debug(`Received a new job from Zeebe ${ insertedId }`)
+  if ( !taskExistAlready ) {
+    // a new task, insert all data, with journaling set
+    taskId = Tasks.insert({
+        ...{
+          journal: {
+            lastSeen: new Date(),
+            seenCount: 1
+        }},
+        ...task
+      } as Task
+    )
+  } else {
+    // updating the existing for the up-to-date values
+    Tasks.update(job.key, {
+      $inc: { "journal.seenCount": 1 },
+      $set: {
+        "journal.lastSeen": new Date(),
+        "variables.notificationLogs": task.variables.notificationLogs,
+      },
+    })
+    taskId = job.key
+  }
+
+  if ( !taskExistAlready ) {
+    debug(`Received a new job from Zeebe ${ taskId }`)
     status = PersistOutcome.NEW
   } else {
     status = PersistOutcome.ALREADY_KNOWN
@@ -206,7 +233,11 @@ export default {
             if (outcome === PersistOutcome.NEW) {
               Metrics.zeebe.inserted.inc()
 
+              // message user about the task awaiting
               this.replyWithReceipt(job).then( ()=> {} )
+
+              // log the arrival time for the new workflows
+              if (job.variables.uuid) bumpActivityLogsOnTaskNewArrival(job)
             }
 
             // as we had no error, tell Zeebe that we'll think about it, and free ourselves to receive more work
@@ -338,7 +369,6 @@ export default {
 
       debug(`Job ${job.key} is eligible for a notification receipt. Sending the receipt...`)
 
-
       // as the To, Cc or Bcc can come as string, a string of array of string (!, yep that's something like that : "[email1, email2]"), and
       // some are empty, let's have a function that process them correctly. They are all field specifier, not direct values
       const parseCustomHeadersNotify = (notifyVar: string | undefined) => {
@@ -397,6 +427,7 @@ export default {
           fromElementId: encrypt(job.elementId),
           pdfType: job.customHeaders.pdfType ? encrypt(job.customHeaders.pdfType) : undefined,
           pdfName: job.customHeaders.pdfName ? encrypt(job.customHeaders.pdfName) : undefined,
+          type: encrypt('awaitingForm')
         } as NotificationStartMessage
       }).then( () => { debug(`Notification receipt sent for Job ${job.key}.`) } )
     }

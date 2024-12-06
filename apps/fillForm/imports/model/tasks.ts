@@ -32,7 +32,6 @@ export class Task implements TaskInterface {
   declare variables: PhDInputVariables
   declare processInstanceKey: string
   declare processDefinitionVersion: number
-  declare activityLogs?: string
   declare key: string;
   declare type: string;
   declare bpmnProcessId: string;
@@ -79,8 +78,14 @@ export class Task implements TaskInterface {
       `http://${Meteor.settings.public.monitor_address}/views/instances/${this.processInstanceKey}` :
       undefined
   }
-}
 
+  get siblings(): Mongo.Cursor<Task, Task> {
+    return Tasks.find({
+      'processInstanceKey': this.processInstanceKey,
+      '_id': { $ne: this.key }
+    })
+  }
+}
 
 /**
  * Check a date to see if this is, in our opinion, an obsolete one

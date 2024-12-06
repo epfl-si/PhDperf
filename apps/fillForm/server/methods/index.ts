@@ -1,6 +1,7 @@
 import './DoctoralSchools'
 import './Fixtures'
 import './ImportScipers'
+import './Reminder'
 import './TaskForm'
 import './TaskParticipant'
 import './TaskVariables'

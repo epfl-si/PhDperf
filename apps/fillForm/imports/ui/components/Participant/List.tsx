@@ -26,10 +26,10 @@ const varToNameMap: { [key: string]: string } = {
   mentor: 'Mentor',
 }
 
-const camelCaseToLabel = (text: string): string => {
-  if (text in varToNameMap) return varToNameMap[text]
+export const camelCaseToLabelParticipant = (role: string): string => {
+  if (role in varToNameMap) return varToNameMap[role]
 
-  return text.replace(/([A-Z])/g, ' $1').replace(/^./, function(str: string){ return str.toUpperCase(); })
+  return role.replace(/([A-Z])/g, ' $1').replace(/^./, function(str: string){ return str.toUpperCase(); })
 }
 
 export const Participant = React.memo(
@@ -37,7 +37,7 @@ export const Participant = React.memo(
     <>
       {info &&
         <div className={`participant border col m-1 p-2 ${ isAssignee ? awaitingBoxColor : allGoodBoxColor}` }>
-          <div className={`small border-bottom border-white`}>{ camelCaseToLabel(role) }</div>
+          <div className={`small border-bottom border-white`}>{ camelCaseToLabelParticipant(role) }</div>
           <div className={`small mt-1`}>{ info.name } ({ info.sciper })</div>
           { showEmail &&
             <div className={`small`}>{ info.email }</div>
@@ -56,7 +56,7 @@ export const ParticipantAsBodyTable = ({role, info, isAssignee, showEmail = fals
         </svg>
       </td>
       <td>
-        { camelCaseToLabel(role) }
+        { camelCaseToLabelParticipant(role) }
       </td>
       <td className={ 'text-center' }>
         { isAssignee ?
@@ -103,30 +103,34 @@ export const ParticipantsAsTable = (
     { task.participants &&
       <Table striped bordered className={ 'mb-4' }>
         <caption style={ { captionSide: 'top' } }>Participants</caption>
-        <col style={ { width: '3%' } }/>
-        <col style={ { width: '14%' } }/>
-        <col style={ {} }/>
-        <col style={ { width: '15%' } }/>
-        <col style={ {} }/>
-        <col style={ {} }/>
-        <tr>
-          <th></th>
-          <th>Role</th>
-          <th className={ 'text-center' }>Task</th>
-          <th>Name</th>
-          <th>Sciper</th>
-          <th>Email</th>
-        </tr>
+        <colgroup>
+          <col style={ { width: '3%' } }/>
+          <col style={ { width: '14%' } }/>
+          <col style={ {} }/>
+          <col style={ { width: '15%' } }/>
+          <col style={ {} }/>
+          <col style={ {} }/>
+        </colgroup>
+        <tbody>
+          <tr>
+            <th></th>
+            <th>Role</th>
+            <th className={ 'text-center' }>Task</th>
+            <th>Name</th>
+            <th>Sciper</th>
+            <th>Email</th>
+          </tr>
 
-        { Object.entries(task.participants).map(([role, info]) =>
-          <ParticipantAsBodyTable
-            key={ `${ task._id }-${ role }` }
-            role={ role }
-            info={ info }
-            isAssignee={ showStatusColor ? assigneeList?.includes(info?.sciper) : false }
-            showEmail={ showEmail }
-          />
-        ) }
+          { Object.entries(task.participants).map(([role, info]) =>
+            <ParticipantAsBodyTable
+              key={ `${ task._id }-${ role }` }
+              role={ role }
+              info={ info }
+              isAssignee={ showStatusColor ? assigneeList?.includes(info?.sciper) : false }
+              showEmail={ showEmail }
+            />
+          ) }
+        </tbody>
       </Table>
     }</>
 }
