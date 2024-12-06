@@ -3,9 +3,10 @@ import React, {useEffect, useState} from "react";
 import {useTracker} from "meteor/react-meteor-data";
 import {useNavigate, useParams, Link} from "react-router-dom";
 import {Alert, Loader} from "@epfl/epfl-sti-react-library";
-import {ImportScipersList} from "/imports/api/importScipers/schema";
+import {DoctorantInfoSelectable, ImportScipersList} from "/imports/api/importScipers/schema";
 import StartButton from '/imports/ui/components/ImportSciper/StartButton';
-import {HeaderRow, Row} from "/imports/ui/components/ImportSciper/Row";
+import {HeaderRow} from "/imports/ui/components/ImportSciper/Header";
+import {Row} from "/imports/ui/components/ImportSciper/Row";
 import {DoctoralSchool, DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 import {DoctoralSchoolInfo} from "/imports/ui/components/ImportSciper/DoctoralSchoolInfo";
 import toast from "react-hot-toast";
@@ -39,6 +40,22 @@ export const ImportScipersSchoolSelector = () => {
   )
 }
 
+export type sortedByPossibilities =
+  'doctoralCandidate' |
+  'thesisDirector' |
+  'thesisCoDirector' |
+  'mentor' |
+  'immatriculationDate' |
+  'candidacyExamDate' |
+  'thesisAdmDate'
+
+export type sortedByOrderPossibilities = 'asc' | 'desc'
+
+export type sortDoctorantInfo = {
+  func: ((doctorantInfo: DoctorantInfoSelectable) => any)[]  // 'any' because it's a sort function
+  order: sortedByOrderPossibilities[]
+}
+
 export function ImportScipersForSchool() {
   const {doctoralSchool} = useParams<{ doctoralSchool: string }>()
 
@@ -48,18 +65,32 @@ export function ImportScipersForSchool() {
 export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralSchool }) {
   const account = useAccountContext()
 
+  const [
+    sortBy, setSortBy
+  ] = useState<sortDoctorantInfo>({
+    // default to "date exam without the year"
+    func: [
+      (doctorantInfo) => doctorantInfo?.dateExamCandidature?.split('.')[1]
+    ],
+    order: ['asc']
+  })
+
   const { ISAScipersForSchool,
     ISAScipersLoading,
     isBeingImported,
   } = useTracker(() => {
       const subscription = Meteor.subscribe('importScipersList', doctoralSchool.acronym);
       const ISAScipersForSchool = ImportScipersList.findOne(
-        { doctoralSchoolAcronym: doctoralSchool.acronym }
+        { doctoralSchoolAcronym: doctoralSchool.acronym },
       )
 
       const ISAScipersLoading: boolean = !subscription.ready()
 
-      const isBeingImported: boolean = ISAScipersForSchool ? ISAScipersForSchool.doctorants?.some((doctorant) => doctorant.isBeingImported) ?? false : false
+      const isBeingImported: boolean = ISAScipersForSchool ?
+        ISAScipersForSchool.doctorants?.some(
+          (doctorant) => doctorant.isBeingImported
+        ) ?? false :
+        false
 
       return {
         ISAScipersForSchool,
@@ -156,16 +187,26 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
         </div>
       </div>
       <div className="container import-scipers-selector">
-        <HeaderRow doctoralSchool={ doctoralSchool } isAllSelected={ ISAScipersForSchool.isAllSelected } disabled={ importStarted }/>
-        { ISAScipersForSchool.doctorants &&
-          _.sortBy(ISAScipersForSchool.doctorants, (d) => d.dateExamCandidature?.split('.')[1]).map((doctorantInfo) =>
-          <Row
-            key={ doctorantInfo.doctorant.sciper }
-            doctoralSchool={ doctoralSchool }
-            doctorant={ doctorantInfo }
-            checked={ doctorantInfo.isSelected }
-          />
-        )}
+        <HeaderRow
+          doctoralSchool={ doctoralSchool }
+          isAllSelected={ ISAScipersForSchool.isAllSelected }
+          disabled={ importStarted }
+          setSorting={ setSortBy }
+        />
+        { _.orderBy(
+          ISAScipersForSchool.doctorants,
+          sortBy.func,
+          sortBy.order
+          ).map(
+            ( doctorantInfo ) =>
+              <Row
+                key={ doctorantInfo.doctorant.sciper }
+                doctoralSchool={ doctoralSchool }
+                doctorant={ doctorantInfo }
+                checked={ doctorantInfo.isSelected }
+              />
+          )
+        }
         <div className={'mt-3'}>
           <StartButton total={ total } nbSelected={ nbSelected } isStarted={ importStarted } startFunc={ startImport }/>
         </div>
