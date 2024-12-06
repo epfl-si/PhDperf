@@ -8,6 +8,7 @@ dayjs.extend(customParseFormat);
 import {DashboardGraph} from "/imports/ui/components/Dashboard/DefinitionGraphed";
 import {Step} from "phd-assess-meta/types/dashboards";
 import {ITaskDashboard} from "/imports/policy/dashboard/type";
+import {SortArrow} from "/imports/ui/components/SortingHeader";
 
 
 type sortedByPossibilities = 'name' |
@@ -72,13 +73,14 @@ export const DashboardHeader = (
           setSortedBy('name')
         }}>
           Name&nbsp;
-          { sortedBy === 'name' ?
-            <span className={ 'header-sortable-icon' }>
-                { sortedByOrder === 'asc' && <>▼</> }
-              { sortedByOrder === 'desc' && <>▲</> }
-              </span> :
-            <span className={ 'header-sortable-icon'}>▬</span>
-          }
+          <SortArrow
+            direction={
+              sortedBy === 'name' ? (
+                sortedByOrder === 'asc' ?
+                  'asc' : 'desc'
+              ) : 'neutral'
+            }
+          />
         </a>
       </div>
       <div
@@ -116,14 +118,15 @@ export const DashboardHeader = (
           setSortedBy('program')
         }}>
           Program&nbsp;
-          { sortedBy === 'program' ?
-            <span className={ 'header-sortable-icon' }>
-              { sortedByOrder === 'asc' && <>▼</> }
-              { sortedByOrder === 'desc' && <>▲</> }
-            </span> :
-            <span className={ 'header-sortable-icon' }>▬</span>
-          }
-          </a>
+          <SortArrow
+            direction={
+              sortedBy === 'program' ? (
+                sortedByOrder === 'asc' ?
+                  'asc' : 'desc'
+              ) : 'neutral'
+            }
+          />
+        </a>
       </div>
       <div
         className="dashboard-header dashboard-header-launch-date col-1 text-black align-self-end text-center"
@@ -151,13 +154,14 @@ export const DashboardHeader = (
           setSortedBy('launched_on')
         }}>
           Report launched&nbsp;on&nbsp;
-          { sortedBy === 'launched_on' ?
-            <span className={ 'header-sortable-icon' }>
-              { sortedByOrder === 'asc' && <>▲</> }
-              { sortedByOrder === 'desc' && <>▼</> }
-            </span> :
-            <span className={ 'header-sortable-icon' }>▬</span>
-          }
+          <SortArrow
+            direction={
+              sortedBy === 'launched_on' ? (
+                sortedByOrder === 'asc' ?
+                  'desc' : 'asc'
+              ) : 'neutral'
+            }
+          />
         </a>
       </div>
       <div
@@ -186,13 +190,14 @@ export const DashboardHeader = (
           setSortedBy('due_date')
         }}>
           Report due&nbsp;date&nbsp;
-          { sortedBy === 'due_date' ?
-            <span className={ 'header-sortable-icon' }>
-              { sortedByOrder === 'asc' && <>️▲</> }
-              { sortedByOrder === 'desc' && <>▼</> }
-            </span> :
-            <span className={ 'header-sortable-icon' }>▬</span>
-          }
+          <SortArrow
+            direction={
+              sortedBy === 'due_date' ? (
+                sortedByOrder === 'asc' ?
+                  'desc' : 'asc'
+              ) : 'neutral'
+            }
+          />
         </a>
       </div>
       <div className={ 'dashboard-header-steps col align-self-end' }>
@@ -250,13 +255,14 @@ export const DashboardHeader = (
                   setSortedBy(step.id)
                 } }>
                   { step.label }&nbsp;
-                  { sortedBy === step.id ?
-                    <span className={ 'header-sortable-icon' }>
-                      { sortedByOrder === 'asc' && <>️▲</> }
-                      { sortedByOrder === 'desc' && <>▼</> }
-                    </span> :
-                    <span className={ 'header-sortable-icon' }>▬</span>
-                  }
+                  <SortArrow
+                    direction={
+                      sortedBy === step.id ? (
+                        sortedByOrder === 'asc' ?
+                          'desc' : 'asc'
+                      ) : 'neutral'
+                    }
+                  />
                 </a>
               </div>
             })

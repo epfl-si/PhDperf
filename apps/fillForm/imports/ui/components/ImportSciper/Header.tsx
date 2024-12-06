@@ -7,6 +7,7 @@ import {
   sortedByPossibilities
 } from "/imports/ui/components/ImportSciper/List";
 import {Meteor} from "meteor/meteor";
+import {SortArrow} from "/imports/ui/components/SortingHeader";
 
 
 const sortByDoctoralCandidateFunction = ( doctorantInfo: DoctorantInfo ) => doctorantInfo?.doctorant?.lastName
@@ -46,7 +47,7 @@ export const HeaderRow = (
   }
 
   return (
-    <div className="row-header row small font-weight-bold align-self-end pl-2 pb-1">
+    <div className="import-scipers-header row-header row small align-self-end pl-2 pb-1">
       <div className={ `col-1 ${defaultColClasses}` }>
         <input
           type="checkbox"
@@ -86,13 +87,14 @@ export const HeaderRow = (
           setSortedBy('doctoralCandidate')
         } }>
           Doctoral candidate name&nbsp;
-          { sortedBy === 'doctoralCandidate' ?
-            <span className={ 'header-sortable-icon' }>
-                { sortedByOrder === 'asc' && <>▼</> }
-              { sortedByOrder === 'desc' && <>▲</> }
-              </span> :
-            <span className={ 'header-sortable-icon' }>▬</span>
-          }
+          <SortArrow
+            direction={
+              sortedBy === 'doctoralCandidate' ? (
+                sortedByOrder === 'asc' ?
+                  'asc' : 'desc'
+              ) : 'neutral'
+            }
+          />
         </a>
       </div>
       <div className={ `col-2 ${ defaultColClasses }` }>
@@ -121,13 +123,14 @@ export const HeaderRow = (
           setSortedBy('thesisDirector')
         } }>
           Thesis director&nbsp;
-          { sortedBy === 'thesisDirector' ?
-            <span className={ 'header-sortable-icon' }>
-                { sortedByOrder === 'asc' && <>▼</> }
-              { sortedByOrder === 'desc' && <>▲</> }
-              </span> :
-            <span className={ 'header-sortable-icon' }>▬</span>
-          }
+          <SortArrow
+            direction={
+              sortedBy === 'thesisDirector' ? (
+                sortedByOrder === 'asc' ?
+                  'asc' : 'desc'
+              ) : 'neutral'
+            }
+          />
         </a>
       </div>
       <div className={ `col-2 ${ defaultColClasses }` }>
@@ -156,13 +159,14 @@ export const HeaderRow = (
           setSortedBy('thesisCoDirector')
         } }>
           Thesis co-director&nbsp;
-          { sortedBy === 'thesisCoDirector' ?
-            <span className={ 'header-sortable-icon' }>
-                { sortedByOrder === 'asc' && <>▼</> }
-              { sortedByOrder === 'desc' && <>▲</> }
-              </span> :
-            <span className={ 'header-sortable-icon' }>▬</span>
-          }
+          <SortArrow
+            direction={
+              sortedBy === 'thesisCoDirector' ? (
+                sortedByOrder === 'asc' ?
+                  'asc' : 'desc'
+              ) : 'neutral'
+            }
+          />
         </a>
       </div>
       <div className={ `col-2 ${ defaultColClasses }` }>
@@ -191,13 +195,14 @@ export const HeaderRow = (
           setSortedBy('mentor')
         } }>
           Mentor&nbsp;
-          { sortedBy === 'mentor' ?
-            <span className={ 'header-sortable-icon' }>
-                { sortedByOrder === 'asc' && <>▼</> }
-              { sortedByOrder === 'desc' && <>▲</> }
-              </span> :
-            <span className={ 'header-sortable-icon' }>▬</span>
-          }
+          <SortArrow
+            direction={
+              sortedBy === 'mentor' ? (
+                sortedByOrder === 'asc' ?
+                  'asc' : 'desc'
+              ) : 'neutral'
+            }
+          />
         </a>
       </div>
       <div className={ `col-1 ${ defaultColClasses }` }>
@@ -226,13 +231,14 @@ export const HeaderRow = (
           setSortedBy('immatriculationDate')
         } }>
           Immatricul. date&nbsp;
-          { sortedBy === 'immatriculationDate' ?
-            <span className={ 'header-sortable-icon' }>
-                { sortedByOrder === 'asc' && <>▼</> }
-              { sortedByOrder === 'desc' && <>▲</> }
-              </span> :
-            <span className={ 'header-sortable-icon' }>▬</span>
-          }
+          <SortArrow
+            direction={
+              sortedBy === 'immatriculationDate' ? (
+                sortedByOrder === 'asc' ?
+                  'asc' : 'desc'
+              ) : 'neutral'
+            }
+          />
         </a>
       </div>
       <div className={ `col-1 ${ defaultColClasses }` }>
@@ -261,13 +267,14 @@ export const HeaderRow = (
           setSortedBy('candidacyExamDate')
         } }>
           Candidacy exam&nbsp;
-          { sortedBy === 'candidacyExamDate' ?
-            <span className={ 'header-sortable-icon' }>
-                { sortedByOrder === 'asc' && <>▼</> }
-              { sortedByOrder === 'desc' && <>▲</> }
-              </span> :
-            <span className={ 'header-sortable-icon' }>▬</span>
-          }
+          <SortArrow
+            direction={
+              sortedBy === 'candidacyExamDate' ? (
+                sortedByOrder === 'asc' ?
+                  'asc' : 'desc'
+              ) : 'neutral'
+            }
+          />
         </a>
       </div>
       <div className={ `col-1 ${ defaultColClasses }` }>
@@ -296,13 +303,14 @@ export const HeaderRow = (
           setSortedBy('thesisAdmDate')
         } }>
           Thesis adm. date&nbsp;
-          { sortedBy === 'thesisAdmDate' ?
-            <span className={ 'header-sortable-icon' }>
-                { sortedByOrder === 'asc' && <>▼</> }
-              { sortedByOrder === 'desc' && <>▲</> }
-              </span> :
-            <span className={ 'header-sortable-icon' }>▬</span>
-          }
+          <SortArrow
+            direction={
+              sortedBy === 'thesisAdmDate' ? (
+                sortedByOrder === 'asc' ?
+                  'asc' : 'desc'
+              ) : 'neutral'
+            }
+          />
         </a>
       </div>
     </div>
