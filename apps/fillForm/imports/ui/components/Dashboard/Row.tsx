@@ -7,7 +7,11 @@ import {useAccountContext} from "/imports/ui/contexts/Account";
 
 import {ITaskDashboard} from "/imports/policy/dashboard/type";
 
-import {convertDefinitionToGraph, DashboardGraph} from "/imports/ui/components/Dashboard/DefinitionGraphed";
+import {
+  convertDefinitionToGraph,
+  DashboardGraph,
+  inverseCoDirAndDirInDefinition
+} from "/imports/ui/components/Dashboard/DefinitionGraphed";
 import {Step} from "phd-assess-meta/types/dashboards";
 import {DashboardRenderedStep} from "/imports/ui/components/Dashboard/Steps";
 import {stepsDefinitionDefault} from "/imports/ui/components/DashboardOld/DefaultDefinition";
@@ -54,13 +58,16 @@ export const DashboardRow = ({ workflowInstanceTasks }: {
   const [canEditInstance, setCanEditInstance] = useState(false)
   const [canSendReminders, setCanSendReminders] = useState(false)
 
-  const stepsDefinition = workflowInstanceTasks[0].variables.dashboardDefinition ?? stepsDefinitionDefault
-  const stepsDefinitionWithoutOldies = stepsDefinition.filter((v: Step) => v.customContent !== "")
+  let stepsDefinition = workflowInstanceTasks[0].variables.dashboardDefinition ?? stepsDefinitionDefault
+
+  // Remove the oldies with this filter
+  stepsDefinition = stepsDefinition.filter((v: Step) => v.customContent !== "")
+  stepsDefinition = inverseCoDirAndDirInDefinition(stepsDefinition)
 
   // generate the good dashboard definition for this row
   const definition = useMemo(
-    () => convertDefinitionToGraph(stepsDefinitionWithoutOldies),
-    [stepsDefinitionWithoutOldies]
+    () => convertDefinitionToGraph(stepsDefinition),
+    [stepsDefinition]
   )
 
   useEffect(() => {

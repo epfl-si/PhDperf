@@ -199,3 +199,32 @@ const compareArraysValues = (arr1: string[], arr2: string[]) => {
 
   return sortedArr1.every((value, index) => value === sortedArr2[index]);
 };
+
+/**
+ * We prefer to show the dir before the codir. Until the bpmn is changed,
+ * do it in the code
+ */
+export const inverseCoDirAndDirInDefinition = (definition: StepsDefinition | undefined): StepsDefinition | undefined => {
+  if (!definition) return undefined
+
+  const indexOfThesisCoDirector = definition.findIndex(
+    activity => activity.id === 'Activity_Thesis_Co_Director_fills_annual_report'
+  );
+  const indexOfThesisDirector = definition.findIndex(
+    activity => activity.id === 'Activity_Thesis_Director_fills_annual_report'
+  );
+
+  // only for old workflows
+  if (indexOfThesisCoDirector == 1 && indexOfThesisDirector == 2) {
+    const coDirItem = definition[indexOfThesisCoDirector]
+
+    definition[indexOfThesisCoDirector] = definition[indexOfThesisDirector];
+    definition.splice(
+      indexOfThesisDirector,
+      1,
+      coDirItem
+    );
+  }
+
+  return definition
+}

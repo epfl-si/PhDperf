@@ -10,7 +10,11 @@ import {useAccountContext} from "../../contexts/Account";
 import {
   stepsDefinitionDefault,
 } from "../DashboardOld/DefaultDefinition";
-import {convertDefinitionToGraph, DashboardGraph} from "/imports/ui/components/Dashboard/DefinitionGraphed";
+import {
+  convertDefinitionToGraph,
+  DashboardGraph,
+  inverseCoDirAndDirInDefinition
+} from "/imports/ui/components/Dashboard/DefinitionGraphed";
 import { DashboardHeader } from "./Header";
 import { DashboardRow } from "./Row";
 import SortSpecifier = Mongo.SortSpecifier;
@@ -95,8 +99,11 @@ export function Dashboard() {
     listDoctoralSchoolsLoading) return <Loader message={'Fetching tasks...'}/>
   if (allTasks.length === 0) return <div>There is currently no task</div>
 
+  const definition = inverseCoDirAndDirInDefinition(allTasks[0].variables.dashboardDefinition)
+
   // having a graph for the dashboard definition is easier to process
-  const definitionGraph = convertDefinitionToGraph(allTasks[0].variables.dashboardDefinition)
+  const definitionGraph = convertDefinitionToGraph(definition)
+
   // use the name of the variable as key
   const definitionKey = Object.keys({StepsDefinitionDefault: stepsDefinitionDefault})[0]
 
