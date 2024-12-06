@@ -3,7 +3,6 @@ import React, {useState} from "react"
 import {Person} from "/imports/api/importScipers/isaTypes"
 import {DoctoralSchool} from "/imports/api/doctoralSchools/schema";
 import {DoctorantInfoSelectable} from "/imports/api/importScipers/schema";
-import toast from "react-hot-toast";
 
 
 export const HeaderRow = ({doctoralSchool, isAllSelected, disabled} :
@@ -63,66 +62,17 @@ const PersonDisplay = ({ person, boldName = false, showSciper = true }: { person
 }
 
 const ThesisCoDirectorDisplay = ({
-                                   doctoralSchool,
-                                   doctorant,
-                                   coDirector,
-                                   isSciperNeeded,
-                                   showSciper
-                                 }: { doctoralSchool: DoctoralSchool, doctorant: Person, coDirector?: Person, isSciperNeeded?: boolean, showSciper?: boolean }) => {
-  const [isSending, setIsSending] = useState(false)
-  const [newSciper, setNewSciper] = useState('')
-
-  const setCoDirectorNewSciper = (e: any) => {
-    e.preventDefault()
-    e.stopPropagation()
-
-    if (!e.target.checkValidity()) {
-      e.target.reportValidity()
-    } else {
-      if (!newSciper) return
-
-      setIsSending(true)
-
-      Meteor.call('setCoDirectorSciper', doctoralSchool.acronym, doctorant.sciper, newSciper.toUpperCase(), (error: any) => {
-          if (error) {
-            toast.error(`Error: ${error.reason}`)
-          } else {
-            toast.success(`Successfully added the sciper ${newSciper} to ${coDirector?.fullName}`)
-          }
-          setIsSending(false)
-        }
-      )
-    }
-  }
-
+  coDirector,
+  isSciperNeeded,
+  showSciper
+}: {
+  coDirector?: Person,
+  isSciperNeeded?: boolean,
+  showSciper?: boolean
+}) => {
   return (
     <>{coDirector &&
         <PersonDisplay person={coDirector} showSciper={!isSciperNeeded && showSciper} />
-      }
-      { coDirector && isSciperNeeded &&
-        <div>
-          <form role="form" onSubmit={ setCoDirectorNewSciper }>
-            <input type="text"
-                   className={'is-invalid'}
-                   id="sciper"
-                   name="sciper"
-                   maxLength={6}
-                   size={6}
-                   placeholder={'Gxxxxx'}
-                   pattern={ "[G|g][0-9]{5}" }
-                   title={ 'Sciper has to be a guest one. Ex. G12345' }
-                   value={ newSciper }
-                   onChange={ (e) => setNewSciper(e.target.value)}
-            />
-            { !isSending &&
-              <button type="submit">Set</button>
-            }
-
-            { isSending &&
-              <span className="loader" />
-            }
-          </form>
-        </div>
       }
     </>
   )
@@ -179,7 +129,7 @@ export const Row = ({ doctorant, doctoralSchool, checked }: RowParameters) => {
           &nbsp;
           { doctorant.needCoDirectorData && !(isToggling || doctorant.isBeingImported || doctorant.hasAlreadyStarted) &&
             <>
-              <span className={'h4 text-danger ml-1'} title="Co-director sciper is missing. Please enter the guest sciper account">⚠</span>
+              <span className={'h4 text-danger ml-1'} title="Co-director sciper is missing. Please enter the information in EDOC portal in ISA.">⚠</span>
             </>
           }
           { !doctorant.thesis?.directeur && !(isToggling || doctorant.isBeingImported || doctorant.hasAlreadyStarted) &&
@@ -209,8 +159,6 @@ export const Row = ({ doctorant, doctoralSchool, checked }: RowParameters) => {
         <div className={ `col-2 ${defaultColClasses}` }><PersonDisplay person={ doctorant.thesis.directeur } /></div>
         <div className={ `col-2 ${defaultColClasses}` }>
           <ThesisCoDirectorDisplay
-            doctoralSchool={ doctoralSchool }
-            doctorant={ doctorant.doctorant }
             coDirector={ doctorant.thesis.coDirecteur }
             isSciperNeeded={ doctorant.needCoDirectorData && !doctorant.hasAlreadyStarted }
             showSciper={ !doctorant.needCoDirectorData || !doctorant.hasAlreadyStarted }
