@@ -4,6 +4,8 @@ export interface Person {
   sciper: string
   fullName: string
   email: string
+  firstName: string
+  lastName: string
 }
 
 export interface Thesis {

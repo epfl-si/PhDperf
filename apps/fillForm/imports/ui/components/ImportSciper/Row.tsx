@@ -1,53 +1,11 @@
 import {Meteor} from "meteor/meteor";
 import React, {useState} from "react"
+import toast from "react-hot-toast";
+
 import {Person} from "/imports/api/importScipers/isaTypes"
 import {DoctoralSchool} from "/imports/api/doctoralSchools/schema";
 import {DoctorantInfoSelectable} from "/imports/api/importScipers/schema";
-import toast from "react-hot-toast";
 
-
-export const HeaderRow = ({doctoralSchool, isAllSelected, disabled} :
-                            {doctoralSchool: DoctoralSchool, isAllSelected: boolean, disabled: boolean}) => {
-  const [isToggling, setIsToggling] = useState(false)
-
-  const defaultColClasses = "align-self-end"
-
-  const setAllCheck = (state: boolean) => {
-    setIsToggling(true)
-
-    Meteor.call('toggleAllDoctorantCheck', doctoralSchool.acronym, state, (error: any) => {
-        if (!error) {
-          setIsToggling(false)
-        }
-      }
-    )
-  }
-
-  return (
-    <div className="row-header row small font-weight-bold align-self-end pl-2 pb-1">
-      <div className={ `col-1 ${defaultColClasses}` }>
-        <input
-          type="checkbox"
-          id="select-all"
-          name="select-all"
-          checked={ isAllSelected }
-          disabled={ isToggling || disabled }
-          onChange={ () => { setAllCheck(!isAllSelected); } }
-        />
-        { isToggling &&
-          <span className="loader" />
-        }
-      </div>
-      <div className={ `col-2 ${defaultColClasses}` }>Doctoral candidate name</div>
-      <div className={ `col-2 ${defaultColClasses}` }>Thesis director</div>
-      <div className={ `col-2 ${defaultColClasses}` }>Thesis co-director</div>
-      <div className={ `col-2 ${defaultColClasses}` }>Mentor</div>
-      <div className={ `col-1 ${defaultColClasses}` }>Immatricul. date</div>
-      <div className={ `col-1 ${defaultColClasses}` }>Candidacy exam</div>
-      <div className={ `col-1 ${defaultColClasses}` }>Thesis adm. date</div>
-    </div>
-  )
-}
 
 const PersonDisplay = ({ person, boldName = false, showSciper = true }: { person?: Person, boldName?: boolean, showSciper?: boolean }) => {
   if (person) {
