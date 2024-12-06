@@ -94,7 +94,8 @@ export const DashboardRow = ({ workflowInstanceTasks }: {
         <a
           href={ `https://people.epfl.ch/${ workflowInstanceTasks[0].variables.phdStudentSciper }` }
           target={ '_blank' }
-        >{ workflowInstanceTasks[0].variables.phdStudentName }</a> ({ workflowInstanceTasks[0].variables.phdStudentSciper })
+        >{ workflowInstanceTasks[0].variables.phdStudentFirstnameDashboard } { workflowInstanceTasks[0].variables.phdStudentLastnameDashboard }
+        </a> ({ workflowInstanceTasks[0].variables.phdStudentSciper })
       </div>
       <div className="dashboard-doctoralProgramName col-1 text-black text-center"
            key={ `${ workflowInstanceTasks[0]._id }_doctoralProgramName` }>
@@ -112,7 +113,9 @@ export const DashboardRow = ({ workflowInstanceTasks }: {
       </div>
       <div className="dashboard-dueDate col-1 text-black text-center"
            key={ `${ workflowInstanceTasks[0].processInstanceKey }_dueDate` }>
-        { workflowInstanceTasks[0].variables.dueDate }
+        {
+          workflowInstanceTasks[0].variables.dueDate
+        }
       </div>
       <div className={ 'dashboard-progress-squares col' }>
         <div className={ 'row' }>

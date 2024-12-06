@@ -15,6 +15,8 @@ export type ParticipantDetail = {
   sciper: Sciper;
   email: string;
   name: string;
+  firstName: string;
+  lastName: string;
 };
 
 export type ParticipantList = Partial<Record<ParticipantRoles, ParticipantDetail>>;
@@ -33,6 +35,8 @@ export const participantsFromZeebe = (variables: PhDInputVariables): Participant
           sciper: variables[`${participantID}Sciper`]!,
           email: variables[`${participantID}Email`]!,
           name: variables[`${participantID}Name`]!,
+          firstName: variables[`${participantID}FirstNameUsage`]!,
+          lastName: variables[`${participantID}LastNameUsage`]!,
         }
       } catch (e) {
         if (e instanceof ReferenceError) {

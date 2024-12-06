@@ -129,6 +129,9 @@ div[id^=error-list].alert-success {
 .dashboard .dashboard-header {
     margin-bottom: 0;
     margin-right: 0;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    cursor: pointer;
 }
 
 .dashboard .dashboard-header-step {
@@ -139,8 +142,14 @@ div[id^=error-list].alert-success {
     padding-right: 0 !important;
 }
 
+.dashboard .header-sortable-icon {
+    font-size: .6rem;
+}
+
 .dashboard .dashboard-row-workflow-instance {
     margin-top: .4rem !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
 }
 
 .dashboard .dashboard-row-notification-logs {

@@ -43,7 +43,7 @@ export const taskFieldsNeededForDashboard = {
 // define here what is allowed in code, as we filter out a full task to get only useful data
 type UnwantedPhDInputVariablesKeys = "created_by"
 
-type PhDInputVariablesDashboard = Omit<PhDInputVariables, UnwantedPhDInputVariablesKeys>
+export type PhDInputVariablesDashboard = Omit<PhDInputVariables, UnwantedPhDInputVariablesKeys>
 
 // like the 'Task implements TaskI', minus the unused fields
 export interface ITaskDashboard<WorkerInputVariables = PhDInputVariablesDashboard, CustomHeaderShape = {}> extends Job<WorkerInputVariables, CustomHeaderShape> {

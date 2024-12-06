@@ -1,6 +1,6 @@
 import _ from "lodash"
 import {Meteor} from "meteor/meteor"
-import React from "react"
+import React, {useState} from "react"
 import {useTracker} from "meteor/react-meteor-data"
 import {Loader} from "@epfl/epfl-sti-react-library";
 
@@ -13,27 +13,16 @@ import {
 import {convertDefinitionToGraph, DashboardGraph} from "/imports/ui/components/Dashboard/DefinitionGraphed";
 import { DashboardHeader } from "./Header";
 import { DashboardRow } from "./Row";
+import SortSpecifier = Mongo.SortSpecifier;
 
 
-export const DashboardContent = ({ definitionForHeader, tasks, headerKey }: {
-  definitionForHeader: DashboardGraph, tasks: ITaskDashboard[], headerKey: string
-}) => {
-  //
-  // Sort
-  tasks = _.sortBy(
-    tasks,
-    [
-      function(task: ITaskDashboard) {
-        const doctoralSchool = task.variables.doctoralProgramName
-        if (task.variables?.phdStudentEmail) {
-          // sort by second part of email address, that's the best way to get the name at this point
-          return `${doctoralSchool}${_.split(task.variables?.phdStudentEmail, '.')[1]}`
-        } else {
-          return `${doctoralSchool}`
-        }
-      }]
-  )
-
+export const DashboardContent = (
+  { definitionForHeader, tasks, headerKey, setSorting }: {
+    definitionForHeader: DashboardGraph,
+    tasks: ITaskDashboard[],
+    headerKey: string,
+    setSorting: ( sortSpecifier: SortSpecifier ) => void
+  }) => {
   //
   // Group_by
   // here we can get multiple task for the same process instance, meaning it have multiple job awaiting
@@ -41,7 +30,12 @@ export const DashboardContent = ({ definitionForHeader, tasks, headerKey }: {
 
   return (
     <div className="container small dashboard">
-      <DashboardHeader key={ `header_${ headerKey }`} definition={ definitionForHeader } headerKey={ headerKey }/>
+      <DashboardHeader
+        key={ `header_${ headerKey }`}
+        definition={ definitionForHeader }
+        headerKey={ headerKey }
+        setSorting={ setSorting }
+      />
       {
         Object.keys(groupByWorkflowInstanceTasks).map(
           (tasksGrouper: string) => <DashboardRow
@@ -57,25 +51,40 @@ export const DashboardContent = ({ definitionForHeader, tasks, headerKey }: {
 export function Dashboard() {
   const account = useAccountContext()
 
-  const listTasksLoading = useTracker(() => {
-    const handle = Meteor.subscribe('tasksDashboard');
-    return !handle.ready();
-  }, []);
+  const listTasksLoading = useTracker(
+    () => {
+      const handle = Meteor.subscribe('tasksDashboard');
+      return !handle.ready();
+      }, []);
 
-  const listDoctoralSchoolsLoading = useTracker(() => {
-    const handle = Meteor.subscribe('doctoralSchools');
-    return !handle.ready();
-  }, []);
+  const listDoctoralSchoolsLoading = useTracker(
+    () => {
+      const handle = Meteor.subscribe('doctoralSchools');
+      return !handle.ready();
+    }, []);
 
-  const listRemindersLoading = useTracker(() => {
-    const handle = Meteor.subscribe('remindersForDashboardTasks');
-    return !handle.ready();
-  }, []);
+  const listRemindersLoading = useTracker(
+    () => {
+      const handle = Meteor.subscribe('remindersForDashboardTasks');
+      return !handle.ready();
+    }, []);
 
-  //
-  // Filter
-  let allTasks = useTracker(() => Tasks.find(
-    {"elementId": {$ne: "Activity_Program_Assistant_Assigns_Participants"}}  // ignore first step
+  const [sortBy, setSortBy] = useState<SortSpecifier>(
+    {
+      sort: {
+        'variables.doctoralProgramName': 1,
+        'variables.phdStudentLastnameDashboard': 1
+      }
+    }
+  )
+
+  let allTasks = useTracker(() => Tasks.find({
+      // ignore first step
+      "elementId":
+        { $ne: "Activity_Program_Assistant_Assigns_Participants" }
+    }, {
+      ...sortBy
+    }
   ).fetch() as unknown as ITaskDashboard[])
 
   //
@@ -99,6 +108,7 @@ export function Dashboard() {
       headerKey={ definitionKey }  // propage the key
       definitionForHeader={ definitionGraph }
       tasks={ allTasks }
+      setSorting={ setSortBy }
     />
   )
 }
