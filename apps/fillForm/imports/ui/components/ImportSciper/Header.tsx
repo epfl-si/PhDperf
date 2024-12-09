@@ -62,14 +62,22 @@ export const HeaderRow = (
         }
       </div>
       <div className={ `col-2 align-self-end` }>
-        <a onClick={ () => {
-          if (sortedBy === 'doctoralCandidate') {
-            if (sortedByOrder === 'asc') {
-              setSorting({
-                func: [sortByDoctoralCandidateFunction],
-                order: ['desc']
-              });
-              setSortedByOrder('desc')
+        <a className={ 'import-scipers-header-label'}
+          onClick={ () => {
+            if (sortedBy === 'doctoralCandidate') {
+              if (sortedByOrder === 'asc') {
+                setSorting({
+                  func: [sortByDoctoralCandidateFunction],
+                  order: ['desc']
+                });
+                setSortedByOrder('desc')
+              } else {
+                setSorting({
+                  func: [sortByDoctoralCandidateFunction],
+                  order: ['asc']
+                });
+                setSortedByOrder('asc')
+              }
             } else {
               setSorting({
                 func: [sortByDoctoralCandidateFunction],
@@ -77,15 +85,9 @@ export const HeaderRow = (
               });
               setSortedByOrder('asc')
             }
-          } else {
-            setSorting({
-              func: [sortByDoctoralCandidateFunction],
-              order: ['asc']
-            });
-            setSortedByOrder('asc')
-          }
-          setSortedBy('doctoralCandidate')
-        } }>
+            setSortedBy('doctoralCandidate')
+        }}
+      >
           Doctoral candidate name&nbsp;
           <SortArrow
             direction={
@@ -98,14 +100,22 @@ export const HeaderRow = (
         </a>
       </div>
       <div className={ `col-2 ${ defaultColClasses }` }>
-        <a onClick={ () => {
-          if (sortedBy === 'thesisDirector') {
-            if (sortedByOrder === 'asc') {
-              setSorting({
-                func: [sortByThesisDirector],
-                order: ['desc']
-              });
-              setSortedByOrder('desc')
+        <a className={ 'import-scipers-header-label'}
+          onClick={ () => {
+            if (sortedBy === 'thesisDirector') {
+              if (sortedByOrder === 'asc') {
+                setSorting({
+                  func: [sortByThesisDirector],
+                  order: ['desc']
+                });
+                setSortedByOrder('desc')
+              } else {
+                setSorting({
+                  func: [sortByThesisDirector],
+                  order: ['asc']
+                });
+                setSortedByOrder('asc')
+              }
             } else {
               setSorting({
                 func: [sortByThesisDirector],
@@ -113,15 +123,9 @@ export const HeaderRow = (
               });
               setSortedByOrder('asc')
             }
-          } else {
-            setSorting({
-              func: [sortByThesisDirector],
-              order: ['asc']
-            });
-            setSortedByOrder('asc')
-          }
-          setSortedBy('thesisDirector')
-        } }>
+            setSortedBy('thesisDirector')
+        }}
+      >
           Thesis director&nbsp;
           <SortArrow
             direction={
@@ -134,14 +138,22 @@ export const HeaderRow = (
         </a>
       </div>
       <div className={ `col-2 ${ defaultColClasses }` }>
-        <a onClick={ () => {
-          if (sortedBy === 'thesisCoDirector') {
-            if (sortedByOrder === 'asc') {
-              setSorting({
-                func: [sortByThesisCoDirector],
-                order: ['desc']
-              });
-              setSortedByOrder('desc')
+        <a className={ 'import-scipers-header-label'}
+          onClick={ () => {
+            if (sortedBy === 'thesisCoDirector') {
+              if (sortedByOrder === 'asc') {
+                setSorting({
+                  func: [sortByThesisCoDirector],
+                  order: ['desc']
+                });
+                setSortedByOrder('desc')
+              } else {
+                setSorting({
+                  func: [sortByThesisCoDirector],
+                  order: ['asc']
+                });
+                setSortedByOrder('asc')
+              }
             } else {
               setSorting({
                 func: [sortByThesisCoDirector],
@@ -149,15 +161,9 @@ export const HeaderRow = (
               });
               setSortedByOrder('asc')
             }
-          } else {
-            setSorting({
-              func: [sortByThesisCoDirector],
-              order: ['asc']
-            });
-            setSortedByOrder('asc')
-          }
-          setSortedBy('thesisCoDirector')
-        } }>
+            setSortedBy('thesisCoDirector')
+        }}
+      >
           Thesis co-director&nbsp;
           <SortArrow
             direction={
@@ -170,14 +176,22 @@ export const HeaderRow = (
         </a>
       </div>
       <div className={ `col-2 ${ defaultColClasses }` }>
-        <a onClick={ () => {
-          if (sortedBy === 'mentor') {
-            if (sortedByOrder === 'asc') {
-              setSorting({
-                func: [sortByMentor],
-                order: ['desc']
-              });
-              setSortedByOrder('desc')
+        <a className={ 'import-scipers-header-label'}
+          onClick={ () => {
+            if (sortedBy === 'mentor') {
+              if (sortedByOrder === 'asc') {
+                setSorting({
+                  func: [sortByMentor],
+                  order: ['desc']
+                });
+                setSortedByOrder('desc')
+              } else {
+                setSorting({
+                  func: [sortByMentor],
+                  order: ['asc']
+                });
+                setSortedByOrder('asc')
+              }
             } else {
               setSorting({
                 func: [sortByMentor],
@@ -185,15 +199,9 @@ export const HeaderRow = (
               });
               setSortedByOrder('asc')
             }
-          } else {
-            setSorting({
-              func: [sortByMentor],
-              order: ['asc']
-            });
-            setSortedByOrder('asc')
-          }
-          setSortedBy('mentor')
-        } }>
+            setSortedBy('mentor')
+          }}
+        >
           Mentor&nbsp;
           <SortArrow
             direction={
@@ -206,14 +214,22 @@ export const HeaderRow = (
         </a>
       </div>
       <div className={ `col-1 ${ defaultColClasses }` }>
-        <a onClick={ () => {
-          if (sortedBy === 'immatriculationDate') {
-            if (sortedByOrder === 'asc') {
-              setSorting({
-                func: [sortByImmatDate],
-                order: ['desc']
-              });
-              setSortedByOrder('desc')
+        <a className={ 'import-scipers-header-label'}
+          onClick={ () => {
+            if (sortedBy === 'immatriculationDate') {
+              if (sortedByOrder === 'asc') {
+                setSorting({
+                  func: [sortByImmatDate],
+                  order: ['desc']
+                });
+                setSortedByOrder('desc')
+              } else {
+                setSorting({
+                  func: [sortByImmatDate],
+                  order: ['asc']
+                });
+                setSortedByOrder('asc')
+              }
             } else {
               setSorting({
                 func: [sortByImmatDate],
@@ -221,15 +237,9 @@ export const HeaderRow = (
               });
               setSortedByOrder('asc')
             }
-          } else {
-            setSorting({
-              func: [sortByImmatDate],
-              order: ['asc']
-            });
-            setSortedByOrder('asc')
-          }
-          setSortedBy('immatriculationDate')
-        } }>
+            setSortedBy('immatriculationDate')
+          }}
+        >
           Immatricul. date&nbsp;
           <SortArrow
             direction={
@@ -242,14 +252,22 @@ export const HeaderRow = (
         </a>
       </div>
       <div className={ `col-1 ${ defaultColClasses }` }>
-        <a onClick={ () => {
-          if (sortedBy === 'candidacyExamDate') {
-            if (sortedByOrder === 'asc') {
-              setSorting({
-                func: [sortByExamCandiature],
-                order: ['desc']
-              });
-              setSortedByOrder('desc')
+        <a className={ 'import-scipers-header-label'}
+          onClick={ () => {
+            if (sortedBy === 'candidacyExamDate') {
+              if (sortedByOrder === 'asc') {
+                setSorting({
+                  func: [sortByExamCandiature],
+                  order: ['desc']
+                });
+                setSortedByOrder('desc')
+              } else {
+                setSorting({
+                  func: [sortByExamCandiature],
+                  order: ['asc']
+                });
+                setSortedByOrder('asc')
+              }
             } else {
               setSorting({
                 func: [sortByExamCandiature],
@@ -257,15 +275,9 @@ export const HeaderRow = (
               });
               setSortedByOrder('asc')
             }
-          } else {
-            setSorting({
-              func: [sortByExamCandiature],
-              order: ['asc']
-            });
-            setSortedByOrder('asc')
-          }
-          setSortedBy('candidacyExamDate')
-        } }>
+            setSortedBy('candidacyExamDate')
+          }}
+        >
           Candidacy exam&nbsp;
           <SortArrow
             direction={
@@ -278,14 +290,22 @@ export const HeaderRow = (
         </a>
       </div>
       <div className={ `col-1 ${ defaultColClasses }` }>
-        <a onClick={ () => {
-          if (sortedBy === 'thesisAdmDate') {
-            if (sortedByOrder === 'asc') {
-              setSorting({
-                func: [sortByThesisAdmDate],
-                order: ['desc']
-              });
-              setSortedByOrder('desc')
+        <a className={ 'import-scipers-header-label'}
+          onClick={ () => {
+            if (sortedBy === 'thesisAdmDate') {
+              if (sortedByOrder === 'asc') {
+                setSorting({
+                  func: [sortByThesisAdmDate],
+                  order: ['desc']
+                });
+                setSortedByOrder('desc')
+              } else {
+                setSorting({
+                  func: [sortByThesisAdmDate],
+                  order: ['asc']
+                });
+                setSortedByOrder('asc')
+              }
             } else {
               setSorting({
                 func: [sortByThesisAdmDate],
@@ -293,15 +313,9 @@ export const HeaderRow = (
               });
               setSortedByOrder('asc')
             }
-          } else {
-            setSorting({
-              func: [sortByThesisAdmDate],
-              order: ['asc']
-            });
-            setSortedByOrder('asc')
-          }
-          setSortedBy('thesisAdmDate')
-        } }>
+            setSortedBy('thesisAdmDate')
+          }}
+        >
           Thesis adm. date&nbsp;
           <SortArrow
             direction={
