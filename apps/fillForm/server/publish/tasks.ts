@@ -191,15 +191,15 @@ const setFirstNameLastNameForDashboard = (taskVariables: PhDInputVariables | und
       taskVariables.phdStudentFirstName ??
       taskVariables.phdStudentName?.split(' ').slice(  // for workflows not already gone through the new api
         0, (
-          taskVariables.phdStudentName?.length - 1 >= 1 ?
-            taskVariables.phdStudentName?.length :
+          taskVariables.phdStudentName?.split(' ').length - 1 >= 1 ?
+            taskVariables.phdStudentName?.split(' ').length - 1 :
             1
         )
       ),
     lastName:
       taskVariables.phdStudentLastName ??
       // for workflows not already gone through the new api
-      taskVariables.phdStudentName?.split(' ')[taskVariables.phdStudentName?.length - 1],
+      taskVariables.phdStudentName?.split(' ')[taskVariables.phdStudentName?.split(' ').length - 1],
   }
 
   // check if last operation was successful, or try a different approach
