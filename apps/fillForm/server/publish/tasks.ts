@@ -186,27 +186,38 @@ Meteor.publish('tasksDashboard', function () {
 const setFirstNameLastNameForDashboard = (taskVariables: PhDInputVariables | undefined) => {
   if (!taskVariables) return
 
-  const phdStudentDashboardName = {
-    firstName: taskVariables.phdStudentName?.split(' ')[0],
-    lastName: taskVariables.phdStudentName?.split(' ')[1]
+  const studentDashboardName = {
+    firstName:
+      taskVariables.phdStudentFirstName ??
+      taskVariables.phdStudentName?.split(' ').slice(  // for workflows not already gone through the new api
+        0, (
+          taskVariables.phdStudentName?.length - 1 >= 1 ?
+            taskVariables.phdStudentName?.length :
+            1
+        )
+      ),
+    lastName:
+      taskVariables.phdStudentLastName ??
+      // for workflows not already gone through the new api
+      taskVariables.phdStudentName?.split(' ')[taskVariables.phdStudentName?.length - 1],
   }
 
   // check if last operation was successful, or try a different approach
   if (
     (
-      !phdStudentDashboardName.firstName ||
-      !phdStudentDashboardName.lastName
+      !studentDashboardName.firstName ||
+      !studentDashboardName.lastName
     ) && taskVariables.phdStudentEmail
   ) {
     // can the email help us ?
     const firstLast = getFirstLastFromEmail(taskVariables.phdStudentEmail)
 
-    phdStudentDashboardName.firstName= firstLast[0] ?? undefined
-    phdStudentDashboardName.lastName = firstLast[1] ?? undefined
+    studentDashboardName.firstName= firstLast[0] ?? undefined
+    studentDashboardName.lastName = firstLast[1] ?? undefined
   }
 
-  taskVariables.phdStudentFirstnameDashboard = phdStudentDashboardName.firstName
-  taskVariables.phdStudentLastnameDashboard = phdStudentDashboardName.lastName
+  taskVariables.phdStudentFirstnameDashboard = studentDashboardName.firstName
+  taskVariables.phdStudentLastnameDashboard = studentDashboardName.lastName
 
   return taskVariables
 }
