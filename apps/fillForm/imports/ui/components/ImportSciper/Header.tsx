@@ -1,6 +1,6 @@
 import {DoctorantInfo} from "/imports/api/importScipers/isaTypes";
 import {DoctoralSchool} from "/imports/api/doctoralSchools/schema";
-import React, {Dispatch, SetStateAction, useState} from "react";
+import React, {CSSProperties, Dispatch, SetStateAction, useState} from "react";
 import {
   sortDoctorantInfo,
   sortedByOrderPossibilities,
@@ -34,6 +34,7 @@ export const HeaderRow = (
   const [ sortedByOrder, setSortedByOrder ] = useState<sortedByOrderPossibilities>('asc')
 
   const defaultColClasses = "align-self-end"
+  const backgroundColor: CSSProperties = Meteor.settings.public.isTest && !Meteor.settings.public.ignoreTestBackgroundColor ? { backgroundColor: 'Cornsilk' } : { backgroundColor: 'white' }
 
   const setAllCheck = (state: boolean) => {
     setIsToggling(true)
@@ -47,7 +48,10 @@ export const HeaderRow = (
   }
 
   return (
-    <div className="import-scipers-header row-header row small align-self-end pl-2 pb-1">
+    <div
+      className="import-scipers-header row-header row small align-self-end pl-2 pb-1 sticky-top"
+      style={ backgroundColor ?? {} }
+    >
       <div className={ `col-1 ${defaultColClasses}` }>
         <input
           type="checkbox"
