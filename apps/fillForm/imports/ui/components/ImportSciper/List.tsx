@@ -70,7 +70,9 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
   ] = useState<sortDoctorantInfo>({
     // default to "date exam without the year"
     func: [
-      (doctorantInfo) => doctorantInfo?.dateExamCandidature?.split('.')[1]
+      (doctorantInfo) =>
+        doctorantInfo?.dateExamCandidature?.split('.')[1] +
+        doctorantInfo?.dateExamCandidature?.split('.')[0]
     ],
     order: ['asc']
   })

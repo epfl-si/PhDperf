@@ -10,14 +10,35 @@ import {Meteor} from "meteor/meteor";
 import {SortArrow} from "/imports/ui/components/SortingHeader";
 
 
-const sortByDoctoralCandidateFunction = ( doctorantInfo: DoctorantInfo ) => doctorantInfo?.doctorant?.lastName
-const sortByThesisDirector = ( doctorantInfo: DoctorantInfo ) => doctorantInfo?.thesis?.directeur?.lastName
-const sortByThesisCoDirector = ( doctorantInfo: DoctorantInfo ) => doctorantInfo?.thesis?.coDirecteur?.lastName
-const sortByMentor = ( doctorantInfo: DoctorantInfo ) => doctorantInfo?.thesis?.mentor?.lastName
-const sortByImmatDate = (doctorantInfo: DoctorantInfo) => doctorantInfo?.dateImmatriculation?.split('.')[1]
-const sortByExamCandiature = (doctorantInfo: DoctorantInfo) => doctorantInfo?.dateExamCandidature?.split('.')[1]
-const sortByThesisAdmDate = (doctorantInfo: DoctorantInfo) => doctorantInfo?.thesis?.dateAdmThese?.split('.')[1]
+// this is overcomplicated so we can sort special chars (thx stackoverflow 74679345)
+const normalizeUTF8NameForSort = (name: string | undefined) =>
+  name?.normalize("NFD")
+       .replace(/[\u0300-\u036f]/g, "")
+       .toLocaleLowerCase() ?? '';
 
+const sortByDoctoralCandidateFunction = ( doctorantInfo: DoctorantInfo ) =>
+  normalizeUTF8NameForSort(doctorantInfo?.doctorant?.lastName)
+
+const sortByThesisDirector = ( doctorantInfo: DoctorantInfo ) =>
+  normalizeUTF8NameForSort(doctorantInfo?.thesis?.directeur?.lastName)
+
+const sortByThesisCoDirector = ( doctorantInfo: DoctorantInfo ) =>
+  normalizeUTF8NameForSort(doctorantInfo?.thesis?.coDirecteur?.lastName)
+
+const sortByMentor = ( doctorantInfo: DoctorantInfo ) =>
+  normalizeUTF8NameForSort(doctorantInfo?.thesis?.mentor?.lastName)
+
+const sortByImmatDate = (doctorantInfo: DoctorantInfo) =>
+  doctorantInfo?.dateImmatriculation?.split('.')[1] +
+  doctorantInfo?.dateImmatriculation?.split('.')[0]
+
+const sortByExamCandidature = (doctorantInfo: DoctorantInfo) =>
+  doctorantInfo?.dateExamCandidature?.split('.')[1] +
+  doctorantInfo?.dateExamCandidature?.split('.')[0]
+
+const sortByThesisAdmDate = (doctorantInfo: DoctorantInfo) =>
+  doctorantInfo?.thesis?.dateAdmThese?.split('.')[1] +
+  doctorantInfo?.thesis?.dateAdmThese?.split('.')[1]
 
 export const HeaderRow = (
   {doctoralSchool, isAllSelected, disabled, setSorting} : {
@@ -261,20 +282,20 @@ export const HeaderRow = (
             if (sortedBy === 'candidacyExamDate') {
               if (sortedByOrder === 'asc') {
                 setSorting({
-                  func: [sortByExamCandiature],
+                  func: [sortByExamCandidature],
                   order: ['desc']
                 });
                 setSortedByOrder('desc')
               } else {
                 setSorting({
-                  func: [sortByExamCandiature],
+                  func: [sortByExamCandidature],
                   order: ['asc']
                 });
                 setSortedByOrder('asc')
               }
             } else {
               setSorting({
-                func: [sortByExamCandiature],
+                func: [sortByExamCandidature],
                 order: ['asc']
               });
               setSortedByOrder('asc')
