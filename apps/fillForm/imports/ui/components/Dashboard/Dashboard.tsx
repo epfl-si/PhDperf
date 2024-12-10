@@ -13,7 +13,8 @@ import {
 import {
   convertDefinitionToGraph,
   DashboardGraph,
-  inverseCoDirAndDirInDefinition
+  inverseCoDirAndDirInDefinition,
+  setNewHeadersName
 } from "/imports/ui/components/Dashboard/DefinitionGraphed";
 import { DashboardHeader } from "./Header";
 import { DashboardRow } from "./Row";
@@ -99,7 +100,11 @@ export function Dashboard() {
     listDoctoralSchoolsLoading) return <Loader message={'Fetching tasks...'}/>
   if (allTasks.length === 0) return <div>There is currently no task</div>
 
-  const definition = inverseCoDirAndDirInDefinition(allTasks[0].variables.dashboardDefinition)
+  let definition = allTasks[0].variables.dashboardDefinition
+
+  // fix the definition without changing the bpmn..
+  definition = inverseCoDirAndDirInDefinition(definition)
+  definition = setNewHeadersName(definition)
 
   // having a graph for the dashboard definition is easier to process
   const definitionGraph = convertDefinitionToGraph(definition)

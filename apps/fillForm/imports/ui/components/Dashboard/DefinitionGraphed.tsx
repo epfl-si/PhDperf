@@ -205,7 +205,7 @@ const compareArraysValues = (arr1: string[], arr2: string[]) => {
  * do it in the code
  */
 export const inverseCoDirAndDirInDefinition = (definition: StepsDefinition | undefined): StepsDefinition | undefined => {
-  if (!definition) return undefined
+  if (!definition) return
 
   const indexOfThesisCoDirector = definition.findIndex(
     activity => activity.id === 'Activity_Thesis_Co_Director_fills_annual_report'
@@ -227,4 +227,21 @@ export const inverseCoDirAndDirInDefinition = (definition: StepsDefinition | und
   }
 
   return definition
+}
+
+// TODO: set this "new" values into the bpmn, or as a 'definition' constant
+export const setNewHeadersName = (definition: StepsDefinition | undefined): StepsDefinition | undefined => {
+  if (!definition) return
+
+  return definition.map( step => {
+    if (step.id === 'Activity_PHD_fills_annual_report') return { ...step, label: 'PhD cand fills the report' }
+    if (step.id === 'Activity_Thesis_Co_Director_fills_annual_report') return { ...step, label: 'Thesis co-dir fills the report' }
+    if (step.id === 'Activity_Thesis_Director_fills_annual_report') return { ...step, label: 'Thesis dir fills the report' }
+    if (step.id === 'Activity_Thesis_Co_Director_Signs') return { ...step, label: 'Thesis co-dir signature' }
+    if (step.id === 'Activity_PHD_Signs') return { ...step, label: 'PhD cand signature' }
+    if (step.id === 'Activity_Post_Mentor_Meeting_PHD_Signs') return { ...step, label: 'PhD cand signature after mentor' }
+    if (step.id === 'Activity_Program_Director_Signs_Exceed_And_Disagree') return { ...step, label: 'Program dir signature' }
+
+    return step
+  })
 }
