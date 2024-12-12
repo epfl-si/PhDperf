@@ -106,8 +106,11 @@ describe('Dashboard Steps render V1 steps', function (){
     );
 
     const allProcessInstanceTasks = _.uniqBy(
-      await Tasks.find({'variables.dashboardDefinition': { $exists:false }}).fetchAsync(),
-      'processInstanceKey') as ITaskDashboard[]
+      await Tasks.find(
+        {'variables.dashboardDefinition': { $exists:false }}).fetchAsync(),
+        'processInstanceKey'
+    ) as unknown as ITaskDashboard[]
+
     assert.isAbove(
       allProcessInstanceTasks.length,
       0,

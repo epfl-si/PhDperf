@@ -29,10 +29,14 @@ describe('Dashboard full render', function () {
     createTasksForDashboardV2Fixtures()
 
     allProcessInstanceTasksWithoutDefinition =
-      await Tasks.find({'variables.dashboardDefinition': { $exists:false }}).fetchAsync() as ITaskDashboard[]
+      await Tasks.find(
+        {'variables.dashboardDefinition': { $exists:false }}
+      ).fetchAsync() as unknown as ITaskDashboard[]
 
     allProcessInstanceTasksWithDefinition =
-      await Tasks.find({'variables.dashboardDefinition': { $exists:true }}).fetchAsync() as ITaskDashboard[]
+      await Tasks.find(
+        {'variables.dashboardDefinition': { $exists:true }}
+      ).fetchAsync() as unknown as ITaskDashboard[]
   });
 
   it('should render V1', async function () {
@@ -76,12 +80,11 @@ describe('Dashboard full render', function () {
     )
 
     assert.isNotEmpty(dashboardDefinition)
-    assert.isNotEmpty(graphedDefinition.nodesOrdered())
+    assert.isNotEmpty(graphedDefinition?.nodesOrdered())
     debugger;
     assert.deepEqual(
       definitionOrder,
-      graphedDefinition.nodesOrdered(),
+      graphedDefinition?.nodesOrdered(),
       `The graphed data is not respecting the original order`)
-
   });
 });
