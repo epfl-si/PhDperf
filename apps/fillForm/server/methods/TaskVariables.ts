@@ -1,6 +1,6 @@
 import {Meteor} from "meteor/meteor";
 import {Tasks} from "/imports/model/tasks";
-import WorkersClient from "/server/zeebe_broker_connector";
+import WorkersClient from "/server/zeebe/connector";
 import {encrypt} from "/server/encryption";
 import {canEditProcessInstance} from "/imports/policy/processInstance";
 

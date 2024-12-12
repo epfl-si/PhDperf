@@ -1,6 +1,6 @@
 import {encrypt} from "/server/encryption";
 import {NotificationStartMessage} from "phd-assess-meta/types/notification";
-import {zBClient} from "/server/zeebe_broker_connector";
+import {zBClient} from "/server/zeebe/connector";
 import {Meteor} from "meteor/meteor";
 import {getUserPermittedTaskReminder} from "/imports/policy/reminders";
 import {onZeebeReminderCreated} from "/imports/api/reminderLogs/helpers";

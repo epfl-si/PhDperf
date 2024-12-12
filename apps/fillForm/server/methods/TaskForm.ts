@@ -1,13 +1,13 @@
 import {Meteor} from "meteor/meteor";
 import dayjs from "dayjs";
+import _ from "lodash";
 
 import {encrypt} from "/server/encryption";
 import {Tasks, UnfinishedTasks} from "/imports/model/tasks";
 import {FormioActivityLog} from "/imports/model/tasksTypes";
 import {canSubmit, getUserPermittedTaskDetailed} from "/imports/policy/tasks";
-import _ from "lodash";
 
-import WorkersClient from '../zeebe_broker_connector'
+import WorkersClient from '/server/zeebe/connector'
 import {auditLogConsoleOut} from "/imports/lib/logging";
 
 import {filterUnsubmittableVars} from "/imports/policy/utils";

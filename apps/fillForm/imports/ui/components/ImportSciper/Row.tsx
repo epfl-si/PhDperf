@@ -1,6 +1,5 @@
 import {Meteor} from "meteor/meteor";
 import React, {useState} from "react"
-import toast from "react-hot-toast";
 
 import {Person} from "/imports/api/importScipers/isaTypes"
 import {DoctoralSchool} from "/imports/api/doctoralSchools/schema";

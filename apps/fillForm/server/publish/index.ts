@@ -1,3 +1,4 @@
+import './dashboard'
 import './doctoralSchools'
 import './importScipers'
 import './processInstances'

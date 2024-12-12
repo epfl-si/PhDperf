@@ -3,7 +3,7 @@ import _ from "lodash"
 
 import {auditLogConsoleOut} from "/imports/lib/logging";
 import {Tasks} from "/imports/model/tasks";
-import WorkersClient from "/server/zeebe_broker_connector";
+import WorkersClient from "/server/zeebe/connector";
 import {PublishMessageRequest} from "zeebe-node/dist/lib/interfaces-grpc-1.0";
 import {encrypt} from "/server/encryption";
 import {PublishMessageResponse} from "zeebe-node";

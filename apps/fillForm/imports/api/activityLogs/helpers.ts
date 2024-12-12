@@ -1,5 +1,5 @@
 import {ActivityLog, ActivityLogs} from "/imports/api/activityLogs/schema";
-import {PhDZeebeJob} from "/server/zeebe_broker_connector";
+import {PhDZeebeJob} from "/server/zeebe/in";
 import {Task} from "/imports/model/tasks";
 
 

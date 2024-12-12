@@ -5,7 +5,7 @@ import path from 'path'
 import _ from "lodash";
 import AbortController from "abort-controller";
 
-import {zBClient} from "/server/zeebe_broker_connector";
+import {zBClient} from "/server/zeebe/connector";
 import {auditLogConsoleOut} from "/imports/lib/logging";
 import {fetchTimeout} from "/imports/lib/fetchTimeout";
 import {encrypt} from "/server/encryption";
