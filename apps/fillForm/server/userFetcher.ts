@@ -184,14 +184,14 @@ export const getParticipantsToUpdateFromEnv = async () => {
 
   for (const participantName of Object.values(ParticipantRoles)) {
 
-    const firstName = process.env[`PARTICIPANT_${ participantName.toUpperCase() }_FIRSTNAME`] ?? ''
-    const lastName = process.env[`PARTICIPANT_${ participantName.toUpperCase() }_LASTNAME`] ?? ''
+    const firstNameUsage = process.env[`PARTICIPANT_${ participantName.toUpperCase() }_FIRSTNAME`] ?? ''
+    const lastNameUsage = process.env[`PARTICIPANT_${ participantName.toUpperCase() }_LASTNAME`] ?? ''
 
     updatedParticipants[`${ participantName }Sciper`] = process.env[`PARTICIPANT_${ participantName.toUpperCase() }_SCIPER`] ?? ''
-    updatedParticipants[`${ participantName }FirstName`] = firstName
-    updatedParticipants[`${ participantName }LastName`] = lastName
+    updatedParticipants[`${ participantName }FirstNameUsage`] = firstNameUsage
+    updatedParticipants[`${ participantName }LastNameUsage`] = lastNameUsage
     updatedParticipants[`${ participantName }Email`] = process.env[`PARTICIPANT_${ participantName.toUpperCase() }_EMAIL`] ?? ''
-    updatedParticipants[`${ participantName }Name`] = (firstName && lastName) ? `${firstName} ${lastName}` : ''
+    updatedParticipants[`${ participantName }Name`] = (firstNameUsage && lastNameUsage) ? `${firstNameUsage} ${firstNameUsage}` : ''
   }
 
   return updatedParticipants

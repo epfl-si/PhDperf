@@ -101,7 +101,7 @@ export const DashboardRow = ({ workflowInstanceTasks }: {
         <a
           href={ `https://people.epfl.ch/${ workflowInstanceTasks[0].variables.phdStudentSciper }` }
           target={ '_blank' }
-        >{ workflowInstanceTasks[0].variables.phdStudentFirstnameDashboard } { workflowInstanceTasks[0].variables.phdStudentLastnameDashboard }
+        >{ workflowInstanceTasks[0].variables.phdStudentLastNameUsage } { workflowInstanceTasks[0].variables.phdStudentFirstNameUsage }
         </a> ({ workflowInstanceTasks[0].variables.phdStudentSciper })
       </div>
       <div className="dashboard-doctoralProgramName col-1 text-black text-center"

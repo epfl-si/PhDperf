@@ -21,6 +21,7 @@ import {PhDCustomHeaderShape} from "phd-assess-meta/types/fillForm/headers";
 import {NotificationLog, NotificationStartMessage} from "phd-assess-meta/types/notification";
 import {PhDAssessCustomVariables} from "phd-assess-meta/types/variables";
 import {bumpActivityLogsOnTaskNewArrival} from "/imports/api/activityLogs/helpers";
+import {fixFirstLastName} from "/server/zeebe/fixer";
 
 const debug = debug_('phd-assess:zeebe-connector')
 const auditLog = auditLogConsoleOut.extend('server/zeebe_broker_connector')
@@ -46,15 +47,16 @@ const alreadyDecryptedVariables = [
 
 export let zBClient: ZeebeSpreadingClient | null = null
 
+export type decryptedVariablesRaw = {
+  [ key: string ]:
+    string |
+    null |
+    ( string | null )[]
+}
+
 function zeebeJobToTask(job: PhDZeebeJob): Task {
   // decrypt the variables before saving into memory
-  const decryptedVariables:
-  {
-    [ key: string ]:
-      string |
-      null |
-      ( string | null )[]
-  } = {}
+  let decryptedVariables: decryptedVariablesRaw = {}
 
   let undecryptableVariablesKey: string[] = []
 
@@ -92,6 +94,7 @@ function zeebeJobToTask(job: PhDZeebeJob): Task {
   // manage the special case of assignees scipers. They can come, historically, as a variable or as field designator
   // the field designator is the moderne way to get the flexibility to refresh a job when a participant has been changed
   if (job.customHeaders.assigneeSciperFieldName) {
+    //TODO: move this into ./zeebe/fixer.ts
     const fieldsName = []
     const scipers: string[] = []
 
@@ -111,6 +114,9 @@ function zeebeJobToTask(job: PhDZeebeJob): Task {
 
     decryptedVariables.assigneeSciper = scipers
   }
+
+  // Curate first and last name from "websrv" times
+  decryptedVariables = fixFirstLastName(decryptedVariables)
 
   // we are ok to make it to a task now
   const task = job as unknown as Task

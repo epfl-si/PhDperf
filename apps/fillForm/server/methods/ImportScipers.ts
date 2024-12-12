@@ -261,6 +261,8 @@ Meteor.methods({
       $set: {
         "doctorants.$[doctorantInfo].needCoDirectorData": false,
         "doctorants.$[doctorantInfo].thesis.coDirecteur.sciper": coDirectorSciper,
+        "doctorants.$[doctorantInfo].thesis.coDirecteur.firstName": `${newCoDirector.firstname}`,
+        "doctorants.$[doctorantInfo].thesis.coDirecteur.lastName": `${newCoDirector.lastname}`,
         "doctorants.$[doctorantInfo].thesis.coDirecteur.fullName": `${newCoDirector.firstname} ${newCoDirector.lastname}`,
         "doctorants.$[doctorantInfo].thesis.coDirecteur.email": newCoDirector.email,
       }
@@ -364,8 +366,11 @@ Meteor.methods({
         doctoralProgramEmail: encrypt(`${doctoralSchool.acronym}@epfl.ch`) ?? undefined,
         docLinkAnnualReport: encrypt(doctoralSchool.helpUrl) ?? undefined,
         creditsNeeded: encrypt(doctoralSchool.creditsNeeded.toString()) ?? undefined,
+
         programDirectorSciper: encrypt(doctoralSchool.programDirectorSciper) ?? undefined,
         programDirectorName: encrypt(programDirector.firstname + ' ' + programDirector.lastname) ?? undefined,
+        programDirectorFirstNameUsage: encrypt(programDirector.firstname) ?? undefined,
+        programDirectorLastNameUsage: encrypt(programDirector.lastname) ?? undefined,
         programDirectorEmail: encrypt(programDirector.email) ?? undefined,
 
         dateOfCandidacyExam: encrypt(doctorant.dateExamCandidature ?? '') ?? undefined,
@@ -376,22 +381,32 @@ Meteor.methods({
 
         phdStudentSciper: encrypt(doctorant.doctorant.sciper) ?? undefined,
         phdStudentName: encrypt(doctorant.doctorant.fullName) ?? undefined,
+        phdStudentFirstNameUsage: encrypt(doctorant.doctorant.firstName) ?? undefined,
+        phdStudentLastNameUsage: encrypt(doctorant.doctorant.lastName) ?? undefined,
         phdStudentEmail: encrypt(doctorant.doctorant.email) ?? undefined,
 
         mentorSciper: encrypt(doctorant.thesis.mentor.sciper) ?? undefined,
         mentorName: encrypt(doctorant.thesis.mentor.fullName) ?? undefined,
+        mentorFirstNameUsage: encrypt(doctorant.thesis.mentor.firstName) ?? undefined,
+        mentorLastNameUsage: encrypt(doctorant.thesis.mentor.lastName) ?? undefined,
         mentorEmail: encrypt(doctorant.thesis.mentor.email) ?? undefined,
 
         thesisDirectorSciper: encrypt(doctorant.thesis.directeur.sciper) ?? undefined,
         thesisDirectorName: encrypt(doctorant.thesis.directeur.fullName) ?? undefined,
+        thesisDirectorFirstNameUsage: encrypt(doctorant.thesis.directeur.firstName) ?? undefined,
+        thesisDirectorLastNameUsage: encrypt(doctorant.thesis.directeur.lastName) ?? undefined,
         thesisDirectorEmail: encrypt(doctorant.thesis.directeur.email) ?? undefined,
 
         thesisCoDirectorSciper: encrypt(doctorant.thesis.coDirecteur?.sciper ?? '') ?? undefined,
         thesisCoDirectorName: encrypt(doctorant.thesis.coDirecteur?.fullName ?? '') ?? undefined,
+        thesisCoDirectorFirstNameUsage: encrypt(doctorant.thesis.coDirecteur?.firstName ?? '') ?? undefined,
+        thesisCoDirectorLastNameUsage: encrypt(doctorant.thesis.coDirecteur?.lastName ?? '') ?? undefined,
         thesisCoDirectorEmail: encrypt(doctorant.thesis.coDirecteur?.email ?? '') ?? undefined,
 
         programAssistantSciper: encrypt(user!._id) ?? undefined,
         programAssistantName: encrypt(user?.tequila?.displayname ?? '') ?? undefined,
+        programAssistantFirstNameUsage: encrypt(user?.tequila?.firstname ?? '') ?? undefined,
+        programAssistantLastNameUsage: encrypt(user?.tequila?.name ?? '') ?? undefined,
         programAssistantEmail: encrypt(user?.tequila.email ?? '') ?? undefined,
       }
 

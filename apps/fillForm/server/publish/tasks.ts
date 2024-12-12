@@ -84,6 +84,8 @@ const hideMentor = (task: Partial<Task>) => {
   }
 
   if (task.variables.mentorName) task.variables.mentorName = undefined
+  if (task.variables.mentorFirstNameUsage) task.variables.mentorFirstNameUsage = undefined
+  if (task.variables.mentorLastNameUsage) task.variables.mentorLastNameUsage = undefined
 
   if (task.variables.mentorEmail) task.variables.mentorEmail = undefined
 
@@ -147,7 +149,7 @@ Meteor.publish('tasksDashboard', function () {
       const activityLogs = ActivityLogs.findOne({ _id: task.processInstanceKey }) ?? { logs: [] }
       Object.assign(task, { activityLogs: activityLogs.logs })
 
-      task.variables = setFirstNameLastNameForDashboard(task.variables)
+      //task.variables = setFirstNameLastNameForDashboard(task.variables)
       task.variables = transformDateStringToDateObject(task.variables)
 
       this.added('tasks', id, task);
@@ -161,7 +163,7 @@ Meteor.publish('tasksDashboard', function () {
       const activityLogs = ActivityLogs.findOne({ _id: task.processInstanceKey }) ?? { logs: [] }
       Object.assign(task, { activityLogs: activityLogs.logs })
 
-      task.variables = setFirstNameLastNameForDashboard(task.variables)
+      //task.variables = setFirstNameLastNameForDashboard(task.variables)
       task.variables = transformDateStringToDateObject(task.variables)
 
       this.changed('tasks', id, task);
@@ -177,57 +179,6 @@ Meteor.publish('tasksDashboard', function () {
 
   if (handle) this.onStop(() => handle.stop());
 })
-
-
-/**
- * curate PhD Firstname Lastname, as our source was not able to
- * give us a clear answer at a certain point
- */
-const setFirstNameLastNameForDashboard = (taskVariables: PhDInputVariables | undefined) => {
-  if (!taskVariables) return
-
-  const studentDashboardName = {
-    firstName:
-      taskVariables.phdStudentFirstName ??
-      taskVariables.phdStudentName?.split(' ').slice(  // for workflows not already gone through the new api
-        0, (
-          taskVariables.phdStudentName?.split(' ').length - 1 >= 1 ?
-            taskVariables.phdStudentName?.split(' ').length - 1 :
-            1
-        )
-      ),
-    lastName:
-      taskVariables.phdStudentLastName ??
-      // for workflows not already gone through the new api
-      taskVariables.phdStudentName?.split(' ')[taskVariables.phdStudentName?.split(' ').length - 1],
-  }
-
-  // check if last operation was successful, or try a different approach
-  if (
-    (
-      !studentDashboardName.firstName ||
-      !studentDashboardName.lastName
-    ) && taskVariables.phdStudentEmail
-  ) {
-    // can the email help us ?
-    const firstLast = getFirstLastFromEmail(taskVariables.phdStudentEmail)
-
-    studentDashboardName.firstName= firstLast[0] ?? undefined
-    studentDashboardName.lastName = firstLast[1] ?? undefined
-  }
-
-  taskVariables.phdStudentFirstnameDashboard = studentDashboardName.firstName
-  taskVariables.phdStudentLastnameDashboard = studentDashboardName.lastName
-
-  return taskVariables
-}
-
-const getFirstLastFromEmail = (email: string) => {
-  return email.split('@')[0].split('.').map(
-    // capitalize the first char
-    name => name.charAt(0).toUpperCase() + name.slice(1)
-  )
-}
 
 /**
  * We may have some dates in a string format.

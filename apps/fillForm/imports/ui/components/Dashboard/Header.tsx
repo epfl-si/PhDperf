@@ -48,8 +48,8 @@ export const DashboardHeader = (
               setSorting(
                 { sort: {
                   'variables.doctoralProgramName': 1,
-                  'variables.phdStudentLastnameDashboard': -1,
-                  'variables.phdStudentFirstnameDashboard': -1
+                  'variables.phdStudentLastNameUsage': -1,
+                  'variables.phdStudentFirstNameUsage': -1
                 }}
               );
               setSortedByOrder('desc')
@@ -57,8 +57,8 @@ export const DashboardHeader = (
               setSorting(
                 { sort: {
                   'variables.doctoralProgramName': 1,
-                  'variables.phdStudentLastnameDashboard': 1,
-                  'variables.phdStudentFirstnameDashboard': 1
+                  'variables.phdStudentLastNameUsage': 1,
+                  'variables.phdStudentFirstNameUsage': 1
                 }}
               );
               setSortedByOrder('asc')
@@ -67,8 +67,8 @@ export const DashboardHeader = (
             setSorting(
               { sort: {
                 'variables.doctoralProgramName': 1,
-                'variables.phdStudentLastnameDashboard': 1,
-                'variables.phdStudentFirstnameDashboard': 1
+                'variables.phdStudentLastNameUsage': 1,
+                'variables.phdStudentFirstNameUsage': 1
               }}
             );
             setSortedByOrder('asc')
@@ -96,8 +96,8 @@ export const DashboardHeader = (
               setSorting(
                 { sort: {
                   'variables.doctoralProgramName': -1,
-                  'variables.phdStudentLastnameDashboard': 1,
-                  'variables.phdStudentFirstnameDashboard': 1
+                  'variables.phdStudentLastNameUsage': 1,
+                  'variables.phdStudentFirstNameUsage': 1
                 }}
               );
               setSortedByOrder('desc')
@@ -105,8 +105,8 @@ export const DashboardHeader = (
               setSorting(
                 { sort: {
                   'variables.doctoralProgramName': 1,
-                  'variables.phdStudentLastnameDashboard': 1,
-                  'variables.phdStudentFirstnameDashboard': 1
+                  'variables.phdStudentLastNameUsage': 1,
+                  'variables.phdStudentFirstNameUsage': 1
                 }}
               );
               setSortedByOrder('asc')
@@ -115,8 +115,8 @@ export const DashboardHeader = (
             setSorting(
               { sort: {
                 'variables.doctoralProgramName': 1,
-                'variables.phdStudentLastnameDashboard': 1,
-                'variables.phdStudentFirstnameDashboard': 1
+                'variables.phdStudentLastNameUsage': 1,
+                'variables.phdStudentFirstNameUsage': 1
               }}
             );
             setSortedByOrder('asc')

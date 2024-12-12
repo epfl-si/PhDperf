@@ -38,7 +38,7 @@ export const Participant = React.memo(
       {info &&
         <div className={`participant border col m-1 p-2 ${ isAssignee ? awaitingBoxColor : allGoodBoxColor}` }>
           <div className={`small border-bottom border-white`}>{ camelCaseToLabelParticipant(role) }</div>
-          <div className={`small mt-1`}>{ info.name } ({ info.sciper })</div>
+          <div className={`small mt-1`}>{ info.lastNameUsage } { info.firstNameUsage } ({ info.sciper })</div>
           { showEmail &&
             <div className={`small`}>{ info.email }</div>
           }
@@ -65,7 +65,7 @@ export const ParticipantAsBodyTable = ({role, info, isAssignee, showEmail = fals
         }
       </td>
       <td>
-        { info.name }
+        { info.lastNameUsage } { info.firstNameUsage }
       </td>
       <td>
         { info.sciper }

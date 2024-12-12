@@ -50,6 +50,8 @@ export const getUserPermittedTaskDetailed = (user: Meteor.User | null, _id: stri
     // filter out mentor infos
     'variables.mentorSciper': 0,
     'variables.mentorName': 0,
+    'variables.mentorFirstNameUsage': 0,
+    'variables.mentorLastNameUsage': 0,
     'variables.mentorEmail': 0,
 
     // and not really needed stuffs for UI
@@ -60,6 +62,8 @@ export const getUserPermittedTaskDetailed = (user: Meteor.User | null, _id: stri
   if (user.isAdmin) {  // admin can see the exclusions, reactivate it
     delete fieldsView['variables.mentorSciper']
     delete fieldsView['variables.mentorName']
+    delete fieldsView['variables.mentorFirstNameUsage']
+    delete fieldsView['variables.mentorLastNameUsage']
     delete fieldsView['variables.mentorEmail']
     delete fieldsView['journal']
   }
