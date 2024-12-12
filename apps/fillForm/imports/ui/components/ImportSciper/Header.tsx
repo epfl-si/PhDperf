@@ -38,7 +38,7 @@ const sortByExamCandidature = (doctorantInfo: DoctorantInfo) =>
 
 const sortByThesisAdmDate = (doctorantInfo: DoctorantInfo) =>
   doctorantInfo?.thesis?.dateAdmThese?.split('.')[1] +
-  doctorantInfo?.thesis?.dateAdmThese?.split('.')[1]
+  doctorantInfo?.thesis?.dateAdmThese?.split('.')[0]
 
 export const HeaderRow = (
   {doctoralSchool, isAllSelected, disabled, setSorting} : {
