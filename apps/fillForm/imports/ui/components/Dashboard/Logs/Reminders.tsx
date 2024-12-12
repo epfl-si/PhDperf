@@ -1,5 +1,4 @@
 import React from "react";
-import {Link} from "react-router-dom";
 import {useTracker} from "meteor/react-meteor-data";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -53,9 +52,7 @@ export const RemindersCount = (
       <FontAwesomeIcon icon={ faEnvelope } />
     </span>
     { currentTask && canStartReminder &&
-      <Link to={ `/tasks/${ currentTask._id }/reminders/create` } className={ 'text-white' }>
-        <FontAwesomeIcon icon={ faPlus } border className={'notification-log-step-plus'}/>
-      </Link>
+      <FontAwesomeIcon icon={ faPlus } border className={'notification-log-step-plus'}/>
     }
   </div>
 }

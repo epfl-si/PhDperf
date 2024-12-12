@@ -1,6 +1,7 @@
 import React from "react";
 import _ from "lodash";
 import styled from "styled-components";
+import {Link} from "react-router-dom";
 
 import {ITaskDashboard} from "/imports/policy/dashboard/type";
 import {ParticipantDetail} from "/imports/model/participants";
@@ -9,7 +10,6 @@ import {stepsDefinitionDefault} from "/imports/ui/components/DashboardOld/Defaul
 import {Step} from "phd-assess-meta/types/dashboards";
 import {DashboardGraph as Graph, fixStepKnownAsTypo} from "/imports/ui/components/Dashboard/DefinitionGraphed";
 
-import {canSeeRemindersLogs} from "/imports/policy/reminders";
 import {useAccountContext} from "/imports/ui/contexts/Account";
 import {RemindersCount} from "/imports/ui/components/Dashboard/Logs/Reminders";
 
@@ -50,10 +50,6 @@ const DashboardStep = styled.div`
   min-height: 2.35rem;
 `;
 
-const BgAwaiting = styled(DashboardStep)`
-  background-color: #ff9933;
-`;
-
 const DashboardCustomContent = styled(DashboardStep)`
   background-color: #E6E6E6;
   padding-top: 0.65rem !important;
@@ -86,21 +82,65 @@ const StepPending = (
     day: 'numeric',
   }) }`
 
-  return <BgAwaiting
-    className='dashboard-step border col text-white text-center'
-    data-step={ step.id }
-    data-step-status={ 'awaiting' }
-    data-toggle='tooltip'
-    title={ onHoverInfo }
-  >
-    { account?.user && canSeeRemindersLogs(account.user) &&
-      <RemindersCount
-        step={ step }
-        workflowInstanceTasks={ workflowInstanceTasks }
-        canStartReminder={ canSendReminders }
-      />
-    }
-  </BgAwaiting>
+  const allCurrentStepIds = [
+    step.id,
+    ...( step.knownAs ?? [] )
+  ]
+
+  const currentTask = workflowInstanceTasks.findLast(
+    task => allCurrentStepIds.includes(task.elementId)
+  )
+
+  const style = { 'backgroundColor': '#ff9933' };
+  const className = 'dashboard-step border col text-white text-center'
+
+  const linkToReminderCreate = ( account?.user &&
+    canSendReminders &&
+    currentTask ) ?
+      `/tasks/${ currentTask._id }/reminders/create` :
+      undefined
+
+  if (linkToReminderCreate) {
+    return <Link
+      to={ linkToReminderCreate }
+      className={ className }
+      data-step={ step.id }
+      data-step-status={ 'awaiting' }
+      data-toggle='tooltip'
+      title={ onHoverInfo }
+      style={
+        {
+          ...style,
+          'textDecoration': 'none'
+        }
+      }
+    >
+      { account?.user &&
+        <RemindersCount
+          step={ step }
+          workflowInstanceTasks={ workflowInstanceTasks }
+          canStartReminder={ canSendReminders }
+        />
+      }
+    </Link>
+  } else {
+    return <div
+      className={ className }
+      data-step={ step.id }
+      data-step-status={ 'awaiting' }
+      data-toggle='tooltip'
+      title={ onHoverInfo }
+      style={ style }
+    >
+      { account?.user &&
+        <RemindersCount
+          step={ step }
+          workflowInstanceTasks={ workflowInstanceTasks }
+          canStartReminder={ canSendReminders }
+        />
+      }
+    </div>
+  }
 }
 
 /**

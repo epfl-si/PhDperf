@@ -63,11 +63,6 @@ export const getUserPermittedTaskReminder = (
 }
 
 /**
- * Who can see the reminders ? Everyone connected !
- */
-export const canSeeRemindersLogs = (user: Meteor.User) : boolean => !!user
-
-/**
  * Provide all the reminders for tasks that the user can see in the dashboard
  */
 export const getRemindersForDashboardTasks = (user?: Meteor.User | null) => {
