@@ -287,40 +287,26 @@ const sortByActivityLogsStartedEvent = (
   step: Step,
   order: sortedByOrderPossibilities
 ) => {
-  const allStepIds = [step.id, ...step.knownAs ?? []]
-
-  const task1StartedEvent = task1.activityLogs.find(
-    log => log.datetime &&
-      allStepIds.includes(log.elementId) &&
-      log.event === 'started'
-  )
-
-  const task2StartedEvent = task2.activityLogs.find(
-    log => log.datetime &&
-      allStepIds.includes(log.elementId) &&
-      log.event === 'started'
-  )
 
   const task1Bigger = order === 'asc' ? 1 : -1
   const task2Bigger = order === 'asc' ? -1 : 1
 
-  // First, "the started events" cases
-  if (task1StartedEvent?.datetime && task2StartedEvent?.datetime) {
-    if (task1StartedEvent?.datetime && task2StartedEvent?.datetime) {
-      if (dayjs(task1StartedEvent.datetime) >
-        dayjs(task2StartedEvent.datetime)) return task1Bigger
-      if (dayjs(task1StartedEvent.datetime) <
-        dayjs(task2StartedEvent.datetime)) return task2Bigger
-      if (dayjs(task1StartedEvent.datetime) ==
-        dayjs(task2StartedEvent.datetime)) return 0
-    }
-  }
+  const allStepIds = [step.id, ...step.knownAs ?? []]
 
-  // then the started for one, none for the other
-  if (task1StartedEvent?.datetime && !task2StartedEvent?.datetime) return task1Bigger
-  if (!task1StartedEvent?.datetime && task2StartedEvent?.datetime) return task2Bigger
+  let task1StartedEvent = task1.activityLogs.find(
+    log => log.datetime &&
+      allStepIds.includes(log.elementId) &&
+      log.event === 'started'
+  )
 
-  // Secondly, if the started failed, "the completed events" cases
+  let task2StartedEvent = task2.activityLogs.find(
+    log => (
+      log.datetime &&
+      allStepIds.includes(log.elementId) &&
+      log.event === 'started'
+    )
+  )
+
   const task1CompletedEvent = task1.activityLogs.find(
     log => log.datetime &&
       allStepIds.includes(log.elementId) &&
@@ -333,10 +319,25 @@ const sortByActivityLogsStartedEvent = (
       log.event === 'completed'
   )
 
-  if (!task1CompletedEvent?.datetime && !task2CompletedEvent?.datetime) {
-    // at this point, they can be considerate as even
-    return 0
+  // cancel from the sorting process the started ones that are actually completed
+  if (task1StartedEvent && task1CompletedEvent) task1StartedEvent = undefined
+  if (task2StartedEvent && task2CompletedEvent) task2StartedEvent = undefined
+
+  // First, "the started events" cases
+  if (task1StartedEvent?.datetime && task2StartedEvent?.datetime) {
+    if (dayjs(task1StartedEvent!.datetime) >
+      dayjs(task2StartedEvent!.datetime)) return task1Bigger
+
+    if (dayjs(task1StartedEvent!.datetime) <
+      dayjs(task2StartedEvent!.datetime)) return task2Bigger
+
+    if (dayjs(task1StartedEvent!.datetime) ==
+      dayjs(task2StartedEvent!.datetime)) return 0
   }
+
+  // then the started for one, none for the other
+  if (task1StartedEvent?.datetime && !task2StartedEvent?.datetime) return task1Bigger
+  if (!task1StartedEvent?.datetime && task2StartedEvent?.datetime) return task2Bigger
 
   if (task1CompletedEvent?.datetime && task2CompletedEvent?.datetime) {
     if (dayjs(task1CompletedEvent.datetime) >
@@ -355,5 +356,12 @@ const sortByActivityLogsStartedEvent = (
     return task2Bigger
   }
 
+  // After that, if the started check failed, test for "the completed events" cases
+  if (!task1CompletedEvent?.datetime && !task2CompletedEvent?.datetime) {
+    // at this point, without any more information, they can be considerate as even
+    return 0
+  }
+
+  // for all the other forgotten cases
   return 0
 }
