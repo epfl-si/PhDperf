@@ -295,16 +295,36 @@ const sortByActivityLogsStartedEvent = (
       log.event === 'started'
   )
 
-  const task1CompletedEvent = task1.activityLogs.find(
-    log => log.datetime &&
-      allStepIds.includes(log.elementId) &&
-      log.event === 'completed'
-  )
-
   const task2StartedEvent = task2.activityLogs.find(
     log => log.datetime &&
       allStepIds.includes(log.elementId) &&
       log.event === 'started'
+  )
+
+  const task1Bigger = order === 'asc' ? 1 : -1
+  const task2Bigger = order === 'asc' ? -1 : 1
+
+  // First, "the started events" cases
+  if (task1StartedEvent?.datetime && task2StartedEvent?.datetime) {
+    if (task1StartedEvent?.datetime && task2StartedEvent?.datetime) {
+      if (dayjs(task1StartedEvent.datetime) >
+        dayjs(task2StartedEvent.datetime)) return task1Bigger
+      if (dayjs(task1StartedEvent.datetime) <
+        dayjs(task2StartedEvent.datetime)) return task2Bigger
+      if (dayjs(task1StartedEvent.datetime) ==
+        dayjs(task2StartedEvent.datetime)) return 0
+    }
+  }
+
+  // then the started for one, none for the other
+  if (task1StartedEvent?.datetime && !task2StartedEvent?.datetime) return task1Bigger
+  if (!task1StartedEvent?.datetime && task2StartedEvent?.datetime) return task2Bigger
+
+  // Secondly, if the started failed, "the completed events" cases
+  const task1CompletedEvent = task1.activityLogs.find(
+    log => log.datetime &&
+      allStepIds.includes(log.elementId) &&
+      log.event === 'completed'
   )
 
   const task2CompletedEvent = task2.activityLogs.find(
@@ -313,46 +333,26 @@ const sortByActivityLogsStartedEvent = (
       log.event === 'completed'
   )
 
-  const task1Bigger = order === 'asc' ? 1 : -1
-  const task2Bigger = order === 'asc' ? -1 : 1
-
-  if (!task1StartedEvent?.datetime && !task2StartedEvent?.datetime) {
-    // no started event ? check for completed then
-
-    if (!task1CompletedEvent?.datetime && !task2CompletedEvent?.datetime) {
-      // at this point, they can be considerate as even
-      return 0
-    }
-
-    if (task1CompletedEvent?.datetime && task2CompletedEvent?.datetime) {
-      if (dayjs(task1CompletedEvent.datetime) >
-        dayjs(task2CompletedEvent.datetime)) return task1Bigger
-      if (dayjs(task1CompletedEvent.datetime) <
-        dayjs(task2CompletedEvent.datetime)) return task2Bigger
-      if (dayjs(task1CompletedEvent.datetime) ==
-        dayjs(task2CompletedEvent.datetime)) return 0
-    }
-
-    if (task1CompletedEvent?.datetime && !task2CompletedEvent?.datetime) {
-      return task1Bigger
-    }
-
-    if (!task1CompletedEvent?.datetime && task2CompletedEvent?.datetime) {
-      return task2Bigger
-    }
+  if (!task1CompletedEvent?.datetime && !task2CompletedEvent?.datetime) {
+    // at this point, they can be considerate as even
+    return 0
   }
 
-  if (task1StartedEvent?.datetime && !task2StartedEvent?.datetime) return task1Bigger
+  if (task1CompletedEvent?.datetime && task2CompletedEvent?.datetime) {
+    if (dayjs(task1CompletedEvent.datetime) >
+      dayjs(task2CompletedEvent.datetime)) return task1Bigger
+    if (dayjs(task1CompletedEvent.datetime) <
+      dayjs(task2CompletedEvent.datetime)) return task2Bigger
+    if (dayjs(task1CompletedEvent.datetime) ==
+      dayjs(task2CompletedEvent.datetime)) return 0
+  }
 
-  if (!task1StartedEvent?.datetime && task2StartedEvent?.datetime) return task2Bigger
+  if (task1CompletedEvent?.datetime && !task2CompletedEvent?.datetime) {
+    return task1Bigger
+  }
 
-  if (task1StartedEvent?.datetime && task2StartedEvent?.datetime) {
-    if (dayjs(task1StartedEvent.datetime) >
-      dayjs(task2StartedEvent.datetime)) return task1Bigger
-    if (dayjs(task1StartedEvent.datetime) <
-      dayjs(task2StartedEvent.datetime)) return task2Bigger
-    if (dayjs(task1StartedEvent.datetime) ==
-      dayjs(task2StartedEvent.datetime)) return 0
+  if (!task1CompletedEvent?.datetime && task2CompletedEvent?.datetime) {
+    return task2Bigger
   }
 
   return 0
