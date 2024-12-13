@@ -56,7 +56,7 @@ export const AsideMenu = () => {
               <Link to={ `/dashboard` }>Dashboard</Link>
               <ul>
                 <li className={ matchPath("/dashboard/old", pathname) ? 'active' : undefined }>
-                  <Link to={ `/dashboard/old` }><small>Dashboard old workflows (before december 2023)</small></Link>
+                  <Link to={ `/dashboard/old` }><small>Dashboard old workflows (before December 2023)</small></Link>
                 </li>
               </ul>
             </li>
