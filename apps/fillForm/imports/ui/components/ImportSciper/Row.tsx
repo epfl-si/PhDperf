@@ -9,7 +9,7 @@ import {DoctorantInfoSelectable} from "/imports/api/importScipers/schema";
 const PersonDisplay = ({ person, boldName = false, showSciper = true }: { person?: Person, boldName?: boolean, showSciper?: boolean }) => {
   if (person) {
     return <div>
-      <div className={ boldName ? 'font-weight-bold' : '' }>{ person.fullName }</div>
+      <div className={ boldName ? 'font-weight-bold' : '' }>{ person.lastName } { person.firstName }</div>
       { showSciper &&
         <div>{ person.sciper }</div>
       }
