@@ -12,7 +12,7 @@ import {
   setPHDFillsAttributes as setPHDFillsAttributesV1, setPHDSignsAttributes
 } from "/tests/factories/dashboard/tasksFactoryV1";
 
-import {stepsDefinitionDefault} from "/imports/ui/components/Dashboard/DefaultDefinition";
+import {stepsDefinitionDefault} from "/imports/ui/components/DashboardOld/DefaultDefinition";
 import {getContainerV1} from "/tests/client/dashboard/utils";
 
 
@@ -106,8 +106,11 @@ describe('Dashboard Steps render V1 steps', function (){
     );
 
     const allProcessInstanceTasks = _.uniqBy(
-      await Tasks.find({'variables.dashboardDefinition': { $exists:false }}).fetchAsync(),
-      'processInstanceKey') as ITaskDashboard[]
+      await Tasks.find(
+        {'variables.dashboardDefinition': { $exists:false }}).fetchAsync(),
+        'processInstanceKey'
+    ) as unknown as ITaskDashboard[]
+
     assert.isAbove(
       allProcessInstanceTasks.length,
       0,

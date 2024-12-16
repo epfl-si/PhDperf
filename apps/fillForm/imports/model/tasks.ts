@@ -32,7 +32,6 @@ export class Task implements TaskInterface {
   declare variables: PhDInputVariables
   declare processInstanceKey: string
   declare processDefinitionVersion: number
-  declare activityLogs?: string
   declare key: string;
   declare type: string;
   declare bpmnProcessId: string;
@@ -74,12 +73,19 @@ export class Task implements TaskInterface {
   }
 
   get monitorUri(): string | undefined {
+    // noinspection HttpUrlsUsage
     return Meteor.settings.public.monitor_address && Meteor.user()?.isAdmin ?
       `http://${Meteor.settings.public.monitor_address}/views/instances/${this.processInstanceKey}` :
       undefined
   }
-}
 
+  get siblings(): Mongo.Cursor<Task, Task> {
+    return Tasks.find({
+      'processInstanceKey': this.processInstanceKey,
+      '_id': { $ne: this.key }
+    })
+  }
+}
 
 /**
  * Check a date to see if this is, in our opinion, an obsolete one
@@ -131,6 +137,10 @@ export interface UnfinishedTask {
   taskId: string,
   updatedAt: Date,
   inputJSON: string,
+  // The taskId can change on refresh. This two values help to
+  // recover this cases
+  processInstanceKey?: string,
+  stepId?: string,
 }
 
 class UnfinishedTasksCollection extends Mongo.Collection<UnfinishedTask> {

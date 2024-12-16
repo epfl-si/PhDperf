@@ -126,10 +126,100 @@ div[id^=error-list].alert-success {
   background-color: #ff9933;
 }
 
+.dashboard .dashboard-header {
+    font-size: .68rem;
+    margin-bottom: 0;
+    margin-right: 0;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    cursor: pointer;
+}
+
+.dashboard .dashboard-header-step {
+    margin-left: .1rem;
+    margin-right: .1rem;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.dashboard-header .header-sortable-icon-neutral {
+    font-size: .55rem;
+}
+
+.dashboard-header .header-sortable-icon-arrow {
+    font-size: 0.68rem;
+}
+
+.dashboard .dashboard-row-workflow-instance {
+    margin-top: .4rem !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.dashboard .dashboard-row-notification-logs {
+    margin-top: 0 !important;
+}
+
 .dashboard .dashboard-step {
-  height: 3em;
-  max-height: 3em;
-  min-height: 3em;
+    margin-left: .25rem !important;
+    margin-right: .25rem !important;
+}
+
+.dashboard .dashboard-phdStudentName,
+.dashboard .dashboard-doctoralProgramName,
+.dashboard .dashboard-launched,
+.dashboard .dashboard-dueDate,
+.dashboard .dashboard-action-edit
+{
+    margin-top: 0.7rem;
+}
+
+.dashboard .notification-log-step-count {
+    margin-top: .55rem;
+    font-size: .8rem;
+    white-space: nowrap;
+}
+
+.dashboard .notification-log-step-count:not(.notification-log-step-count-with-plus-button) {
+    margin-right: 0.2rem;
+}
+
+.dashboard .notification-log-step-count-number {
+    margin-right: .2rem;
+}
+
+.dashboard .notification-log-step-count-envelope {
+    font-size: 0.7rem;
+}
+
+.dashboard .notification-log-step-plus {
+    margin-left: .2rem;
+    font-size: .4rem;
+}
+
+.dashboard .dashboard-activity-log,
+.dashboard .dashboard-notification-log {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.dashboard .dashboard-activity-log {
+    margin-top: .2rem;
+}
+
+.dashboard .notification-log-entry,
+.dashboard .activity-log-entry {
+    font-size: .65rem;
+}
+
+.dashboard .activity-log-icon {
+    font-size: .65rem;
+}
+
+.old-dashboard .old-dashboard-step {
+    height: 3em;
+    max-height: 3em;
+    min-height: 3em;
 }
 
 /** THE ARROW CASE
@@ -174,7 +264,27 @@ details[open] > summary::before {
     END OF THE ARROW CASE
  */
 
-/* fix the formio input checkbox being invisible because of some strange filter on safari */
+.import-scipers-header {
+    font-weight: bold;
+}
+
+.import-scipers-header .import-scipers-header-label {
+    cursor: pointer;
+    color: inherit;
+    text-decoration: none;
+}
+
+.import-scipers-header .header-sortable-icon-arrow {
+    font-weight: normal;
+    font-size: 0.68rem;
+}
+.import-scipers-header .header-sortable-icon-neutral {
+    font-weight: normal;
+    font-size: 0.55rem;
+}
+
+
+    /* fix the formio input checkbox being invisible because of some strange filter on safari */
 .form-check input[type='checkbox'] {
   filter: none;
 }
@@ -200,4 +310,12 @@ details[open] > summary::before {
   -webkit-transition: background .25s;
   transition: background .25s;
   width: calc(100% - 6rem);
+}
+
+.tox-tinymce {
+  border-radius: 0px !important;
+}
+
+.mce-content-readonly {
+  background-color: #e6e6e6;
 }

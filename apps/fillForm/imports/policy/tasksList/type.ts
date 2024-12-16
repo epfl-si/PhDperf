@@ -16,25 +16,37 @@ export const taskFieldsNeededForList = {
   'variables.phdStudentSciper': 1,
   'variables.phdStudentEmail': 1,
   'variables.phdStudentName': 1,
+  'variables.phdStudentFirstNameUsage': 1,
+  'variables.phdStudentLastNameUsage': 1,
   'variables.thesisDirectorSciper': 1,
   'variables.thesisDirectorEmail': 1,
   'variables.thesisDirectorName': 1,
+  'variables.thesisDirectorFirstNameUsage': 1,
+  'variables.thesisDirectorLastNameUsage': 1,
   'variables.thesisCoDirectorSciper': 1,
   'variables.thesisCoDirectorEmail': 1,
   'variables.thesisCoDirectorName': 1,
+  'variables.thesisCoDirectorFirstNameUsage': 1,
+  'variables.thesisCoDirectorLastNameUsage': 1,
   'variables.programDirectorSciper': 1,
   'variables.programDirectorEmail': 1,
   'variables.programDirectorName': 1,
+  'variables.programDirectorFirstNameUsage': 1,
+  'variables.programDirectorLastNameUsage': 1,
   'variables.programAssistantSciper': 1,
   'variables.programAssistantEmail': 1,
   'variables.programAssistantName': 1,
+  'variables.programAssistantFirstNameUsage': 1,
+  'variables.programAssistantLastNameUsage': 1,
 }
 
 export const taskFieldsNeededForListAdmin = {
   'variables.mentorSciper': 1,
   'variables.mentorName': 1,
+  'variables.mentorFirstNameUsage': 1,
+  'variables.mentorLastNameUsage': 1,
   'variables.mentorEmail': 1,
-  'journal.lastSeen': 1,  // to mark it on the list as obosolete
+  'journal.lastSeen': 1,  // to mark it on the list as obsolete
   ...taskFieldsNeededForList
 }
 

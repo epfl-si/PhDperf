@@ -2,7 +2,7 @@ import { Headers } from 'meteor/fetch'
 import AbortController from 'abort-controller'
 import memoize from 'timed-memoize'
 import {PhDInputVariables} from "/imports/model/tasksTypes";
-import {ParticipantIDs} from "/imports/model/participants";
+import {ParticipantRoles} from "/imports/model/participants";
 import {fetchTimeout} from "/imports/lib/fetchTimeout";
 
 const debug = require('debug')('server/userFetcher')
@@ -53,7 +53,7 @@ export async function getUserInfo (sciper: string | number): Promise<APIPersonIn
 
     try {
       jsonResponse = await response.json()
-    } catch (e: any) {  // can't json decode the result ? hhmmmm not good
+    } catch (e: any) {  // can't json decode the result ? not good
       console.warn(
         `${ server } has returned a bad result for ${ sciper }.`,
         `Nothing is returned/cached as a result.`,
@@ -69,20 +69,27 @@ export async function getUserInfo (sciper: string | number): Promise<APIPersonIn
 
   } catch (e: unknown) {
     let errorMessage;
+    let errorName;
 
     if (typeof e === "string") {
       errorMessage = e // works, `e` narrowed to string
+      errorName = ''
     } else if (e instanceof Error) {
       errorMessage = e.message // works, `e` narrowed to Error
+
+      if (e.name === 'AbortError') {
+        // error message on abort because timeout is really confusing
+        errorMessage = 'Timeout'
+      }
     }
 
     // any error (404, 500, ...) is returned as undefined, so we can invalidate caches
     console.warn(
       `${ server } is not responding correctly for ${ sciper }.`,
       `Nothing is returned/cached as a result.`,
-      `Error was: ${errorMessage}.`)
+      `Error was: ${errorName}, ${errorMessage}.`)
 
-    return
+    throw e
   }
 }
 
@@ -105,7 +112,7 @@ export const getParticipantsToUpdateFromSciper = async (variables: PhDInputVaria
 
   let updatedParticipants: any = {}
 
-  for (const participantName of ParticipantIDs) {
+  for (const participantName of Object.values(ParticipantRoles)) {
 
     const vSciper = variables[`${participantName}Sciper`]
     const vEmail = variables[`${participantName}Email`]
@@ -159,6 +166,32 @@ export const getParticipantsToUpdateFromSciper = async (variables: PhDInputVaria
         }
       }
     }
+  }
+
+  return updatedParticipants
+}
+
+/**
+ * Provide user info from an env file. It used for development envs that
+ * do not have access to the api.
+ * Env. data exemple:
+ *   PARTICIPANT_PHDSTUDENT_SCIPER="1111111"
+ *   PARTICIPANT_PHDSTUDENT_NAME="Joe Bar"
+ *   PARTICIPANT_PHDSTUDENT_EMAIL="joe.bar@somewhere.com"
+ */
+export const getParticipantsToUpdateFromEnv = async () => {
+  let updatedParticipants: any = {}
+
+  for (const participantName of Object.values(ParticipantRoles)) {
+
+    const firstNameUsage = process.env[`PARTICIPANT_${ participantName.toUpperCase() }_FIRSTNAME`] ?? ''
+    const lastNameUsage = process.env[`PARTICIPANT_${ participantName.toUpperCase() }_LASTNAME`] ?? ''
+
+    updatedParticipants[`${ participantName }Sciper`] = process.env[`PARTICIPANT_${ participantName.toUpperCase() }_SCIPER`] ?? ''
+    updatedParticipants[`${ participantName }FirstNameUsage`] = firstNameUsage
+    updatedParticipants[`${ participantName }LastNameUsage`] = lastNameUsage
+    updatedParticipants[`${ participantName }Email`] = process.env[`PARTICIPANT_${ participantName.toUpperCase() }_EMAIL`] ?? ''
+    updatedParticipants[`${ participantName }Name`] = (firstNameUsage && lastNameUsage) ? `${firstNameUsage} ${firstNameUsage}` : ''
   }
 
   return updatedParticipants

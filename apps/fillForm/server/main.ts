@@ -1,15 +1,16 @@
 import {Meteor} from 'meteor/meteor'
-import './fixtures/doctoralSchools'
-import './methods/DoctoralSchools'
-import './methods/ImportScipers'
-import './methods/TaskForm'
-import './methods/ZeebeProcessInstance'
-import './publish'
-import WorkersClient from './zeebe_broker_connector'
-import { PrometheusSource } from '/server/prometheus'
-import Tequila from 'meteor/epfl:accounts-tequila'
 import {findUpSync} from 'find-up'
+import { PrometheusSource } from '/server/prometheus'
+
+import Tequila from 'meteor/epfl:accounts-tequila'
+
+import './zeebe'
+import './fixtures/doctoralSchools'
+import './methods'
+import './publish'
 import '/imports/policy'
+
+import ZeebeClient from './zeebe/connector'
 
 require("dotenv").config({path: findUpSync(".env")})
 
@@ -21,7 +22,8 @@ Meteor.startup(() => {
     import('./methods/Fixtures');
   }
 
-  WorkersClient.start()
+  ZeebeClient.start()
+
   Tequila.start({
     getUserId: (tequila: any) => {
       return tequila.uniqueid;
@@ -32,5 +34,7 @@ Meteor.startup(() => {
     fakeLocalServer: Meteor.settings.fake_tequila,
     bypass: Tequila.defaultOptions.bypass.concat("/metrics")
   })
+
   PrometheusSource.start()
+
 })

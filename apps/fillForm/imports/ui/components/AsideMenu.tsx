@@ -1,5 +1,5 @@
 import {Link, matchPath, useLocation} from "react-router-dom";
-import React from "react";
+import React, {useEffect, useState} from "react";
 
 import {Loader} from "@epfl/epfl-sti-react-library";
 
@@ -12,8 +12,17 @@ export const AsideMenu = () => {
   const account = useAccountContext()
   const { pathname } = useLocation()
 
-  const hasDoctoralSchoolEditLink = (account && account.user && canEditAtLeastOneDoctoralSchool(account.user)) ?? false
-  const hasImportSciperLink = (account && account.user && canImportScipersFromISA(account.user)) ?? false
+  const [hasDoctoralSchoolEditLink, setHasDoctoralSchoolEditLink] = useState(false)
+  const [hasImportSciperLink, setHasImportSciperLink] = useState(false)
+
+  useEffect(() => {
+    setHasDoctoralSchoolEditLink(
+      ( account && account.user && canEditAtLeastOneDoctoralSchool(account.user) ) ?? false
+    )
+    setHasImportSciperLink(
+      ( account && account.user && canImportScipersFromISA(account.user) ) ?? false
+    )
+  }, [account])
 
   return (
     <aside className="nav-aside-wrapper">
@@ -43,8 +52,13 @@ export const AsideMenu = () => {
             <li className={matchPath("/", pathname) ? 'active' : undefined}>
               <Link to={`/`}>Tasks to do</Link>
             </li>
-            <li className={matchPath("/dashboard", pathname) ? 'active' : undefined}>
-              <Link to={`/dashboard`}>Dashboard</Link>
+            <li className={ matchPath("/dashboard", pathname) ? 'active' : undefined }>
+              <Link to={ `/dashboard` }>Dashboard</Link>
+              <ul>
+                <li className={ matchPath("/dashboard/old", pathname) ? 'active' : undefined }>
+                  <Link to={ `/dashboard/old` }><small>Dashboard old workflows (before December 2023)</small></Link>
+                </li>
+              </ul>
             </li>
             <li>
               <a href={ 'https://www.epfl.ch/education/phd/annual_report' } target="_blank">

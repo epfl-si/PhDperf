@@ -6,7 +6,7 @@ import {Tasks} from "/imports/model/tasks";
 import {ITaskDashboard} from "/imports/policy/dashboard/type";
 import {StepsDefinition} from "phd-assess-meta/types/dashboards";
 
-import {stepsDefinitionDefault} from "/imports/ui/components/Dashboard/DefaultDefinition";
+import {stepsDefinitionDefault} from "/imports/ui/components/DashboardOld/DefaultDefinition";
 import {convertDefinitionToGraph} from "/imports/ui/components/Dashboard/DefinitionGraphed";
 import {DashboardContent} from "/imports/ui/components/Dashboard/Dashboard";
 
@@ -17,12 +17,15 @@ import {DashboardContent} from "/imports/ui/components/Dashboard/Dashboard";
 export const getAndCheckDashboardContainer = (tasks: ITaskDashboard[], dashboardDefinition: StepsDefinition) => {
   const definitionGraph = convertDefinitionToGraph(dashboardDefinition)
 
+  assert.exists(definitionGraph)
+
   const { container } = render(
     <DashboardContent
       key={ Object.keys({stepsDefinitionDefault: stepsDefinitionDefault})[0] }
       headerKey={ Object.keys({stepsDefinitionDefault: stepsDefinitionDefault})[0] }
-      definitionForHeader={ definitionGraph }
+      definitionForHeader={ definitionGraph! }
       tasks={ tasks }
+      setSorting={ () => {}  }
     />
   );
 
@@ -43,7 +46,9 @@ export const getAndCheckDashboardContainer = (tasks: ITaskDashboard[], dashboard
  */
 export const getContainerV1 = async () => {
   const allProcessInstanceTasks =
-    await Tasks.find({'variables.dashboardDefinition': { $exists:false }}).fetchAsync() as ITaskDashboard[]
+    await Tasks.find(
+      {'variables.dashboardDefinition': { $exists:false }}
+    ).fetchAsync() as unknown as ITaskDashboard[]
 
   assert.isNotEmpty(allProcessInstanceTasks, `${JSON.stringify(allProcessInstanceTasks)}`)
 
@@ -55,7 +60,9 @@ export const getContainerV1 = async () => {
  */
 export const getContainerV2 = async () => {
   const allProcessInstanceTasks =
-    await Tasks.find({'variables.dashboardDefinition': { $exists:true }}).fetchAsync() as ITaskDashboard[]
+    await Tasks.find(
+      {'variables.dashboardDefinition': { $exists:true }}
+    ).fetchAsync() as unknown as ITaskDashboard[]
 
   assert.isNotEmpty(
     allProcessInstanceTasks, `There is no task with a dashboardDefinition (aka V2)`

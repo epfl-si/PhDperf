@@ -6,15 +6,10 @@ import {Tasks, UnfinishedTasks} from "/imports/model/tasks";
 import {
   canDeleteProcessInstance,
   canStartProcessInstance, canRefreshProcessInstance,
-} from "/imports/policy/tasks";
-import {zBClient} from "/server/zeebe_broker_connector";
-import WorkersClient from '../zeebe_broker_connector';
+} from "/imports/policy/processInstance";
+import {zBClient} from "/server/zeebe/connector";
+import WorkersClient from '/server/zeebe/connector';
 import {auditLogConsoleOut} from "/imports/lib/logging";
-
-// load methods from shared js
-import '/imports/api/doctoralSchools/methods'
-import '/server/methods/ImportScipers'
-import '/server/methods/DoctoralSchools'
 import {DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 
 const auditLog = auditLogConsoleOut.extend('server/methods')
@@ -43,9 +38,9 @@ Meteor.methods({
 
     try {
       const createProcessInstanceResponse = await Promise.resolve(zBClient.createProcessInstance(diagramProcessId, {
-        created_at: encrypt(new Date().toJSON()),
-        created_by: encrypt(user._id),
-        updated_at: encrypt(new Date().toJSON()),
+        created_at: encrypt(new Date().toJSON())!,
+        created_by: encrypt(user._id)!,
+        updated_at: encrypt(new Date().toJSON())!,
         uuid: crypto.randomUUID(),
       }))
       auditLog(`created new instance ${diagramProcessId}, response: ${JSON.stringify(createProcessInstanceResponse)}`)
@@ -86,7 +81,7 @@ Meteor.methods({
         await UnfinishedTasks.removeAsync({ taskId: task._id!})
       }
 
-      auditLog(`Sucessfully deleted a process instance ${processInstanceKey}`)
+      auditLog(`Successfully deleted a process instance ${processInstanceKey}`)
     } catch (error) {
       auditLog(`Error: Unable to cancel the process instance ${processInstanceKey}. ${error}`)
       Tasks.remove({processInstanceKey: processInstanceKey})

@@ -1,20 +1,36 @@
 import {Meteor} from 'meteor/meteor'
 const CryptoJS = require("crypto-js");
 
-export function encrypt(message: string | [], passphrase: string | undefined = process.env.PHDASSESS_ENCRYPTION_KEY): string {
+export function encrypt(
+  message: string | null | undefined,
+  passphrase: string | undefined = process.env.PHDASSESS_ENCRYPTION_KEY
+): string | null | undefined {
+  if (
+    process.env.PHDASSESS_SKIP_ENCRYPTION &&
+    process.env.PHDASSESS_SKIP_ENCRYPTION === 'true'
+  ) return message
+
   if (passphrase === undefined) {
     throw new Meteor.Error('encryption error', 'Trying to encrypt a value without a passphrase set');
   }
 
-  if (message === "") {
+  if (
+    message === "" ||
+    message === null ||
+    message === undefined
+  ) {
     return message;
   } else {
     return CryptoJS.AES.encrypt(JSON.stringify(message), passphrase).toString();
   }
-
 }
 
 export function decrypt(cryptedMessage: string | null, passphrase: string | undefined = process.env.PHDASSESS_ENCRYPTION_KEY): string | null {
+  if (
+    process.env.PHDASSESS_SKIP_ENCRYPTION &&
+    process.env.PHDASSESS_SKIP_ENCRYPTION === 'true'
+  ) return cryptedMessage
+
   if (passphrase === undefined) {
     throw new Meteor.Error('encryption error', 'Trying to encrypt a value without a passphrase set');
   }

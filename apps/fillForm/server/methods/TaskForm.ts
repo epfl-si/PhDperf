@@ -1,26 +1,22 @@
 import {Meteor} from "meteor/meteor";
 import dayjs from "dayjs";
+import _ from "lodash";
 
 import {encrypt} from "/server/encryption";
 import {Tasks, UnfinishedTasks} from "/imports/model/tasks";
 import {FormioActivityLog} from "/imports/model/tasksTypes";
-import {
-  filterUnsubmittableVars, canSubmit,
-  getUserPermittedTaskDetailed
-} from "/imports/policy/tasks";
-import _ from "lodash";
+import {canSubmit, getUserPermittedTaskDetailed} from "/imports/policy/tasks";
 
-import WorkersClient from '../zeebe_broker_connector'
-import {getParticipantsToUpdateFromSciper} from "/server/userFetcher";
+import WorkersClient from '/server/zeebe/connector'
 import {auditLogConsoleOut} from "/imports/lib/logging";
 
-// load methods from shared js
-import '/imports/api/doctoralSchools/methods'
-import '/server/methods/ImportScipers'
-import '/server/methods/DoctoralSchools'
-import '/server/methods/TaskParticipant'
+import {filterUnsubmittableVars} from "/imports/policy/utils";
+import {updateParticipantsInfoForFormData} from "/server/methods/ParticipantsUpdater";
+import {bumpActivityLogsOnTaskSubmit} from "/imports/api/activityLogs/helpers";
+
 
 const auditLog = auditLogConsoleOut.extend('server/methods/TaskForm')
+const debug = require('debug')('server/methods/TaskForm')
 
 
 Meteor.methods({
@@ -43,7 +39,7 @@ Meteor.methods({
     }
   },
 
-  async submit(_id, formData, formMetaData: FormioActivityLog) {
+  async submit(_id, formData, _formMetaData: FormioActivityLog) {
     let user: Meteor.User | null = null
     if (this.userId) {
       user = Meteor.users.findOne({_id: this.userId}) ?? null
@@ -77,41 +73,28 @@ Meteor.methods({
       throw new Meteor.Error(400, 'There is not enough valid data to validate this form. Canceling.')
     }
 
-    // update Users info, based on sciper, if possible. Block only if we don't have any data on the PhD
-    try {
-      let participantsToUpdate: any
-      if (!task.variables.phdStudentSciper) {
-        // look like a first step if we do not have the phdStudentSciper in task.variables.
-        // let's fetch with formData then
-        participantsToUpdate = await getParticipantsToUpdateFromSciper(formData)
-      } else {
-        participantsToUpdate = await getParticipantsToUpdateFromSciper(task.variables)
-      }
-
-      formData = {...formData, ...participantsToUpdate}
-    } catch (e: any) {
-      if (Meteor.isDevelopment && Meteor.settings?.skipUsersUpdateOnFail) {  // don't raise an error it optional on dev env.
-        console.log(`skipping the user update for dev env, as there is an error. ${ e }`)
-      } else {
-        if (e.name == 'AbortError') {
-          // Look like the fetching of user info has got a timeout,
-          // make it bad only if we don't have already some data, or ignore it
-          auditLog(`Error: Timeout while fetching scipers.`)
-          if (!task.variables.phdStudentEmail) throw new Meteor.Error(422, 'Unable to get users information, aborting. Please contact the administrator or try again later.')
-        } else {
-          auditLog(`Error: parsing a participant ${ e } has failed. Aborting.`)
-          throw new Meteor.Error(422, `There is a problem with a participant: ${ e }`)
-        }
-      }
-    }
+    formData = await updateParticipantsInfoForFormData(formData, task)
 
     formData.updated_at = new Date().toJSON()
 
-    formData = _.mapValues(formData, x => encrypt(x))  // encrypt all data
+    // encrypt all data
+    formData = _.mapValues(formData, x => encrypt(x))
 
     await WorkersClient.success(task._id!, formData)
     auditLog(`Sending success: job ${task._id} of process instance ${task.processInstanceKey} with data ${JSON.stringify(formData)}`)
+
+    debug(`Bumping activity logs about the submit`)
+    bumpActivityLogsOnTaskSubmit(task)
+
+    debug(`Clear the temp form, if any`)
     await UnfinishedTasks.removeAsync({ taskId: task._id!, userId: user._id })
+    await UnfinishedTasks.removeAsync({
+      userId: user._id,
+      processInstanceKey: task.processInstanceKey,
+      stepId: task.elementId,
+    })
+
+    debug(`Save as submitted in the local db, for journaling operations`)
     Tasks.markAsSubmitted(task._id!)
   },
 
@@ -123,10 +106,26 @@ Meteor.methods({
 
     if (!user) return
 
-    await UnfinishedTasks.updateAsync(
-      { userId: user._id, taskId: taskId },
-      { $set: {
-          userId: user._id, taskId: taskId, inputJSON: formData, updatedAt: dayjs().toDate()
+    const task = await Tasks.findOneAsync(
+      { _id: taskId },
+      { fields: {
+          processInstanceKey: 1,
+          elementId: 1,
+        }
+      }
+    )
+
+    await UnfinishedTasks.updateAsync({
+        userId: user._id,
+        taskId: taskId
+      }, {
+      $set: {
+        userId: user._id,
+        taskId: taskId,
+        inputJSON: formData,
+        updatedAt: dayjs().toDate(),
+        processInstanceKey: task?.processInstanceKey ?? undefined,
+        stepId: task?.elementId ?? undefined,
         }
       },
       { upsert: true}
@@ -141,6 +140,32 @@ Meteor.methods({
 
     if (!user) return
 
-    return await UnfinishedTasks.findOneAsync({ userId: user._id, taskId: taskId })
+    let unfinishedTask = await UnfinishedTasks.findOneAsync(
+      { userId: user._id, taskId: taskId }
+    )
+
+    // can't find one ? let's check if the cause is
+    // the change of a variable that created a new job
+    if (!unfinishedTask) {
+      const task = await Tasks.findOneAsync(
+        { _id: taskId },
+        { fields: {
+            processInstanceKey: 1,
+            elementId: 1,
+          }
+        }
+      )
+
+      if (task) {
+        unfinishedTask = await UnfinishedTasks.findOneAsync({
+            userId: user._id,
+            processInstanceKey: task.processInstanceKey,
+            stepId: task.elementId
+          }
+        )
+      }
+    }
+
+    return unfinishedTask
   },
 })

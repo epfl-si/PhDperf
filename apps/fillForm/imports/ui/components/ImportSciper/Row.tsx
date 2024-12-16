@@ -1,58 +1,15 @@
 import {Meteor} from "meteor/meteor";
 import React, {useState} from "react"
+
 import {Person} from "/imports/api/importScipers/isaTypes"
 import {DoctoralSchool} from "/imports/api/doctoralSchools/schema";
 import {DoctorantInfoSelectable} from "/imports/api/importScipers/schema";
-import toast from "react-hot-toast";
 
-
-export const HeaderRow = ({doctoralSchool, isAllSelected, disabled} :
-                            {doctoralSchool: DoctoralSchool, isAllSelected: boolean, disabled: boolean}) => {
-  const [isToggling, setIsToggling] = useState(false)
-
-  const defaultColClasses = "align-self-end"
-
-  const setAllCheck = (state: boolean) => {
-    setIsToggling(true)
-
-    Meteor.call('toggleAllDoctorantCheck', doctoralSchool.acronym, state, (error: any) => {
-        if (!error) {
-          setIsToggling(false)
-        }
-      }
-    )
-  }
-
-  return (
-    <div className="row-header row small font-weight-bold align-self-end pl-2 pb-1">
-      <div className={ `col-1 ${defaultColClasses}` }>
-        <input
-          type="checkbox"
-          id="select-all"
-          name="select-all"
-          checked={ isAllSelected }
-          disabled={ isToggling || disabled }
-          onChange={ () => { setAllCheck(!isAllSelected); } }
-        />
-        { isToggling &&
-          <span className="loader" />
-        }
-      </div>
-      <div className={ `col-2 ${defaultColClasses}` }>Doctoral candidate name</div>
-      <div className={ `col-2 ${defaultColClasses}` }>Thesis director</div>
-      <div className={ `col-2 ${defaultColClasses}` }>Thesis co-director</div>
-      <div className={ `col-2 ${defaultColClasses}` }>Mentor</div>
-      <div className={ `col-1 ${defaultColClasses}` }>Immatricul. date</div>
-      <div className={ `col-1 ${defaultColClasses}` }>Candidacy exam</div>
-      <div className={ `col-1 ${defaultColClasses}` }>Thesis adm. date</div>
-    </div>
-  )
-}
 
 const PersonDisplay = ({ person, boldName = false, showSciper = true }: { person?: Person, boldName?: boolean, showSciper?: boolean }) => {
   if (person) {
     return <div>
-      <div className={ boldName ? 'font-weight-bold' : '' }>{ person.fullName }</div>
+      <div className={ boldName ? 'font-weight-bold' : '' }>{ person.lastName } { person.firstName }</div>
       { showSciper &&
         <div>{ person.sciper }</div>
       }
@@ -63,66 +20,17 @@ const PersonDisplay = ({ person, boldName = false, showSciper = true }: { person
 }
 
 const ThesisCoDirectorDisplay = ({
-                                   doctoralSchool,
-                                   doctorant,
-                                   coDirector,
-                                   isSciperNeeded,
-                                   showSciper
-                                 }: { doctoralSchool: DoctoralSchool, doctorant: Person, coDirector?: Person, isSciperNeeded?: boolean, showSciper?: boolean }) => {
-  const [isSending, setIsSending] = useState(false)
-  const [newSciper, setNewSciper] = useState('')
-
-  const setCoDirectorNewSciper = (e: any) => {
-    e.preventDefault()
-    e.stopPropagation()
-
-    if (!e.target.checkValidity()) {
-      e.target.reportValidity()
-    } else {
-      if (!newSciper) return
-
-      setIsSending(true)
-
-      Meteor.call('setCoDirectorSciper', doctoralSchool.acronym, doctorant.sciper, newSciper.toUpperCase(), (error: any) => {
-          if (error) {
-            toast.error(`Error: ${error.reason}`)
-          } else {
-            toast.success(`Successfully added the sciper ${newSciper} to ${coDirector?.fullName}`)
-          }
-          setIsSending(false)
-        }
-      )
-    }
-  }
-
+  coDirector,
+  isSciperNeeded,
+  showSciper
+}: {
+  coDirector?: Person,
+  isSciperNeeded?: boolean,
+  showSciper?: boolean
+}) => {
   return (
     <>{coDirector &&
         <PersonDisplay person={coDirector} showSciper={!isSciperNeeded && showSciper} />
-      }
-      { coDirector && isSciperNeeded &&
-        <div>
-          <form role="form" onSubmit={ setCoDirectorNewSciper }>
-            <input type="text"
-                   className={'is-invalid'}
-                   id="sciper"
-                   name="sciper"
-                   maxLength={6}
-                   size={6}
-                   placeholder={'Gxxxxx'}
-                   pattern={ "[G|g][0-9]{5}" }
-                   title={ 'Sciper has to be a guest one. Ex. G12345' }
-                   value={ newSciper }
-                   onChange={ (e) => setNewSciper(e.target.value)}
-            />
-            { !isSending &&
-              <button type="submit">Set</button>
-            }
-
-            { isSending &&
-              <span className="loader" />
-            }
-          </form>
-        </div>
       }
     </>
   )
@@ -179,7 +87,7 @@ export const Row = ({ doctorant, doctoralSchool, checked }: RowParameters) => {
           &nbsp;
           { doctorant.needCoDirectorData && !(isToggling || doctorant.isBeingImported || doctorant.hasAlreadyStarted) &&
             <>
-              <span className={'h4 text-danger ml-1'} title="Co-director sciper is missing. Please enter the guest sciper account">⚠</span>
+              <span className={'h4 text-danger ml-1'} title="Co-director sciper is missing. Please enter the information in EDOC portal in ISA.">⚠</span>
             </>
           }
           { !doctorant.thesis?.directeur && !(isToggling || doctorant.isBeingImported || doctorant.hasAlreadyStarted) &&
@@ -209,8 +117,6 @@ export const Row = ({ doctorant, doctoralSchool, checked }: RowParameters) => {
         <div className={ `col-2 ${defaultColClasses}` }><PersonDisplay person={ doctorant.thesis.directeur } /></div>
         <div className={ `col-2 ${defaultColClasses}` }>
           <ThesisCoDirectorDisplay
-            doctoralSchool={ doctoralSchool }
-            doctorant={ doctorant.doctorant }
             coDirector={ doctorant.thesis.coDirecteur }
             isSciperNeeded={ doctorant.needCoDirectorData && !doctorant.hasAlreadyStarted }
             showSciper={ !doctorant.needCoDirectorData || !doctorant.hasAlreadyStarted }

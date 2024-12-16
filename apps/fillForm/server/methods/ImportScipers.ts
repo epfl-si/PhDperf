@@ -1,20 +1,25 @@
 import {Meteor} from "meteor/meteor";
+import dayjs from "dayjs";
+import crypto from "node:crypto";
+import path from 'path'
+import _ from "lodash";
+import AbortController from "abort-controller";
 
+import {zBClient} from "/server/zeebe/connector";
+import {auditLogConsoleOut} from "/imports/lib/logging";
+import {fetchTimeout} from "/imports/lib/fetchTimeout";
+import {encrypt} from "/server/encryption";
+import {getUserInfoMemoized} from "/server/userFetcher";
+import {
+  PhDAssessEditableVariables,
+} from "phd-assess-meta/types/variables";
+
+import {DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 import {DoctorantInfoSelectable, ImportScipersList} from "/imports/api/importScipers/schema";
 import {isaResponse} from "/imports/api/importScipers/isaTypes";
-import {canImportScipersFromISA} from "/imports/policy/importScipers";
-import {auditLogConsoleOut} from "/imports/lib/logging";
-import {getUserInfoMemoized} from "/server/userFetcher";
-import _ from "lodash";
 import {Tasks} from "/imports/model/tasks";
-import {zBClient} from "/server/zeebe_broker_connector";
-import {encrypt} from "/server/encryption";
-import {canStartProcessInstance} from "/imports/policy/tasks";
-import {DoctoralSchools} from "/imports/api/doctoralSchools/schema";
-import {fetchTimeout} from "/imports/lib/fetchTimeout";
-import AbortController from "abort-controller";
-import path from 'path'
-import crypto from "node:crypto";
+import {canStartProcessInstance} from "/imports/policy/processInstance";
+import {canImportScipersFromISA} from "/imports/policy/importScipers";
 
 
 const debug = require('debug')('server/methods/ImportScipers')
@@ -176,7 +181,7 @@ Meteor.methods({
 
     ImportScipersList.update(query, updateDocument, options)
 
-    // uncheck the all list if we got an uncheck
+    // uncheck the all list if we got an uncheck case
     if (!checked) {
       ImportScipersList.update({
         doctoralSchoolAcronym: doctoralSchoolAcronym,
@@ -256,6 +261,8 @@ Meteor.methods({
       $set: {
         "doctorants.$[doctorantInfo].needCoDirectorData": false,
         "doctorants.$[doctorantInfo].thesis.coDirecteur.sciper": coDirectorSciper,
+        "doctorants.$[doctorantInfo].thesis.coDirecteur.firstName": `${newCoDirector.firstname}`,
+        "doctorants.$[doctorantInfo].thesis.coDirecteur.lastName": `${newCoDirector.lastname}`,
         "doctorants.$[doctorantInfo].thesis.coDirecteur.fullName": `${newCoDirector.firstname} ${newCoDirector.lastname}`,
         "doctorants.$[doctorantInfo].thesis.coDirecteur.email": newCoDirector.email,
       }
@@ -269,7 +276,10 @@ Meteor.methods({
     ImportScipersList.update(query, updateDocument, options)
   },
 
-  async startPhDAssess(doctoralSchoolAcronym: string) {
+  async startProcessInstancesCreation(
+    doctoralSchoolAcronym: string,
+    dueDate: Date
+    ) {
     let user: Meteor.User | null = null
     if (this.userId) {
       user = Meteor.users.findOne({_id: this.userId}) ?? null
@@ -281,18 +291,46 @@ Meteor.methods({
 
     const ds = DoctoralSchools.findOne({'acronym': doctoralSchoolAcronym})
 
-    if (!ds || !canStartProcessInstance(user, [ds]) || !canImportScipersFromISA(user)) {
+    if (
+      !ds ||
+      !canStartProcessInstance(
+        user, [ds
+        ]) ||
+      !canImportScipersFromISA(user)
+    ) {
       auditLog(`Unallowed user ${user._id} is trying to start a workflow.`)
-      throw new Meteor.Error(403, 'You are not allowed to start a workflow')
+      throw new Meteor.Error(
+        403,
+        'You are not allowed to start a workflow'
+      )
+    }
+
+    if (!dueDate) {
+      throw new Meteor.Error(
+        500,
+        'No due date provided.'
+      )
+    }
+
+    if (!dayjs(dueDate).isAfter(dayjs(), 'day')) {
+      throw new Meteor.Error(
+        500,
+        'The due date should be in the future.')
     }
 
     auditLog(`starting batch imports`)
 
-    if(!zBClient) throw new Meteor.Error(500, `The Zeebe client has not been able to start on the server.`)
+    if(!zBClient) throw new Meteor.Error(
+      500,
+      `The Zeebe client has not been able to start on the server.`
+    )
 
     const doctoralSchool = DoctoralSchools.findOne({acronym: doctoralSchoolAcronym})
+    if (!doctoralSchool) throw new Meteor.Error(
+      500,
+      `The doctoral school does not exist anymore`
+    )
 
-    if (!doctoralSchool) throw new Meteor.Error(500, `The doctoral school does not exist anymore`)
     const programDirector = await getUserInfoMemoized(doctoralSchool.programDirectorSciper)
     // check the user api is working as intended
     if (!programDirector) throw new Meteor.Error(
@@ -317,41 +355,59 @@ Meteor.methods({
       doctoralSchoolAcronym: doctoralSchoolAcronym,
     })
 
-    const doctorantsToLoad = imports!.doctorants?.filter((doctorant) => doctorant.isSelected)
+    const doctorantsToLoad = imports!.doctorants?.filter(
+      (doctorant) => doctorant.isSelected
+    )
 
     const ProcessInstanceCreationPromises: any = []
     doctorantsToLoad?.forEach((doctorant) => {
-      const dataToPush = {
-        doctoralProgramName: encrypt(doctoralSchool.acronym),
-        doctoralProgramEmail: encrypt(`${doctoralSchool.acronym}@epfl.ch`),
-        docLinkAnnualReport: encrypt(doctoralSchool.helpUrl),
-        creditsNeeded: encrypt(doctoralSchool.creditsNeeded.toString()),
-        programDirectorSciper: encrypt(doctoralSchool.programDirectorSciper),
-        programDirectorName: encrypt(programDirector.firstname + ' ' + programDirector.lastname),
-        programDirectorEmail: encrypt(programDirector.email),
+      const dataToPush: Partial<PhDAssessEditableVariables> = {
+        doctoralProgramName: encrypt(doctoralSchool.acronym) ?? undefined,
+        doctoralProgramEmail: encrypt(`${doctoralSchool.acronym}@epfl.ch`) ?? undefined,
+        docLinkAnnualReport: encrypt(doctoralSchool.helpUrl) ?? undefined,
+        creditsNeeded: encrypt(doctoralSchool.creditsNeeded.toString()) ?? undefined,
 
-        dateOfCandidacyExam: encrypt(doctorant.dateExamCandidature ?? ''),
-        dateOfEnrolment: encrypt(doctorant.dateImmatriculation ?? ''),
+        programDirectorSciper: encrypt(doctoralSchool.programDirectorSciper) ?? undefined,
+        programDirectorName: encrypt(programDirector.firstname + ' ' + programDirector.lastname) ?? undefined,
+        programDirectorFirstNameUsage: encrypt(programDirector.firstname) ?? undefined,
+        programDirectorLastNameUsage: encrypt(programDirector.lastname) ?? undefined,
+        programDirectorEmail: encrypt(programDirector.email) ?? undefined,
 
-        phdStudentSciper: encrypt(doctorant.doctorant.sciper),
-        phdStudentName: encrypt(doctorant.doctorant.fullName),
-        phdStudentEmail: encrypt(doctorant.doctorant.email),
+        dateOfCandidacyExam: encrypt(doctorant.dateExamCandidature ?? '') ?? undefined,
+        dateOfEnrolment: encrypt(doctorant.dateImmatriculation ?? '') ?? undefined,
+        dueDate: encrypt(
+          `${ ("0" + dueDate.getDate()).slice(-2) }.${ ("0" + (dueDate.getMonth() + 1)).slice(-2) }.${ dueDate.getFullYear() }`
+        ) ?? undefined,
 
-        mentorSciper: encrypt(doctorant.thesis.mentor.sciper),
-        mentorName: encrypt(doctorant.thesis.mentor.fullName),
-        mentorEmail: encrypt(doctorant.thesis.mentor.email),
+        phdStudentSciper: encrypt(doctorant.doctorant.sciper) ?? undefined,
+        phdStudentName: encrypt(doctorant.doctorant.fullName) ?? undefined,
+        phdStudentFirstNameUsage: encrypt(doctorant.doctorant.firstName) ?? undefined,
+        phdStudentLastNameUsage: encrypt(doctorant.doctorant.lastName) ?? undefined,
+        phdStudentEmail: encrypt(doctorant.doctorant.email) ?? undefined,
 
-        thesisDirectorSciper: encrypt(doctorant.thesis.directeur.sciper),
-        thesisDirectorName: encrypt(doctorant.thesis.directeur.fullName),
-        thesisDirectorEmail: encrypt(doctorant.thesis.directeur.email),
+        mentorSciper: encrypt(doctorant.thesis.mentor.sciper) ?? undefined,
+        mentorName: encrypt(doctorant.thesis.mentor.fullName) ?? undefined,
+        mentorFirstNameUsage: encrypt(doctorant.thesis.mentor.firstName) ?? undefined,
+        mentorLastNameUsage: encrypt(doctorant.thesis.mentor.lastName) ?? undefined,
+        mentorEmail: encrypt(doctorant.thesis.mentor.email) ?? undefined,
 
-        thesisCoDirectorSciper: encrypt(doctorant.thesis.coDirecteur?.sciper ?? ''),
-        thesisCoDirectorName: encrypt(doctorant.thesis.coDirecteur?.fullName ?? ''),
-        thesisCoDirectorEmail: encrypt(doctorant.thesis.coDirecteur?.email ?? ''),
+        thesisDirectorSciper: encrypt(doctorant.thesis.directeur.sciper) ?? undefined,
+        thesisDirectorName: encrypt(doctorant.thesis.directeur.fullName) ?? undefined,
+        thesisDirectorFirstNameUsage: encrypt(doctorant.thesis.directeur.firstName) ?? undefined,
+        thesisDirectorLastNameUsage: encrypt(doctorant.thesis.directeur.lastName) ?? undefined,
+        thesisDirectorEmail: encrypt(doctorant.thesis.directeur.email) ?? undefined,
 
-        programAssistantSciper: encrypt(user!._id),
-        programAssistantName: encrypt(user?.tequila?.displayname ?? ''),
-        programAssistantEmail: encrypt(user?.tequila.email ?? ''),
+        thesisCoDirectorSciper: encrypt(doctorant.thesis.coDirecteur?.sciper ?? '') ?? undefined,
+        thesisCoDirectorName: encrypt(doctorant.thesis.coDirecteur?.fullName ?? '') ?? undefined,
+        thesisCoDirectorFirstNameUsage: encrypt(doctorant.thesis.coDirecteur?.firstName ?? '') ?? undefined,
+        thesisCoDirectorLastNameUsage: encrypt(doctorant.thesis.coDirecteur?.lastName ?? '') ?? undefined,
+        thesisCoDirectorEmail: encrypt(doctorant.thesis.coDirecteur?.email ?? '') ?? undefined,
+
+        programAssistantSciper: encrypt(user!._id) ?? undefined,
+        programAssistantName: encrypt(user?.tequila?.displayname ?? '') ?? undefined,
+        programAssistantFirstNameUsage: encrypt(user?.tequila?.firstname ?? '') ?? undefined,
+        programAssistantLastNameUsage: encrypt(user?.tequila?.name ?? '') ?? undefined,
+        programAssistantEmail: encrypt(user?.tequila.email ?? '') ?? undefined,
       }
 
       ProcessInstanceCreationPromises.push(

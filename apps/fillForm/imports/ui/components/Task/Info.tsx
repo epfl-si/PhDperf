@@ -11,8 +11,9 @@ export const TaskInfo = ({ task, showPhDStudent=true }: { task: ITaskList, showP
       <span className={'mr-auto'}>
         { showPhDStudent &&
           <div className={'task-phdstudent-info mr-2'}>
+
             <span className={ 'task-phdstudent-name' }>
-              { task.variables.phdStudentName }
+              { task.variables.phdStudentLastNameUsage } { task.variables.phdStudentFirstNameUsage }
             </span> {
               task.variables.phdStudentSciper && <>
               ( <span className={ 'task-phdstudent-sciper' }>

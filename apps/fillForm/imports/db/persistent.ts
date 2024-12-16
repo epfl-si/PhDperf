@@ -1,7 +1,7 @@
 import { MongoInternals } from 'meteor/mongo';
 
 
-// This one should be backuped and resilient, not like the default one
+// This one should have a backup and be resilient. Not like the default one that reset everytime it restarts.
 let persistentDB: Object | null = null
 
 if (Meteor.isServer) {

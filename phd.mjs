@@ -1,6 +1,7 @@
 #!/usr/bin/env -S npm exec --yes --package=zx@latest zx --
 import deployProcess from './cli/deployProcess.mjs'
 import { stringifySnapshot } from './cli/snapshots.mjs'
+import generateActivityLogs from './cli/generateActivityLogs.mjs'
 
 $.verbose = false
 
@@ -22,6 +23,8 @@ if (argv.help || argv._[0] === 'help') {
   await stringifySnapshot(argv);
 } else if (argv._[0] === 'git-pull-all') {
   await gitPullAll(...argv._.slice(1));
+} else if (argv._[0] === 'generate-activity-logs') {
+  await generateActivityLogs(argv);
 } else {
   await help(...argv._);
 }
@@ -29,17 +32,18 @@ if (argv.help || argv._[0] === 'help') {
 async function help(args) {
   await echo`
 Usage:
-  phd help                 Show this message
-  phd run                  Start the docker stack
-  phd start                Start the docker stack
-  phd stop                 Stop the docker stack
-  phd clean                Wipe all data. All steps have to be confirmed
-  phd test                 Launch tests
-  phd test e2e             Launch e2e tests with a headless browser
-  phd test load-fixtures   Load locally task fixtures
-  phd git-pull-all         Git refresh all the known modules / submodules
-  phd deploy-bpmn          Interactively deploy a BPMN
-  phd stringify-snapshot   Use the PERL-tools to export a DB to a *.txt. Use --path=PATH_TO_CURRENT
+  phd help                    Show this message
+  phd start                   Start the docker stack. You can use 'phd run' too
+  phd start zeebe             Start the docker stack, but only the zeebe stack
+  phd stop                    Stop the docker stack
+  phd clean                   Wipe all data. All steps have to be confirmed
+  phd test                    Launch tests
+  phd test e2e                Launch e2e tests with a headless browser
+  phd test load-fixtures      Load locally task fixtures
+  phd git-pull-all            Git refresh all the known modules / submodules
+  phd deploy-bpmn             Interactively deploy a BPMN
+  phd stringify-snapshot      Use the PERL-tools to export a DB to a *.txt. Use --path=PATH_TO_CURRENT
+  phd generate-activity-logs  Initiate the activityLogs table for the new dashboard milestone (temp)
   `
 }
 
@@ -49,14 +53,16 @@ async function dockerRun(args) {
   console.log('Starting the zeebe stack..')
   await $`docker compose up -d zeebe_node_0 zeebe_node_1 zeebe_node_2`;
 
-  console.log('Starting the pdf, notifier, ged, isa..')
-  await $`docker compose up -d pdf notifier ged isa`;
+  if (args !== 'zeebe') {
+    console.log('Starting the pdf, notifier, ged, isa..')
+    await $`docker compose up -d pdf notifier ged isa`;
 
-  console.log('Starting the simple-monitor (localhost:8082)..')
-  await $`docker compose up -d simple-monitor`;
+    console.log('Starting the simple-monitor (localhost:8082)..')
+    await $`docker compose up -d simple-monitor`;
+  }
 
   console.log(`Stack started.`);
-  console.log(`To see the logs, use "cd ${path.join(__dirname, `docker`)}; docker compose logs -f"`);
+  console.log(`To see the logs, use "cd ${path.join(__dirname, `docker`)}; docker compose logs -f --since 5m"`);
   console.log(`To stop, use the './phd.mjs stop' command`);
 }
 
@@ -98,6 +104,7 @@ async function clean(args) {
     const fillFormPath = path.join(__dirname, `apps/fillForm`);
     cd(fillFormPath);
     await $`meteor reset`;
+    await $`meteor npm i`;
     console.log(`Successfully reset the meteor db`)
   }
 
