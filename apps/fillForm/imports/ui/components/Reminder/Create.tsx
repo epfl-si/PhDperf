@@ -200,13 +200,14 @@ const ReminderForm = ({ task }: { task: Task }) => {
             plugins={ 'link' }
             toolbar={ 'undo redo | styles | align | bold italic | link' }
             init={ {
-              menubar: false,
-              statusbar: true,
-              promotion: false,
               branding: false,
-              link_context_toolbar: true,
+              content_style: isSubmitting ? '.mce-content-readonly { background-color: #e6e6e6; }' : undefined,
+              convert_urls: false,  // dont show urls as relative urls, it is disturbing in this context
               height: 500,
-              content_style: isSubmitting ? '.mce-content-readonly { background-color: #e6e6e6; }' : undefined
+              link_context_toolbar: true,
+              menubar: false,
+              promotion: false,
+              statusbar: true,
             } }
             initialValue={ messageRendered }
             value={ message }
