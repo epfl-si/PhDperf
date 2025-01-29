@@ -87,7 +87,7 @@ const ReminderForm = ({ task }: { task: Task }) => {
   );
 
   const [bcc, setBcc] = useState(
-    task.variables?.doctoralProgramEmail ?? ''
+    task?.variables?.doctoralProgramEmail
   );
 
   const [subject, setSubject] = useState(subjectRendered);
@@ -222,6 +222,9 @@ const ReminderForm = ({ task }: { task: Task }) => {
         >Send reminder
         </button>
       </form>
+      <code>
+        { JSON.stringify(task.variables.doctoralProgramEmail) }
+      </code>
     </> }
     { isSubmitted && <>
       <div className={'alert alert-success'} role='alert'>{'Reminder sent.'}</div>
