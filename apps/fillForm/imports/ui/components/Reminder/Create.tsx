@@ -87,7 +87,7 @@ const ReminderForm = ({ task }: { task: Task }) => {
   );
 
   const [bcc, setBcc] = useState(
-    fromZeebeCustomHeadersEmailsToEmailInput(task?.customHeaders?.notifyBcc, task)
+    task.variables?.doctoralProgramEmail ?? ''
   );
 
   const [subject, setSubject] = useState(subjectRendered);
