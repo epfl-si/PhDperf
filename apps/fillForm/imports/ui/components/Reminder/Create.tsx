@@ -60,6 +60,9 @@ export function TaskReminderForm() {
   if (!task) return <div>There is currently no task with this ID, you may not have enough permission or it may have been completed.</div>
   if (!task.variables.uuid)  return <div>This task is part of an old workflow and reminders can not be used.</div>
 
+  // wait at least for a data before showing the form
+  if (!task.variables.doctoralProgramEmail) return <Loader message={'Fetching the task info...'}/>
+
   return <ReminderForm task={ task! }/>
 }
 
@@ -222,13 +225,10 @@ const ReminderForm = ({ task }: { task: Task }) => {
         >Send reminder
         </button>
       </form>
-      <code>
-        { JSON.stringify(task.variables.doctoralProgramEmail) }
-      </code>
     </> }
     { isSubmitted && <>
-      <div className={'alert alert-success'} role='alert'>{'Reminder sent.'}</div>
-      <Link to={`/dashboard`}><Button label={'Back'} onClickFn={() => void 0}/></Link>
+      <div className={ 'alert alert-success' } role='alert'>{ 'Reminder sent.' }</div>
+      <Link to={ `/dashboard` }><Button label={ 'Back' } onClickFn={ () => void 0 }/></Link>
     </> }
   </>
 }
