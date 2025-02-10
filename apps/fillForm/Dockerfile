@@ -1,6 +1,6 @@
 ARG BASE_IMAGE=docker-registry.default.svc:5000/phd-assess-test/node-base:latest
 
-FROM $BASE_IMAGE
+FROM $BASE_IMAGE AS build-stage
 
 ENV NODE_ENV=production
 
