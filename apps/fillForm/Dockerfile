@@ -1,4 +1,6 @@
-FROM docker-registry.default.svc:5000/phd-assess-test/node-base:latest AS build-stage
+ARG BASE_IMAGE=docker-registry.default.svc:5000/phd-assess-test/node-base:latest
+
+FROM $BASE_IMAGE
 
 ENV NODE_ENV=production
 
@@ -28,7 +30,7 @@ RUN meteor npm install --production
 RUN meteor build --directory /app/output
 RUN meteor npm run postinstall
 
-FROM docker-registry.default.svc:5000/phd-assess-test/node-base:latest
+FROM $BASE_IMAGE
 
 RUN groupadd -g 1001 meteoruser && \
     useradd -u 1001 -g meteoruser -m -s /bin/bash meteoruser
