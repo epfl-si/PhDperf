@@ -67,6 +67,10 @@
           port: "{{ zeebe_ports.command }}"
           protocol: TCP
           targetPort: "{{ zeebe_ports.command }}"
+        - name: "zeebe-management"
+          port: "{{ zeebe_ports.management }}"
+          protocol: TCP
+          targetPort: "{{ zeebe_ports.management }}"
       selector:
         zeebe-quorum-member: "{{ item }}"
   with_items: "{{ _zeebe_quorum_services }}"
