@@ -1,4 +1,4 @@
-import {Browser, Page, test as base} from '@playwright/test';
+import {Browser, BrowserContext, Page, test as base} from '@playwright/test';
 
 import {fillFormAppPageForUser, fillFormAppPageForAdmin} from "/tests/E2E/tests/fixtures/fillFormApp";
 import {loginAsAdmin} from "/tests/E2E/tests/utils/login";
@@ -10,19 +10,21 @@ type FillFormAppFixtures = {
 };
 
 export const test = base.extend<FillFormAppFixtures>({
-  fillFormAppPageAsUser: async ({ page }, use) => {
-    const fillFormAppPageAsUser = new fillFormAppPageForUser(page);
-
-    await fillFormAppPageAsUser.login()
+  fillFormAppPageAsUser: async ({ browser }, use) => {
+    const context = await browser.newContext({ storageState: '.auth/user.json' });
+    const fillFormAppPageAsUser = new fillFormAppPageForUser(await context.newPage());
 
     await use(fillFormAppPageAsUser);
-  },
-  fillFormAppPageAsAdmin: async ({ page }, use) => {
-    const fillFormAppPageAsAdmin = new fillFormAppPageForAdmin(page);
 
-    await fillFormAppPageAsAdmin.login()
+    await context.close();
+  },
+  fillFormAppPageAsAdmin: async ({ browser }, use) => {
+    const context = await browser.newContext({ storageState: '.auth/admin.json' });
+    const fillFormAppPageAsAdmin = new fillFormAppPageForAdmin(await context.newPage());
 
     await use(fillFormAppPageAsAdmin);
+
+    await context.close();
   },
 });
 
@@ -58,4 +60,28 @@ export const cleanupPageAndTaskForUser = async (page: Page) => {
   const fillFormAppPageAsAdmin = new fillFormAppPageForAdmin(page);
   await fillFormAppPageAsAdmin.removeAllTasks();
   await fillFormAppPageAsAdmin.page.close();
+}
+
+export const setupUserAndAdminContexts = async (browser: Browser) => {
+  // adminContext and all pages inside, including adminPage, are signed in as "admin".
+  const adminContext = await browser.newContext({ storageState: '.auth/admin.json' });
+  const adminPage = await adminContext.newPage();
+
+  // userContext and all pages inside, including userPage, are signed in as "user".
+  const userContext = await browser.newContext({ storageState: '.auth/user.json' });
+  const userPage = await userContext.newPage();
+
+  return {
+    adminContext,
+    adminPage,
+    userContext,
+    userPage,
+  }
+}
+
+export const tearDownUserAndAdminContexts = async (
+    adminContext: BrowserContext, userContext: BrowserContext
+) => {
+  await adminContext.close();
+  await userContext.close();
 }
